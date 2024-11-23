@@ -4,6 +4,8 @@
 ## Overview
 The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed to help investors make data-driven decisions to maximize returns and minimize risks. Combining blockchain transparency, AI-driven optimization algorithms, and quantitative finance techniques, the tool provides personalized portfolio management solutions.
 
+> **Note**: RiskOptimizer is currently under active development. Features and functionalities are being added and improved continuously to enhance user experience.
+
 ## Key Features
 - **Real-Time Portfolio Tracking**: Utilize blockchain to track transactions securely and transparently.
 - **AI-Powered Optimization**: Use machine learning models to recommend portfolio allocations and rebalancing strategies.
