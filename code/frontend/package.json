@@ -1,1 +1,24 @@
-Placeholder content for /mnt/data/AI_Powered_Portfolio_Optimization_Tool/code/frontend/package.json
+{
+    "name": "portfolio-optimizer-frontend",
+    "version": "1.0.0",
+    "dependencies": {
+      "@material-ui/core": "^4.12.3",
+      "react": "^17.0.2",
+      "react-dom": "^17.0.2",
+      "react-router-dom": "^5.3.0",
+      "recharts": "^2.1.9",
+      "web3": "^1.7.0"
+    },
+    "scripts": {
+      "start": "webpack serve --mode development",
+      "build": "webpack --mode production"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.15.8",
+      "@babel/preset-react": "^7.14.5",
+      "babel-loader": "^8.2.3",
+      "webpack": "^5.58.2",
+      "webpack-cli": "^4.9.0",
+      "webpack-dev-server": "^4.3.1"
+    }
+  }
