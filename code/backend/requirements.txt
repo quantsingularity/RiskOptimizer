@@ -1,1 +1,13 @@
-Placeholder content for /mnt/data/AI_Powered_Portfolio_Optimization_Tool/code/backend/requirements.txt
+flask==2.0.1
+python-dotenv==0.19.1
+web3==5.24.0
+joblib==1.1.0
+pandas==1.3.3
+numpy==1.21.2
+scipy>=1.7.2
+pyportfolioopt
+psycopg2-binary==2.9.1
+gunicorn==20.1.0
+Flask-Cors==3.0.10
+pytest==8.3.5
+werkzeug==2.0.1
