@@ -80,8 +80,8 @@ The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed 
 
 ### **1. Clone Repository**
 ```bash
-git clone https://github.com/your-repo-name/Portfolio-Optimization-Tool.git
-cd Portfolio-Optimization-Tool
+git clone https://github.com/abrar2030/RiskOptimizer.git
+cd RiskOptimizer
 ```
 
 ### **2. Install Backend Dependencies**
