@@ -10,12 +10,12 @@ import LoginScreen from '../screens/Auth/LoginScreen';
 import DashboardScreen from '../screens/Dashboard/DashboardScreen';
 import PortfolioListScreen from '../screens/Portfolios/PortfolioListScreen';
 import PortfolioDetailScreen from '../screens/Portfolios/PortfolioDetailScreen';
-import OptimizationScreen from "../screens/Optimize/OptimizationScreen";
-import MarketScreen from "../screens/Market/MarketScreen";
-import SettingsScreen from "../screens/Settings/SettingsScreen";
-import AddAssetScreen from "../screens/Portfolios/AddAssetScreen"; // Placeholder
-import CreatePortfolioScreen from "../screens/Portfolios/CreatePortfolioScreen"; // Placeholder
-import AssetDetailScreen from "../screens/Portfolios/AssetDetailScreen"; // Placeholder
+import OptimizationScreen from '../screens/Optimize/OptimizationScreen';
+import MarketScreen from '../screens/Market/MarketScreen';
+import SettingsScreen from '../screens/Settings/SettingsScreen';
+import AddAssetScreen from '../screens/Portfolios/AddAssetScreen'; // Placeholder
+import CreatePortfolioScreen from '../screens/Portfolios/CreatePortfolioScreen'; // Placeholder
+import AssetDetailScreen from '../screens/Portfolios/AssetDetailScreen'; // Placeholder
 import RiskAnalysisScreen from '../screens/RiskAnalysisScreen'; // Placeholder
 import TransactionHistoryScreen from '../screens/TransactionHistoryScreen'; // Placeholder
 

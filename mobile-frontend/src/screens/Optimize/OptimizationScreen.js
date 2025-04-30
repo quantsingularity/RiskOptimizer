@@ -82,7 +82,7 @@ const OptimizationScreen = ({ navigation }) => {
   // Example sector handling - replace with actual data/logic
   const availableSectors = ['Technology', 'Healthcare', 'Financials', 'Energy', 'Consumer Staples', 'Industrials', 'Utilities', 'Real Estate', 'Materials', 'Communication Services', 'Consumer Discretionary', 'Tobacco'];
   const toggleSectorExclusion = (sector) => {
-    setExcludedSectors(prev => 
+    setExcludedSectors(prev =>
       prev.includes(sector) ? prev.filter(s => s !== sector) : [...prev, sector]
     );
   };
@@ -137,7 +137,7 @@ const OptimizationScreen = ({ navigation }) => {
           value={investmentHorizon}
           useNativeAndroidPickerStyle={false}
         />
-        
+
         <Text style={styles.label}>Max Allocation per Asset: {(maxAllocation * 100).toFixed(0)}%</Text>
         <Slider
           value={maxAllocation}
@@ -192,7 +192,7 @@ const OptimizationScreen = ({ navigation }) => {
           <Text style={styles.resultText}>Optimized Risk Score: {optimizationResult.optimized_risk_score?.toFixed(2)} (Current: {optimizationResult.current_risk_score?.toFixed(2)})</Text>
           <Text style={styles.resultText}>Expected Return: {(optimizationResult.expected_return * 100)?.toFixed(2)}%</Text>
           <Text style={styles.resultText}>Sharpe Ratio: {optimizationResult.sharpe_ratio?.toFixed(2)}</Text>
-          
+
           <Text style={styles.subHeader}>Recommendations:</Text>
           {optimizationResult.recommendations?.map((rec, index) => (
             <View key={index} style={styles.recommendationItem}>
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     padding: 2,
     margin: 0,
-    marginLeft: 0, 
+    marginLeft: 0,
     marginRight: 5,
   },
   checkboxText: {

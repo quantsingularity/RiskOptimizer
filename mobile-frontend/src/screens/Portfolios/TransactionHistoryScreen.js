@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, Linking, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, Linking, Alert, Button } from 'react-native';
 import { Card, ListItem, Icon } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
 import apiService from '../services/apiService';
@@ -22,7 +22,7 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
     try {
       const [historyResponse, verificationResponse] = await Promise.all([
         apiService.getTransactionHistory(portfolioId),
-        apiService.verifyPortfolioIntegrity(portfolioId) // Fetch verification status too
+        apiService.verifyPortfolioIntegrity(portfolioId), // Fetch verification status too
       ]);
       setTransactions(historyResponse.data.transactions || []);
       setVerificationStatus(verificationResponse.data);
@@ -60,7 +60,7 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
   const openTxInExplorer = (txHash) => {
     // Basic example for Etherscan - adapt based on actual blockchain used
     if (!verificationStatus?.blockchain) {
-        Alert.alert("Cannot Open", "Blockchain information not available.");
+        Alert.alert('Cannot Open', 'Blockchain information not available.');
         return;
     }
     let explorerUrl;
@@ -69,15 +69,15 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
     } else if (verificationStatus.blockchain.toLowerCase() === 'solana') {
         explorerUrl = `https://explorer.solana.com/tx/${txHash}`;
     } else {
-        Alert.alert("Unsupported Blockchain", `Cannot open explorer for ${verificationStatus.blockchain}.`);
+        Alert.alert('Unsupported Blockchain', `Cannot open explorer for ${verificationStatus.blockchain}.`);
         return;
     }
-    
+
     Linking.canOpenURL(explorerUrl).then(supported => {
       if (supported) {
         Linking.openURL(explorerUrl);
       } else {
-        Alert.alert("Cannot Open URL", `Don't know how to open this URL: ${explorerUrl}`);
+        Alert.alert('Cannot Open URL', `Don't know how to open this URL: ${explorerUrl}`);
       }
     });
   };
@@ -88,10 +88,10 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
       onPress={() => item.tx_hash && openTxInExplorer(item.tx_hash)}
       containerStyle={styles.listItem}
     >
-      <Icon 
-        name={item.action === 'buy' ? 'arrow-bottom-left-thick' : 'arrow-top-right-thick'} 
-        type="material-community" 
-        color={item.action === 'buy' ? '#34C759' : '#FF3B30'} 
+      <Icon
+        name={item.action === 'buy' ? 'arrow-bottom-left-thick' : 'arrow-top-right-thick'}
+        type="material-community"
+        color={item.action === 'buy' ? '#34C759' : '#FF3B30'}
       />
       <ListItem.Content>
         <ListItem.Title style={styles.itemTitle}>
@@ -113,7 +113,7 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
     verificationStatus ? (
         <Card containerStyle={styles.verificationCard}>
             <View style={styles.verificationRow}>
-                <Icon name={verificationStatus.verified ? "check-circle-outline" : "alert-circle-outline"} type="material-community" color={verificationStatus.verified ? '#34C759' : '#FF9500'} size={20}/>
+                <Icon name={verificationStatus.verified ? 'check-circle-outline' : 'alert-circle-outline'} type="material-community" color={verificationStatus.verified ? '#34C759' : '#FF9500'} size={20}/>
                 <Text style={[styles.verificationText, verificationStatus.verified ? styles.verified : styles.notVerified]}>
                     Portfolio Integrity: {verificationStatus.verified ? 'Verified' : 'Verification Failed or Pending'}
                 </Text>

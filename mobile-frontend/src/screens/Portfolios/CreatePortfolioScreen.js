@@ -21,7 +21,7 @@ const CreatePortfolioScreen = ({ navigation }) => {
       const response = await apiService.createPortfolio({ name, description, currency });
       // Navigate back to portfolio list or to the new portfolio's detail screen
       // PortfolioListScreen should refresh on focus to show the new portfolio
-      navigation.goBack(); 
+      navigation.goBack();
     } catch (err) {
       console.error('Failed to create portfolio:', err);
       setError('Could not create portfolio. Please try again.');

@@ -1,130 +1,138 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Button, Card, ListItem, Icon } from '@rneui/themed';
-import { useAuth } from '../context/AuthContext';
+import React, { useContext, useMemo } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { ButtonGroup, ListItem, useTheme, Icon, Button } from '@rneui/themed';
+import { ThemeContext } from '../../context/ThemeContext'; // Adjust path as needed
 
 const SettingsScreen = ({ navigation }) => {
-  const { user, logout } = useAuth();
+    const { themeMode, setThemeMode, isDarkMode } = useContext(ThemeContext);
+    const { theme } = useTheme();
 
-  const handleLogout = () => {
-    // Add confirmation dialog before logging out
-    logout();
-    // Navigation back to LoginScreen is handled by AppNavigator
-  };
+    const themeOptions = ['Light', 'Dark', 'System'];
+    const selectedIndex = useMemo(() => {
+        switch (themeMode) {
+            case 'light': return 0;
+            case 'dark': return 1;
+            case 'system': return 2;
+            default: return 2;
+        }
+    }, [themeMode]);
 
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    const handleThemeChange = (index) => {
+        let newMode = 'system';
+        if (index === 0) newMode = 'light';
+        if (index === 1) newMode = 'dark';
+        setThemeMode(newMode);
+    };
 
-      <Card containerStyle={styles.card}>
-        <Card.Title>Account</Card.Title>
-        <Card.Divider />
-        <ListItem bottomDivider>
-          <Icon name="account-circle" type="material-community" color="#555" />
-          <ListItem.Content>
-            <ListItem.Title>Name</ListItem.Title>
-            <ListItem.Subtitle>{user?.name || 'N/A'}</ListItem.Subtitle>
-          </ListItem.Content>
-          {/* Add chevron and onPress to navigate to profile edit screen */}
-          {/* <ListItem.Chevron /> */}
-        </ListItem>
-        <ListItem bottomDivider>
-          <Icon name="email-outline" type="material-community" color="#555" />
-          <ListItem.Content>
-            <ListItem.Title>Email</ListItem.Title>
-            <ListItem.Subtitle>{user?.email || 'N/A'}</ListItem.Subtitle>
-          </ListItem.Content>
-        </ListItem>
-        {/* Add Change Password option */}
-        {/* <ListItem bottomDivider onPress={() => alert('Navigate to Change Password')}>
-          <Icon name="lock-reset" type="material-community" color="#555" />
-          <ListItem.Content>
-            <ListItem.Title>Change Password</ListItem.Title>
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem> */}
-      </Card>
+    const styles = useMemo(() => StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.background,
+        },
+        groupContainer: {
+            marginTop: 20,
+            marginHorizontal: 15,
+        },
+        title: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: theme.colors.grey0,
+            marginBottom: 10,
+            marginLeft: 15,
+        },
+        buttonGroupContainer: {
+            borderRadius: 8,
+            marginHorizontal: 0, // Remove horizontal margin from ButtonGroup itself
+        },
+        buttonGroupSelected: {
+            backgroundColor: theme.colors.primary,
+        },
+        buttonGroupText: {
+            fontSize: 14,
+        },
+        listItem: {
+            backgroundColor: theme.colors.white,
+            paddingVertical: 15,
+        },
+        listItemTitle: {
+            color: theme.colors.black,
+            fontSize: 17,
+        },
+        listItemSubtitle: {
+            color: theme.colors.grey1,
+            fontSize: 13,
+        },
+        divider: {
+            // Theme handles divider color
+        },
+    }), [theme]);
 
-      <Card containerStyle={styles.card}>
-        <Card.Title>Preferences</Card.Title>
-        <Card.Divider />
-        <ListItem bottomDivider onPress={() => alert('Navigate to Preferences Edit')}>
-           <Icon name="tune" type="material-community" color="#555" />
-           <ListItem.Content>
-             <ListItem.Title>Risk Tolerance</ListItem.Title>
-             <ListItem.Subtitle>{user?.preferences?.risk_tolerance || 'Not Set'}</ListItem.Subtitle>
-           </ListItem.Content>
-           <ListItem.Chevron />
-         </ListItem>
-         <ListItem bottomDivider onPress={() => alert('Navigate to Preferences Edit')}>
-           <Icon name="calendar-clock" type="material-community" color="#555" />
-           <ListItem.Content>
-             <ListItem.Title>Investment Horizon</ListItem.Title>
-             <ListItem.Subtitle>{user?.preferences?.investment_horizon || 'Not Set'}</ListItem.Subtitle>
-           </ListItem.Content>
-           <ListItem.Chevron />
-         </ListItem>
-        {/* Add other preferences like notification settings */}
-      </Card>
+    return (
+        <ScrollView style={styles.container}>
+            <View style={styles.groupContainer}>
+                <Text style={styles.title}>Appearance</Text>
+                <ButtonGroup
+                    buttons={themeOptions}
+                    selectedIndex={selectedIndex}
+                    onPress={handleThemeChange}
+                    containerStyle={styles.buttonGroupContainer}
+                    selectedButtonStyle={styles.buttonGroupSelected}
+                    textStyle={styles.buttonGroupText}
+                />
+            </View>
 
-      <Card containerStyle={styles.card}>
-        <Card.Title>About</Card.Title>
-        <Card.Divider />
-        <ListItem bottomDivider>
-          <Icon name="information-outline" type="material-community" color="#555" />
-          <ListItem.Content>
-            <ListItem.Title>Version</ListItem.Title>
-            <ListItem.Subtitle>1.0.0</ListItem.Subtitle> { /* Replace with dynamic version */}
-          </ListItem.Content>
-        </ListItem>
-        {/* Add links to Privacy Policy, Terms of Service etc. */}
-      </Card>
+            {/* Placeholder for other settings */}
+            <View style={styles.groupContainer}>
+                <Text style={styles.title}>Account</Text>
+                <ListItem bottomDivider containerStyle={styles.listItem} onPress={() => alert('Navigate to Profile Edit')}>
+                    <Icon name="account-circle-outline" type="material-community" color={theme.colors.grey1} />
+                    <ListItem.Content>
+                        <ListItem.Title style={styles.listItemTitle}>Edit Profile</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron color={theme.colors.grey2} />
+                </ListItem>
+                <ListItem containerStyle={styles.listItem} onPress={() => alert('Navigate to Change Password')}>
+                    <Icon name="lock-outline" type="material-community" color={theme.colors.grey1} />
+                    <ListItem.Content>
+                        <ListItem.Title style={styles.listItemTitle}>Change Password</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron color={theme.colors.grey2} />
+                </ListItem>
+            </View>
 
-      <Button
-        title="Logout"
-        onPress={handleLogout}
-        buttonStyle={styles.logoutButton}
-        titleStyle={styles.logoutButtonTitle}
-        icon={<Icon name="logout" type="material-community" color="#FF3B30" size={20} />}
-        iconRight
-      />
-    </ScrollView>
-  );
+             <View style={styles.groupContainer}>
+                <Text style={styles.title}>About</Text>
+                <ListItem bottomDivider containerStyle={styles.listItem} onPress={() => alert('Show App Version')}>
+                    <Icon name="information-outline" type="material-community" color={theme.colors.grey1} />
+                    <ListItem.Content>
+                        <ListItem.Title style={styles.listItemTitle}>Version</ListItem.Title>
+                        <ListItem.Subtitle style={styles.listItemSubtitle}>1.0.0 (Simulated)</ListItem.Subtitle>
+                    </ListItem.Content>
+                </ListItem>
+                 <ListItem containerStyle={styles.listItem} onPress={() => alert('Show Privacy Policy')}>
+                    <Icon name="shield-lock-outline" type="material-community" color={theme.colors.grey1} />
+                    <ListItem.Content>
+                        <ListItem.Title style={styles.listItemTitle}>Privacy Policy</ListItem.Title>
+                    </ListItem.Content>
+                     <ListItem.Chevron color={theme.colors.grey2} />
+                </ListItem>
+            </View>
+
+            {/* Logout Button */}
+            <View style={{ margin: 20, marginTop: 30 }}>
+                 <Button
+                    title="Logout"
+                    buttonStyle={{ backgroundColor: theme.colors.error }}
+                    onPress={() => alert('Handle Logout')}
+                 />
+            </View>
+
+        </ScrollView>
+    );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    margin: 20,
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingBottom: 5, // Reduce bottom padding slightly
-  },
-  logoutButton: {
-    backgroundColor: 'white',
-    marginHorizontal: 15,
-    marginTop: 10,
-    marginBottom: 30,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FF3B30',
-    paddingVertical: 12,
-  },
-  logoutButtonTitle: {
-    color: '#FF3B30',
-    fontWeight: 'bold',
-    marginRight: 5,
-  },
-});
+// Need to import ScrollView
+import { ScrollView } from 'react-native';
 
 export default SettingsScreen;
 

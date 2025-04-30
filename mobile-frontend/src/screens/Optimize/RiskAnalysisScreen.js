@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, Button } from 'react-native';
 import { Card, Divider } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
 import apiService from '../services/apiService';
@@ -71,7 +71,7 @@ const RiskAnalysisScreen = ({ route, navigation }) => {
   }
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >

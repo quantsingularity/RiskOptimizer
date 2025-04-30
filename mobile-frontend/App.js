@@ -1,28 +1,20 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { AuthProvider } from './context/AuthContext';
-import AppNavigator from './navigation/AppNavigator';
+import { AuthProvider } from './src/context/AuthContext';
+import AppNavigator from './src/navigation/AppNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppThemeProvider } from './src/context/ThemeContext'; // Import the custom theme provider
+import { StatusBar } from 'react-native'; // Import StatusBar
 
 export default function App() {
   return (
-    <SafeAreaProvider> 
-      <AuthProvider>
-        <StatusBar style="auto" />
-        <AppNavigator />
-      </AuthProvider>
+    <SafeAreaProvider>
+      <AppThemeProvider> {/* Use the custom AppThemeProvider */}
+        {/* StatusBar can be managed here or within AppThemeProvider/AppNavigator */}
+        {/* Let AppThemeProvider manage it based on the current theme */}
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
+      </AppThemeProvider>
     </SafeAreaProvider>
   );
 }
-
-// Remove default styles if not needed
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
-
