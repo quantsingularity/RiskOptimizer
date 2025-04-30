@@ -1,0 +1,8 @@
+{
+  "name": "project_fixed_frontend",
+  "version": "1.0.0",
+  "description": "Organized mobile frontend with error fixes",
+  "main": "src/App.js",
+  "private": true
+}
+
