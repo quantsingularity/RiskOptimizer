@@ -16,8 +16,8 @@ import SettingsScreen from '../screens/Settings/SettingsScreen';
 import AddAssetScreen from '../screens/Portfolios/AddAssetScreen'; // Placeholder
 import CreatePortfolioScreen from '../screens/Portfolios/CreatePortfolioScreen'; // Placeholder
 import AssetDetailScreen from '../screens/Portfolios/AssetDetailScreen'; // Placeholder
-import RiskAnalysisScreen from '../screens/RiskAnalysisScreen'; // Placeholder
-import TransactionHistoryScreen from '../screens/TransactionHistoryScreen'; // Placeholder
+import RiskAnalysisScreen from '../screens/Optimize/RiskAnalysisScreen';
+import TransactionHistoryScreen from '../screens/Portfolios/TransactionHistoryScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

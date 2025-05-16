@@ -27,15 +27,33 @@ def app():
     # Set testing configuration
     flask_app.config.update({
         "TESTING": True,
-        # Add other test-specific configurations if needed
-        # e.g., "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+        "JWT_SECRET_KEY": "test_secret_key",
+        "ALPHA_VANTAGE_KEY": "test_alpha_vantage_key"
     })
-
-    # TODO: Add setup code here if needed (e.g., creating test database tables)
+    
+    # Setup code: Create test database tables
+    from db.database import db, init_db
+    with flask_app.app_context():
+        # Initialize the database
+        init_db(flask_app)
+        # Create all tables
+        db.create_all()
+        # Add any test data if needed
+        # For example:
+        # from models import User
+        # test_user = User(username='testuser', email='test@example.com')
+        # test_user.set_password('password123')
+        # db.session.add(test_user)
+        # db.session.commit()
 
     yield flask_app
 
-    # TODO: Add teardown code here if needed (e.g., dropping test database tables)
+    # Teardown code: Drop test database tables
+    with flask_app.app_context():
+        db.session.remove()
+        db.drop_all()
 
 @pytest.fixture
 def client(app):

@@ -29,9 +29,9 @@ cd ../..
 echo -e "${BLUE}Waiting for backend to initialize...${NC}"
 sleep 5
 
-# Start frontend
-echo -e "${BLUE}Starting frontend...${NC}"
-cd code/frontend
+# Start web frontend
+echo -e "${BLUE}Starting web frontend...${NC}"
+cd code/web-frontend
 npm install > /dev/null
 npm start &
 FRONTEND_PID=$!

@@ -2,182 +2,140 @@
 
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
-// import CreatePortfolioScreen from "../../src/screens/Portfolios/CreatePortfolioScreen"; // Adjust path
-// import { PortfolioContext } from "../../src/context/PortfolioContext";
+import CreatePortfolioScreen from "../../src/screens/Portfolios/CreatePortfolioScreen";
+import apiService from "../../src/services/apiService";
 
-// Mock navigation and context
-// const mockGoBack = jest.fn();
-// const mockNavigation = { goBack: mockGoBack };
-// const mockCreatePortfolio = jest.fn();
-// const mockPortfolioContext = {
-//   createPortfolio: mockCreatePortfolio,
-//   loading: false,
-//   error: null,
-// };
+// Mock the apiService
+jest.mock("../../src/services/apiService", () => ({
+  createPortfolio: jest.fn()
+}));
 
-// Mock Screen component for placeholder tests
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from "react-native";
-
-const MockCreatePortfolioScreen = ({ navigation }) => {
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
-
-  const handleCreate = async () => {
-    setLoading(true);
-    setError(null);
-    if (!name) {
-      setError("Portfolio name is required");
-      setLoading(false);
-      return;
-    }
-    // try {
-    //   await mockCreatePortfolio({ name, description });
-    //   navigation.goBack(); // Go back on success
-    // } catch (err) {
-    //   setError("Failed to create portfolio");
-    // } finally {
-    //   setLoading(false);
-    // }
-    console.log("Creating portfolio:", name, description);
-    await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
-    if (name === "Fail Create") {
-        setError("Failed to create portfolio");
-    } else {
-        console.log("Mock Create Success");
-        navigation.goBack(); // Simulate goBack on success
-    }
-    setLoading(false);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create New Portfolio</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Portfolio Name (Required)"
-        value={name}
-        onChangeText={setName}
-        testID="name-input"
-      />
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Description (Optional)"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        testID="description-input"
-      />
-      {error && <Text style={styles.errorText} testID="error-message">{error}</Text>}
-      {loading && <ActivityIndicator size="small" testID="loading-indicator" />}
-      <Button title={loading ? "Creating..." : "Create Portfolio"} onPress={handleCreate} disabled={loading} testID="create-button" />
-    </View>
-  );
+// Mock the navigation
+const mockGoBack = jest.fn();
+const mockNavigation = { 
+  goBack: mockGoBack,
+  setOptions: jest.fn()
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  input: { height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 15, paddingHorizontal: 10 },
-  textArea: { height: 80, textAlignVertical: "top" }, // Added for multiline
-  errorText: { color: "red", marginBottom: 10 },
+// Mock the components used in CreatePortfolioScreen
+jest.mock("@rneui/themed", () => {
+  const React = require("react");
+  return {
+    ...jest.requireActual("@rneui/themed"),
+    Input: ({ placeholder, leftIcon, onChangeText, value, multiline, containerStyle, disabled, testID }) => (
+      <React.Fragment>
+        <input
+          placeholder={placeholder}
+          onChange={(e) => onChangeText(e.target.value)}
+          value={value}
+          multiline={multiline}
+          disabled={disabled}
+          data-testid={testID || `input-${placeholder}`}
+        />
+      </React.Fragment>
+    ),
+    Button: ({ title, onPress, buttonStyle, disabled, testID }) => (
+      <button onClick={onPress} disabled={disabled} data-testid={testID || "button"}>
+        {title}
+      </button>
+    ),
+    Text: ({ style, children }) => <span style={style}>{children}</span>,
+    Card: {
+      ...React.forwardRef(({ containerStyle, children }, ref) => (
+        <div ref={ref} style={containerStyle} data-testid="card">
+          {children}
+        </div>
+      ))
+    }
+  };
 });
 
 describe("Create Portfolio Screen", () => {
-  const mockGoBack = jest.fn();
-  const mockNavigation = { goBack: mockGoBack };
+  beforeEach(() => {
+    // Reset all mocks
+    jest.clearAllMocks();
+    
+    // Setup default mock response
+    apiService.createPortfolio.mockResolvedValue({
+      data: {
+        id: "new-portfolio-id",
+        name: "Test Portfolio",
+        description: "Test Description",
+        createdAt: new Date().toISOString()
+      }
+    });
+  });
 
   const renderCreateScreen = () => {
-    // return render(
-    //   <PortfolioContext.Provider value={mockPortfolioContext}>
-    //     <CreatePortfolioScreen navigation={mockNavigation} />
-    //   </PortfolioContext.Provider>
-    // );
-    return render(<MockCreatePortfolioScreen navigation={mockNavigation} />); // Render mock for now
+    return render(<CreatePortfolioScreen navigation={mockNavigation} />);
   };
-
-  // beforeEach(() => {
-  //   mockCreatePortfolio.mockClear();
-  //   mockGoBack.mockClear();
-  // });
 
   it("should render name and description inputs and create button", () => {
     renderCreateScreen();
-    // expect(screen.getByPlaceholderText(/portfolio name/i)).toBeOnTheScreen();
-    // expect(screen.getByPlaceholderText(/description/i)).toBeOnTheScreen();
-    // expect(screen.getByRole("button", { name: /create portfolio/i })).toBeOnTheScreen();
-    expect(screen.getByTestId("name-input")).toBeDefined();
-    expect(screen.getByTestId("description-input")).toBeDefined();
-    expect(screen.getByTestId("create-button")).toBeDefined();
-    expect(true).toBe(true); // Placeholder assertion
+    expect(screen.getByTestId("input-Portfolio Name")).toBeTruthy();
+    expect(screen.getByTestId("input-Description (Optional)")).toBeTruthy();
+    expect(screen.getByTestId("button")).toBeTruthy();
   });
 
   it("should update input fields when user types", () => {
     renderCreateScreen();
-    const nameInput = screen.getByTestId("name-input");
-    const descriptionInput = screen.getByTestId("description-input");
+    const nameInput = screen.getByTestId("input-Portfolio Name");
+    const descriptionInput = screen.getByTestId("input-Description (Optional)");
 
-    fireEvent.changeText(nameInput, "My New Portfolio");
-    fireEvent.changeText(descriptionInput, "Focus on tech stocks");
+    fireEvent.change(nameInput, { target: { value: "My New Portfolio" } });
+    fireEvent.change(descriptionInput, { target: { value: "Focus on tech stocks" } });
 
-    // expect(nameInput.props.value).toBe("My New Portfolio");
-    // expect(descriptionInput.props.value).toBe("Focus on tech stocks");
-    expect(true).toBe(true); // Placeholder assertion
+    expect(nameInput.value).toBe("My New Portfolio");
+    expect(descriptionInput.value).toBe("Focus on tech stocks");
   });
 
   it("should call createPortfolio function and goBack on successful creation", async () => {
     renderCreateScreen();
-    const nameInput = screen.getByTestId("name-input");
-    const descriptionInput = screen.getByTestId("description-input");
-    const createButton = screen.getByTestId("create-button");
+    const nameInput = screen.getByTestId("input-Portfolio Name");
+    const descriptionInput = screen.getByTestId("input-Description (Optional)");
+    const createButton = screen.getByTestId("button");
 
-    fireEvent.changeText(nameInput, "Success Portfolio");
-    fireEvent.changeText(descriptionInput, "Description");
-    fireEvent.press(createButton);
+    fireEvent.change(nameInput, { target: { value: "Success Portfolio" } });
+    fireEvent.change(descriptionInput, { target: { value: "Description" } });
+    fireEvent.click(createButton);
 
-    // expect(screen.getByRole("button", { name: /creating.../i })).toBeDisabled();
-    // expect(screen.getByTestId("loading-indicator")).toBeOnTheScreen();
-
-    // await waitFor(() => {
-    //   expect(mockCreatePortfolio).toHaveBeenCalledWith({ name: "Success Portfolio", description: "Description" });
-    //   expect(mockCreatePortfolio).toHaveBeenCalledTimes(1);
-    //   expect(mockGoBack).toHaveBeenCalledTimes(1);
-    // });
-    await waitFor(() => expect(mockGoBack).toHaveBeenCalledTimes(1)); // Wait for mock goBack
-    expect(true).toBe(true); // Placeholder assertion
+    await waitFor(() => {
+      expect(apiService.createPortfolio).toHaveBeenCalledWith({
+        name: "Success Portfolio",
+        description: "Description"
+      });
+      expect(apiService.createPortfolio).toHaveBeenCalledTimes(1);
+      expect(mockGoBack).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("should display error message if name is missing", async () => {
     renderCreateScreen();
-    const createButton = screen.getByTestId("create-button");
+    const createButton = screen.getByTestId("button");
 
-    fireEvent.press(createButton);
+    fireEvent.click(createButton);
 
-    // await waitFor(() => {
-    //   expect(screen.getByText(/portfolio name is required/i)).toBeOnTheScreen();
-    // });
-    // expect(mockCreatePortfolio).not.toHaveBeenCalled();
-    // expect(mockGoBack).not.toHaveBeenCalled();
-    expect(await screen.findByTestId("error-message")).toBeDefined(); // Check mock error
-    expect(true).toBe(true); // Placeholder assertion
+    await waitFor(() => {
+      expect(screen.getByText("Portfolio name is required")).toBeTruthy();
+    });
+    expect(apiService.createPortfolio).not.toHaveBeenCalled();
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 
   it("should display error message if creation fails", async () => {
-    // mockCreatePortfolio.mockRejectedValue(new Error("API Error"));
+    apiService.createPortfolio.mockRejectedValueOnce(new Error("API Error"));
+    
     renderCreateScreen();
-    const nameInput = screen.getByTestId("name-input");
-    const createButton = screen.getByTestId("create-button");
+    const nameInput = screen.getByTestId("input-Portfolio Name");
+    const createButton = screen.getByTestId("button");
 
-    fireEvent.changeText(nameInput, "Fail Create"); // Use specific name to trigger mock error
-    fireEvent.press(createButton);
+    fireEvent.change(nameInput, { target: { value: "Fail Portfolio" } });
+    fireEvent.click(createButton);
 
-    // await waitFor(() => {
-    //   expect(screen.getByText(/failed to create portfolio/i)).toBeOnTheScreen();
-    // });
-    // expect(mockGoBack).not.toHaveBeenCalled();
-    expect(await screen.findByTestId("error-message")).toBeDefined(); // Check mock error
-    expect(true).toBe(true); // Placeholder assertion
+    await waitFor(() => {
+      expect(screen.getByText("Failed to create portfolio")).toBeTruthy();
+    });
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 });
 

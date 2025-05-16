@@ -1,111 +1,188 @@
 // mobile-frontend/__tests__/screens/DashboardScreen.test.js
 
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react-native";
-// import DashboardScreen from "../../src/screens/Dashboard/DashboardScreen"; // Adjust path
-// import { PortfolioContext } from "../../src/context/PortfolioContext"; // If context is used
-// import apiService from "../../src/services/apiService"; // If data is fetched directly
+import { render, screen, waitFor, fireEvent } from "@testing-library/react-native";
+import DashboardScreen from "../../src/screens/Dashboard/DashboardScreen";
+import apiService from "../../src/services/apiService";
 
-// Mock child components and services/hooks
-// jest.mock("../../src/components/dashboard/PortfolioSummary", () => () => <View><Text>Mock Summary</Text></View>);
-// jest.mock("../../src/components/dashboard/PerformanceChart", () => () => <View><Text>Mock Chart</Text></View>);
-// jest.mock("../../src/services/apiService");
+// Mock the apiService
+jest.mock("../../src/services/apiService", () => ({
+  getPortfolios: jest.fn(),
+  getRiskMetrics: jest.fn(),
+  getAssetPriceHistory: jest.fn()
+}));
 
-// Mock Screen component for placeholder tests
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from "react-native";
-
-const MockDashboardScreen = () => {
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
-  const [data, setData] = React.useState(null);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Simulate API call
-        // const dashboardData = await apiService.getDashboardData();
-        await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
-        setData({ summary: { totalValue: 5000 }, chart: [], allocation: [] });
-      } catch (err) {
-        setError("Failed to load dashboard");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" testID="loading-indicator" /></View>;
-  }
-
-  if (error) {
-    return <View style={styles.center}><Text style={styles.errorText} testID="error-message">{error}</Text></View>;
-  }
-
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
-      {/* Mocked child components */}
-      <View testID="mock-summary"><Text>Mock Summary</Text></View>
-      <View testID="mock-chart"><Text>Mock Chart</Text></View>
-      {/* Add other mocked components as needed */}
-    </ScrollView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15 },
-  errorText: { color: "red" },
+// Mock the useNavigation hook
+jest.mock("@react-navigation/native", () => {
+  return {
+    ...jest.requireActual("@react-navigation/native"),
+    useNavigation: () => ({
+      navigate: jest.fn()
+    })
+  };
 });
 
+// Mock the components used in DashboardScreen
+jest.mock("@rneui/themed", () => {
+  const React = require("react");
+  return {
+    ...jest.requireActual("@rneui/themed"),
+    Card: {
+      ...React.forwardRef(({ children, containerStyle }, ref) => (
+        <div ref={ref} style={containerStyle} data-testid="card">
+          {children}
+        </div>
+      )),
+      Title: ({ children }) => <h3 data-testid="card-title">{children}</h3>,
+      Divider: () => <hr />,
+    },
+    Button: ({ title, onPress, icon, type, testID }) => (
+      <button onClick={onPress} data-testid={testID || "button"}>
+        {title}
+      </button>
+    ),
+    Icon: ({ name, type, color, size }) => (
+      <span data-testid={`icon-${name}`}>Icon</span>
+    ),
+    Text: ({ style, children }) => <span style={style}>{children}</span>,
+    ListItem: {
+      ...React.forwardRef(({ children, onPress }, ref) => (
+        <div ref={ref} onClick={onPress} data-testid="list-item">
+          {children}
+        </div>
+      )),
+      Content: ({ children }) => <div data-testid="list-item-content">{children}</div>,
+      Title: ({ children }) => <div data-testid="list-item-title">{children}</div>,
+      Subtitle: ({ children }) => <div data-testid="list-item-subtitle">{children}</div>,
+      Chevron: () => <span data-testid="list-item-chevron">></span>,
+    }
+  };
+});
+
+// Mock the chart component
+jest.mock("react-native-chart-kit", () => ({
+  LineChart: () => <div data-testid="line-chart">Chart</div>
+}));
+
 describe("Dashboard Screen", () => {
+  beforeEach(() => {
+    // Reset all mocks
+    jest.clearAllMocks();
+    
+    // Setup default mock responses
+    apiService.getPortfolios.mockResolvedValue({
+      data: [
+        {
+          id: "1",
+          name: "Test Portfolio",
+          totalValue: 10000,
+          dailyChange: 2.5,
+          assets: [
+            { symbol: "AAPL", allocation: 0.4, value: 4000 },
+            { symbol: "MSFT", allocation: 0.3, value: 3000 },
+            { symbol: "GOOGL", allocation: 0.3, value: 3000 }
+          ]
+        }
+      ]
+    });
+    
+    apiService.getRiskMetrics.mockResolvedValue({
+      data: {
+        sharpeRatio: 1.2,
+        volatility: 0.15,
+        maxDrawdown: -0.1,
+        beta: 0.9
+      }
+    });
+    
+    apiService.getAssetPriceHistory.mockResolvedValue({
+      data: {
+        indicators: {
+          quote: [{
+            close: [100, 102, 105, 103, 106]
+          }]
+        },
+        timestamp: [1620000000, 1620086400, 1620172800, 1620259200, 1620345600]
+      }
+    });
+  });
+
   const renderDashboardScreen = () => {
-    // return render(
-    //   <PortfolioContext.Provider value={{ /* mock context */ }}>
-    //     <DashboardScreen navigation={{ /* mock navigation */ }} />
-    //   </PortfolioContext.Provider>
-    // );
-    return render(<MockDashboardScreen />); // Render mock for now
+    return render(<DashboardScreen />);
   };
 
   it("should display loading indicator initially", () => {
     renderDashboardScreen();
-    // expect(screen.getByTestId("loading-indicator")).toBeOnTheScreen();
-    expect(true).toBe(true); // Placeholder assertion
+    expect(screen.getByTestId("loading-indicator")).toBeTruthy();
   });
 
-  it("should display dashboard components after successful data load", async () => {
+  it("should fetch portfolio data on mount", async () => {
     renderDashboardScreen();
-    // await waitFor(() => {
-    //   expect(screen.queryByTestId("loading-indicator")).toBeNull();
-    //   expect(screen.getByText(/dashboard/i)).toBeOnTheScreen();
-    //   expect(screen.getByTestId("mock-summary")).toBeOnTheScreen();
-    //   expect(screen.getByTestId("mock-chart")).toBeOnTheScreen();
-    // });
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
-    expect(screen.getByTestId("mock-summary")).toBeDefined();
-    expect(true).toBe(true); // Placeholder assertion
+    await waitFor(() => {
+      expect(apiService.getPortfolios).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should display portfolio summary after successful data load", async () => {
+    renderDashboardScreen();
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading-indicator")).toBeNull();
+    });
+    
+    expect(screen.getByText("Test Portfolio")).toBeTruthy();
+    expect(screen.getByText("$10,000.00")).toBeTruthy();
+    expect(screen.getByText("+2.5%")).toBeTruthy();
+  });
+
+  it("should display risk metrics after successful data load", async () => {
+    renderDashboardScreen();
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading-indicator")).toBeNull();
+    });
+    
+    expect(screen.getByText("Sharpe Ratio: 1.2")).toBeTruthy();
+    expect(screen.getByText("Volatility: 15%")).toBeTruthy();
+    expect(screen.getByText("Max Drawdown: -10%")).toBeTruthy();
+    expect(screen.getByText("Beta: 0.9")).toBeTruthy();
+  });
+
+  it("should display performance chart after successful data load", async () => {
+    renderDashboardScreen();
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading-indicator")).toBeNull();
+    });
+    
+    expect(screen.getByTestId("line-chart")).toBeTruthy();
   });
 
   it("should display error message if data loading fails", async () => {
-    // // Mock API to throw error
-    // apiService.getDashboardData.mockRejectedValueOnce(new Error("API Error"));
-    renderDashboardScreen(); // Needs modification in mock to simulate error
-
-    // await waitFor(() => {
-    //   expect(screen.queryByTestId("loading-indicator")).toBeNull();
-    //   expect(screen.getByText(/failed to load dashboard/i)).toBeOnTheScreen();
-    // });
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
-    // Modify mock to test error path
-    expect(true).toBe(true); // Placeholder assertion
+    // Mock API to throw error
+    apiService.getPortfolios.mockRejectedValueOnce(new Error("API Error"));
+    
+    renderDashboardScreen();
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading-indicator")).toBeNull();
+    });
+    
+    expect(screen.getByText("Failed to load dashboard data")).toBeTruthy();
   });
 
-  // Add tests for navigation interactions if any (e.g., tapping on a summary card)
+  it("should navigate to portfolio details when portfolio card is pressed", async () => {
+    const { navigate } = require("@react-navigation/native").useNavigation();
+    
+    renderDashboardScreen();
+    
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading-indicator")).toBeNull();
+    });
+    
+    fireEvent.click(screen.getByTestId("card"));
+    
+    expect(navigate).toHaveBeenCalledWith("PortfolioDetail", { portfolioId: "1" });
+  });
 });
 

@@ -89,12 +89,58 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // TODO: Implement token refresh logic using refreshToken
+  // Token refresh logic implementation
+  const refreshTokens = async () => {
+    try {
+      if (!authState.refreshToken) {
+        throw new Error('No refresh token available');
+      }
+      
+      const response = await apiService.refreshToken(authState.refreshToken);
+      const { access_token, refresh_token } = response.data;
+      
+      await SecureStore.setItemAsync('accessToken', access_token);
+      await SecureStore.setItemAsync('refreshToken', refresh_token);
+      apiService.setAuthHeader(access_token);
+      
+      setAuthState(prevState => ({
+        ...prevState,
+        accessToken: access_token,
+        refreshToken: refresh_token
+      }));
+      
+      return access_token;
+    } catch (error) {
+      console.error('Token refresh failed:', error.response ? error.response.data : error.message);
+      // If refresh fails, log the user out
+      await logout();
+      return null;
+    }
+  };
+  
+  // Setup interceptor for automatic token refresh
+  useEffect(() => {
+    const setupInterceptor = () => {
+      apiService.setupTokenRefreshInterceptor(
+        () => authState.accessToken,
+        refreshTokens
+      );
+    };
+    
+    if (authState.authenticated) {
+      setupInterceptor();
+    }
+    
+    return () => {
+      apiService.removeTokenRefreshInterceptor();
+    };
+  }, [authState.authenticated, authState.accessToken]);
 
   const value = {
     ...authState,
     login,
     logout,
+    refreshTokens
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
