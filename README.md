@@ -9,7 +9,7 @@
 RiskOptimizer is an advanced portfolio risk management platform that leverages artificial intelligence and blockchain technology to help investors optimize their investment strategies and manage risk effectively.
 
 <div align="center">
-  <img src="resources/dashboard_preview.png" alt="RiskOptimizer Dashboard" width="80%">
+  <img src="docs/images/RiskOptimizer_dashboard.bmp" alt="RiskOptimizer Dashboard" width="80%">
 </div>
 
 > **Note**: This project is under active development. Features and functionalities are continuously being enhanced to improve risk assessment capabilities and user experience.
