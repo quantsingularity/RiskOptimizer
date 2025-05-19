@@ -1,23 +1,23 @@
-# AI-Powered Portfolio Optimization Tool
+# RiskOptimizer
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/abrar2030/RiskOptimizer/ci-cd.yml?branch=main&label=CI&logo=github)](https://github.com/abrar2030/RiskOptimizer/actions)
-[![CI Status](https://img.shields.io/github/workflow/status/abrar2030/RiskOptimizer/CI/main?label=CI)](https://github.com/abrar2030/RiskOptimizer/actions)
+[![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/RiskOptimizer/ci-cd.yml?branch=main&label=CI/CD&logo=github)](https://github.com/abrar2030/RiskOptimizer/actions)
 [![Test Coverage](https://img.shields.io/codecov/c/github/abrar2030/RiskOptimizer/main?label=Coverage)](https://codecov.io/gh/abrar2030/RiskOptimizer)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/github/license/abrar2030/RiskOptimizer)](https://github.com/abrar2030/RiskOptimizer/blob/main/LICENSE)
 
-## Overview
-The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed to help investors make data-driven decisions to maximize returns and minimize risks. Combining blockchain transparency, AI-driven optimization algorithms, and quantitative finance techniques, the tool provides personalized portfolio management solutions.
+## 📊 AI-Powered Portfolio Risk Management Platform
+
+RiskOptimizer is an advanced portfolio risk management platform that leverages artificial intelligence and blockchain technology to help investors optimize their investment strategies and manage risk effectively.
 
 <div align="center">
-  <img src="docs/RiskOptimizer.bmp" alt="AI-Powered Portfolio Optimization Tool" width="100%">
+  <img src="resources/dashboard_preview.png" alt="RiskOptimizer Dashboard" width="80%">
 </div>
 
-> **Note**: RiskOptimizer is currently under active development. Features and functionalities are being added and improved continuously to enhance user experience.
+> **Note**: This project is under active development. Features and functionalities are continuously being enhanced to improve risk assessment capabilities and user experience.
 
 ## Table of Contents
+- [Overview](#overview)
 - [Key Features](#key-features)
-- [Feature Implementation Status](#feature-implementation-status)
-- [Tools and Technologies](#tools-and-technologies)
+- [Technology Stack](#technology-stack)
 - [Architecture](#architecture)
 - [Development Workflow](#development-workflow)
 - [Installation and Setup](#installation-and-setup)
@@ -28,143 +28,181 @@ The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed 
 - [Future Enhancements](#future-enhancements)
 - [License](#license)
 
+## Overview
+
+RiskOptimizer is a comprehensive platform designed to help investors make data-driven decisions by providing advanced risk analysis, portfolio optimization, and predictive analytics. The platform combines traditional financial models with cutting-edge AI and blockchain technology to deliver accurate, transparent, and secure investment insights.
+
 ## Key Features
-- **Real-Time Portfolio Tracking**: Utilize blockchain to track transactions securely and transparently.
-- **AI-Powered Optimization**: Use machine learning models to recommend portfolio allocations and rebalancing strategies.
-- **Advanced Risk Metrics**: Evaluate portfolio performance using tools like Sharpe Ratio, VaR (Value at Risk), and Efficient Frontier visualizations.
-- **Interactive Dashboard**: Visualize portfolio trends, insights, and optimization results.
 
-## Feature Implementation Status
+### Risk Analysis
+- **Value at Risk (VaR) Calculation**: Estimate potential losses using historical simulation, parametric, and Monte Carlo methods
+- **Stress Testing**: Simulate portfolio performance under extreme market conditions
+- **Correlation Analysis**: Identify relationships between assets to optimize diversification
+- **Volatility Forecasting**: Predict market volatility using GARCH models and machine learning
 
-| Feature | Status | Description | Planned Release |
-|---------|--------|-------------|----------------|
-| **Portfolio Tracking** |
-| Blockchain Transaction Tracking | ✅ Implemented | Secure and transparent transaction recording | v1.0 |
-| Real-Time Updates | ✅ Implemented | Live portfolio value and performance | v1.0 |
-| Multi-Asset Support | ✅ Implemented | Stocks, bonds, crypto, and alternatives | v1.0 |
-| Historical Performance | 🔄 In Progress | Historical portfolio tracking and analysis | v1.1 |
-| **AI Optimization** |
-| Portfolio Allocation | ✅ Implemented | ML-based asset allocation recommendations | v1.0 |
-| Rebalancing Strategies | ✅ Implemented | Optimal portfolio rebalancing suggestions | v1.0 |
-| Market Prediction | 🔄 In Progress | Asset price and trend forecasting | v1.1 |
-| Sentiment Analysis | 📅 Planned | News and social media impact analysis | v1.2 |
-| **Risk Metrics** |
-| Sharpe Ratio | ✅ Implemented | Risk-adjusted return calculation | v1.0 |
-| Value at Risk (VaR) | ✅ Implemented | Potential loss estimation | v1.0 |
-| Efficient Frontier | ✅ Implemented | Optimal portfolio visualization | v1.0 |
-| Stress Testing | 🔄 In Progress | Portfolio performance in extreme scenarios | v1.1 |
-| Monte Carlo Simulation | 🔄 In Progress | Probability-based future projections | v1.1 |
-| **Dashboard** |
-| Portfolio Overview | ✅ Implemented | Summary of current portfolio status | v1.0 |
-| Performance Charts | ✅ Implemented | Visual representation of performance | v1.0 |
-| Risk Analysis | ✅ Implemented | Visual risk assessment tools | v1.0 |
-| Optimization Results | ✅ Implemented | AI recommendation visualization | v1.0 |
-| Custom Reporting | 📅 Planned | User-defined reports and analytics | v1.2 |
+### Portfolio Optimization
+- **Modern Portfolio Theory Implementation**: Optimize asset allocation based on risk-return profiles
+- **Multi-objective Optimization**: Balance risk, return, and other constraints
+- **Rebalancing Recommendations**: Receive suggestions for portfolio adjustments
+- **Tax-efficient Strategies**: Minimize tax impact while maintaining optimal allocation
 
-**Legend:**
-- ✅ Implemented: Feature is complete and available
-- 🔄 In Progress: Feature is currently being developed
-- 📅 Planned: Feature is planned for future release
+### AI-Powered Insights
+- **Market Trend Prediction**: Forecast market movements using deep learning models
+- **Anomaly Detection**: Identify unusual market patterns that may indicate opportunities or risks
+- **Sentiment Analysis**: Analyze news and social media to gauge market sentiment
+- **Personalized Recommendations**: Receive tailored investment advice based on risk tolerance
 
-## Tools and Technologies
+### Blockchain Integration
+- **Transparent Transaction Records**: Immutable history of portfolio changes
+- **Smart Contract Automation**: Automate investment rules and risk management protocols
+- **Decentralized Identity**: Secure user authentication and data protection
+- **Tokenized Assets**: Support for digital asset investments and tracking
 
-### **Core Technologies**
-1. **Blockchain**:
-   - Ethereum or Solana for secure transaction tracking and transparency.
-2. **AI/ML**:
-   - TensorFlow, PyTorch, and Scikit-learn for predictive and optimization models.
-3. **Quantitative Finance**:
-   - Efficient Frontier, Black-Litterman Model, and CAPM for portfolio optimization.
-4. **Database**:
-   - PostgreSQL for storing user portfolios and financial data.
-5. **Frontend**:
-   - React.js with D3.js for interactive and dynamic visualizations.
-6. **Backend**:
-   - Flask or FastAPI for managing APIs and integrating AI models.
+## Technology Stack
+
+### Backend
+- **Languages**: Python, Rust (for performance-critical components)
+- **Frameworks**: FastAPI, Flask
+- **Database**: PostgreSQL, MongoDB
+- **AI/ML**: TensorFlow, PyTorch, scikit-learn
+- **Blockchain**: Ethereum, Solidity, Web3.py
+
+### Frontend
+- **Framework**: React with TypeScript
+- **State Management**: Redux
+- **Data Visualization**: D3.js, Recharts
+- **Styling**: Tailwind CSS, Styled Components
+- **Web3**: ethers.js, web3.js
+
+### DevOps
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Prometheus, Grafana
+- **Cloud**: AWS, Google Cloud Platform
 
 ## Architecture
 
-### **1. Frontend**
-- **Tech Stack**: React.js + D3.js
-- **Responsibilities**:
-  - Provide interactive charts for portfolio performance, optimization, and risk metrics.
-  - Enable users to input and adjust portfolio parameters dynamically.
+RiskOptimizer follows a microservices architecture with the following components:
 
-### **2. Backend**
-- **Tech Stack**: Flask/FastAPI
-- **Responsibilities**:
-  - Serve APIs for real-time portfolio tracking and optimization recommendations.
-  - Integrate AI models and blockchain data.
+```
+RiskOptimizer/
+├── Backend Services
+│   ├── Risk Analysis Service
+│   ├── Portfolio Optimization Service
+│   ├── Market Data Service
+│   ├── AI Prediction Service
+│   └── Blockchain Integration Service
+├── Frontend Applications
+│   ├── Web Dashboard
+│   └── Mobile App
+├── Data Processing Pipeline
+│   ├── Data Collection
+│   ├── Feature Engineering
+│   ├── Model Training
+│   └── Inference Engine
+└── Infrastructure
+    ├── Database Cluster
+    ├── Kubernetes Deployment
+    ├── CI/CD Pipeline
+    └── Monitoring Stack
+```
 
-### **3. Blockchain Integration**
-- **Smart Contract Usage**:
-  - Record transactions and portfolio changes on-chain for security and transparency.
-
-### **4. AI Models**
-- **Models Used**:
-  - Neural networks for predictive modeling.
-  - Optimization algorithms like Markowitz Model for portfolio allocation.
+### AI Models Used
+- Neural networks for predictive modeling
+- Optimization algorithms like Markowitz Model for portfolio allocation
+- Time series forecasting models for market prediction
+- Natural language processing for sentiment analysis
 
 ## Development Workflow
 
-### **1. Blockchain Integration**
-- Develop smart contracts for secure transaction tracking.
-- Connect to Ethereum or Solana blockchains using web3.js or ethers.js.
+### 1. Blockchain Integration
+- Develop smart contracts for secure transaction tracking
+- Connect to Ethereum or Solana blockchains using web3.js or ethers.js
+- Implement decentralized identity and authentication
 
-### **2. AI Model Development**
-- Train models on historical market data for predictive analytics and optimization.
-- Use regression models to forecast asset performance.
+### 2. AI Model Development
+- Train models on historical market data for predictive analytics and optimization
+- Use regression models to forecast asset performance
+- Implement reinforcement learning for adaptive portfolio strategies
 
-### **3. Backend Development**
-- Build APIs to fetch blockchain data and process AI-driven recommendations.
-- Securely handle user data and portfolio analytics.
+### 3. Backend Development
+- Build APIs to fetch blockchain data and process AI-driven recommendations
+- Securely handle user data and portfolio analytics
+- Implement real-time data processing pipelines
 
-### **4. Frontend Development**
-- Create dashboards with React.js and integrate interactive charts using D3.js.
+### 4. Frontend Development
+- Create dashboards with React.js and integrate interactive charts using D3.js
+- Develop intuitive user interfaces for complex financial data
+- Implement responsive design for cross-device compatibility
 
 ## Installation and Setup
 
-### **1. Clone Repository**
+### 1. Clone Repository
 ```bash
 git clone https://github.com/abrar2030/RiskOptimizer.git
 cd RiskOptimizer
 ```
 
-### **2. Install Backend Dependencies**
+### 2. Environment Setup
 ```bash
-cd backend
+# Run the setup script to configure the environment
+./setup_environment.sh
+```
+
+### 3. Install Backend Dependencies
+```bash
+cd code/backend
 pip install -r requirements.txt
 ```
 
-### **3. Install Frontend Dependencies**
+### 4. Install Frontend Dependencies
 ```bash
-cd frontend
+cd code/frontend
 npm install
 ```
 
-### **4. Deploy Smart Contracts**
-- Use Truffle or Hardhat to deploy contracts to a blockchain testnet.
-
-### **5. Run Application**
+### 5. Deploy Smart Contracts
 ```bash
+cd code/blockchain
+npx hardhat compile
+npx hardhat deploy --network <network_name>
+```
+
+### 6. Run Application
+```bash
+# Start the entire application using the convenience script
+./run_riskoptimizer.sh
+
+# Or start components individually
 # Start Backend
-cd backend
+cd code/backend
 python app.py
 
 # Start Frontend
-cd frontend
+cd code/frontend
 npm start
 ```
 
 ## Example Use Cases
 
-### **1. Individual Investors**
-- Analyze their portfolio's risk and return metrics.
-- Optimize allocation across assets based on personal preferences and market trends.
+### 1. Individual Investors
+- Analyze portfolio's risk and return metrics
+- Optimize allocation across assets based on personal preferences and market trends
+- Receive AI-powered recommendations for portfolio adjustments
+- Track investment performance with transparent blockchain records
 
-### **2. Financial Advisors**
-- Provide clients with data-driven portfolio recommendations.
-- Use real-time risk metrics to manage large-scale portfolios.
+### 2. Financial Advisors
+- Provide clients with data-driven portfolio recommendations
+- Use real-time risk metrics to manage large-scale portfolios
+- Generate comprehensive risk reports for client presentations
+- Implement automated rebalancing strategies based on risk parameters
+
+### 3. Institutional Investors
+- Conduct advanced stress testing for regulatory compliance
+- Implement sophisticated risk management protocols
+- Analyze cross-asset correlations during market volatility
+- Optimize large portfolios with multiple constraints
 
 ## Testing
 
@@ -180,30 +218,34 @@ The project includes comprehensive testing to ensure reliability and accuracy:
 - End-to-end tests for complete user workflows
 - API integration tests
 - Blockchain interaction tests
+- Data pipeline validation
 
 ### Performance Testing
 - Load testing for API endpoints
 - Optimization algorithm performance benchmarks
 - Real-time data processing tests
+- Blockchain transaction throughput tests
 
 To run tests:
-
 ```bash
 # Backend tests
-cd backend
+cd code/backend
 pytest
 
 # Frontend tests
-cd frontend
+cd code/frontend
 npm test
 
 # Smart contract tests
-cd blockchain
-truffle test
+cd code/blockchain
+npx hardhat test
 
 # AI model tests
-cd ai_models
+cd code/ai_models
 python -m unittest discover
+
+# Run all tests
+python validate_project.py --run-tests
 ```
 
 ## CI/CD Pipeline
@@ -223,9 +265,9 @@ RiskOptimizer uses GitHub Actions for continuous integration and deployment:
 - Infrastructure updates via Terraform
 
 Current CI/CD Status:
-- Build: ![Build Status](https://img.shields.io/github/workflow/status/abrar2030/RiskOptimizer/CI/main?label=build)
+- Build: ![Build Status](https://img.shields.io/github/actions/workflow/status/abrar2030/RiskOptimizer/ci-cd.yml?branch=main&label=build)
 - Test Coverage: ![Coverage](https://img.shields.io/codecov/c/github/abrar2030/RiskOptimizer/main?label=coverage)
-- Code Quality: ![Code Quality](https://img.shields.io/codacy/grade/abrar2030/RiskOptimizer?label=code%20quality)
+- Code Quality: ![Code Quality](https://img.shields.io/lgtm/grade/javascript/g/abrar2030/RiskOptimizer?label=code%20quality)
 
 ## Contributing
 
@@ -257,7 +299,6 @@ We welcome contributions to improve RiskOptimizer! Here's how you can contribute
    - Respond to review comments and make necessary adjustments
 
 ### Development Guidelines
-
 - Follow PEP 8 style guide for Python code
 - Use ESLint and Prettier for JavaScript/React code
 - Write unit tests for new features
@@ -268,11 +309,21 @@ We welcome contributions to improve RiskOptimizer! Here's how you can contribute
 ## Future Enhancements
 
 1. **Integration with Third-Party APIs**:
-   - Add APIs for real-time market data from sources like Bloomberg or CoinGecko.
+   - Add APIs for real-time market data from sources like Bloomberg or CoinGecko
+   - Integrate with major brokerage platforms for automated trading
+
 2. **Mobile App Development**:
-   - Create a mobile-friendly version for on-the-go portfolio management.
+   - Create a mobile-friendly version for on-the-go portfolio management
+   - Implement push notifications for risk alerts and market opportunities
+
 3. **Social Portfolio Sharing**:
-   - Allow users to share and collaborate on portfolio strategies.
+   - Allow users to share and collaborate on portfolio strategies
+   - Implement a leaderboard for top-performing portfolios
+
+4. **Advanced AI Features**:
+   - Implement deep reinforcement learning for adaptive portfolio management
+   - Develop explainable AI features to help users understand recommendations
 
 ## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
