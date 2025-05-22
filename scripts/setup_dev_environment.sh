@@ -1,0 +1,245 @@
+#!/bin/bash
+# setup_dev_environment.sh
+# Comprehensive development environment setup script for RiskOptimizer
+# This script automates the entire setup process for the RiskOptimizer development environment
+
+# Color definitions for better readability
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Log function for consistent output
+log() {
+    local level=$1
+    local message=$2
+    local color=$NC
+    
+    case $level in
+        "INFO") color=$BLUE ;;
+        "SUCCESS") color=$GREEN ;;
+        "WARNING") color=$YELLOW ;;
+        "ERROR") color=$RED ;;
+    esac
+    
+    echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message${NC}"
+}
+
+# Error handling function
+handle_error() {
+    log "ERROR" "An error occurred on line $1"
+    exit 1
+}
+
+# Set up error handling
+trap 'handle_error $LINENO' ERR
+
+# Enable strict mode
+set -euo pipefail
+
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Configuration variables
+PYTHON_VERSION="3.11"
+NODE_VERSION="18"
+VENV_DIR="$PROJECT_ROOT/venv"
+LOG_FILE="$PROJECT_ROOT/setup_log.txt"
+
+# Start setup process
+log "INFO" "Starting RiskOptimizer development environment setup..."
+log "INFO" "Project root: $PROJECT_ROOT"
+
+# Check for required system tools
+log "INFO" "Checking for required system tools..."
+
+check_command() {
+    local cmd=$1
+    local install_guide=$2
+    
+    if ! command -v $cmd &> /dev/null; then
+        log "WARNING" "$cmd is not installed."
+        log "INFO" "Installation guide: $install_guide"
+        return 1
+    else
+        log "SUCCESS" "$cmd is installed: $(command -v $cmd)"
+        return 0
+    fi
+}
+
+# Check for essential tools
+SYSTEM_READY=true
+
+# Check Python
+if ! check_command python3 "Install Python from https://www.python.org/downloads/"; then
+    SYSTEM_READY=false
+fi
+
+# Check Node.js
+if ! check_command node "Install Node.js from https://nodejs.org/"; then
+    SYSTEM_READY=false
+fi
+
+# Check npm
+if ! check_command npm "npm comes with Node.js - https://nodejs.org/"; then
+    SYSTEM_READY=false
+fi
+
+# Check git
+if ! check_command git "Install git from https://git-scm.com/downloads"; then
+    SYSTEM_READY=false
+fi
+
+# Check Docker if available (optional)
+if ! check_command docker "Install Docker from https://docs.docker.com/get-docker/ (optional)"; then
+    log "WARNING" "Docker is not installed. Containerized development and testing will not be available."
+fi
+
+if [ "$SYSTEM_READY" = false ]; then
+    log "ERROR" "Please install the required tools before continuing."
+    exit 1
+fi
+
+# Create Python virtual environment
+log "INFO" "Setting up Python virtual environment..."
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv "$VENV_DIR"
+    log "SUCCESS" "Created virtual environment at $VENV_DIR"
+else
+    log "INFO" "Virtual environment already exists at $VENV_DIR"
+fi
+
+# Activate virtual environment
+log "INFO" "Activating virtual environment..."
+source "$VENV_DIR/bin/activate"
+log "SUCCESS" "Virtual environment activated"
+
+# Install Python dependencies
+log "INFO" "Installing Python dependencies..."
+pip install --upgrade pip
+log "INFO" "Installing backend dependencies..."
+pip install -r "$PROJECT_ROOT/code/backend/requirements.txt"
+log "INFO" "Installing AI model dependencies..."
+pip install -r "$PROJECT_ROOT/code/ai_models/requirements.txt" 2>/dev/null || log "WARNING" "AI model requirements file not found, skipping"
+
+# Install Node.js dependencies
+log "INFO" "Installing Node.js dependencies..."
+cd "$PROJECT_ROOT/code/web-frontend"
+npm install
+
+# Install blockchain dependencies
+log "INFO" "Installing blockchain dependencies..."
+cd "$PROJECT_ROOT/code/blockchain"
+npm install
+
+# Return to project root
+cd "$PROJECT_ROOT"
+
+# Set up pre-commit hooks
+log "INFO" "Setting up git hooks..."
+if [ -d "$PROJECT_ROOT/.git" ]; then
+    # Create pre-commit hook
+    PRE_COMMIT_HOOK="$PROJECT_ROOT/.git/hooks/pre-commit"
+    
+    cat > "$PRE_COMMIT_HOOK" << 'EOF'
+#!/bin/bash
+# Pre-commit hook for RiskOptimizer
+# Runs linting and tests on staged files
+
+# Get the project root directory
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+# Run the lint script on staged files only
+"$PROJECT_ROOT/scripts/lint_staged.sh"
+
+# If linting fails, prevent the commit
+if [ $? -ne 0 ]; then
+    echo "Linting failed. Please fix the issues before committing."
+    exit 1
+fi
+
+# Run quick tests
+"$PROJECT_ROOT/scripts/run_quick_tests.sh"
+
+# If tests fail, prevent the commit
+if [ $? -ne 0 ]; then
+    echo "Tests failed. Please fix the issues before committing."
+    exit 1
+fi
+
+exit 0
+EOF
+    
+    chmod +x "$PRE_COMMIT_HOOK"
+    log "SUCCESS" "Git pre-commit hook installed"
+else
+    log "WARNING" "Not a git repository, skipping git hooks setup"
+fi
+
+# Create environment configuration
+log "INFO" "Creating environment configuration..."
+if [ ! -f "$PROJECT_ROOT/.env" ]; then
+    cat > "$PROJECT_ROOT/.env" << EOF
+# RiskOptimizer Environment Configuration
+# Generated by setup_dev_environment.sh on $(date)
+
+# Development mode
+DEV_MODE=true
+
+# API Configuration
+API_PORT=5000
+API_HOST=0.0.0.0
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=riskoptimizer
+DB_USER=postgres
+DB_PASSWORD=postgres
+
+# Web Frontend Configuration
+WEB_PORT=3000
+
+# Blockchain Configuration
+BLOCKCHAIN_NETWORK=development
+BLOCKCHAIN_PROVIDER_URL=http://localhost:8545
+
+# AI Model Configuration
+MODEL_PATH=./code/ai_models/optimization_model.pkl
+EOF
+    log "SUCCESS" "Created default .env configuration"
+else
+    log "INFO" ".env file already exists, skipping"
+fi
+
+# Verify installation
+log "INFO" "Verifying installation..."
+
+# Check Python packages
+if pip list | grep -q "tensorflow"; then
+    log "SUCCESS" "Python packages verified"
+else
+    log "WARNING" "Some Python packages may not be installed correctly"
+fi
+
+# Check Node.js packages
+if [ -d "$PROJECT_ROOT/code/web-frontend/node_modules" ]; then
+    log "SUCCESS" "Node.js packages verified"
+else
+    log "WARNING" "Node.js packages may not be installed correctly"
+fi
+
+# Setup complete
+log "SUCCESS" "RiskOptimizer development environment setup complete!"
+log "INFO" "To activate the environment, run: source $VENV_DIR/bin/activate"
+log "INFO" "To start the application, run: ./scripts/run_riskoptimizer.sh"
+
+# Create a setup completion marker
+touch "$PROJECT_ROOT/.setup_complete"
+
+# Deactivate virtual environment
+deactivate
+
+exit 0
