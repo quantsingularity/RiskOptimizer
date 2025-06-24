@@ -1,0 +1,341 @@
+# Elasticsearch Configuration for RiskOptimizer Infrastructure
+
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: riskoptimizer-logs
+
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: ${HOSTNAME}
+
+# Add custom attributes to the node:
+#
+node.attr.rack: ${RACK_ID}
+node.attr.zone: ${ZONE_ID}
+
+# Node roles
+node.roles: [ master, data, ingest, ml, remote_cluster_client ]
+
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /var/lib/elasticsearch
+
+# Path to log files:
+#
+path.logs: /var/log/elasticsearch
+
+# Path to snapshots:
+#
+path.repo: ["/var/lib/elasticsearch/snapshots"]
+
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+bootstrap.memory_lock: true
+
+# ---------------------------------- Network -----------------------------------
+#
+# By default Elasticsearch is only accessible on localhost. Set a different
+# address here to expose this node on the network:
+#
+network.host: 0.0.0.0
+
+# By default Elasticsearch listens for HTTP traffic on the first free port it
+# finds starting at 9200. Set a specific HTTP port here:
+#
+http.port: 9200
+
+# Transport port for node-to-node communication
+transport.port: 9300
+
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when this node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.seed_hosts: 
+  - elasticsearch-master-1.riskoptimizer.com
+  - elasticsearch-master-2.riskoptimizer.com
+  - elasticsearch-master-3.riskoptimizer.com
+
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+cluster.initial_master_nodes:
+  - elasticsearch-master-1
+  - elasticsearch-master-2
+  - elasticsearch-master-3
+
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+gateway.recover_after_nodes: 3
+
+# For more information, consult the gateway module documentation.
+
+# ---------------------------------- Various -----------------------------------
+#
+# Require explicit names when deleting indices:
+#
+action.destructive_requires_name: true
+
+# ---------------------------------- Security ----------------------------------
+#
+# Enable security features
+xpack.security.enabled: true
+
+# Enable encryption for HTTP API client connections
+xpack.security.http.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  client_authentication: required
+  keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+
+# Enable audit logging
+xpack.security.audit.enabled: true
+xpack.security.audit.logfile.events.include:
+  - access_denied
+  - access_granted
+  - anonymous_access_denied
+  - authentication_failed
+  - authentication_success
+  - change_password
+  - connection_denied
+  - connection_granted
+  - tampered_request
+  - run_as_denied
+  - run_as_granted
+
+# ---------------------------------- Monitoring --------------------------------
+#
+# Enable monitoring
+xpack.monitoring.enabled: true
+xpack.monitoring.collection.enabled: true
+
+# ---------------------------------- Machine Learning --------------------------
+#
+# Enable machine learning
+xpack.ml.enabled: true
+
+# ---------------------------------- Watcher -----------------------------------
+#
+# Enable Watcher
+xpack.watcher.enabled: true
+
+# ---------------------------------- Index Lifecycle Management ---------------
+#
+# Enable ILM
+xpack.ilm.enabled: true
+
+# ---------------------------------- Snapshot Lifecycle Management ------------
+#
+# Enable SLM
+xpack.slm.enabled: true
+
+# ---------------------------------- Cross Cluster Replication -----------------
+#
+# Enable CCR
+xpack.ccr.enabled: true
+
+# ---------------------------------- Index Settings ----------------------------
+#
+# Default index settings
+index.number_of_shards: 1
+index.number_of_replicas: 1
+index.refresh_interval: 30s
+
+# Index lifecycle policies
+index.lifecycle.name: riskoptimizer-logs-policy
+index.lifecycle.rollover_alias: riskoptimizer-logs
+
+# ---------------------------------- Search Settings ---------------------------
+#
+# Search settings
+search.max_buckets: 65536
+search.allow_expensive_queries: false
+
+# ---------------------------------- Thread Pool Settings ----------------------
+#
+# Thread pool settings for better performance
+thread_pool:
+  search:
+    size: 13
+    queue_size: 1000
+  search_throttled:
+    size: 1
+    queue_size: 100
+  get:
+    size: 13
+    queue_size: 1000
+  analyze:
+    size: 1
+    queue_size: 16
+  write:
+    size: 13
+    queue_size: 10000
+  index:
+    size: 13
+    queue_size: 200
+  bulk:
+    size: 13
+    queue_size: 200
+
+# ---------------------------------- Circuit Breaker Settings ------------------
+#
+# Circuit breaker settings
+indices.breaker.total.use_real_memory: true
+indices.breaker.total.limit: 70%
+indices.breaker.fielddata.limit: 40%
+indices.breaker.request.limit: 60%
+
+# ---------------------------------- Cluster Settings --------------------------
+#
+# Cluster-wide settings
+cluster.routing.allocation.disk.threshold_enabled: true
+cluster.routing.allocation.disk.watermark.low: 85%
+cluster.routing.allocation.disk.watermark.high: 90%
+cluster.routing.allocation.disk.watermark.flood_stage: 95%
+
+# Shard allocation awareness
+cluster.routing.allocation.awareness.attributes: zone
+cluster.routing.allocation.awareness.force.zone.values: zone-1,zone-2,zone-3
+
+# ---------------------------------- Index Templates ---------------------------
+#
+# Index template for RiskOptimizer logs
+index_patterns: ["riskoptimizer-*"]
+template:
+  settings:
+    number_of_shards: 3
+    number_of_replicas: 1
+    refresh_interval: "30s"
+    index.lifecycle.name: "riskoptimizer-logs-policy"
+    index.lifecycle.rollover_alias: "riskoptimizer-logs"
+  mappings:
+    properties:
+      "@timestamp":
+        type: date
+      level:
+        type: keyword
+      message:
+        type: text
+        analyzer: standard
+      service:
+        type: keyword
+      environment:
+        type: keyword
+      user_id:
+        type: keyword
+      session_id:
+        type: keyword
+      request_id:
+        type: keyword
+      ip_address:
+        type: ip
+      user_agent:
+        type: text
+        analyzer: standard
+      response_time:
+        type: long
+      status_code:
+        type: integer
+      method:
+        type: keyword
+      url:
+        type: keyword
+      error:
+        type: object
+        properties:
+          type:
+            type: keyword
+          message:
+            type: text
+          stack_trace:
+            type: text
+
+# ---------------------------------- Ingest Pipelines --------------------------
+#
+# Ingest pipeline for log processing
+ingest.geoip.downloader.enabled: true
+
+# ---------------------------------- Alerting ----------------------------------
+#
+# Watcher settings for alerting
+xpack.watcher.trigger.schedule.interval: 10s
+xpack.watcher.execution.default_throttle_period: 5m
+
+# ---------------------------------- Performance Tuning ------------------------
+#
+# JVM heap size (set via ES_JAVA_OPTS or jvm.options)
+# -Xms16g
+# -Xmx16g
+
+# Disable swapping
+bootstrap.memory_lock: true
+
+# File descriptors
+# max_open_files: 65536
+
+# Virtual memory
+# max_map_count: 262144
+
+# ---------------------------------- Backup and Restore ------------------------
+#
+# Repository settings for snapshots
+repositories:
+  s3_repository:
+    type: s3
+    settings:
+      bucket: riskoptimizer-elasticsearch-backups
+      region: us-west-2
+      base_path: snapshots
+      compress: true
+      server_side_encryption: true
+
+# ---------------------------------- Custom Settings ---------------------------
+#
+# Custom settings for RiskOptimizer
+riskoptimizer:
+  retention:
+    application_logs: 90d
+    security_logs: 2y
+    audit_logs: 7y
+    performance_logs: 30d
+  
+  compliance:
+    gdpr_enabled: true
+    pci_dss_enabled: true
+    sox_enabled: true
+  
+  security:
+    field_level_security: true
+    document_level_security: true
+    audit_trail: true
+

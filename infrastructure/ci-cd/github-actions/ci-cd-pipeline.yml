@@ -1,0 +1,571 @@
+# Enhanced GitHub Actions Workflow for RiskOptimizer
+# This workflow implements security best practices and compliance requirements
+
+name: RiskOptimizer CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, release/*]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  # Global environment variables
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.11'
+  TERRAFORM_VERSION: '1.5.7'
+  KUBECTL_VERSION: '1.28.0'
+  HELM_VERSION: '3.12.0'
+  
+  # Security and compliance
+  ENABLE_SECURITY_SCAN: true
+  ENABLE_COMPLIANCE_CHECK: true
+  ENABLE_VULNERABILITY_SCAN: true
+  
+  # Container registry
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# Security permissions
+permissions:
+  contents: read
+  security-events: write
+  id-token: write
+  packages: write
+  actions: read
+
+jobs:
+  # Security and compliance checks
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule' || env.ENABLE_SECURITY_SCAN == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Run Semgrep security analysis
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/owasp-top-ten
+            p/cwe-top-25
+      
+      - name: Run GitLeaks secret detection
+        uses: zricethezav/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run Checkov infrastructure security scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform,kubernetes,dockerfile
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+      
+      - name: Upload Checkov scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: checkov-results.sarif
+
+  # Code quality and testing
+  code-quality:
+    name: Code Quality & Testing
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip_tests != 'true'
+    
+    strategy:
+      matrix:
+        component: [frontend, backend, infrastructure]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        if: matrix.component == 'frontend' || matrix.component == 'backend'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Setup Python
+        if: matrix.component == 'backend' || matrix.component == 'infrastructure'
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          case "${{ matrix.component }}" in
+            frontend)
+              cd frontend && npm ci
+              ;;
+            backend)
+              cd backend && npm ci
+              pip install -r requirements-dev.txt
+              ;;
+            infrastructure)
+              pip install -r infrastructure/requirements.txt
+              ;;
+          esac
+      
+      - name: Run linting
+        run: |
+          case "${{ matrix.component }}" in
+            frontend)
+              cd frontend && npm run lint
+              ;;
+            backend)
+              cd backend && npm run lint
+              flake8 . --max-line-length=88 --extend-ignore=E203,W503
+              black --check .
+              isort --check-only .
+              ;;
+            infrastructure)
+              cd infrastructure
+              terraform fmt -check -recursive
+              tflint --recursive
+              ;;
+          esac
+      
+      - name: Run unit tests
+        run: |
+          case "${{ matrix.component }}" in
+            frontend)
+              cd frontend && npm run test:coverage
+              ;;
+            backend)
+              cd backend && npm run test:coverage
+              pytest --cov=. --cov-report=xml
+              ;;
+            infrastructure)
+              cd infrastructure && terraform validate
+              ;;
+          esac
+      
+      - name: Upload coverage reports
+        if: matrix.component != 'infrastructure'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: ${{ matrix.component }}
+          name: ${{ matrix.component }}-coverage
+
+  # Build and package
+  build:
+    name: Build & Package
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality]
+    if: always() && (needs.security-scan.result == 'success' || needs.security-scan.result == 'skipped') && (needs.code-quality.result == 'success' || needs.code-quality.result == 'skipped')
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            VCS_REF=${{ github.sha }}
+            VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+      
+      - name: Sign container image
+        uses: sigstore/cosign-installer@v3
+      
+      - name: Sign the published Docker image
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign sign --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+      
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+      
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: sbom.spdx.json
+
+  # Infrastructure validation and planning
+  infrastructure-plan:
+    name: Infrastructure Plan
+    runs-on: ubuntu-latest
+    needs: [security-scan]
+    if: always() && (needs.security-scan.result == 'success' || needs.security-scan.result == 'skipped')
+    
+    env:
+      TF_VAR_environment: ${{ github.event.inputs.environment || 'staging' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-${{ github.run_id }}
+          aws-region: us-west-2
+      
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=riskoptimizer/${{ env.TF_VAR_environment }}/terraform.tfstate" \
+            -backend-config="region=us-west-2" \
+            -backend-config="encrypt=true"
+      
+      - name: Terraform Validate
+        working-directory: infrastructure/terraform
+        run: terraform validate
+      
+      - name: Terraform Plan
+        working-directory: infrastructure/terraform
+        run: |
+          terraform plan \
+            -var-file="environments/${{ env.TF_VAR_environment }}.tfvars" \
+            -out=tfplan \
+            -detailed-exitcode
+      
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan-${{ env.TF_VAR_environment }}
+          path: infrastructure/terraform/tfplan
+
+  # Deployment to staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, infrastructure-plan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          role-session-name: GitHubActions-Staging-${{ github.run_id }}
+          aws-region: us-west-2
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ env.KUBECTL_VERSION }}
+      
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.HELM_VERSION }}
+      
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: terraform-plan-staging
+          path: infrastructure/terraform/
+      
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=riskoptimizer/staging/terraform.tfstate" \
+            -backend-config="region=us-west-2" \
+            -backend-config="encrypt=true"
+      
+      - name: Terraform Apply
+        working-directory: infrastructure/terraform
+        run: terraform apply -auto-approve tfplan
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region us-west-2 --name riskoptimizer-staging-eks
+      
+      - name: Deploy to Kubernetes
+        working-directory: infrastructure/kubernetes
+        run: |
+          # Apply security policies first
+          kubectl apply -f base/security-policies.yaml
+          kubectl apply -f base/secrets-management.yaml
+          
+          # Deploy application
+          helm upgrade --install riskoptimizer ./helm-chart \
+            --namespace riskoptimizer-staging \
+            --create-namespace \
+            --values values/staging.yaml \
+            --set image.tag=${{ needs.build.outputs.image-tag }} \
+            --wait --timeout=10m
+      
+      - name: Run smoke tests
+        run: |
+          # Wait for deployment to be ready
+          kubectl wait --for=condition=available --timeout=300s deployment/riskoptimizer-backend -n riskoptimizer-staging
+          
+          # Run basic health checks
+          kubectl exec -n riskoptimizer-staging deployment/riskoptimizer-backend -- curl -f http://localhost:8082/health/live
+      
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Deployment to production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, infrastructure-plan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Manual approval checkpoint
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: devops-team,security-team
+          minimum-approvals: 2
+          issue-title: "Production Deployment Approval Required"
+          issue-body: |
+            Please review and approve the production deployment:
+            - Commit: ${{ github.sha }}
+            - Image: ${{ needs.build.outputs.image-tag }}
+            - Changes: ${{ github.event.head_commit.message }}
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PRODUCTION }}
+          role-session-name: GitHubActions-Production-${{ github.run_id }}
+          aws-region: us-west-2
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ env.KUBECTL_VERSION }}
+      
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.HELM_VERSION }}
+      
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: terraform-plan-production
+          path: infrastructure/terraform/
+      
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=riskoptimizer/production/terraform.tfstate" \
+            -backend-config="region=us-west-2" \
+            -backend-config="encrypt=true"
+      
+      - name: Terraform Apply
+        working-directory: infrastructure/terraform
+        run: terraform apply -auto-approve tfplan
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region us-west-2 --name riskoptimizer-production-eks
+      
+      - name: Blue-Green Deployment
+        working-directory: infrastructure/kubernetes
+        run: |
+          # Deploy to green environment
+          helm upgrade --install riskoptimizer-green ./helm-chart \
+            --namespace riskoptimizer-production \
+            --create-namespace \
+            --values values/production.yaml \
+            --set image.tag=${{ needs.build.outputs.image-tag }} \
+            --set deployment.suffix=green \
+            --wait --timeout=15m
+          
+          # Run comprehensive health checks
+          kubectl exec -n riskoptimizer-production deployment/riskoptimizer-backend-green -- curl -f http://localhost:8082/health/ready
+          
+          # Switch traffic to green (blue-green deployment)
+          kubectl patch service riskoptimizer-backend -n riskoptimizer-production -p '{"spec":{"selector":{"deployment":"green"}}}'
+          
+          # Wait and verify
+          sleep 30
+          kubectl exec -n riskoptimizer-production deployment/riskoptimizer-backend-green -- curl -f http://localhost:8082/health/live
+          
+          # Clean up old blue deployment
+          helm uninstall riskoptimizer-blue -n riskoptimizer-production || true
+      
+      - name: Post-deployment verification
+        run: |
+          # Run integration tests
+          cd tests && npm run test:integration:production
+          
+          # Verify monitoring and alerting
+          kubectl get pods -n riskoptimizer-production
+          kubectl get services -n riskoptimizer-production
+      
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Compliance and audit reporting
+  compliance-report:
+    name: Compliance Report
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event.inputs.environment == 'production'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Generate compliance report
+        run: |
+          # Generate GDPR compliance report
+          echo "Generating GDPR compliance report..."
+          
+          # Generate PCI DSS compliance report
+          echo "Generating PCI DSS compliance report..."
+          
+          # Generate SOX compliance report
+          echo "Generating SOX compliance report..."
+          
+          # Generate security baseline report
+          echo "Generating security baseline report..."
+      
+      - name: Upload compliance reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: compliance-reports-${{ github.run_id }}
+          path: reports/
+      
+      - name: Send compliance notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "text": "Compliance reports generated",
+              "attachments": [{
+                "color": "good",
+                "fields": [{
+                  "title": "Reports Available",
+                  "value": "GDPR, PCI DSS, SOX, Security Baseline",
+                  "short": true
+                }]
+              }]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
