@@ -1,9 +1,6 @@
-"""
-Portfolio repository for database operations related to portfolios.
-Implements the repository pattern for data access.
-"""
 
 from typing import Dict, List, Optional, Any
+from decimal import Decimal
 
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
@@ -12,6 +9,7 @@ from riskoptimizer.core.exceptions import DatabaseError, NotFoundError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.models import Portfolio, Allocation, User
 from riskoptimizer.infrastructure.database.session import get_db_session
+from riskoptimizer.domain.services.audit_service import audit_service # Import audit service
 
 logger = get_logger(__name__)
 
@@ -27,6 +25,7 @@ class PortfolioRepository:
             session: SQLAlchemy session (optional)
         """
         self._session = session
+        self.audit_service = audit_service
     
     def _get_session(self, session: Optional[Session] = None) -> Session:
         """
@@ -60,6 +59,7 @@ class PortfolioRepository:
             return portfolio
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolio by address: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "get_by_address", "user_address": user_address, "error": str(e)})
             raise DatabaseError(f"Failed to get portfolio: {str(e)}")
     
     def get_by_id(self, portfolio_id: int, session: Optional[Session] = None) -> Optional[Portfolio]:
@@ -82,6 +82,7 @@ class PortfolioRepository:
             return portfolio
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolio by ID: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "get_by_id", "portfolio_id": portfolio_id, "error": str(e)})
             raise DatabaseError(f"Failed to get portfolio: {str(e)}")
     
     def get_by_user_id(self, user_id: int, session: Optional[Session] = None) -> List[Portfolio]:
@@ -104,6 +105,7 @@ class PortfolioRepository:
             return portfolios
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolios by user ID: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=user_id, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "get_by_user_id", "error": str(e)})
             raise DatabaseError(f"Failed to get portfolios: {str(e)}")
     
     def create(self, user_id: int, user_address: str, name: str = "Default Portfolio", 
@@ -139,9 +141,11 @@ class PortfolioRepository:
             db.flush()  # Flush to get the ID
             
             logger.info(f"Created portfolio {portfolio.id} for user {user_id}")
+            self.audit_service.log_action(user_id=user_id, action_type="PORTFOLIO_CREATED", entity_type="PORTFOLIO", entity_id=portfolio.id, details={"name": name, "user_address": user_address})
             return portfolio
         except SQLAlchemyError as e:
             logger.error(f"Error creating portfolio: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=user_id, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "create", "name": name, "user_address": user_address, "error": str(e)})
             raise DatabaseError(f"Failed to create portfolio: {str(e)}")
     
     def update(self, portfolio_id: int, data: Dict[str, Any], session: Optional[Session] = None) -> Portfolio:
@@ -168,6 +172,9 @@ class PortfolioRepository:
             if not portfolio:
                 raise NotFoundError(f"Portfolio {portfolio_id} not found", "portfolio", str(portfolio_id))
             
+            # Store old data for audit
+            old_data = {key: getattr(portfolio, key) for key in data.keys() if hasattr(portfolio, key)}
+
             # Update fields
             for key, value in data.items():
                 if hasattr(portfolio, key):
@@ -176,11 +183,13 @@ class PortfolioRepository:
             db.flush()
             
             logger.info(f"Updated portfolio {portfolio_id}")
+            self.audit_service.log_action(user_id=portfolio.user_id, action_type="PORTFOLIO_UPDATED", entity_type="PORTFOLIO", entity_id=portfolio.id, details={"old_data": old_data, "new_data": data})
             return portfolio
         except NotFoundError:
             raise
         except SQLAlchemyError as e:
             logger.error(f"Error updating portfolio: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "update", "portfolio_id": portfolio_id, "data": data, "error": str(e)})
             raise DatabaseError(f"Failed to update portfolio: {str(e)}")
     
     def delete(self, portfolio_id: int, session: Optional[Session] = None) -> bool:
@@ -205,24 +214,29 @@ class PortfolioRepository:
             if not portfolio:
                 return False
             
+            # Store data for audit before deletion
+            audit_details = {"portfolio_id": portfolio.id, "name": portfolio.name, "user_address": portfolio.user_address}
+
             # Delete portfolio (cascade will delete allocations)
             db.delete(portfolio)
             db.flush()
             
             logger.info(f"Deleted portfolio {portfolio_id}")
+            self.audit_service.log_action(user_id=portfolio.user_id, action_type="PORTFOLIO_DELETED", entity_type="PORTFOLIO", entity_id=portfolio.id, details=audit_details)
             return True
         except SQLAlchemyError as e:
             logger.error(f"Error deleting portfolio: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "delete", "portfolio_id": portfolio_id, "error": str(e)})
             raise DatabaseError(f"Failed to delete portfolio: {str(e)}")
     
-    def save_allocations(self, portfolio_id: int, allocations: Dict[str, float], 
+    def save_allocations(self, portfolio_id: int, allocations: Dict[str, Decimal], 
                          session: Optional[Session] = None) -> List[Allocation]:
         """
         Save allocations for a portfolio.
         
         Args:
             portfolio_id: Portfolio ID
-            allocations: Dictionary mapping asset symbols to percentages
+            allocations: Dictionary mapping asset symbols to percentages (Decimal)
             session: SQLAlchemy session (optional)
             
         Returns:
@@ -257,11 +271,13 @@ class PortfolioRepository:
             db.flush()
             
             logger.info(f"Saved {len(allocation_objects)} allocations for portfolio {portfolio_id}")
+            self.audit_service.log_action(user_id=portfolio.user_id, action_type="ALLOCATIONS_SAVED", entity_type="PORTFOLIO", entity_id=portfolio.id, details={"allocations": {k: str(v) for k, v in allocations.items()}})
             return allocation_objects
         except NotFoundError:
             raise
         except SQLAlchemyError as e:
             logger.error(f"Error saving allocations: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="ALLOCATION", details={"action": "save_allocations", "portfolio_id": portfolio_id, "error": str(e)})
             raise DatabaseError(f"Failed to save allocations: {str(e)}")
     
     def get_allocations(self, portfolio_id: int, session: Optional[Session] = None) -> List[Allocation]:
@@ -284,6 +300,7 @@ class PortfolioRepository:
             return allocations
         except SQLAlchemyError as e:
             logger.error(f"Error getting allocations: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="ALLOCATION", details={"action": "get_allocations", "portfolio_id": portfolio_id, "error": str(e)})
             raise DatabaseError(f"Failed to get allocations: {str(e)}")
     
     def get_portfolio_with_allocations(self, user_address: str, session: Optional[Session] = None) -> Dict[str, Any]:
@@ -318,29 +335,31 @@ class PortfolioRepository:
             
             for allocation in allocations:
                 assets.append(allocation.asset_symbol)
-                allocation_percentages.append(allocation.percentage)
+                allocation_percentages.append(float(allocation.percentage)) # Convert Decimal to float for external use
             
             return {
                 "user_address": user_address,
                 "portfolio_id": portfolio.id,
                 "name": portfolio.name,
                 "assets": assets,
-                "allocations": allocation_percentages
+                "allocations": allocation_percentages,
+                "total_value": float(portfolio.total_value) if portfolio.total_value is not None else None # Convert Decimal to float
             }
         except NotFoundError:
             raise
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolio with allocations: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "get_portfolio_with_allocations", "user_address": user_address, "error": str(e)})
             raise DatabaseError(f"Failed to get portfolio with allocations: {str(e)}")
     
-    def save_portfolio_with_allocations(self, user_address: str, allocations: Dict[str, float], 
+    def save_portfolio_with_allocations(self, user_address: str, allocations: Dict[str, Decimal], 
                                         name: str = "Default Portfolio", session: Optional[Session] = None) -> Dict[str, Any]:
         """
         Save portfolio with allocations for a user.
         
         Args:
             user_address: User wallet address
-            allocations: Dictionary mapping asset symbols to percentages
+            allocations: Dictionary mapping asset symbols to percentages (Decimal)
             name: Portfolio name
             session: SQLAlchemy session (optional)
             
@@ -382,12 +401,15 @@ class PortfolioRepository:
             result = self.get_portfolio_with_allocations(user_address, db)
             
             logger.info(f"Saved portfolio with {len(allocations)} allocations for user {user_address}")
+            self.audit_service.log_action(user_id=user_id, action_type="PORTFOLIO_ALLOCATIONS_SAVED", entity_type="PORTFOLIO", entity_id=portfolio.id, details={"user_address": user_address, "name": name, "num_allocations": len(allocations)})
             return result
         except SQLAlchemyError as e:
             logger.error(f"Error saving portfolio with allocations: {str(e)}", exc_info=True)
+            self.audit_service.log_action(user_id=None, action_type="DB_ERROR", entity_type="PORTFOLIO", details={"action": "save_portfolio_with_allocations", "user_address": user_address, "error": str(e)})
             raise DatabaseError(f"Failed to save portfolio with allocations: {str(e)}")
 
 
 # Singleton instance
 portfolio_repository = PortfolioRepository()
+
 

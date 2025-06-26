@@ -16,7 +16,7 @@ from riskoptimizer.api.schemas.auth_schema import (
 logger = get_logger(__name__)
 
 # Create blueprint
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 
 def create_success_response(data: Any, message: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -61,13 +61,86 @@ def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:
     }
 
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route("/register", methods=["POST"])
 def register() -> Response:
     """
     Register a new user.
-    
-    Returns:
-        User data and authentication tokens
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: UserRegister
+            required:
+                - email
+                - username
+                - password
+            properties:
+                email:
+                    type: string
+                    format: email
+                    description: User's email address
+                username:
+                    type: string
+                    description: User's chosen username
+                password:
+                    type: string
+                    format: password
+                    description: User's password (min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char)
+                wallet_address:
+                    type: string
+                    description: Optional blockchain wallet address
+    responses:
+        201:
+            description: User registered successfully
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            user:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                    email:
+                                        type: string
+                                    username:
+                                        type: string
+                                    role:
+                                        type: string
+                                    is_verified:
+                                        type: boolean
+                                    wallet_address:
+                                        type: string
+                                    created_at:
+                                        type: string
+                                        format: date-time
+                                    updated_at:
+                                        type: string
+                                        format: date-time
+                            tokens:
+                                type: object
+                                properties:
+                                    access_token:
+                                        type: string
+                                    refresh_token:
+                                        type: string
+                                    token_type:
+                                        type: string
+                                    expires_in:
+                                        type: integer
+        400:
+            description: Invalid input data
+        409:
+            description: User with email or username already exists
+        500:
+            description: Internal server error
     """
     try:
         logger.info("User registration request received")
@@ -82,10 +155,10 @@ def register() -> Response:
         
         # Register user
         user_data, tokens = auth_service.register_user(
-            email=validated_data['email'],
-            username=validated_data['username'],
-            password=validated_data['password'],
-            wallet_address=validated_data.get('wallet_address')
+            email=validated_data["email"],
+            username=validated_data["username"],
+            password=validated_data["password"],
+            wallet_address=validated_data.get("wallet_address")
         )
         
         # Create success response
@@ -97,7 +170,7 @@ def register() -> Response:
             message="User registered successfully"
         )
         
-        logger.info(f"User registered successfully: {validated_data['email']}")
+        logger.info(f"User registered successfully: {validated_data["email"]}")
         return jsonify(response), 201
         
     except ValidationError as e:
@@ -117,13 +190,79 @@ def register() -> Response:
         return jsonify(response), 500
 
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route("/login", methods=["POST"])
 def login() -> Response:
     """
     Authenticate a user and issue tokens.
-    
-    Returns:
-        User data and authentication tokens
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: UserLogin
+            required:
+                - email
+                - password
+            properties:
+                email:
+                    type: string
+                    format: email
+                    description: User's email address
+                password:
+                    type: string
+                    format: password
+                    description: User's password
+    responses:
+        200:
+            description: User authenticated successfully
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            user:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                    email:
+                                        type: string
+                                    username:
+                                        type: string
+                                    role:
+                                        type: string
+                                    is_verified:
+                                        type: boolean
+                                    wallet_address:
+                                        type: string
+                                    created_at:
+                                        type: string
+                                        format: date-time
+                                    updated_at:
+                                        type: string
+                                        format: date-time
+                            tokens:
+                                type: object
+                                properties:
+                                    access_token:
+                                        type: string
+                                    refresh_token:
+                                        type: string
+                                    token_type:
+                                        type: string
+                                    expires_in:
+                                        type: integer
+        400:
+            description: Invalid input data
+        401:
+            description: Invalid email or password, or account locked
+        500:
+            description: Internal server error
     """
     try:
         logger.info("User login request received")
@@ -138,8 +277,8 @@ def login() -> Response:
         
         # Authenticate user
         user_data, tokens = auth_service.authenticate_user(
-            email=validated_data['email'],
-            password=validated_data['password']
+            email=validated_data["email"],
+            password=validated_data["password"]
         )
         
         # Create success response
@@ -151,7 +290,7 @@ def login() -> Response:
             message="User authenticated successfully"
         )
         
-        logger.info(f"User authenticated successfully: {validated_data['email']}")
+        logger.info(f"User authenticated successfully: {validated_data["email"]}")
         return jsonify(response), 200
         
     except ValidationError as e:
@@ -176,13 +315,47 @@ def login() -> Response:
         return jsonify(response), 500
 
 
-@auth_bp.route('/refresh', methods=['POST'])
+@auth_bp.route("/refresh", methods=["POST"])
 def refresh_token() -> Response:
     """
     Refresh access token using a valid refresh token.
-    
-    Returns:
-        New access token
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: RefreshTokenRequest
+            required:
+                - refresh_token
+            properties:
+                refresh_token:
+                    type: string
+                    description: The refresh token obtained during login
+    responses:
+        200:
+            description: Access token refreshed successfully
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            access_token:
+                                type: string
+                            token_type:
+                                type: string
+                            expires_in:
+                                type: integer
+        400:
+            description: Invalid input data
+        401:
+            description: Invalid or expired refresh token
+        500:
+            description: Internal server error
     """
     try:
         logger.info("Token refresh request received")
@@ -196,7 +369,7 @@ def refresh_token() -> Response:
         validated_data = validate_refresh_token_request(data)
         
         # Refresh token
-        tokens = auth_service.refresh_access_token(validated_data['refresh_token'])
+        tokens = auth_service.refresh_access_token(validated_data["refresh_token"])
         
         # Create success response
         response = create_success_response(
@@ -229,31 +402,63 @@ def refresh_token() -> Response:
         return jsonify(response), 500
 
 
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route("/logout", methods=["POST"])
 def logout() -> Response:
     """
     Logout a user by blacklisting their tokens.
-    
-    Returns:
-        Success message
+    --- 
+    parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Bearer token (access token)
+        - in: body
+          name: body
+          schema:
+            id: LogoutRequest
+            required:
+                - refresh_token
+            properties:
+                refresh_token:
+                    type: string
+                    description: The refresh token to blacklist
+    responses:
+        200:
+            description: User logged out successfully
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+        400:
+            description: Invalid input data
+        401:
+            description: Missing or invalid Authorization header, or invalid tokens
+        500:
+            description: Internal server error
     """
     try:
         logger.info("User logout request received")
         
         # Get authorization header
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.startswith('Bearer '):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
             raise AuthenticationError("Missing or invalid Authorization header")
         
         # Extract access token
-        access_token = auth_header.split(' ')[1]
+        access_token = auth_header.split(" ")[1]
         
         # Get refresh token from request body
         data = request.get_json()
-        if not data or 'refresh_token' not in data:
+        if not data or "refresh_token" not in data:
             raise ValidationError("Refresh token is required", "refresh_token")
         
-        refresh_token = data['refresh_token']
+        refresh_token = data["refresh_token"]
         
         # Logout user
         auth_service.logout_user(access_token, refresh_token)
@@ -287,4 +492,5 @@ def logout() -> Response:
         error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
         response = create_error_response(error)
         return jsonify(response), 500
+
 

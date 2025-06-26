@@ -1,7 +1,3 @@
-"""
-Logging configuration for the RiskOptimizer application.
-Provides structured logging with JSON format and context.
-"""
 
 import json
 import logging
@@ -13,11 +9,39 @@ from typing import Any, Dict, Optional
 from riskoptimizer.core.config import config
 
 
+class SensitiveDataFilter(logging.Filter):
+    """
+    A logging filter to redact sensitive information from log records.
+    """
+    SENSITIVE_KEYS = ["password", "secret_key", "jwt_secret_key", "refresh_token", "access_token", "wallet_address"]
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """
+        Redact sensitive information from the log record message and extra attributes.
+        """
+        # Redact from message if it contains sensitive data
+        for key in self.SENSITIVE_KEYS:
+            if key in record.msg.lower():
+                record.msg = "[REDACTED]"
+                break
+        
+        # Redact from extra attributes
+        if hasattr(record, "extra") and record.extra:
+            for key in self.SENSITIVE_KEYS:
+                if key in record.extra:
+                    record.extra[key] = "[REDACTED]"
+        
+        return True
+
+
 class JsonFormatter(logging.Formatter):
     """Custom formatter that outputs logs in JSON format."""
 
     def format(self, record: logging.LogRecord) -> str:
-        """Format log record as JSON string."""
+        """
+        Format log record as JSON string.
+        Adds common context fields like `request_id` and `user_id`.
+        """
         log_data = {
             "timestamp": datetime.utcfromtimestamp(record.created).isoformat() + "Z",
             "level": record.levelname,
@@ -26,6 +50,9 @@ class JsonFormatter(logging.Formatter):
             "module": record.module,
             "function": record.funcName,
             "line": record.lineno,
+            "process": record.process,
+            "thread": record.thread,
+            "environment": config.environment,
         }
 
         # Add extra fields if available
@@ -40,27 +67,33 @@ class JsonFormatter(logging.Formatter):
                 "traceback": traceback.format_exception(*record.exc_info)
             }
 
-        # Add request_id if available
+        # Add request_id and user_id if available (from g or context adapter)
         if hasattr(record, "request_id"):
             log_data["request_id"] = record.request_id
+        if hasattr(record, "user_id"):
+            log_data["user_id"] = record.user_id
+        if hasattr(record, "ip_address"):
+            log_data["ip_address"] = record.ip_address
 
         return json.dumps(log_data)
 
 
 class ContextAdapter(logging.LoggerAdapter):
-    """Logger adapter that adds context to log records."""
-
+    """
+    Logger adapter that adds context to log records.
+    This ensures that context (like request_id, user_id) is always available.
+    """
     def process(self, msg: str, kwargs: Dict[str, Any]) -> tuple:
-        """Process log record by adding context."""
-        # Initialize extra dict if not present
-        kwargs.setdefault("extra", {})
+        """
+        Process log record by adding context.
+        """
+        # Ensure extra dict exists
+        if "extra" not in kwargs or not isinstance(kwargs["extra"], dict):
+            kwargs["extra"] = {}
         
-        # Add extra context from adapter
+        # Add context from adapter to extra
         if self.extra:
-            # Create a new dict to avoid modifying the original
-            extra = kwargs["extra"].copy()
-            extra.update({"extra": self.extra})
-            kwargs["extra"] = extra
+            kwargs["extra"].update(self.extra)
             
         return msg, kwargs
 
@@ -91,15 +124,20 @@ def get_logger(name: str, context: Optional[Dict[str, Any]] = None) -> logging.L
         handler.setFormatter(JsonFormatter())
         logger.addHandler(handler)
         
+        # Add sensitive data filter to prevent logging of sensitive info
+        logger.addFilter(SensitiveDataFilter())
+        
     # Return logger with context adapter
     return ContextAdapter(logger, context or {})
 
 
 def configure_logging() -> None:
-    """Configure root logger with JSON formatting."""
+    """
+    Configure root logger with JSON formatting and sensitive data filtering.
+    """
     root_logger = logging.getLogger()
     
-    # Remove existing handlers
+    # Remove existing handlers to prevent duplicate logs
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
         
@@ -113,16 +151,24 @@ def configure_logging() -> None:
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(JsonFormatter())
     root_logger.addHandler(handler)
+    
+    # Add sensitive data filter
+    root_logger.addFilter(SensitiveDataFilter())
 
 
 class LoggerMixin:
-    """Mixin class that adds logging capabilities to a class."""
-    
+    """
+    Mixin class that adds logging capabilities to a class.
+    Automatically includes class name in log context.
+    """
     @property
     def logger(self) -> logging.LoggerAdapter:
-        """Get logger for the class."""
+        """
+        Get logger for the class.
+        """
         if not hasattr(self, "_logger"):
             context = {"class": self.__class__.__name__}
             self._logger = get_logger(self.__class__.__module__, context)
         return self._logger
+
 

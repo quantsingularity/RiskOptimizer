@@ -7,6 +7,7 @@ import os
 import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flasgger import Swagger
 
 from riskoptimizer.core.config import config
 from riskoptimizer.core.logging import configure_logging, get_logger
@@ -39,8 +40,17 @@ def create_app() -> Flask:
     app = Flask(__name__)
     
     # Configure app
-    app.config['JSON_SORT_KEYS'] = False
-    app.config['MAX_CONTENT_LENGTH'] = config.api.max_content_length
+    app.config["JSON_SORT_KEYS"] = False
+    app.config["MAX_CONTENT_LENGTH"] = config.api.max_content_length
+    
+    # Configure Swagger for API documentation
+    app.config["SWAGGER"] = {
+        "title": "RiskOptimizer API",
+        "uiversion": 3,
+        "version": "1.0.0",
+        "description": "API for RiskOptimizer application, providing financial risk analysis and portfolio management."
+    }
+    Swagger(app)
     
     # Enable CORS
     CORS(app, resources={r"/api/*": {"origins": config.api.cors_origins}})
@@ -61,9 +71,29 @@ def create_app() -> Flask:
     apply_performance_monitoring(app)
     
     # Add health check endpoint
-    @app.route('/health', methods=['GET'])
+    @app.route("/health", methods=["GET"])
     def health_check():
-        """Health check endpoint."""
+        """
+        Health check endpoint.
+        --- 
+        responses:
+            200:
+                description: API is healthy
+                schema:
+                    type: object
+                    properties:
+                        status:
+                            type: string
+                            enum: [ok, degraded]
+                        version:
+                            type: string
+                        database:
+                            type: boolean
+                        cache:
+                            type: boolean
+            503:
+                description: API is degraded (e.g., database or cache connection issues)
+        """
         health = {
             "status": "ok",
             "version": "1.0.0",
@@ -79,13 +109,19 @@ def create_app() -> Flask:
         return jsonify(health), status_code
     
     # Add API documentation redirect
-    @app.route('/', methods=['GET'])
+    @app.route("/", methods=["GET"])
     def index():
-        """Redirect to API documentation."""
+        """
+        Redirect to API documentation.
+        --- 
+        responses:
+            200:
+                description: Redirects to Swagger UI documentation
+        """
         return jsonify({
             "name": "RiskOptimizer API",
             "version": "1.0.0",
-            "documentation": "/api/docs"
+            "documentation": "/apidocs/"
         })
     
     return app
@@ -119,11 +155,12 @@ def init_app() -> Flask:
 app = init_app()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run application
     app.run(
         host=config.api.host,
         port=config.api.port,
         debug=config.api.debug
     )
+
 

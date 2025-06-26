@@ -1,7 +1,3 @@
-"""
-Core configuration module for RiskOptimizer application.
-Provides centralized configuration management with environment-specific settings.
-"""
 
 import os
 from typing import Optional
@@ -58,6 +54,9 @@ class SecurityConfig:
     jwt_refresh_token_expires: int = 2592000  # 30 days
     password_hash_rounds: int = 12
     rate_limit_per_minute: int = 60
+    max_login_attempts: int = 5  # Max failed login attempts before lockout
+    lockout_time: int = 300  # Account lockout time in seconds (5 minutes)
+    data_encryption_key: str # Key for application-level data encryption
 
 
 @dataclass
@@ -149,13 +148,24 @@ class Config:
         if not jwt_secret_key:
             raise ValueError("JWT_SECRET_KEY environment variable is required")
 
+        data_encryption_key = os.getenv("DATA_ENCRYPTION_KEY")
+        if not data_encryption_key:
+            # Generate a key if not provided (for development/testing only)
+            # In production, this should be securely generated and managed externally
+            from cryptography.fernet import Fernet
+            data_encryption_key = Fernet.generate_key().decode()
+            logger.warning("DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production.")
+
         return SecurityConfig(
             secret_key=secret_key,
             jwt_secret_key=jwt_secret_key,
             jwt_access_token_expires=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600")),
             jwt_refresh_token_expires=int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "2592000")),
             password_hash_rounds=int(os.getenv("PASSWORD_HASH_ROUNDS", "12")),
-            rate_limit_per_minute=int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+            rate_limit_per_minute=int(os.getenv("RATE_LIMIT_PER_MINUTE", "60")),
+            max_login_attempts=int(os.getenv("MAX_LOGIN_ATTEMPTS", "5")),
+            lockout_time=int(os.getenv("LOCKOUT_TIME", "300")),
+            data_encryption_key=data_encryption_key
         )
 
     def _load_blockchain_config(self) -> BlockchainConfig:
@@ -207,10 +217,10 @@ class Config:
     def validate(self) -> None:
         """Validate configuration settings."""
         # Validate required environment variables
-        required_vars = ["SECRET_KEY", "JWT_SECRET_KEY"]
+        required_vars = ["SECRET_KEY", "JWT_SECRET_KEY", "DATA_ENCRYPTION_KEY"]
         missing_vars = [var for var in required_vars if not os.getenv(var)]
         if missing_vars:
-            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+            raise ValueError(f"Missing required environment variables: {", ".join(missing_vars)}")
 
         # Validate model path exists
         if not os.path.exists(self.model_path):
@@ -219,4 +229,5 @@ class Config:
 
 # Global configuration instance
 config = Config()
+
 

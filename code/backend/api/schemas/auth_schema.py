@@ -1,7 +1,3 @@
-"""
-Authentication schema for request validation.
-Provides validation functions for authentication-related API requests.
-"""
 
 import re
 from typing import Dict, Any
@@ -24,9 +20,10 @@ def validate_email(email: Any) -> str:
     if not email or not isinstance(email, str):
         raise ValidationError("Email is required", "email", email)
     
-    # Simple email validation regex
-    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    if not re.match(email_regex, email):
+    # More robust email validation regex based on RFC 5322
+    # This regex is complex, a simpler one might be preferred for UX, but this is more accurate.
+    email_regex = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x5c-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+    if not re.match(email_regex, email, re.IGNORECASE):
         raise ValidationError("Invalid email format", "email", email)
     
     return email
@@ -48,20 +45,26 @@ def validate_password(password: Any) -> str:
     if not password or not isinstance(password, str):
         raise ValidationError("Password is required", "password")
     
-    if len(password) < 8:
-        raise ValidationError("Password must be at least 8 characters long", "password")
+    # Enhanced password policy:
+    # - Minimum 12 characters
+    # - At least one digit
+    # - At least one uppercase letter
+    # - At least one lowercase letter
+    # - At least one special character (e.g., !@#$%^&*()-_+=)
+    if len(password) < 12:
+        raise ValidationError("Password must be at least 12 characters long", "password")
     
-    # Check for at least one digit
-    if not any(char.isdigit() for char in password):
+    if not re.search(r"\d", password):
         raise ValidationError("Password must contain at least one digit", "password")
     
-    # Check for at least one uppercase letter
-    if not any(char.isupper() for char in password):
+    if not re.search(r"[A-Z]", password):
         raise ValidationError("Password must contain at least one uppercase letter", "password")
     
-    # Check for at least one lowercase letter
-    if not any(char.islower() for char in password):
+    if not re.search(r"[a-z]", password):
         raise ValidationError("Password must contain at least one lowercase letter", "password")
+    
+    if not re.search(r"[!@#$%^&*()-_+=]", password):
+        raise ValidationError("Password must contain at least one special character (!@#$%^&*()-_+=)", "password")
     
     return password
 
@@ -89,7 +92,7 @@ def validate_username(username: Any) -> str:
         raise ValidationError("Username cannot exceed 30 characters", "username", username)
     
     # Check for valid characters (alphanumeric, underscore, hyphen)
-    username_regex = r'^[a-zA-Z0-9_-]+$'
+    username_regex = r"^[a-zA-Z0-9_-]+$"
     if not re.match(username_regex, username):
         raise ValidationError("Username can only contain letters, numbers, underscores, and hyphens", "username", username)
     
@@ -119,7 +122,7 @@ def validate_wallet_address(wallet_address: Any) -> str:
         return None
     
     # Ethereum address validation (0x followed by 40 hex characters)
-    eth_regex = r'^0x[a-fA-F0-9]{40}$'
+    eth_regex = r"^0x[a-fA-F0-9]{40}$"
     if not re.match(eth_regex, wallet_address):
         raise ValidationError("Invalid Ethereum wallet address format", "wallet_address", wallet_address)
     
@@ -230,4 +233,6 @@ def validate_refresh_token_request(data: Dict[str, Any]) -> Dict[str, Any]:
     return {
         'refresh_token': refresh_token
     }
+
+
 

@@ -18,7 +18,7 @@ from riskoptimizer.api.middleware.auth_middleware import jwt_required, optional_
 logger = get_logger(__name__)
 
 # Create blueprint
-risk_bp = Blueprint('risk', __name__, url_prefix='/api/v1/risk')
+risk_bp = Blueprint("risk", __name__, url_prefix="/api/v1/risk")
 
 
 def create_success_response(data: Any, message: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -63,14 +63,60 @@ def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:
     }
 
 
-@risk_bp.route('/var', methods=['POST'])
+@risk_bp.route("/var", methods=["POST"])
 @jwt_required()
 def calculate_var() -> Response:
     """
     Calculate Value at Risk (VaR) for a given set of returns.
-    
-    Returns:
-        VaR calculation result
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: VaRRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: array
+                    items:
+                        type: number
+                    description: List of historical returns.
+                confidence:
+                    type: number
+                    format: float
+                    description: Confidence level for VaR calculation (e.g., 0.95 for 95%).
+                    default: 0.95
+    responses:
+        200:
+            description: VaR calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            value_at_risk:
+                                type: number
+                                format: float
+                                description: The calculated Value at Risk.
+                    meta:
+                        type: object
+                        properties:
+                            confidence:
+                                type: number
+                            data_points:
+                                type: integer
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("VaR calculation request received")
@@ -85,8 +131,8 @@ def calculate_var() -> Response:
         
         # Calculate VaR
         var = risk_service.calculate_var(
-            returns=validated_data['returns'],
-            confidence=validated_data.get('confidence', 0.95)
+            returns=validated_data["returns"],
+            confidence=validated_data.get("confidence", 0.95)
         )
         
         # Create success response
@@ -94,8 +140,8 @@ def calculate_var() -> Response:
             data={"value_at_risk": var},
             message="VaR calculated successfully",
             meta={
-                "confidence": validated_data.get('confidence', 0.95),
-                "data_points": len(validated_data['returns'])
+                "confidence": validated_data.get("confidence", 0.95),
+                "data_points": len(validated_data["returns"])
             }
         )
         
@@ -124,14 +170,60 @@ def calculate_var() -> Response:
         return jsonify(response), 500
 
 
-@risk_bp.route('/cvar', methods=['POST'])
+@risk_bp.route("/cvar", methods=["POST"])
 @jwt_required()
 def calculate_cvar() -> Response:
     """
     Calculate Conditional Value at Risk (CVaR) for a given set of returns.
-    
-    Returns:
-        CVaR calculation result
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: CVaRRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: array
+                    items:
+                        type: number
+                    description: List of historical returns.
+                confidence:
+                    type: number
+                    format: float
+                    description: Confidence level for CVaR calculation (e.g., 0.95 for 95%).
+                    default: 0.95
+    responses:
+        200:
+            description: CVaR calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            conditional_value_at_risk:
+                                type: number
+                                format: float
+                                description: The calculated Conditional Value at Risk.
+                    meta:
+                        type: object
+                        properties:
+                            confidence:
+                                type: number
+                            data_points:
+                                type: integer
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("CVaR calculation request received")
@@ -146,8 +238,8 @@ def calculate_cvar() -> Response:
         
         # Calculate CVaR
         cvar = risk_service.calculate_cvar(
-            returns=validated_data['returns'],
-            confidence=validated_data.get('confidence', 0.95)
+            returns=validated_data["returns"],
+            confidence=validated_data.get("confidence", 0.95)
         )
         
         # Create success response
@@ -155,8 +247,8 @@ def calculate_cvar() -> Response:
             data={"conditional_value_at_risk": cvar},
             message="CVaR calculated successfully",
             meta={
-                "confidence": validated_data.get('confidence', 0.95),
-                "data_points": len(validated_data['returns'])
+                "confidence": validated_data.get("confidence", 0.95),
+                "data_points": len(validated_data["returns"])
             }
         )
         
@@ -185,14 +277,60 @@ def calculate_cvar() -> Response:
         return jsonify(response), 500
 
 
-@risk_bp.route('/sharpe-ratio', methods=['POST'])
+@risk_bp.route("/sharpe-ratio", methods=["POST"])
 @jwt_required()
 def calculate_sharpe_ratio() -> Response:
     """
     Calculate Sharpe ratio for a given set of returns.
-    
-    Returns:
-        Sharpe ratio calculation result
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: SharpeRatioRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: array
+                    items:
+                        type: number
+                    description: List of historical returns.
+                risk_free_rate:
+                    type: number
+                    format: float
+                    description: Risk-free rate (e.g., 0.01 for 1%).
+                    default: 0.0
+    responses:
+        200:
+            description: Sharpe ratio calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            sharpe_ratio:
+                                type: number
+                                format: float
+                                description: The calculated Sharpe Ratio.
+                    meta:
+                        type: object
+                        properties:
+                            risk_free_rate:
+                                type: number
+                            data_points:
+                                type: integer
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("Sharpe ratio calculation request received")
@@ -207,8 +345,8 @@ def calculate_sharpe_ratio() -> Response:
         
         # Calculate Sharpe ratio
         sharpe_ratio = risk_service.calculate_sharpe_ratio(
-            returns=validated_data['returns'],
-            risk_free_rate=validated_data.get('risk_free_rate', 0.0)
+            returns=validated_data["returns"],
+            risk_free_rate=validated_data.get("risk_free_rate", 0.0)
         )
         
         # Create success response
@@ -216,8 +354,8 @@ def calculate_sharpe_ratio() -> Response:
             data={"sharpe_ratio": sharpe_ratio},
             message="Sharpe ratio calculated successfully",
             meta={
-                "risk_free_rate": validated_data.get('risk_free_rate', 0.0),
-                "data_points": len(validated_data['returns'])
+                "risk_free_rate": validated_data.get("risk_free_rate", 0.0),
+                "data_points": len(validated_data["returns"])
             }
         )
         
@@ -246,14 +384,53 @@ def calculate_sharpe_ratio() -> Response:
         return jsonify(response), 500
 
 
-@risk_bp.route('/max-drawdown', methods=['POST'])
+@risk_bp.route("/max-drawdown", methods=["POST"])
 @jwt_required()
 def calculate_max_drawdown() -> Response:
     """
     Calculate maximum drawdown for a given set of returns.
-    
-    Returns:
-        Maximum drawdown calculation result
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: MaxDrawdownRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: array
+                    items:
+                        type: number
+                    description: List of historical returns.
+    responses:
+        200:
+            description: Maximum drawdown calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            max_drawdown:
+                                type: number
+                                format: float
+                                description: The calculated Maximum Drawdown.
+                    meta:
+                        type: object
+                        properties:
+                            data_points:
+                                type: integer
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("Max drawdown calculation request received")
@@ -268,14 +445,14 @@ def calculate_max_drawdown() -> Response:
         
         # Calculate max drawdown
         max_drawdown = risk_service.calculate_max_drawdown(
-            returns=validated_data['returns']
+            returns=validated_data["returns"]
         )
         
         # Create success response
         response = create_success_response(
             data={"max_drawdown": max_drawdown},
             message="Maximum drawdown calculated successfully",
-            meta={"data_points": len(validated_data['returns'])}
+            meta={"data_points": len(validated_data["returns"])}
         )
         
         logger.info(f"Maximum drawdown calculated successfully: {max_drawdown}")
@@ -303,14 +480,87 @@ def calculate_max_drawdown() -> Response:
         return jsonify(response), 500
 
 
-@risk_bp.route('/metrics', methods=['POST'])
+@risk_bp.route("/metrics", methods=["POST"])
 @jwt_required()
 def calculate_risk_metrics() -> Response:
     """
     Calculate comprehensive risk metrics for a portfolio.
-    
-    Returns:
-        Risk metrics calculation results
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: RiskMetricsRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: array
+                    items:
+                        type: number
+                    description: List of historical returns for the portfolio.
+                confidence:
+                    type: number
+                    format: float
+                    description: Confidence level for VaR and CVaR calculation (e.g., 0.95 for 95%).
+                    default: 0.95
+                risk_free_rate:
+                    type: number
+                    format: float
+                    description: Risk-free rate for Sharpe Ratio calculation (e.g., 0.01 for 1%).
+                    default: 0.0
+    responses:
+        200:
+            description: Risk metrics calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            expected_return:
+                                type: number
+                                format: float
+                                description: Expected return of the portfolio.
+                            volatility:
+                                type: number
+                                format: float
+                                description: Volatility (standard deviation) of the portfolio.
+                            value_at_risk:
+                                type: number
+                                format: float
+                                description: Value at Risk (VaR) of the portfolio.
+                            conditional_var:
+                                type: number
+                                format: float
+                                description: Conditional Value at Risk (CVaR) of the portfolio.
+                            sharpe_ratio:
+                                type: number
+                                format: float
+                                description: Sharpe Ratio of the portfolio.
+                            max_drawdown:
+                                type: number
+                                format: float
+                                description: Maximum Drawdown of the portfolio.
+                    meta:
+                        type: object
+                        properties:
+                            confidence:
+                                type: number
+                            risk_free_rate:
+                                type: number
+                            data_points:
+                                type: integer
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("Risk metrics calculation request received")
@@ -325,9 +575,9 @@ def calculate_risk_metrics() -> Response:
         
         # Calculate risk metrics
         metrics = risk_service.calculate_portfolio_risk_metrics(
-            returns=validated_data['returns'],
-            confidence=validated_data.get('confidence', 0.95),
-            risk_free_rate=validated_data.get('risk_free_rate', 0.0)
+            returns=validated_data["returns"],
+            confidence=validated_data.get("confidence", 0.95),
+            risk_free_rate=validated_data.get("risk_free_rate", 0.0)
         )
         
         # Create success response
@@ -335,9 +585,9 @@ def calculate_risk_metrics() -> Response:
             data=metrics,
             message="Risk metrics calculated successfully",
             meta={
-                "confidence": validated_data.get('confidence', 0.95),
-                "risk_free_rate": validated_data.get('risk_free_rate', 0.0),
-                "data_points": len(validated_data['returns'])
+                "confidence": validated_data.get("confidence", 0.95),
+                "risk_free_rate": validated_data.get("risk_free_rate", 0.0),
+                "data_points": len(validated_data["returns"])
             }
         )
         
@@ -366,14 +616,83 @@ def calculate_risk_metrics() -> Response:
         return jsonify(response), 500
 
 
-@risk_bp.route('/efficient-frontier', methods=['POST'])
+@risk_bp.route("/efficient-frontier", methods=["POST"])
 @jwt_required()
 def calculate_efficient_frontier() -> Response:
     """
     Calculate efficient frontier for a set of assets.
-    
-    Returns:
-        Efficient frontier calculation results
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: EfficientFrontierRequest
+            required:
+                - returns
+            properties:
+                returns:
+                    type: object
+                    additionalProperties:
+                        type: array
+                        items:
+                            type: number
+                    description: Dictionary where keys are asset names and values are lists of historical returns for each asset.
+                min_weight:
+                    type: number
+                    format: float
+                    description: Minimum weight for any asset in the portfolio.
+                    default: 0.0
+                max_weight:
+                    type: number
+                    format: float
+                    description: Maximum weight for any asset in the portfolio.
+                    default: 1.0
+                risk_free_rate:
+                    type: number
+                    format: float
+                    description: Risk-free rate for Sharpe Ratio calculation.
+                    default: 0.0
+                points:
+                    type: integer
+                    description: Number of points to generate on the efficient frontier.
+                    default: 20
+    responses:
+        200:
+            description: Efficient frontier calculated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            frontier_points:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        expected_return:
+                                            type: number
+                                            format: float
+                                        volatility:
+                                            type: number
+                                            format: float
+                                        sharpe_ratio:
+                                            type: number
+                                            format: float
+                                        weights:
+                                            type: object
+                                            additionalProperties:
+                                                type: number
+        400:
+            description: Invalid input data.
+        422:
+            description: Calculation error.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("Efficient frontier calculation request received")
@@ -388,11 +707,11 @@ def calculate_efficient_frontier() -> Response:
         
         # Calculate efficient frontier
         frontier_points = risk_service.calculate_efficient_frontier(
-            returns=validated_data['returns'],
-            min_weight=validated_data.get('min_weight', 0.0),
-            max_weight=validated_data.get('max_weight', 1.0),
-            risk_free_rate=validated_data.get('risk_free_rate', 0.0),
-            points=validated_data.get('points', 20)
+            returns=validated_data["returns"],
+            min_weight=validated_data.get("min_weight", 0.0),
+            max_weight=validated_data.get("max_weight", 1.0),
+            risk_free_rate=validated_data.get("risk_free_rate", 0.0),
+            points=validated_data.get("points", 20)
         )
         
         # Create success response
@@ -400,10 +719,10 @@ def calculate_efficient_frontier() -> Response:
             data={"frontier_points": frontier_points},
             message="Efficient frontier calculated successfully",
             meta={
-                "assets": list(validated_data['returns'].keys()),
-                "min_weight": validated_data.get('min_weight', 0.0),
-                "max_weight": validated_data.get('max_weight', 1.0),
-                "risk_free_rate": validated_data.get('risk_free_rate', 0.0),
+                "assets": list(validated_data["returns"].keys()),
+                "min_weight": validated_data.get("min_weight", 0.0),
+                "max_weight": validated_data.get("max_weight", 1.0),
+                "risk_free_rate": validated_data.get("risk_free_rate", 0.0),
                 "points": len(frontier_points)
             }
         )
@@ -431,4 +750,5 @@ def calculate_efficient_frontier() -> Response:
         error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
         response = create_error_response(error)
         return jsonify(response), 500
+
 

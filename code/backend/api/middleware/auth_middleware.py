@@ -1,7 +1,3 @@
-"""
-Authentication middleware for protecting API endpoints.
-Implements JWT token verification and role-based access control.
-"""
 
 from functools import wraps
 from typing import Callable, Dict, Any, List, Optional, Union
@@ -72,7 +68,7 @@ def jwt_required(roles: Optional[Union[str, List[str]]] = None) -> Callable:
     Decorator to protect API endpoints with JWT authentication.
     
     Args:
-        roles: Required role(s) for access (optional)
+        roles: Required role(s) for access (optional). Can be a single role string or a list of role strings.
         
     Returns:
         Decorated function
@@ -91,7 +87,7 @@ def jwt_required(roles: Optional[Union[str, List[str]]] = None) -> Callable:
                 g.user = {
                     'id': payload['user_id'],
                     'email': payload['email'],
-                    'role': payload.get('role', 'user')
+                    'role': payload.get('role', 'user') # Default to 'user' role if not present
                 }
                 
                 # Check role if required
@@ -178,4 +174,6 @@ def optional_jwt(func: Callable) -> Callable:
         return func(*args, **kwargs)
     
     return wrapper
+
+
 

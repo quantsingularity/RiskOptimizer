@@ -1,11 +1,8 @@
-"""
-SQLAlchemy database models for the RiskOptimizer application.
-"""
 
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, Boolean, Numeric
 from sqlalchemy.orm import relationship
 
 from riskoptimizer.infrastructure.database.session import Base
@@ -42,7 +39,7 @@ class Portfolio(Base):
     user_address = Column(String(42), index=True, nullable=False)  # For backward compatibility
     name = Column(String(255), nullable=False, default="Default Portfolio")
     description = Column(Text)
-    total_value = Column(Float, default=0.0)
+    total_value = Column(Numeric(precision=18, scale=4), default=0.0) # Changed from Float to Numeric
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -61,9 +58,9 @@ class Allocation(Base):
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
     asset_symbol = Column(String(20), nullable=False)
     asset_name = Column(String(255))
-    percentage = Column(Float, nullable=False)
-    amount = Column(Float)
-    current_price = Column(Float)
+    percentage = Column(Numeric(precision=10, scale=4), nullable=False) # Changed from Float to Numeric
+    amount = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    current_price = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -79,17 +76,17 @@ class RiskAssessment(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
-    assessment_type = Column(String(50), nullable=False)  # e.g., 'var', 'cvar', 'sharpe'
-    confidence_level = Column(Float)
+    assessment_type = Column(String(50), nullable=False)  # e.g., \'var\', \'cvar\', \'sharpe\'
+    confidence_level = Column(Numeric(precision=5, scale=4)) # Changed from Float to Numeric
     time_horizon = Column(Integer)  # in days
-    value_at_risk = Column(Float)
-    conditional_var = Column(Float)
-    expected_return = Column(Float)
-    volatility = Column(Float)
-    sharpe_ratio = Column(Float)
-    max_drawdown = Column(Float)
-    beta = Column(Float)
-    alpha = Column(Float)
+    value_at_risk = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    conditional_var = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    expected_return = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    volatility = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    sharpe_ratio = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    max_drawdown = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    beta = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    alpha = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -105,12 +102,12 @@ class MarketData(Base):
     id = Column(Integer, primary_key=True, index=True)
     symbol = Column(String(20), nullable=False, index=True)
     date = Column(DateTime, nullable=False, index=True)
-    open_price = Column(Float)
-    high_price = Column(Float)
-    low_price = Column(Float)
-    close_price = Column(Float, nullable=False)
-    volume = Column(Float)
-    adjusted_close = Column(Float)
+    open_price = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    high_price = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    low_price = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    close_price = Column(Numeric(precision=18, scale=4), nullable=False) # Changed from Float to Numeric
+    volume = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    adjusted_close = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Composite index for symbol and date
@@ -127,11 +124,11 @@ class OptimizationResult(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
-    optimization_type = Column(String(50), nullable=False)  # e.g., 'max_sharpe', 'min_variance'
-    objective_value = Column(Float)
-    expected_return = Column(Float)
-    expected_volatility = Column(Float)
-    sharpe_ratio = Column(Float)
+    optimization_type = Column(String(50), nullable=False)  # e.g., \'max_sharpe\', \'min_variance\'
+    objective_value = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    expected_return = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    expected_volatility = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
+    sharpe_ratio = Column(Numeric(precision=18, scale=4)) # Changed from Float to Numeric
     weights = Column(Text)  # JSON string of asset weights
     constraints = Column(Text)  # JSON string of constraints used
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -150,7 +147,7 @@ class TaskResult(Base):
     task_id = Column(String(255), unique=True, index=True, nullable=False)
     task_type = Column(String(100), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
-    status = Column(String(50), nullable=False)  # 'pending', 'running', 'success', 'failure'
+    status = Column(String(50), nullable=False)  # \'pending\', \'running\', \'success\', \'failure\'
     result = Column(Text)  # JSON string of task result
     error_message = Column(Text)
     started_at = Column(DateTime)
@@ -159,4 +156,5 @@ class TaskResult(Base):
     
     # Relationships
     user = relationship("User")
+
 

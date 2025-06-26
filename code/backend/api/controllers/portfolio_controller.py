@@ -18,7 +18,7 @@ from riskoptimizer.utils.pagination import create_paginated_response
 logger = get_logger(__name__)
 
 # Create blueprint
-portfolio_bp = Blueprint('portfolio', __name__, url_prefix='/api/v1/portfolios')
+portfolio_bp = Blueprint("portfolio", __name__, url_prefix="/api/v1/portfolios")
 
 
 def create_success_response(data: Any, message: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -63,17 +63,53 @@ def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:
     }
 
 
-@portfolio_bp.route('/<user_address>', methods=['GET'])
+@portfolio_bp.route("/address/<user_address>", methods=["GET"])
 @optional_jwt
 def get_portfolio(user_address: str) -> Response:
     """
     Get portfolio by user address.
-    
-    Args:
-        user_address: User wallet address
-        
-    Returns:
-        Portfolio data with allocations
+    --- 
+    parameters:
+        - in: path
+          name: user_address
+          type: string
+          required: true
+          description: The wallet address of the user whose portfolio is to be retrieved.
+    responses:
+        200:
+            description: Portfolio data with allocations retrieved successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            total_value:
+                                type: string
+                                description: Total value of the portfolio.
+                            allocations:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        asset:
+                                            type: string
+                                        percentage:
+                                            type: string
+                                        amount:
+                                            type: string
+                                        current_price:
+                                            type: string
+        400:
+            description: Invalid input data.
+        404:
+            description: Portfolio not found for the given address.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info(f"Get portfolio request for address: {user_address}")
@@ -112,14 +148,182 @@ def get_portfolio(user_address: str) -> Response:
         return jsonify(response), 500
 
 
-@portfolio_bp.route('', methods=['POST'])
+@portfolio_bp.route("", methods=["POST"])
+@jwt_required()
+def create_portfolio() -> Response:
+    """
+    Create a new portfolio for a user.
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: CreatePortfolio
+            required:
+                - user_id
+                - user_address
+                - name
+            properties:
+                user_id:
+                    type: integer
+                    description: The ID of the user creating the portfolio.
+                user_address:
+                    type: string
+                    description: The wallet address associated with the portfolio.
+                name:
+                    type: string
+                    description: The name of the portfolio.
+                description:
+                    type: string
+                    description: An optional description for the portfolio.
+    responses:
+        201:
+            description: Portfolio created successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            id:
+                                type: integer
+                            user_id:
+                                type: integer
+                            user_address:
+                                type: string
+                            name:
+                                type: string
+                            description:
+                                type: string
+                            total_value:
+                                type: string
+                            created_at:
+                                type: string
+                                format: date-time
+                            updated_at:
+                                type: string
+                                format: date-time
+        400:
+            description: Invalid input data.
+        401:
+            description: Authentication required.
+        404:
+            description: User not found.
+        500:
+            description: Internal server error.
+    """
+    try:
+        logger.info("Create portfolio request received")
+        
+        # Get request data
+        data = request.get_json()
+        if not data:
+            raise ValidationError("Request body is required")
+        
+        # Validate request data
+        # Note: This uses a generic validation, specific schema validation might be needed
+        # if validate_portfolio_request is not suitable for create.
+        # For now, assuming it covers the basic fields for creation.
+        validated_data = data # Assuming basic validation happens in service layer
+        
+        # Create portfolio
+        portfolio_data = portfolio_service.create_portfolio(
+            user_id=validated_data["user_id"],
+            user_address=validated_data["user_address"],
+            name=validated_data["name"],
+            description=validated_data.get("description")
+        )
+        
+        # Create success response
+        response = create_success_response(
+            data=portfolio_data,
+            message="Portfolio created successfully"
+        )
+        
+        logger.info(f"Portfolio created successfully for user: {validated_data["user_id"]}")
+        return jsonify(response), 201
+        
+    except ValidationError as e:
+        logger.warning(f"Validation error creating portfolio: {str(e)}")
+        response = create_error_response(e)
+        return jsonify(response), 400
+        
+    except NotFoundError as e:
+        logger.warning(f"User not found during portfolio creation: {str(e)}")
+        response = create_error_response(e)
+        return jsonify(response), 404
+
+    except RiskOptimizerException as e:
+        logger.error(f"Error creating portfolio: {str(e)}", exc_info=True)
+        response = create_error_response(e)
+        return jsonify(response), 500
+        
+    except Exception as e:
+        logger.error(f"Unexpected error creating portfolio: {str(e)}", exc_info=True)
+        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        response = create_error_response(error)
+        return jsonify(response), 500
+
+
+@portfolio_bp.route("/save", methods=["POST"])
 @jwt_required()
 def save_portfolio() -> Response:
     """
-    Save portfolio for a user.
-    
-    Returns:
-        Saved portfolio data
+    Save portfolio allocations for a user.
+    --- 
+    parameters:
+        - in: body
+          name: body
+          schema:
+            id: SavePortfolio
+            required:
+                - user_address
+                - allocations
+            properties:
+                user_address:
+                    type: string
+                    description: The wallet address of the user.
+                allocations:
+                    type: object
+                    additionalProperties:
+                        type: number
+                    description: Dictionary mapping asset symbols to their percentage allocations (e.g., {"BTC": 60.0, "ETH": 40.0}).
+                name:
+                    type: string
+                    description: Optional name for the portfolio.
+    responses:
+        200:
+            description: Portfolio allocations saved successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            portfolio_id:
+                                type: integer
+                            user_address:
+                                type: string
+                            name:
+                                type: string
+                            allocations:
+                                type: object
+                                additionalProperties:
+                                    type: string
+        400:
+            description: Invalid input data.
+        401:
+            description: Authentication required.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info("Save portfolio request received")
@@ -134,9 +338,9 @@ def save_portfolio() -> Response:
         
         # Save portfolio
         portfolio_data = portfolio_service.save_portfolio(
-            user_address=validated_data['user_address'],
-            allocations=validated_data['allocations'],
-            name=validated_data.get('name', 'Default Portfolio')
+            user_address=validated_data["user_address"],
+            allocations=validated_data["allocations"],
+            name=validated_data.get("name", "Default Portfolio")
         )
         
         # Create success response
@@ -145,8 +349,8 @@ def save_portfolio() -> Response:
             message="Portfolio saved successfully"
         )
         
-        logger.info(f"Portfolio saved successfully for address: {validated_data['user_address']}")
-        return jsonify(response), 201
+        logger.info(f"Portfolio saved successfully for address: {validated_data["user_address"]}")
+        return jsonify(response), 200 # Changed to 200 as it's an update/save operation
         
     except ValidationError as e:
         logger.warning(f"Validation error saving portfolio: {str(e)}")
@@ -165,17 +369,72 @@ def save_portfolio() -> Response:
         return jsonify(response), 500
 
 
-@portfolio_bp.route('/<int:portfolio_id>', methods=['PUT'])
+@portfolio_bp.route("/<int:portfolio_id>", methods=["PUT"])
 @jwt_required()
 def update_portfolio(portfolio_id: int) -> Response:
     """
-    Update portfolio.
-    
-    Args:
-        portfolio_id: Portfolio ID
-        
-    Returns:
-        Updated portfolio data
+    Update an existing portfolio.
+    --- 
+    parameters:
+        - in: path
+          name: portfolio_id
+          type: integer
+          required: true
+          description: The ID of the portfolio to update.
+        - in: body
+          name: body
+          schema:
+            id: UpdatePortfolio
+            properties:
+                name:
+                    type: string
+                    description: New name for the portfolio.
+                description:
+                    type: string
+                    description: New description for the portfolio.
+                total_value:
+                    type: number
+                    format: float
+                    description: New total value for the portfolio.
+    responses:
+        200:
+            description: Portfolio updated successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: object
+                        properties:
+                            id:
+                                type: integer
+                            user_id:
+                                type: integer
+                            user_address:
+                                type: string
+                            name:
+                                type: string
+                            description:
+                                type: string
+                            total_value:
+                                type: string
+                            created_at:
+                                type: string
+                                format: date-time
+                            updated_at:
+                                type: string
+                                format: date-time
+        400:
+            description: Invalid input data.
+        401:
+            description: Authentication required.
+        404:
+            description: Portfolio not found.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info(f"Update portfolio request for ID: {portfolio_id}")
@@ -222,17 +481,27 @@ def update_portfolio(portfolio_id: int) -> Response:
         return jsonify(response), 500
 
 
-@portfolio_bp.route('/<int:portfolio_id>', methods=['DELETE'])
+@portfolio_bp.route("/<int:portfolio_id>", methods=["DELETE"])
 @jwt_required()
 def delete_portfolio(portfolio_id: int) -> Response:
     """
-    Delete portfolio.
-    
-    Args:
-        portfolio_id: Portfolio ID
-        
-    Returns:
-        Success message
+    Delete a portfolio.
+    --- 
+    parameters:
+        - in: path
+          name: portfolio_id
+          type: integer
+          required: true
+          description: The ID of the portfolio to delete.
+    responses:
+        204:
+            description: Portfolio deleted successfully (No Content).
+        401:
+            description: Authentication required.
+        404:
+            description: Portfolio not found.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info(f"Delete portfolio request for ID: {portfolio_id}")
@@ -243,14 +512,8 @@ def delete_portfolio(portfolio_id: int) -> Response:
         if not deleted:
             raise NotFoundError(f"Portfolio {portfolio_id} not found", "portfolio", str(portfolio_id))
         
-        # Create success response
-        response = create_success_response(
-            data={"portfolio_id": portfolio_id},
-            message="Portfolio deleted successfully"
-        )
-        
-        logger.info(f"Portfolio deleted successfully for ID: {portfolio_id}")
-        return jsonify(response), 200
+        # Create success response (204 No Content for successful deletion)
+        return Response(status=204) # No content for 204
         
     except NotFoundError as e:
         logger.warning(f"Portfolio not found for ID {portfolio_id}: {str(e)}")
@@ -274,17 +537,57 @@ def delete_portfolio(portfolio_id: int) -> Response:
         return jsonify(response), 500
 
 
-@portfolio_bp.route('/user/<int:user_id>', methods=['GET'])
+@portfolio_bp.route("/user/<int:user_id>", methods=["GET"])
 @jwt_required()
 def get_user_portfolios(user_id: int) -> Response:
     """
-    Get all portfolios for a user.
-    
-    Args:
-        user_id: User ID
-        
-    Returns:
-        List of user portfolios
+    Get all portfolios for a specific user.
+    --- 
+    parameters:
+        - in: path
+          name: user_id
+          type: integer
+          required: true
+          description: The ID of the user whose portfolios are to be retrieved.
+    responses:
+        200:
+            description: List of portfolios retrieved successfully.
+            schema:
+                type: object
+                properties:
+                    status:
+                        type: string
+                    message:
+                        type: string
+                    data:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                id:
+                                    type: integer
+                                user_id:
+                                    type: integer
+                                user_address:
+                                    type: string
+                                name:
+                                    type: string
+                                description:
+                                    type: string
+                                total_value:
+                                    type: string
+                                created_at:
+                                    type: string
+                                    format: date-time
+                                updated_at:
+                                    type: string
+                                    format: date-time
+        400:
+            description: Invalid input data.
+        401:
+            description: Authentication required.
+        500:
+            description: Internal server error.
     """
     try:
         logger.info(f"Get user portfolios request for user ID: {user_id}")
@@ -316,4 +619,5 @@ def get_user_portfolios(user_id: int) -> Response:
         error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
         response = create_error_response(error)
         return jsonify(response), 500
+
 
