@@ -1,4 +1,3 @@
-
 import secrets
 from functools import wraps
 from typing import Callable, Dict, Any, List, Optional

@@ -1,8 +1,3 @@
-"""
-Enhanced logging utilities with correlation IDs and structured logging.
-Provides comprehensive logging capabilities for observability and debugging.
-"""
-
 import json
 import uuid
 import time
