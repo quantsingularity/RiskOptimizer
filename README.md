@@ -25,7 +25,6 @@ RiskOptimizer is an advanced portfolio risk management platform that leverages a
 - [Testing](#testing)
 - [CI/CD Pipeline](#cicd-pipeline)
 - [Contributing](#contributing)
-- [Future Enhancements](#future-enhancements)
 - [License](#license)
 
 ## Overview
