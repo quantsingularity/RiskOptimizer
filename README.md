@@ -277,14 +277,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Future Enhancements
-
-* Enhanced AI models with deep reinforcement learning
-* Integration with additional blockchain networks
-* Mobile application for on-the-go portfolio management
-* Advanced scenario analysis and stress testing tools
-* Integration with traditional banking and investment platforms
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
