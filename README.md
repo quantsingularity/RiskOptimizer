@@ -1,6 +1,6 @@
 # RiskOptimizer
 
-[![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/RiskOptimizer/ci-cd.yml?branch=main&label=CI/CD&logo=github)](https://github.com/abrar2030/RiskOptimizer/actions)
+![CI/CD Status](https://img.shields.io/github/actions/workflow/status/abrar2030/RiskOptimizer/cicd.yml?branch=main&label=CI/CD&logo=github)
 [![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](https://github.com/abrar2030/RiskOptimizer/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
