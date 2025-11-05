@@ -81,17 +81,6 @@ The mobile application is optimized for performance on a wide range of devices, 
 - Optimized network usage and offline capabilities
 - Battery usage considerations for background operations
 
-## Contribution Guidelines
-
-When contributing to the Mobile Frontend, please follow these guidelines:
-
-1. Adhere to the established code style and architecture patterns.
-2. Write comprehensive tests for all new functionality.
-3. Ensure cross-platform compatibility for all features.
-4. Optimize for both performance and user experience.
-5. Document any complex logic or non-obvious implementations.
-6. Consider accessibility implications of UI changes.
-
 ## Dependencies
 
 The Mobile Frontend relies on several key dependencies:
