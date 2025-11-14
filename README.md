@@ -4,6 +4,7 @@
 [![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](https://github.com/abrar2030/RiskOptimizer/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+
 ## 📊 AI-Powered Portfolio Risk Management Platform
 
 RiskOptimizer is an advanced portfolio risk management platform that leverages artificial intelligence and blockchain technology to help investors optimize their investment strategies and manage risk effectively.
@@ -34,51 +35,72 @@ RiskOptimizer is a comprehensive platform designed to help investors make data-d
 ## Key Features
 
 ### Risk Analysis
-* **Value at Risk (VaR) Calculation**: Estimate potential losses using historical simulation, parametric, and Monte Carlo methods
-* **Stress Testing**: Simulate portfolio performance under extreme market conditions
-* **Correlation Analysis**: Identify relationships between assets to optimize diversification
-* **Volatility Forecasting**: Predict market volatility using GARCH models and machine learning
+
+| Feature | Description |
+| :--- | :--- |
+| **Value at Risk (VaR) Calculation** | Estimate potential losses using historical simulation, parametric, and Monte Carlo methods |
+| **Stress Testing** | Simulate portfolio performance under extreme market conditions |
+| **Correlation Analysis** | Identify relationships between assets to optimize diversification |
+| **Volatility Forecasting** | Predict market volatility using GARCH models and machine learning |
 
 ### Portfolio Optimization
-* **Modern Portfolio Theory Implementation**: Optimize asset allocation based on risk-return profiles
-* **Multi-objective Optimization**: Balance risk, return, and other constraints
-* **Rebalancing Recommendations**: Receive suggestions for portfolio adjustments
-* **Tax-efficient Strategies**: Minimize tax impact while maintaining optimal allocation
+
+| Feature | Description |
+| :--- | :--- |
+| **Modern Portfolio Theory Implementation** | Optimize asset allocation based on risk-return profiles |
+| **Multi-objective Optimization** | Balance risk, return, and other constraints |
+| **Rebalancing Recommendations** | Receive suggestions for portfolio adjustments |
+| **Tax-efficient Strategies** | Minimize tax impact while maintaining optimal allocation |
 
 ### AI-Powered Predictions
-* **Market Trend Prediction**: Forecast market movements using deep learning models
-* **Anomaly Detection**: Identify unusual market patterns that may indicate opportunities or risks
-* **Sentiment Analysis**: Analyze news and social media to gauge market sentiment
-* **Personalized Recommendations**: Receive tailored investment advice based on risk tolerance
+
+| Feature | Description |
+| :--- | :--- |
+| **Market Trend Prediction** | Forecast market movements using deep learning models |
+| **Anomaly Detection** | Identify unusual market patterns that may indicate opportunities or risks |
+| **Sentiment Analysis** | Analyze news and social media to gauge market sentiment |
+| **Personalized Recommendations** | Receive tailored investment advice based on risk tolerance |
 
 ### Blockchain Integration
-* **Transparent Transaction Records**: Immutable history of portfolio changes
-* **Smart Contract Automation**: Automate investment rules and risk management protocols
-* **Decentralized Identity**: Secure user authentication and data protection
-* **Tokenized Assets**: Support for digital asset investments and tracking
+
+| Feature | Description |
+| :--- | :--- |
+| **Transparent Transaction Records** | Immutable history of portfolio changes |
+| **Smart Contract Automation** | Automate investment rules and risk management protocols |
+| **Decentralized Identity** | Secure user authentication and data protection |
+| **Tokenized Assets** | Support for digital asset investments and tracking |
 
 ## Technology Stack
 
 ### Backend
-* **Languages**: Python, Rust (for performance-critical components)
-* **Frameworks**: FastAPI, Flask
-* **Database**: PostgreSQL, MongoDB
-* **AI/ML**: TensorFlow, PyTorch, scikit-learn
-* **Blockchain**: Ethereum, Solidity, Web3.py
+
+| Component | Technologies |
+| :--- | :--- |
+| **Languages** | Python, Rust (for performance-critical components) |
+| **Frameworks** | FastAPI, Flask |
+| **Database** | PostgreSQL, MongoDB |
+| **AI/ML** | TensorFlow, PyTorch, scikit-learn |
+| **Blockchain** | Ethereum, Solidity, Web3.py |
 
 ### Frontend
-* **Framework**: React with TypeScript
-* **State Management**: Redux
-* **Data Visualization**: D3.js, Recharts
-* **Styling**: Tailwind CSS, Styled Components
-* **Web3**: ethers.js, web3.js
+
+| Component | Technologies |
+| :--- | :--- |
+| **Framework** | React with TypeScript |
+| **State Management** | Redux |
+| **Data Visualization** | D3.js, Recharts |
+| **Styling** | Tailwind CSS, Styled Components |
+| **Web3** | ethers.js, web3.js |
 
 ### Infrastructure
-* **Containerization**: Docker
-* **Orchestration**: Kubernetes
-* **CI/CD**: GitHub Actions
-* **Monitoring**: Prometheus, Grafana
-* **Cloud**: AWS, Google Cloud Platform
+
+| Component | Technologies |
+| :--- | :--- |
+| **Containerization** | Docker |
+| **Orchestration** | Kubernetes |
+| **CI/CD** | GitHub Actions |
+| **Monitoring** | Prometheus, Grafana |
+| **Cloud** | AWS, Google Cloud Platform |
 
 ## Architecture
 
@@ -110,30 +132,45 @@ RiskOptimizer/
 ## Development Workflow
 
 ### Core Algorithms
-* Neural networks for predictive modeling
-* Optimization algorithms like Markowitz Model for portfolio allocation
-* Time series forecasting models for market prediction
-* Natural language processing for sentiment analysis
+
+| Algorithm Type | Purpose |
+| :--- | :--- |
+| **Neural Networks** | Predictive modeling |
+| **Markowitz Model** | Portfolio allocation (Optimization algorithms) |
+| **Time Series Forecasting Models** | Market prediction |
+| **Natural Language Processing** | Sentiment analysis |
 
 ### 1. Blockchain Integration
-* Develop smart contracts for secure transaction tracking
-* Connect to Ethereum or Solana blockchains using web3.js or ethers.js
-* Implement decentralized identity and authentication
+
+| Step | Description |
+| :--- | :--- |
+| **Smart Contracts** | Develop for secure transaction tracking |
+| **Blockchain Connection** | Connect to Ethereum or Solana using web3.js or ethers.js |
+| **Identity** | Implement decentralized identity and authentication |
 
 ### 2. AI Model Development
-* Train models on historical market data for predictive analytics and optimization
-* Use regression models to forecast asset performance
-* Implement reinforcement learning for adaptive portfolio strategies
+
+| Step | Description |
+| :--- | :--- |
+| **Model Training** | Train models on historical market data for predictive analytics and optimization |
+| **Asset Performance** | Use regression models to forecast asset performance |
+| **Adaptive Strategies** | Implement reinforcement learning for adaptive portfolio strategies |
 
 ### 3. Backend Development
-* Build APIs to fetch blockchain data and process AI-driven recommendations
-* Securely handle user data and portfolio analytics
-* Implement real-time data processing pipelines
+
+| Step | Description |
+| :--- | :--- |
+| **API Building** | Build APIs to fetch blockchain data and process AI-driven recommendations |
+| **Data Handling** | Securely handle user data and portfolio analytics |
+| **Data Processing** | Implement real-time data processing pipelines |
 
 ### 4. Frontend Development
-* Create dashboards with React.js and integrate interactive charts using D3.js
-* Develop intuitive user interfaces for complex financial data
-* Implement responsive design for cross-device compatibility
+
+| Step | Description |
+| :--- | :--- |
+| **Dashboards** | Create dashboards with React.js and integrate interactive charts using D3.js |
+| **User Interfaces** | Develop intuitive user interfaces for complex financial data |
+| **Responsiveness** | Implement responsive design for cross-device compatibility |
 
 ## Installation and Setup
 
@@ -183,22 +220,31 @@ npm start
 ## Example Use Cases
 
 ### 1. Individual Investors
-* Analyze portfolio's risk and return metrics
-* Optimize allocation across assets based on personal preferences and market trends
-* Receive AI-powered recommendations for portfolio adjustments
-* Track investment performance with transparent blockchain records
+
+| Use Case | Benefit |
+| :--- | :--- |
+| **Risk/Return Analysis** | Analyze portfolio's risk and return metrics |
+| **Portfolio Optimization** | Optimize allocation across assets based on personal preferences and market trends |
+| **AI Recommendations** | Receive AI-powered recommendations for portfolio adjustments |
+| **Performance Tracking** | Track investment performance with transparent blockchain records |
 
 ### 2. Financial Advisors
-* Provide clients with data-driven portfolio recommendations
-* Use real-time risk metrics to manage large-scale portfolios
-* Generate comprehensive risk reports for client presentations
-* Implement automated rebalancing strategies based on risk parameters
+
+| Use Case | Benefit |
+| :--- | :--- |
+| **Client Recommendations** | Provide clients with data-driven portfolio recommendations |
+| **Large Portfolio Management** | Use real-time risk metrics to manage large-scale portfolios |
+| **Reporting** | Generate comprehensive risk reports for client presentations |
+| **Automated Rebalancing** | Implement automated rebalancing strategies based on risk parameters |
 
 ### 3. Institutional Investors
-* Conduct advanced stress testing for regulatory compliance
-* Implement sophisticated risk management protocols
-* Analyze cross-asset correlations during market volatility
-* Optimize large portfolios with multiple constraints
+
+| Use Case | Benefit |
+| :--- | :--- |
+| **Regulatory Compliance** | Conduct advanced stress testing for regulatory compliance |
+| **Risk Management** | Implement sophisticated risk management protocols |
+| **Market Volatility** | Analyze cross-asset correlations during market volatility |
+| **Complex Optimization** | Optimize large portfolios with multiple constraints |
 
 ## Testing
 
@@ -207,7 +253,7 @@ The project maintains comprehensive test coverage across all components to ensur
 ### Test Coverage
 
 | Component | Coverage | Status |
-|-----------|----------|--------|
+| :--- | :--- | :--- |
 | Risk Analysis Service | 92% | ✅ |
 | Portfolio Optimization | 88% | ✅ |
 | Market Data Service | 85% | ✅ |
@@ -217,22 +263,31 @@ The project maintains comprehensive test coverage across all components to ensur
 | Overall | 85% | ✅ |
 
 ### Unit Tests
-* Backend API endpoint tests using pytest
-* Frontend component tests with Jest and React Testing Library
-* Smart contract tests with Truffle/Hardhat
-* AI model validation tests
+
+| Test Type | Description |
+| :--- | :--- |
+| **Backend API** | Endpoint tests using pytest |
+| **Frontend Components** | Tests with Jest and React Testing Library |
+| **Smart Contracts** | Tests with Truffle/Hardhat |
+| **AI Models** | Model validation tests |
 
 ### Integration Tests
-* End-to-end tests for complete user workflows
-* API integration tests
-* Blockchain interaction tests
-* Data pipeline validation
+
+| Test Type | Description |
+| :--- | :--- |
+| **End-to-End** | Tests for complete user workflows |
+| **API** | API integration tests |
+| **Blockchain** | Blockchain interaction tests |
+| **Data Pipeline** | Data pipeline validation |
 
 ### Performance Tests
-* Load testing for API endpoints
-* Optimization algorithm performance benchmarks
-* Real-time data processing tests
-* Blockchain transaction throughput tests
+
+| Test Type | Description |
+| :--- | :--- |
+| **Load Testing** | Load testing for API endpoints |
+| **Optimization** | Optimization algorithm performance benchmarks |
+| **Real-time Data** | Real-time data processing tests |
+| **Blockchain Throughput** | Blockchain transaction throughput tests |
 
 To run tests:
 
@@ -259,22 +314,22 @@ python validate_project.py --run-tests
 
 ## CI/CD Pipeline
 
-RiskOptimizer uses GitHub Actions for continuous integration and deployment:
-
-* Automated testing on each pull request and push to main
-* Code quality checks with ESLint, Prettier, and Pylint
-* Docker image building and publishing
-* Automated deployment to staging and production environments
+| CI/CD Step | Description |
+| :--- | :--- |
+| **Automated Testing** | Runs on each pull request and push to main |
+| **Code Quality Checks** | Uses ESLint, Prettier, and Pylint |
+| **Docker Image** | Building and publishing of Docker images |
+| **Deployment** | Automated deployment to staging and production environments |
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+| Step | Command/Action |
+| :--- | :--- |
+| **Fork** | Fork the repository |
+| **Branch** | Create your feature branch (`git checkout -b feature/amazing-feature`) |
+| **Commit** | Commit your changes (`git commit -m 'Add some amazing feature'`) |
+| **Push** | Push to the branch (`git push origin feature/amazing-feature`) |
+| **Pull Request** | Open a Pull Request |
 
 ## License
 
