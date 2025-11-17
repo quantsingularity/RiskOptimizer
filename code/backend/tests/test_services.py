@@ -1,13 +1,14 @@
 # code/backend/tests/test_services.py
-import pytest
+import math  # Import math for isnan
+from unittest.mock import MagicMock, patch
+
 import numpy as np
 import pandas as pd
-import math # Import math for isnan
-from unittest.mock import patch, MagicMock
-
+import pytest
 # Assuming RiskMetrics is in services.quant_analysis
 # Adjust import path if necessary
 from services.quant_analysis import RiskMetrics
+
 
 # Test RiskMetrics.calculate_var
 def test_calculate_var():
@@ -25,6 +26,7 @@ def test_calculate_var():
     assert var_95 == pytest.approx(expected_var_95, abs=1e-4)
     assert var_99 == pytest.approx(expected_var_99, abs=1e-5)
 
+
 def test_calculate_var_empty_returns():
     """Test VaR calculation with empty returns list should return NaN."""
     # np.mean and np.std of empty list produce RuntimeWarning and return nan
@@ -33,16 +35,19 @@ def test_calculate_var_empty_returns():
         result = RiskMetrics.calculate_var([])
         assert math.isnan(result)
 
+
 # Test RiskMetrics.efficient_frontier
 # Patch the pypfopt.EfficientFrontier where it's imported inside the method
-@patch("pypfopt.EfficientFrontier") 
+@patch("pypfopt.EfficientFrontier")
 def test_efficient_frontier(mock_ef):
     """Test the efficient frontier calculation delegates correctly."""
     mock_returns = pd.Series([0.1, 0.2], index=["A", "B"])
-    mock_cov = pd.DataFrame([[0.1, 0.05], [0.05, 0.2]], index=["A", "B"], columns=["A", "B"])
-    
+    mock_cov = pd.DataFrame(
+        [[0.1, 0.05], [0.05, 0.2]], index=["A", "B"], columns=["A", "B"]
+    )
+
     mock_ef_instance = MagicMock()
-    mock_ef_instance.max_sharpe.return_value = None # Modifies inplace
+    mock_ef_instance.max_sharpe.return_value = None  # Modifies inplace
     mock_ef_instance.clean_weights.return_value = {"A": 0.6, "B": 0.4}
     mock_ef.return_value = mock_ef_instance
 
@@ -54,5 +59,5 @@ def test_efficient_frontier(mock_ef):
     mock_ef_instance.max_sharpe.assert_called_once()
     mock_ef_instance.clean_weights.assert_called_once()
 
-# Add more tests for edge cases if necessary
 
+# Add more tests for edge cases if necessary

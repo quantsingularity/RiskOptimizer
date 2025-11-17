@@ -1,7 +1,8 @@
-import unittest
-import requests
 import json
 import time
+import unittest
+
+import requests
 
 # Assuming the backend is running on localhost:8000
 BASE_URL = "http://localhost:8000/api/v1"

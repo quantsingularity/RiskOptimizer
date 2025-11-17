@@ -2,18 +2,24 @@
 Setup script for RiskOptimizer Backend
 """
 
-from setuptools import setup, find_packages
 import os
+
+from setuptools import find_packages, setup
+
 
 # Read the README file
 def read_readme():
     with open("README.md", "r", encoding="utf-8") as fh:
         return fh.read()
 
+
 # Read requirements
 def read_requirements():
     with open("requirements.txt", "r", encoding="utf-8") as fh:
-        return [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+        return [
+            line.strip() for line in fh if line.strip() and not line.startswith("#")
+        ]
+
 
 # Read version
 def read_version():
@@ -23,6 +29,7 @@ def read_version():
             if line.startswith("__version__"):
                 return line.split("=")[1].strip().strip('"').strip("'")
     return "0.1.0"
+
 
 setup(
     name="riskoptimizer-backend",
@@ -91,14 +98,13 @@ setup(
     zip_safe=False,
     keywords=[
         "finance",
-        "risk-management", 
+        "risk-management",
         "portfolio-optimization",
         "monte-carlo",
         "var",
         "cvar",
         "fastapi",
         "celery",
-        "quantitative-finance"
+        "quantitative-finance",
     ],
 )
-

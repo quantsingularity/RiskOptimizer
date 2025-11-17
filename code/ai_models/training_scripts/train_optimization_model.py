@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { Button, Slider, Box, Typography } from '@material-ui/core';
+import '@material-ui/core'
+import 'react'
+import Box
+import React
+import Slider
+import Typography }
+import { Button
+import { useState }
 
 export default function OptimizationTool() {
   const [riskTolerance, setRiskTolerance] = useState(5);

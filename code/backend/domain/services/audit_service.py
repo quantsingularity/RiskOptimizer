@@ -1,14 +1,12 @@
-
 from datetime import datetime
 from typing import Any, Dict, Optional
-
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 
 from riskoptimizer.core.exceptions import DatabaseError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.models import AuditLog
 from riskoptimizer.infrastructure.database.session import get_db_session
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 logger = get_logger(__name__)
 
@@ -30,9 +28,15 @@ class AuditService:
         """
         return session or self._session
 
-    def log_action(self, user_id: Optional[int], action_type: str, 
-                   entity_type: Optional[str] = None, entity_id: Optional[int] = None,
-                   details: Optional[Dict[str, Any]] = None, session: Optional[Session] = None) -> None:
+    def log_action(
+        self,
+        user_id: Optional[int],
+        action_type: str,
+        entity_type: Optional[str] = None,
+        entity_id: Optional[int] = None,
+        details: Optional[Dict[str, Any]] = None,
+        session: Optional[Session] = None,
+    ) -> None:
         """
         Logs an action to the audit trail.
 
@@ -43,7 +47,7 @@ class AuditService:
             entity_id (Optional[int]): The ID of the entity affected by the action.
             details (Optional[Dict[str, Any]]): A dictionary containing additional details about the action.
             session (Optional[Session]): An optional SQLAlchemy session to use. If None, a new one is created.
-        
+
         Raises:
             DatabaseError: If there's an issue logging the action to the database.
         """
@@ -55,17 +59,19 @@ class AuditService:
                 entity_type=entity_type,
                 entity_id=entity_id,
                 details=details,
-                timestamp=datetime.utcnow()
+                timestamp=datetime.utcnow(),
             )
             db.add(audit_log)
-            db.flush() # Use flush instead of commit if this is part of a larger transaction
-            logger.info(f"Audit log recorded: Action={action_type}, User={user_id}, Entity={entity_type}:{entity_id}")
+            db.flush()  # Use flush instead of commit if this is part of a larger transaction
+            logger.info(
+                f"Audit log recorded: Action={action_type}, User={user_id}, Entity={entity_type}:{entity_id}"
+            )
         except SQLAlchemyError as e:
-            logger.error(f"Failed to log audit action: {action_type}. Error: {e}", exc_info=True)
+            logger.error(
+                f"Failed to log audit action: {action_type}. Error: {e}", exc_info=True
+            )
             raise DatabaseError(f"Failed to log audit action: {e}")
 
 
 # Singleton instance
 audit_service = AuditService()
-
-

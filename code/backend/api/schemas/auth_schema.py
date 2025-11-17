@@ -1,5 +1,6 @@
 import re
-from typing import Dict, Any
+from typing import Any, Dict
+
 from riskoptimizer.core.exceptions import ValidationError
 
 

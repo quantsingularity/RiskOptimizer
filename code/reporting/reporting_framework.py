@@ -9,20 +9,21 @@ This module provides a flexible reporting framework:
 5. Report versioning and comparison
 """
 
-import os
-import json
-import datetime
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import base64
-from io import BytesIO
+import datetime
+import json
 import logging
+import os
+import uuid
 import warnings
+from io import BytesIO
+from pathlib import Path
+
 import jinja2
 import markdown
-import uuid
-from pathlib import Path
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 # Configure logging
 logging.basicConfig(

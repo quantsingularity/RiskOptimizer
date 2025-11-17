@@ -1,24 +1,24 @@
-
 import unittest
-from unittest.mock import MagicMock, patch
 from decimal import Decimal, getcontext
-import numpy as np
+from unittest.mock import MagicMock, patch
 
+import numpy as np
+from riskoptimizer.core.exceptions import CalculationError, ValidationError
 from riskoptimizer.domain.services.risk_service import RiskService
-from riskoptimizer.core.exceptions import ValidationError, CalculationError
 
 # Set precision for Decimal calculations globally for this module
 getcontext().prec = 28
+
 
 class TestRiskService(unittest.TestCase):
 
     def setUp(self):
         self.risk_service = RiskService()
-        self.risk_service.cache = MagicMock() # Mock redis_cache
+        self.risk_service.cache = MagicMock()  # Mock redis_cache
 
     def test_validate_returns_valid(self):
         self.risk_service._validate_returns([1.0, 2.0, 3.0])
-        self.risk_service._validate_returns([Decimal('0.01'), Decimal('0.02')])
+        self.risk_service._validate_returns([Decimal("0.01"), Decimal("0.02")])
 
     def test_validate_returns_invalid_type(self):
         with self.assertRaises(ValidationError):
@@ -85,15 +85,23 @@ class TestRiskService(unittest.TestCase):
         # Drawdown: 0, (0.9898-1.01)/1.01 = -0.02, (1.019494-1.019494)/1.019494 = 0, (0.97871424-1.019494)/1.019494 = -0.0399999, (1.027650-1.027650)/1.027650 = 0
         # Max drawdown should be approximately -0.0399999
         result = self.risk_service.calculate_max_drawdown(returns)
-        self.assertAlmostEqual(result, Decimal("-0.0399999999999999999999999999"), places=20)
+        self.assertAlmostEqual(
+            result, Decimal("-0.0399999999999999999999999999"), places=20
+        )
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
     @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_var")
     @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_cvar")
-    @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_sharpe_ratio")
-    @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_max_drawdown")
-    def test_calculate_portfolio_risk_metrics_success(self, mock_max_drawdown, mock_sharpe_ratio, mock_cvar, mock_var):
+    @patch(
+        "riskoptimizer.domain.services.risk_service.RiskService.calculate_sharpe_ratio"
+    )
+    @patch(
+        "riskoptimizer.domain.services.risk_service.RiskService.calculate_max_drawdown"
+    )
+    def test_calculate_portfolio_risk_metrics_success(
+        self, mock_max_drawdown, mock_sharpe_ratio, mock_cvar, mock_var
+    ):
         mock_var.return_value = Decimal("0.02")
         mock_cvar.return_value = Decimal("0.03")
         mock_sharpe_ratio.return_value = Decimal("1.5")
@@ -103,7 +111,9 @@ class TestRiskService(unittest.TestCase):
         confidence = 0.95
         risk_free_rate = 0.01
 
-        metrics = self.risk_service.calculate_portfolio_risk_metrics(returns, confidence, risk_free_rate)
+        metrics = self.risk_service.calculate_portfolio_risk_metrics(
+            returns, confidence, risk_free_rate
+        )
 
         self.assertIn("expected_return", metrics)
         self.assertIn("volatility", metrics)
@@ -128,18 +138,24 @@ class TestRiskService(unittest.TestCase):
     @patch("pypfopt.risk_models.sample_cov")
     @patch("pypfopt.expected_returns.mean_historical_return")
     @patch("pandas.DataFrame")
-    def test_calculate_efficient_frontier_success(self, mock_dataframe, mock_mean_historical_return, mock_sample_cov, mock_efficient_frontier):
+    def test_calculate_efficient_frontier_success(
+        self,
+        mock_dataframe,
+        mock_mean_historical_return,
+        mock_sample_cov,
+        mock_efficient_frontier,
+    ):
         mock_mean_historical_return.return_value = MagicMock()
         mock_sample_cov.return_value = MagicMock()
 
         mock_ef_instance = MagicMock()
         mock_ef_instance.clean_weights.side_effect = [
-            {"asset1": 0.6, "asset2": 0.4}, # min_vol_weights
-            {"asset1": 0.7, "asset2": 0.3}  # max_sharpe_weights
+            {"asset1": 0.6, "asset2": 0.4},  # min_vol_weights
+            {"asset1": 0.7, "asset2": 0.3},  # max_sharpe_weights
         ]
         mock_ef_instance.portfolio_performance.side_effect = [
-            (0.05, 0.10, 0.5), # min_vol_performance
-            (0.08, 0.12, 0.6)  # max_sharpe_performance
+            (0.05, 0.10, 0.5),  # min_vol_performance
+            (0.08, 0.12, 0.6),  # max_sharpe_performance
         ]
         mock_efficient_frontier.return_value = mock_ef_instance
 
@@ -164,15 +180,20 @@ class TestRiskService(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.risk_service.calculate_efficient_frontier({}, 0.0, 1.0, 0.0, 20)
         with self.assertRaises(ValidationError):
-            self.risk_service.calculate_efficient_frontier({"asset1": [0.01]}, 0.0, 1.0, 0.0, 20)
+            self.risk_service.calculate_efficient_frontier(
+                {"asset1": [0.01]}, 0.0, 1.0, 0.0, 20
+            )
 
     def test_calculate_efficient_frontier_pypfopt_not_installed(self):
         with patch.dict("sys.modules", {"pypfopt": None}):
             with self.assertRaises(CalculationError) as cm:
-                self.risk_service.calculate_efficient_frontier({"asset1": [0.01, 0.02], "asset2": [0.03, 0.04]})
-            self.assertIn("Required library PyPortfolioOpt not installed", str(cm.exception))
+                self.risk_service.calculate_efficient_frontier(
+                    {"asset1": [0.01, 0.02], "asset2": [0.03, 0.04]}
+                )
+            self.assertIn(
+                "Required library PyPortfolioOpt not installed", str(cm.exception)
+            )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
-
-

@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, List
 
 import psutil
 from flask import g, request
-
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 
@@ -33,7 +32,9 @@ class PerformanceMetrics:
         self.error_counts = defaultdict(int)
         self.start_time = time.time()
 
-    def record_request(self, endpoint: str, method: str, response_time: float, status_code: int) -> None:
+    def record_request(
+        self, endpoint: str, method: str, response_time: float, status_code: int
+    ) -> None:
         """
         Record a request metric.
 
@@ -78,7 +79,7 @@ class PerformanceMetrics:
                 "avg_response_time": 0,
                 "min_response_time": 0,
                 "max_response_time": 0,
-                "error_rate": 0
+                "error_rate": 0,
             }
 
         request_count = self.request_counts[key]
@@ -92,7 +93,7 @@ class PerformanceMetrics:
             "avg_response_time": sum(response_times) / len(response_times),
             "min_response_time": min(response_times),
             "max_response_time": max(response_times),
-            "error_rate": error_count / request_count if request_count > 0 else 0
+            "error_rate": error_count / request_count if request_count > 0 else 0,
         }
 
     def get_all_stats(self) -> List[Dict[str, Any]]:
@@ -139,15 +140,15 @@ class PerformanceMetrics:
                     "total": memory.total,
                     "available": memory.available,
                     "percent": memory.percent,
-                    "used": memory.used
+                    "used": memory.used,
                 },
                 "disk": {
                     "total": disk.total,
                     "used": disk.used,
                     "free": disk.free,
-                    "percent": (disk.used / disk.total) * 100
+                    "percent": (disk.used / disk.total) * 100,
                 },
-                "uptime": uptime
+                "uptime": uptime,
             }
         except Exception as e:
             logger.error(f"Error getting system stats: {e}", exc_info=True)
@@ -168,6 +169,7 @@ def monitor_performance(func: Callable) -> Callable:
     Returns:
         Decorated function
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs) -> Any:
         start_time = time.time()
@@ -256,7 +258,7 @@ class CachePerformanceMonitor:
             "cache_errors": self.cache_errors,
             "total_requests": total_requests,
             "hit_rate": hit_rate,
-            "miss_rate": 1 - hit_rate
+            "miss_rate": 1 - hit_rate,
         }
 
     def reset_stats(self) -> None:
@@ -297,7 +299,7 @@ def get_performance_report() -> Dict[str, Any]:
             "endpoints": endpoint_stats,
             "system": system_stats,
             "cache": cache_stats,
-            "redis_healthy": redis_healthy
+            "redis_healthy": redis_healthy,
         }
     except Exception as e:
         logger.error(f"Error generating performance report: {e}", exc_info=True)
@@ -348,10 +350,8 @@ def apply_performance_monitoring(app) -> None:
                     "path": request.path,
                     "status_code": response.status_code,
                     "response_time": response_time,
-                    "request_id": getattr(g, "request_id", None)
-                }
+                    "request_id": getattr(g, "request_id", None),
+                },
             )
 
         return response
-
-

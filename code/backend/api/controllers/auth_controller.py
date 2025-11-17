@@ -3,15 +3,17 @@ Authentication controller for handling user authentication API endpoints.
 Implements user registration, login, token refresh, and logout.
 """
 
-from typing import Dict, Any, Tuple
-from flask import Blueprint, request, jsonify, Response, g
+from typing import Any, Dict, Tuple
 
-from riskoptimizer.core.exceptions import ValidationError, AuthenticationError, RiskOptimizerException
+from flask import Blueprint, Response, g, jsonify, request
+from riskoptimizer.api.schemas.auth_schema import (
+    validate_login_request, validate_refresh_token_request,
+    validate_register_request)
+from riskoptimizer.core.exceptions import (AuthenticationError,
+                                           RiskOptimizerException,
+                                           ValidationError)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.auth_service import auth_service
-from riskoptimizer.api.schemas.auth_schema import (
-    validate_login_request, validate_register_request, validate_refresh_token_request
-)
 
 logger = get_logger(__name__)
 

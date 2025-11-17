@@ -1,6 +1,7 @@
 import os
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -10,6 +11,7 @@ load_dotenv()
 @dataclass
 class DatabaseConfig:
     """Database configuration settings."""
+
     host: str
     port: int
     name: str
@@ -29,6 +31,7 @@ class DatabaseConfig:
 @dataclass
 class RedisConfig:
     """Redis configuration settings."""
+
     host: str
     port: int
     db: int = 0
@@ -47,6 +50,7 @@ class RedisConfig:
 @dataclass
 class SecurityConfig:
     """Security configuration settings."""
+
     secret_key: str
     jwt_secret_key: str
     jwt_access_token_expires: int = 3600  # 1 hour
@@ -55,12 +59,13 @@ class SecurityConfig:
     rate_limit_per_minute: int = 60
     max_login_attempts: int = 5  # Max failed login attempts before lockout
     lockout_time: int = 300  # Account lockout time in seconds (5 minutes)
-    data_encryption_key: str # Key for application-level data encryption
+    data_encryption_key: str  # Key for application-level data encryption
 
 
 @dataclass
 class BlockchainConfig:
     """Blockchain configuration settings."""
+
     provider_url: str
     portfolio_tracker_address: str
     risk_management_address: str
@@ -71,6 +76,7 @@ class BlockchainConfig:
 @dataclass
 class CeleryConfig:
     """Celery configuration settings."""
+
     broker_url: str
     result_backend: str
     task_serializer: str = "json"
@@ -87,6 +93,7 @@ class CeleryConfig:
 @dataclass
 class APIConfig:
     """API configuration settings."""
+
     host: str = "0.0.0.0"
     port: int = 5000
     debug: bool = False
@@ -122,7 +129,7 @@ class Config:
             pool_size=int(os.getenv("DB_POOL_SIZE", "10")),
             max_overflow=int(os.getenv("DB_MAX_OVERFLOW", "20")),
             pool_timeout=int(os.getenv("DB_POOL_TIMEOUT", "30")),
-            pool_recycle=int(os.getenv("DB_POOL_RECYCLE", "3600"))
+            pool_recycle=int(os.getenv("DB_POOL_RECYCLE", "3600")),
         )
 
     def _load_redis_config(self) -> RedisConfig:
@@ -134,7 +141,8 @@ class Config:
             password=os.getenv("REDIS_PASSWORD"),
             socket_timeout=int(os.getenv("REDIS_SOCKET_TIMEOUT", "30")),
             socket_connect_timeout=int(os.getenv("REDIS_SOCKET_CONNECT_TIMEOUT", "30")),
-            retry_on_timeout=os.getenv("REDIS_RETRY_ON_TIMEOUT", "true").lower() == "true"
+            retry_on_timeout=os.getenv("REDIS_RETRY_ON_TIMEOUT", "true").lower()
+            == "true",
         )
 
     def _load_security_config(self) -> SecurityConfig:
@@ -152,29 +160,39 @@ class Config:
             # Generate a key if not provided (for development/testing only)
             # In production, this should be securely generated and managed externally
             from cryptography.fernet import Fernet
+
             data_encryption_key = Fernet.generate_key().decode()
-            logger.warning("DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production.")
+            logger.warning(
+                "DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production."
+            )
 
         return SecurityConfig(
             secret_key=secret_key,
             jwt_secret_key=jwt_secret_key,
             jwt_access_token_expires=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600")),
-            jwt_refresh_token_expires=int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "2592000")),
+            jwt_refresh_token_expires=int(
+                os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "2592000")
+            ),
             password_hash_rounds=int(os.getenv("PASSWORD_HASH_ROUNDS", "12")),
             rate_limit_per_minute=int(os.getenv("RATE_LIMIT_PER_MINUTE", "60")),
             max_login_attempts=int(os.getenv("MAX_LOGIN_ATTEMPTS", "5")),
             lockout_time=int(os.getenv("LOCKOUT_TIME", "300")),
-            data_encryption_key=data_encryption_key
+            data_encryption_key=data_encryption_key,
         )
 
     def _load_blockchain_config(self) -> BlockchainConfig:
         """Load blockchain configuration from environment variables."""
         return BlockchainConfig(
             provider_url=os.getenv("BLOCKCHAIN_PROVIDER", "http://localhost:8545"),
-            portfolio_tracker_address=os.getenv("PORTFOLIO_TRACKER_ADDRESS", "0x0000000000000000000000000000000000000000"),
-            risk_management_address=os.getenv("RISK_MANAGEMENT_ADDRESS", "0x0000000000000000000000000000000000000000"),
+            portfolio_tracker_address=os.getenv(
+                "PORTFOLIO_TRACKER_ADDRESS",
+                "0x0000000000000000000000000000000000000000",
+            ),
+            risk_management_address=os.getenv(
+                "RISK_MANAGEMENT_ADDRESS", "0x0000000000000000000000000000000000000000"
+            ),
             gas_limit=int(os.getenv("BLOCKCHAIN_GAS_LIMIT", "500000")),
-            gas_price=int(os.getenv("BLOCKCHAIN_GAS_PRICE", "20000000000"))
+            gas_price=int(os.getenv("BLOCKCHAIN_GAS_PRICE", "20000000000")),
         )
 
     def _load_celery_config(self) -> CeleryConfig:
@@ -188,7 +206,7 @@ class Config:
             task_serializer=os.getenv("CELERY_TASK_SERIALIZER", "json"),
             result_serializer=os.getenv("CELERY_RESULT_SERIALIZER", "json"),
             timezone=os.getenv("CELERY_TIMEZONE", "UTC"),
-            enable_utc=os.getenv("CELERY_ENABLE_UTC", "true").lower() == "true"
+            enable_utc=os.getenv("CELERY_ENABLE_UTC", "true").lower() == "true",
         )
 
     def _load_api_config(self) -> APIConfig:
@@ -199,7 +217,9 @@ class Config:
             port=int(os.getenv("API_PORT", "5000")),
             debug=os.getenv("DEBUG_MODE", "false").lower() == "true",
             cors_origins=cors_origins,
-            max_content_length=int(os.getenv("MAX_CONTENT_LENGTH", str(16 * 1024 * 1024)))
+            max_content_length=int(
+                os.getenv("MAX_CONTENT_LENGTH", str(16 * 1024 * 1024))
+            ),
         )
 
     def _get_model_path(self) -> str:
@@ -219,7 +239,9 @@ class Config:
         required_vars = ["SECRET_KEY", "JWT_SECRET_KEY", "DATA_ENCRYPTION_KEY"]
         missing_vars = [var for var in required_vars if not os.getenv(var)]
         if missing_vars:
-            raise ValueError(f"Missing required environment variables: {", ".join(missing_vars)}")
+            raise ValueError(
+                f"Missing required environment variables: {", ".join(missing_vars)}"
+            )
 
         # Validate model path exists
         if not os.path.exists(self.model_path):
@@ -228,5 +250,3 @@ class Config:
 
 # Global configuration instance
 config = Config()
-
-

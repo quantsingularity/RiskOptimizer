@@ -9,7 +9,9 @@ from typing import Any, Dict, Optional
 class RiskOptimizerException(Exception):
     """Base exception class for all RiskOptimizer-specific exceptions."""
 
-    def __init__(self, message: str, error_code: str = None, details: Dict[str, Any] = None):
+    def __init__(
+        self, message: str, error_code: str = None, details: Dict[str, Any] = None
+    ):
         self.message = message
         self.error_code = error_code or self.__class__.__name__.upper()
         self.details = details or {}
@@ -20,14 +22,16 @@ class RiskOptimizerException(Exception):
         return {
             "code": self.error_code,
             "message": self.message,
-            "details": self.details
+            "details": self.details,
         }
 
 
 class ValidationError(RiskOptimizerException):
     """Raised when input validation fails."""
 
-    def __init__(self, message: str = "Validation failed", field: str = None, value: Any = None):
+    def __init__(
+        self, message: str = "Validation failed", field: str = None, value: Any = None
+    ):
         details = {}
         if field:
             details["field"] = field
@@ -56,7 +60,12 @@ class AuthorizationError(RiskOptimizerException):
 class NotFoundError(RiskOptimizerException):
     """Raised when a requested resource is not found."""
 
-    def __init__(self, message: str = "Resource not found", resource_type: str = None, resource_id: str = None):
+    def __init__(
+        self,
+        message: str = "Resource not found",
+        resource_type: str = None,
+        resource_id: str = None,
+    ):
         details = {}
         if resource_type:
             details["resource_type"] = resource_type
@@ -78,7 +87,9 @@ class ConflictError(RiskOptimizerException):
 class DatabaseError(RiskOptimizerException):
     """Raised when database operations fail."""
 
-    def __init__(self, message: str = "Database operation failed", operation: str = None):
+    def __init__(
+        self, message: str = "Database operation failed", operation: str = None
+    ):
         details = {}
         if operation:
             details["operation"] = operation
@@ -88,7 +99,12 @@ class DatabaseError(RiskOptimizerException):
 class ExternalServiceError(RiskOptimizerException):
     """Raised when external service calls fail."""
 
-    def __init__(self, message: str = "External service error", service: str = None, status_code: int = None):
+    def __init__(
+        self,
+        message: str = "External service error",
+        service: str = None,
+        status_code: int = None,
+    ):
         details = {}
         if service:
             details["service"] = service
@@ -100,7 +116,12 @@ class ExternalServiceError(RiskOptimizerException):
 class RateLimitError(RiskOptimizerException):
     """Raised when rate limit is exceeded."""
 
-    def __init__(self, message: str = "Rate limit exceeded", limit: int = None, window: int = None):
+    def __init__(
+        self,
+        message: str = "Rate limit exceeded",
+        limit: int = None,
+        window: int = None,
+    ):
         details = {}
         if limit:
             details["limit"] = limit
@@ -122,7 +143,9 @@ class ModelError(RiskOptimizerException):
 class CalculationError(RiskOptimizerException):
     """Raised when risk calculations fail."""
 
-    def __init__(self, message: str = "Calculation failed", calculation_type: str = None):
+    def __init__(
+        self, message: str = "Calculation failed", calculation_type: str = None
+    ):
         details = {}
         if calculation_type:
             details["calculation_type"] = calculation_type
@@ -132,7 +155,9 @@ class CalculationError(RiskOptimizerException):
 class BlockchainError(RiskOptimizerException):
     """Raised when blockchain operations fail."""
 
-    def __init__(self, message: str = "Blockchain operation failed", transaction_hash: str = None):
+    def __init__(
+        self, message: str = "Blockchain operation failed", transaction_hash: str = None
+    ):
         details = {}
         if transaction_hash:
             details["transaction_hash"] = transaction_hash
@@ -152,11 +177,15 @@ class CacheError(RiskOptimizerException):
 class TaskError(RiskOptimizerException):
     """Raised when background task operations fail."""
 
-    def __init__(self, message: str = "Task operation failed", task_id: str = None, task_type: str = None):
+    def __init__(
+        self,
+        message: str = "Task operation failed",
+        task_id: str = None,
+        task_type: str = None,
+    ):
         details = {}
         if task_id:
             details["task_id"] = task_id
         if task_type:
             details["task_type"] = task_type
         super().__init__(message, "TASK_ERROR", details)
-

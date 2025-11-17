@@ -1,8 +1,10 @@
 # code/backend/tests/test_endpoints.py
-import pytest
 import json
+from unittest.mock import MagicMock, patch
+
 import pandas as pd
-from unittest.mock import patch, MagicMock
+import pytest
+
 
 # Test the index route
 def test_index(client):
@@ -13,29 +15,33 @@ def test_index(client):
     assert json_data["status"] == "success"
     assert "RiskOptimizer API is running" in json_data["message"]
 
+
 # Test the /api/optimize endpoint
 @patch("app.expected_returns")
 @patch("app.risk_models")
 @patch("app.EfficientFrontier")
-def test_optimize_portfolio_success(mock_ef, mock_risk_models, mock_expected_returns, client):
+def test_optimize_portfolio_success(
+    mock_ef, mock_risk_models, mock_expected_returns, client
+):
     """Test successful portfolio optimization."""
     # Mock dependencies
     mock_mu = pd.Series([0.1, 0.2])
     mock_s = pd.DataFrame([[0.1, 0.05], [0.05, 0.2]])
     mock_expected_returns.mean_historical_return.return_value = mock_mu
     mock_risk_models.sample_cov.return_value = mock_s
-    
+
     mock_ef_instance = MagicMock()
-    mock_ef_instance.max_sharpe.return_value = None # max_sharpe modifies inplace
+    mock_ef_instance.max_sharpe.return_value = None  # max_sharpe modifies inplace
     mock_ef_instance.clean_weights.return_value = {"AssetA": 0.6, "AssetB": 0.4}
-    mock_ef_instance.portfolio_performance.return_value = (0.15, 0.18, 0.75) # Expected return, Volatility, Sharpe Ratio
+    mock_ef_instance.portfolio_performance.return_value = (
+        0.15,
+        0.18,
+        0.75,
+    )  # Expected return, Volatility, Sharpe Ratio
     mock_ef.return_value = mock_ef_instance
 
     # Prepare request data
-    historical_data = {
-        "AssetA": [100, 101, 102, 103],
-        "AssetB": [50, 51, 50, 52]
-    }
+    historical_data = {"AssetA": [100, 101, 102, 103], "AssetB": [50, 51, 50, 52]}
     request_data = {"historical_data": historical_data}
 
     response = client.post("/api/optimize", json=request_data)
@@ -54,13 +60,15 @@ def test_optimize_portfolio_success(mock_ef, mock_risk_models, mock_expected_ret
     mock_ef_instance.clean_weights.assert_called_once()
     mock_ef_instance.portfolio_performance.assert_called_once()
 
+
 def test_optimize_portfolio_error(client):
     """Test portfolio optimization with invalid data."""
     response = client.post("/api/optimize", json={"invalid_data": []})
     assert response.status_code == 400
     json_data = response.get_json()
     assert json_data["status"] == "error"
-    assert "historical_data" in json_data["message"] # Expecting KeyError
+    assert "historical_data" in json_data["message"]  # Expecting KeyError
+
 
 # Test /api/portfolio/<address> (Blockchain)
 @patch("app.w3")
@@ -69,7 +77,10 @@ def test_get_portfolio_blockchain_success(mock_w3, client):
     mock_address = "0x1234567890123456789012345678901234567890"
     mock_w3.isAddress.return_value = True
     mock_contract_instance = MagicMock()
-    mock_contract_instance.functions.getPortfolio().call.return_value = (["ETH", "BTC"], [6000, 4000]) # Basis points
+    mock_contract_instance.functions.getPortfolio().call.return_value = (
+        ["ETH", "BTC"],
+        [6000, 4000],
+    )  # Basis points
     mock_w3.eth.contract.return_value = mock_contract_instance
 
     response = client.get(f"/api/portfolio/{mock_address}")
@@ -77,10 +88,13 @@ def test_get_portfolio_blockchain_success(mock_w3, client):
     json_data = response.get_json()
     assert json_data["status"] == "success"
     assert json_data["portfolio"]["assets"] == ["ETH", "BTC"]
-    assert json_data["portfolio"]["allocations"] == [0.6, 0.4] # Percentages
+    assert json_data["portfolio"]["allocations"] == [0.6, 0.4]  # Percentages
     mock_w3.isAddress.assert_called_once_with(mock_address)
     mock_w3.eth.contract.assert_called_once()
-    mock_contract_instance.functions.getPortfolio(mock_address).call.assert_called_once()
+    mock_contract_instance.functions.getPortfolio(
+        mock_address
+    ).call.assert_called_once()
+
 
 @patch("app.w3")
 def test_get_portfolio_blockchain_invalid_address(mock_w3, client):
@@ -95,6 +109,7 @@ def test_get_portfolio_blockchain_invalid_address(mock_w3, client):
     assert "Invalid Ethereum address" in json_data["message"]
     mock_w3.isAddress.assert_called_once_with(mock_address)
 
+
 @patch("app.w3")
 def test_get_portfolio_blockchain_contract_error(mock_w3, client):
     """Test fetching portfolio from blockchain with contract error."""
@@ -108,6 +123,7 @@ def test_get_portfolio_blockchain_contract_error(mock_w3, client):
     assert json_data["status"] == "error"
     assert "Contract Error" in json_data["message"]
 
+
 # Test /api/portfolio/db/<address>
 @patch("app.db")
 def test_get_portfolio_db_success(mock_db, client):
@@ -115,7 +131,7 @@ def test_get_portfolio_db_success(mock_db, client):
     mock_address = "0xABCDEF..."
     mock_db.get_portfolio.return_value = [
         {"asset_symbol": "AAPL", "percentage": 0.7},
-        {"asset_symbol": "GOOG", "percentage": 0.3}
+        {"asset_symbol": "GOOG", "percentage": 0.3},
     ]
 
     response = client.get(f"/api/portfolio/db/{mock_address}")
@@ -126,6 +142,7 @@ def test_get_portfolio_db_success(mock_db, client):
     assert json_data["portfolio"]["assets"] == ["AAPL", "GOOG"]
     assert json_data["portfolio"]["allocations"] == [0.7, 0.3]
     mock_db.get_portfolio.assert_called_once_with(mock_address)
+
 
 @patch("app.db")
 def test_get_portfolio_db_not_found(mock_db, client):
@@ -140,6 +157,7 @@ def test_get_portfolio_db_not_found(mock_db, client):
     assert "Portfolio not found" in json_data["message"]
     mock_db.get_portfolio.assert_called_once_with(mock_address)
 
+
 # Test /api/portfolio/save
 @patch("app.db")
 def test_save_portfolio_success(mock_db, client):
@@ -147,7 +165,7 @@ def test_save_portfolio_success(mock_db, client):
     mock_db.save_portfolio.return_value = True
     request_data = {
         "user_address": "0xSAVEME",
-        "allocations": {"TSLA": 0.5, "MSFT": 0.5}
+        "allocations": {"TSLA": 0.5, "MSFT": 0.5},
     }
 
     response = client.post("/api/portfolio/save", json=request_data)
@@ -155,16 +173,16 @@ def test_save_portfolio_success(mock_db, client):
     json_data = response.get_json()
     assert json_data["status"] == "success"
     assert "Portfolio saved successfully" in json_data["message"]
-    mock_db.save_portfolio.assert_called_once_with("0xSAVEME", {"TSLA": 0.5, "MSFT": 0.5})
+    mock_db.save_portfolio.assert_called_once_with(
+        "0xSAVEME", {"TSLA": 0.5, "MSFT": 0.5}
+    )
+
 
 @patch("app.db")
 def test_save_portfolio_db_error(mock_db, client):
     """Test saving portfolio to database with a DB error."""
     mock_db.save_portfolio.return_value = False
-    request_data = {
-        "user_address": "0xFAILME",
-        "allocations": {"AMZN": 1.0}
-    }
+    request_data = {"user_address": "0xFAILME", "allocations": {"AMZN": 1.0}}
 
     response = client.post("/api/portfolio/save", json=request_data)
     assert response.status_code == 500
@@ -172,6 +190,7 @@ def test_save_portfolio_db_error(mock_db, client):
     assert json_data["status"] == "error"
     assert "Failed to save portfolio" in json_data["message"]
     mock_db.save_portfolio.assert_called_once()
+
 
 def test_save_portfolio_bad_request(client):
     """Test saving portfolio with missing data."""
@@ -181,22 +200,23 @@ def test_save_portfolio_bad_request(client):
     assert json_data["status"] == "error"
     assert "allocations are required" in json_data["message"]
 
+
 # Test /api/risk/var
 @patch("app.RiskMetrics")
 def test_calculate_var_success(mock_risk_metrics, client):
     """Test successful VaR calculation."""
-    mock_risk_metrics.calculate_var.return_value = 0.05 # Example VaR
-    request_data = {
-        "returns": [0.01, -0.02, 0.03, -0.01, 0.02],
-        "confidence": 0.99
-    }
+    mock_risk_metrics.calculate_var.return_value = 0.05  # Example VaR
+    request_data = {"returns": [0.01, -0.02, 0.03, -0.01, 0.02], "confidence": 0.99}
 
     response = client.post("/api/risk/var", json=request_data)
     assert response.status_code == 200
     json_data = response.get_json()
     assert json_data["status"] == "success"
     assert json_data["value_at_risk"] == 0.05
-    mock_risk_metrics.calculate_var.assert_called_once_with(request_data["returns"], request_data["confidence"])
+    mock_risk_metrics.calculate_var.assert_called_once_with(
+        request_data["returns"], request_data["confidence"]
+    )
+
 
 def test_calculate_var_bad_request(client):
     """Test VaR calculation with missing returns data."""
@@ -206,8 +226,8 @@ def test_calculate_var_bad_request(client):
     assert json_data["status"] == "error"
     assert "Returns data is required" in json_data["message"]
 
+
 # Placeholder for integration tests (if needed, move to test_integration.py)
 # def test_full_optimization_flow(client):
 #     # This would likely require more complex setup/mocking or a live test DB
 #     pass
-

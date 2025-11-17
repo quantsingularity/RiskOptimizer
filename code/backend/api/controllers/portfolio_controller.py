@@ -3,16 +3,18 @@ Portfolio controller for handling portfolio-related API endpoints.
 Implements RESTful API design with proper error handling.
 """
 
-from typing import Dict, Any, List
-from flask import Blueprint, request, jsonify, Response
+from typing import Any, Dict, List
 
-from riskoptimizer.core.exceptions import ValidationError, NotFoundError, RiskOptimizerException
+from flask import Blueprint, Response, jsonify, request
+from riskoptimizer.api.middleware.auth_middleware import (jwt_required,
+                                                          optional_jwt)
+from riskoptimizer.api.schemas.portfolio_schema import (
+    validate_portfolio_request, validate_portfolio_update_request)
+from riskoptimizer.core.exceptions import (NotFoundError,
+                                           RiskOptimizerException,
+                                           ValidationError)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.portfolio_service import portfolio_service
-from riskoptimizer.api.schemas.portfolio_schema import (
-    validate_portfolio_request, validate_portfolio_update_request
-)
-from riskoptimizer.api.middleware.auth_middleware import jwt_required, optional_jwt
 from riskoptimizer.utils.pagination import create_paginated_response
 
 logger = get_logger(__name__)

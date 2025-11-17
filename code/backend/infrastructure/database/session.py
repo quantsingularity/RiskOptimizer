@@ -6,13 +6,12 @@ Provides SQLAlchemy session factory and connection pooling.
 from contextlib import contextmanager
 from typing import Generator
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import DatabaseError
 from riskoptimizer.core.logging import get_logger
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
 
 logger = get_logger(__name__)
 
@@ -38,10 +37,10 @@ Base = declarative_base()
 def get_db_session() -> Generator[Session, None, None]:
     """
     Get a database session from the session pool.
-    
+
     Yields:
         SQLAlchemy session
-        
+
     Raises:
         DatabaseError: If database operations fail
     """
@@ -63,7 +62,7 @@ def get_db_session() -> Generator[Session, None, None]:
 def init_db() -> None:
     """
     Initialize database by creating all tables.
-    
+
     This should be called during application startup.
     """
     try:
@@ -78,7 +77,7 @@ def init_db() -> None:
 def check_db_connection() -> bool:
     """
     Check database connection.
-    
+
     Returns:
         True if connection is successful, False otherwise
     """
@@ -91,4 +90,3 @@ def check_db_connection() -> bool:
     except Exception as e:
         logger.error(f"Database connection failed: {str(e)}", exc_info=True)
         return False
-

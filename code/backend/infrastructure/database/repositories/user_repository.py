@@ -1,16 +1,16 @@
 
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from cryptography.fernet import Fernet
-
 from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import DatabaseError, NotFoundError, ConflictError
+from riskoptimizer.core.exceptions import (ConflictError, DatabaseError,
+                                           NotFoundError)
 from riskoptimizer.core.logging import get_logger
+from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.database.models import User
 from riskoptimizer.infrastructure.database.session import get_db_session
-from riskoptimizer.domain.services.audit_service import audit_service
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm import Session
 
 logger = get_logger(__name__)
 

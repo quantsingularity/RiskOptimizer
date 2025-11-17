@@ -26,19 +26,19 @@ MAX_PORTFOLIO_ASSETS = 100
 # Optimization constants
 OPTIMIZATION_METHODS = [
     "mean_variance",
-    "risk_parity", 
+    "risk_parity",
     "minimum_variance",
     "maximum_sharpe",
-    "black_litterman"
+    "black_litterman",
 ]
 
 # Task queue constants
 TASK_QUEUES = {
     "default": "default",
     "risk_calculations": "risk_calculations",
-    "portfolio_operations": "portfolio_operations", 
+    "portfolio_operations": "portfolio_operations",
     "report_generation": "report_generation",
-    "maintenance": "maintenance"
+    "maintenance": "maintenance",
 }
 
 # Export main components
@@ -48,11 +48,10 @@ from .core.logging import get_logger
 
 __all__ = [
     "__version__",
-    "__author__", 
+    "__author__",
     "__email__",
     "__description__",
     "get_settings",
     "RiskOptimizerException",
-    "get_logger"
+    "get_logger",
 ]
-
