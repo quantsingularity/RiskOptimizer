@@ -12,12 +12,10 @@ It connects the backend API with Ethereum and other blockchain networks.
 
 import json
 import os
-import time
 
 # Load environment variables
 from dotenv import load_dotenv
 from eth_account import Account
-from eth_account.signers.local import LocalAccount
 from web3 import HTTPProvider, Web3
 from web3.gas_strategies.time_based import medium_gas_price_strategy
 from web3.middleware import geth_poa_middleware

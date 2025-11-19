@@ -18,10 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 # Configure logging

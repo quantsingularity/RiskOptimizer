@@ -3,21 +3,14 @@ Risk calculation tasks for asynchronous processing.
 Handles Monte Carlo simulations, VaR calculations, and other heavy computations.
 """
 
-import json
 import logging
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-from tasks.celery_app import (
-    TaskError,
-    TaskTimeoutError,
-    TaskValidationError,
-    celery_app,
-    task_result_manager,
-    task_with_progress,
-)
+from tasks.celery_app import (TaskValidationError, celery_app,
+                              task_result_manager, task_with_progress)
 
 logger = logging.getLogger(__name__)
 

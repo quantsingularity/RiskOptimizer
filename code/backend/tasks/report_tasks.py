@@ -3,35 +3,20 @@ Report generation tasks for asynchronous processing.
 Handles PDF/Excel report generation and data export tasks.
 """
 
-import base64
 import io
-import json
 import logging
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.units import inch
-from reportlab.platypus import (
-    Image,
-    Paragraph,
-    SimpleDocTemplate,
-    Spacer,
-    Table,
-    TableStyle,
-)
-from tasks.celery_app import (
-    TaskError,
-    TaskValidationError,
-    celery_app,
-    task_result_manager,
-    task_with_progress,
-)
+from reportlab.platypus import (Paragraph, SimpleDocTemplate, Spacer, Table,
+                                TableStyle)
+from tasks.celery_app import (TaskValidationError, celery_app,
+                              task_result_manager, task_with_progress)
 
 logger = logging.getLogger(__name__)
 

@@ -11,31 +11,21 @@ This module provides comprehensive tests for:
 The tests validate functionality, integration, and performance of all new features.
 """
 
-import json
-import multiprocessing as mp
 import os
 import shutil
 import sys
 import tempfile
-import time
 import unittest
-from datetime import datetime, timedelta
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from frontend.dashboard.dashboard_framework import (
-    ChartComponent,
-    Dashboard,
-    DashboardComponent,
-)
+from frontend.dashboard.dashboard_framework import ChartComponent, Dashboard
 from reporting.reporting_framework import ReportGenerator, ReportTemplate
 from risk_engine.parallel_risk_engine import ParallelRiskEngine
-
 # Import modules to test
 from risk_models.extreme_value_theory import ExtremeValueRisk
 from risk_models.ml_risk_models import CopulaMLRiskModel, MLRiskModel
@@ -173,7 +163,6 @@ class TestMLRiskModels(unittest.TestCase):
         # Generate sample return data
         np.random.seed(42)
         n_days = 1000
-        n_assets = 4
 
         # Create asset returns with some correlation
         self.asset_returns = pd.DataFrame(
@@ -383,7 +372,6 @@ class TestParallelRiskEngine(unittest.TestCase):
         # Generate sample return data
         np.random.seed(42)
         n_days = 1000
-        n_assets = 4
 
         # Create asset returns with some correlation
         self.asset_returns = pd.DataFrame(

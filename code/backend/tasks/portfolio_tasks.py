@@ -3,20 +3,14 @@ Portfolio management tasks for asynchronous processing.
 Handles portfolio optimization, rebalancing, and analysis tasks.
 """
 
-import json
 import logging
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
-from tasks.celery_app import (
-    TaskError,
-    TaskValidationError,
-    celery_app,
-    task_result_manager,
-    task_with_progress,
-)
+from tasks.celery_app import (TaskError, TaskValidationError, celery_app,
+                              task_result_manager, task_with_progress)
 
 logger = logging.getLogger(__name__)
 
@@ -247,7 +241,7 @@ def _optimize_black_litterman(mean_returns, cov_matrix, params):
     risk_aversion = params.get("risk_aversion", 3.0)
 
     # Implied equilibrium returns
-    pi = risk_aversion * np.dot(cov_matrix, market_weights)
+    risk_aversion * np.dot(cov_matrix, market_weights)
 
     # For simplicity, use implied returns as expected returns
     # In practice, investor views would be incorporated here

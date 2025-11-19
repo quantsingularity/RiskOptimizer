@@ -3,23 +3,17 @@ Risk controller for handling risk calculation API endpoints.
 Implements RESTful API design with proper error handling.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from flask import Blueprint, Response, jsonify, request
-from riskoptimizer.api.middleware.auth_middleware import jwt_required, optional_jwt
+from riskoptimizer.api.middleware.auth_middleware import jwt_required
 from riskoptimizer.api.schemas.risk_schema import (
-    validate_cvar_request,
-    validate_efficient_frontier_request,
-    validate_max_drawdown_request,
-    validate_risk_metrics_request,
-    validate_sharpe_ratio_request,
-    validate_var_request,
-)
-from riskoptimizer.core.exceptions import (
-    CalculationError,
-    RiskOptimizerException,
-    ValidationError,
-)
+    validate_cvar_request, validate_efficient_frontier_request,
+    validate_max_drawdown_request, validate_risk_metrics_request,
+    validate_sharpe_ratio_request, validate_var_request)
+from riskoptimizer.core.exceptions import (CalculationError,
+                                           RiskOptimizerException,
+                                           ValidationError)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.risk_service import risk_service
 

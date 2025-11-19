@@ -155,7 +155,6 @@ class TaskResultManager:
     def cleanup_expired_task_data(self):
         """Clean up expired task data."""
         # This is handled by Redis TTL, but can be extended for custom cleanup
-        pass
 
 
 # Global task result manager instance
@@ -166,19 +165,13 @@ task_result_manager = TaskResultManager()
 class TaskError(Exception):
     """Base exception for task errors."""
 
-    pass
-
 
 class TaskTimeoutError(TaskError):
     """Exception raised when a task times out."""
 
-    pass
-
 
 class TaskValidationError(TaskError):
     """Exception raised when task input validation fails."""
-
-    pass
 
 
 # Task decorators

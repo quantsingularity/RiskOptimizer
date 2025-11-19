@@ -1,9 +1,7 @@
 # code/backend/tests/test_endpoints.py
-import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pytest
 
 
 # Test the index route

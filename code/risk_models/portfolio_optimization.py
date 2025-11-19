@@ -1,7 +1,5 @@
 import os
-from datetime import datetime, timedelta
 
-import numpy as np
 import pandas as pd
 from pypfopt import expected_returns, risk_models
 from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
@@ -54,7 +52,7 @@ def mean_variance_optimization(prices: pd.DataFrame, target_risk: float = 0.20) 
     ef = EfficientFrontier(mu, S)
 
     # 3. Max Sharpe Ratio Portfolio
-    raw_weights_max_sharpe = ef.max_sharpe()
+    ef.max_sharpe()
     cleaned_weights_max_sharpe = ef.clean_weights()
 
     print("\nMax Sharpe Ratio Portfolio Weights:")
@@ -64,7 +62,7 @@ def mean_variance_optimization(prices: pd.DataFrame, target_risk: float = 0.20) 
 
     # 4. Min Volatility Portfolio
     ef_min_vol = EfficientFrontier(mu, S)
-    raw_weights_min_vol = ef_min_vol.min_volatility()
+    ef_min_vol.min_volatility()
     cleaned_weights_min_vol = ef_min_vol.clean_weights()
 
     print("\nMin Volatility Portfolio Weights:")

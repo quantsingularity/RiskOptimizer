@@ -2,7 +2,6 @@
 Test configuration and fixtures for the RiskOptimizer test suite.
 """
 
-import os
 import tempfile
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
@@ -38,7 +37,6 @@ def sample_returns_data():
 
     # Generate 252 days of returns for 5 assets
     n_periods = 252
-    n_assets = 5
 
     # Create realistic correlation structure
     correlation_matrix = np.array(

@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 from decimal import Decimal, getcontext
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from riskoptimizer.core.exceptions import NotFoundError, ValidationError
 from riskoptimizer.domain.services.portfolio_service import PortfolioService

@@ -1,8 +1,8 @@
 import traceback
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Dict
 
 import werkzeug.exceptions as werkzeug_exceptions
-from flask import Blueprint, Flask, Response, current_app, g, jsonify, request
+from flask import Flask, Response, current_app, g, jsonify, request
 from riskoptimizer.core.exceptions import RiskOptimizerException
 from riskoptimizer.core.logging import get_logger
 

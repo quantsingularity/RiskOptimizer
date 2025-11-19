@@ -196,7 +196,7 @@ def monitor_performance(func: Callable) -> Callable:
 
             return result
 
-        except Exception as e:
+        except Exception:
             # Calculate response time for errors
             response_time = time.time() - start_time
 

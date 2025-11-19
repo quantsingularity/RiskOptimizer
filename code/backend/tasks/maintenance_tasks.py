@@ -6,12 +6,11 @@ Handles cache management, data cleanup, and system monitoring tasks.
 import gc
 import json
 import logging
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from datetime import datetime
 
 import psutil
 import redis
-from tasks.celery_app import TaskError, celery_app, task_result_manager
+from tasks.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 

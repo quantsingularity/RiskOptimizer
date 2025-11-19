@@ -1,5 +1,5 @@
 from decimal import Decimal, getcontext
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 import numpy as np
 from riskoptimizer.core.exceptions import CalculationError, ValidationError
@@ -7,7 +7,6 @@ from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.services.quant_analysis import RiskMetrics
 from riskoptimizer.utils.cache_utils import memoize
-from scipy.stats import norm
 
 logger = get_logger(__name__)
 
@@ -374,7 +373,8 @@ class RiskService:
         try:
             # Import PyPortfolioOpt components here to avoid circular imports and ensure it's available
             import pandas as pd
-            from pypfopt import EfficientFrontier, expected_returns, risk_models
+            from pypfopt import (EfficientFrontier, expected_returns,
+                                 risk_models)
         except ImportError:
             logger.error(
                 "PyPortfolioOpt library not installed. Please install it using 'pip install PyPortfolioOpt'",

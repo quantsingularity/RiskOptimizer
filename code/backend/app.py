@@ -3,24 +3,24 @@ Main application module for the RiskOptimizer API.
 Initializes and configures the Flask application.
 """
 
-import os
 import sys
 
 from flasgger import Swagger
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from riskoptimizer.api.controllers.auth_controller import auth_bp
 from riskoptimizer.api.controllers.monitoring_controller import monitoring_bp
 from riskoptimizer.api.controllers.portfolio_controller import portfolio_bp
 from riskoptimizer.api.controllers.risk_controller import risk_bp
-from riskoptimizer.api.middleware.error_middleware import error_handling_middleware
-from riskoptimizer.api.middleware.rate_limit_middleware import apply_rate_limiting
+from riskoptimizer.api.middleware.error_middleware import \
+    error_handling_middleware
+from riskoptimizer.api.middleware.rate_limit_middleware import \
+    apply_rate_limiting
 from riskoptimizer.core.config import config
 from riskoptimizer.core.logging import configure_logging, get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
-from riskoptimizer.infrastructure.database.session import check_db_connection, init_db
-from riskoptimizer.utils.health_checks import health_manager
-from riskoptimizer.utils.observability import apply_correlation_middleware
+from riskoptimizer.infrastructure.database.session import (check_db_connection,
+                                                           init_db)
 from riskoptimizer.utils.performance import apply_performance_monitoring
 
 logger = get_logger(__name__)

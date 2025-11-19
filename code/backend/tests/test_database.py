@@ -1,7 +1,5 @@
 # code/backend/tests/test_database.py
-from unittest.mock import ANY, MagicMock, patch
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 # Assuming Database class is in db.database
 # Adjust import path if necessary

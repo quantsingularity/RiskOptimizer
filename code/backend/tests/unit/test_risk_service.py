@@ -2,7 +2,6 @@ import unittest
 from decimal import Decimal, getcontext
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 from riskoptimizer.core.exceptions import CalculationError, ValidationError
 from riskoptimizer.domain.services.risk_service import RiskService
 

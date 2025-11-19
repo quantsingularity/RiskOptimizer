@@ -6,7 +6,7 @@ Provides caching functionality for frequently accessed data and expensive comput
 import hashlib
 import json
 from functools import wraps
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional
 
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache

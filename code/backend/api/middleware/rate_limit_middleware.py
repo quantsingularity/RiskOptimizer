@@ -5,11 +5,12 @@ Implements rate limiting to prevent abuse of the API.
 
 import time
 from functools import wraps
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 
 from flask import Response, g, jsonify, request
 from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import RateLimitError, RiskOptimizerException
+from riskoptimizer.core.exceptions import (RateLimitError,
+                                           RiskOptimizerException)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 

@@ -9,7 +9,6 @@ import argparse
 import os
 import subprocess
 import sys
-import time
 
 
 def run_command(command, cwd=None):

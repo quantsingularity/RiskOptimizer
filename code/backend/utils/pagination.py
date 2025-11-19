@@ -4,7 +4,6 @@ Provides utilities for paginating large datasets in API responses.
 """
 
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
-from urllib.parse import urlencode
 
 from flask import request, url_for
 from riskoptimizer.core.exceptions import ValidationError

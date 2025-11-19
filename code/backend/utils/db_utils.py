@@ -5,7 +5,7 @@ Provides utilities for query optimization, connection pooling, and database moni
 
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List
 
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.session import get_db_session

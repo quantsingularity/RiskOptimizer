@@ -11,15 +11,11 @@ This module provides optimized risk calculation capabilities using parallel proc
 7. Parallel risk decomposition
 """
 
-import datetime
 import logging
 import multiprocessing as mp
-import os
 import time
 import warnings
-from functools import partial
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import psutil
@@ -180,7 +176,7 @@ class ParallelRiskEngine:
 
         # Get asset names and count
         assets = returns.columns
-        n_assets = len(assets)
+        len(assets)
 
         # Determine batch size
         batch_size = max(100, n_portfolios // (self.n_jobs * 10))
@@ -721,7 +717,7 @@ class ParallelRiskEngine:
             result: Dictionary of scenario results
         """
         # Calculate mean and covariance
-        mean_returns = returns.mean()
+        returns.mean()
         cov_matrix = returns.cov()
 
         # Generate random shock factors

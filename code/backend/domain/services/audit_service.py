@@ -4,7 +4,6 @@ from typing import Any, Dict, Optional
 from riskoptimizer.core.exceptions import DatabaseError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.models import AuditLog
-from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 

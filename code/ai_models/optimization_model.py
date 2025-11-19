@@ -11,7 +11,6 @@ beyond traditional mean-variance optimization to include:
 """
 
 import os
-import pickle
 
 import joblib
 import numpy as np
@@ -170,7 +169,7 @@ class AdvancedPortfolioOptimizer:
 
         # Calculate covariance matrix
         returns = historical_data.pct_change().dropna()
-        cov_matrix = returns.cov()
+        returns.cov()
 
         # Adjust returns based on risk tolerance
         risk_adjustment = (self.risk_tolerance - 5) / 10  # -0.4 to +0.5

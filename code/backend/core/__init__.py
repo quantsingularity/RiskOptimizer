@@ -3,16 +3,9 @@ Core package initialization
 """
 
 from .config import Settings, get_settings
-from .exceptions import (
-    AuthenticationError,
-    AuthorizationError,
-    ConflictError,
-    NotFoundError,
-    RateLimitError,
-    RiskOptimizerException,
-    TaskError,
-    ValidationError,
-)
+from .exceptions import (AuthenticationError, AuthorizationError,
+                         ConflictError, NotFoundError, RateLimitError,
+                         RiskOptimizerException, TaskError, ValidationError)
 from .logging import get_logger, setup_logging
 
 __all__ = [

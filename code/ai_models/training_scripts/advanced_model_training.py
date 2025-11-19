@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
 
 # Add parent directory to path to import optimization_model
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

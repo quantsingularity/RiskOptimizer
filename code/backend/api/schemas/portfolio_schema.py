@@ -3,7 +3,7 @@ Portfolio schema for request validation.
 Provides validation functions for portfolio-related API requests.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from riskoptimizer.core.exceptions import ValidationError
 

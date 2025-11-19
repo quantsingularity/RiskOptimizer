@@ -3,7 +3,7 @@ Custom exception classes for the RiskOptimizer application.
 Provides structured error handling with specific exception types.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 class RiskOptimizerException(Exception):

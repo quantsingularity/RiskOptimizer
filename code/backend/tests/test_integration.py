@@ -3,16 +3,12 @@ Integration tests for the complete RiskOptimizer system.
 Tests end-to-end workflows and API integration.
 """
 
-import asyncio
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
-from fastapi.testclient import TestClient
-from httpx import AsyncClient
 
 # Import the main application
 # from app import app  # This would import the main FastAPI app
@@ -291,7 +287,8 @@ class TestWorkflowIntegration:
     ):
         """Test complete risk analysis workflow from start to finish."""
         from tasks.report_tasks import generate_risk_report
-        from tasks.risk_tasks import monte_carlo_simulation, stress_test_portfolio
+        from tasks.risk_tasks import (monte_carlo_simulation,
+                                      stress_test_portfolio)
 
         # Step 1: Prepare portfolio data
         portfolio_data = {
@@ -361,7 +358,8 @@ class TestWorkflowIntegration:
     @patch("tasks.portfolio_tasks.task_result_manager")
     def test_portfolio_optimization_and_rebalancing_workflow(self, mock_task_manager):
         """Test complete portfolio optimization and rebalancing workflow."""
-        from tasks.portfolio_tasks import optimize_portfolio, rebalance_portfolio
+        from tasks.portfolio_tasks import (optimize_portfolio,
+                                           rebalance_portfolio)
 
         # Step 1: Optimize portfolio allocation
         assets_data = {
@@ -630,7 +628,6 @@ class TestLoadIntegration:
 
         # Simulate concurrent task execution
         concurrent_tasks = 50
-        task_types = ["monte_carlo", "optimization", "report_generation"]
 
         # Simulate task execution times
         np.random.seed(42)
