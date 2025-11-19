@@ -35,7 +35,7 @@ The mobile app will mirror the core functionalities of the web application, adap
 
 **3.4. Portfolios Section:**
 - **Portfolio List Screen:** Cards displaying each portfolio's name, total value, and perhaps a mini-chart or risk indicator. Floating action button (+) to create a new portfolio.
-- **Portfolio Detail Screen:** 
+- **Portfolio Detail Screen:**
     - Header with portfolio name, value, currency.
     - Tabs or sections for:
         - **Overview:** Key metrics (risk score, performance summary).
@@ -85,4 +85,3 @@ The mobile app will mirror the core functionalities of the web application, adap
 - Begin implementing the core structure (navigation, basic screens).
 - Implement authentication.
 - Develop components for each feature, integrating with the API.
-

@@ -15,10 +15,10 @@ const endpoints = {
   getPortfolio: (address) => `/api/portfolio/${address}`,
   getPortfolioFromDb: (address) => `/api/portfolio/db/${address}`,
   savePortfolio: '/api/portfolio/save',
-  
+
   // Optimization endpoints
   optimizePortfolio: '/api/optimize',
-  
+
   // Risk analysis endpoints
   calculateVaR: '/api/risk/var',
 };
@@ -35,7 +35,7 @@ const apiService = {
       throw error;
     }
   },
-  
+
   getPortfolioFromDb: async (address) => {
     try {
       const response = await api.get(endpoints.getPortfolioFromDb(address));
@@ -45,7 +45,7 @@ const apiService = {
       throw error;
     }
   },
-  
+
   savePortfolio: async (portfolioData) => {
     try {
       const response = await api.post(endpoints.savePortfolio, portfolioData);
@@ -55,7 +55,7 @@ const apiService = {
       throw error;
     }
   },
-  
+
   // Optimization services
   optimizePortfolio: async (historicalData, parameters = {}) => {
     try {
@@ -69,7 +69,7 @@ const apiService = {
       throw error;
     }
   },
-  
+
   // Risk analysis services
   calculateVaR: async (returns, confidence = 0.95) => {
     try {

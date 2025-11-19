@@ -20,7 +20,7 @@ const AssetAllocation = ({ allocation }) => {
         <Typography variant="h6" gutterBottom>
           Asset Allocation
         </Typography>
-        
+
         <Box sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <PieChart
             series={[
@@ -40,7 +40,7 @@ const AssetAllocation = ({ allocation }) => {
             }}
           />
         </Box>
-        
+
         <Grid container spacing={1} sx={{ mt: 1 }}>
           {data.map((item, index) => (
             <Grid item xs={6} sm={4} key={index}>

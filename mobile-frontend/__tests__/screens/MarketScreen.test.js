@@ -101,4 +101,3 @@ describe("Market Screen", () => {
   // TODO: Add tests for search functionality interaction
   // TODO: Add tests for navigation when an asset is tapped (if applicable)
 });
-

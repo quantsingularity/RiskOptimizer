@@ -56,14 +56,14 @@ export const RiskAnalysisProvider = ({ children }) => {
           }
         }
       };
-      
+
       // Update risk metrics with stress test results
       const updatedMetrics = {
         ...riskMetrics,
         stressTest: simulatedResponse.stress_test_results
       };
       setRiskMetrics(updatedMetrics);
-      
+
       return simulatedResponse;
     } catch (err) {
       setError(err.message || 'An error occurred while running stress test');

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Grid, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
   Divider,
   Button,
   IconButton,
@@ -27,7 +27,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 const Optimization = () => {
   const [riskTolerance, setRiskTolerance] = useState(50);
-  
+
   const handleRiskToleranceChange = (event, newValue) => {
     setRiskTolerance(newValue);
   };
@@ -38,8 +38,8 @@ const Optimization = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Portfolio Optimization
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           startIcon={<SaveAltIcon />}
         >
           Save Optimization
@@ -50,8 +50,8 @@ const Optimization = () => {
         {/* Optimization Parameters */}
         <Grid item xs={12} md={5}>
           <Card>
-            <CardHeader 
-              title="Optimization Parameters" 
+            <CardHeader
+              title="Optimization Parameters"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -84,13 +84,13 @@ const Optimization = () => {
                   </Grid>
                   <Grid item>
                     <Typography variant="body2" color="text.secondary">
-                      {riskTolerance < 30 ? 'Conservative' : 
+                      {riskTolerance < 30 ? 'Conservative' :
                        riskTolerance < 70 ? 'Moderate' : 'Aggressive'}
                     </Typography>
                   </Grid>
                 </Grid>
               </Box>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Optimization Method
@@ -106,7 +106,7 @@ const Optimization = () => {
                   </Select>
                 </FormControl>
               </Box>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Time Horizon
@@ -121,7 +121,7 @@ const Optimization = () => {
                   </Select>
                 </FormControl>
               </Box>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Constraints
@@ -139,9 +139,9 @@ const Optimization = () => {
                   label="Include ESG Factors"
                 />
               </Box>
-              
-              <Button 
-                variant="contained" 
+
+              <Button
+                variant="contained"
                 fullWidth
                 startIcon={<PlayArrowIcon />}
                 size="large"
@@ -156,13 +156,13 @@ const Optimization = () => {
         {/* Optimization Results */}
         <Grid item xs={12} md={7}>
           <Card>
-            <CardHeader 
-              title="Optimization Results" 
+            <CardHeader
+              title="Optimization Results"
               subheader="Maximum Sharpe Ratio Portfolio"
               action={
-                <Button 
-                  variant="outlined" 
-                  size="small" 
+                <Button
+                  variant="outlined"
+                  size="small"
                   startIcon={<TuneIcon />}
                 >
                   Adjust
@@ -212,11 +212,11 @@ const Optimization = () => {
                   </Box>
                 </Grid>
               </Grid>
-              
+
               <Typography variant="subtitle2" gutterBottom>
                 Optimized Asset Allocation
               </Typography>
-              
+
               <Box sx={{ mb: 3 }}>
                 {[
                   { name: 'Apple Inc. (AAPL)', current: 15, optimized: 12 },
@@ -241,15 +241,15 @@ const Optimization = () => {
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
+                        <Typography
+                          variant="body2"
+                          sx={{
                             fontWeight: 600,
-                            color: asset.optimized > asset.current ? 'success.main' : 
+                            color: asset.optimized > asset.current ? 'success.main' :
                                    asset.optimized < asset.current ? 'error.main' : 'text.primary'
                           }}
                         >
-                          {asset.optimized > asset.current ? '↑' : 
+                          {asset.optimized > asset.current ? '↑' :
                            asset.optimized < asset.current ? '↓' : '→'} {asset.optimized}%
                         </Typography>
                       </Grid>
@@ -257,13 +257,13 @@ const Optimization = () => {
                   </Box>
                 ))}
               </Box>
-              
+
               <Box sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   Efficient frontier chart will be implemented with real data integration
                 </Typography>
               </Box>
-              
+
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
                 <Button variant="outlined">
                   Compare with Current

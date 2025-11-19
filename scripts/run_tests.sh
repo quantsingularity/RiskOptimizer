@@ -15,14 +15,14 @@ log() {
     local level=$1
     local message=$2
     local color=$NC
-    
+
     case $level in
         "INFO") color=$BLUE ;;
         "SUCCESS") color=$GREEN ;;
         "WARNING") color=$YELLOW ;;
         "ERROR") color=$RED ;;
     esac
-    
+
     echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message${NC}"
 }
 
@@ -122,37 +122,37 @@ activate_venv() {
 run_backend_tests() {
     log "INFO" "Running backend tests..."
     cd "$PROJECT_ROOT/code/backend"
-    
+
     # Install test dependencies if needed
     pip install pytest pytest-cov pytest-xdist > /dev/null
-    
+
     # Build test command
     TEST_CMD="python -m pytest"
-    
+
     if [ "$VERBOSE" = true ]; then
         TEST_CMD="$TEST_CMD -v"
     fi
-    
+
     if [ "$COVERAGE" = true ]; then
         TEST_CMD="$TEST_CMD --cov=. --cov-report=html:$PROJECT_ROOT/test_reports/backend/coverage"
     fi
-    
+
     if [ "$PARALLEL" = true ]; then
         TEST_CMD="$TEST_CMD -xvs -n auto"
     fi
-    
+
     if [ "$QUICK" = true ]; then
         TEST_CMD="$TEST_CMD -k 'not slow'"
     fi
-    
+
     # Run tests
     mkdir -p "$PROJECT_ROOT/test_reports/backend"
     $TEST_CMD --junitxml="$PROJECT_ROOT/test_reports/backend/results.xml"
-    
+
     if [ "$COVERAGE" = true ]; then
         log "SUCCESS" "Backend test coverage report generated at $PROJECT_ROOT/test_reports/backend/coverage"
     fi
-    
+
     log "SUCCESS" "Backend tests completed"
 }
 
@@ -160,30 +160,30 @@ run_backend_tests() {
 run_frontend_tests() {
     log "INFO" "Running frontend tests..."
     cd "$PROJECT_ROOT/code/web-frontend"
-    
+
     # Build test command
     TEST_CMD="npm test"
-    
+
     if [ "$VERBOSE" = true ]; then
         TEST_CMD="$TEST_CMD -- --verbose"
     fi
-    
+
     if [ "$COVERAGE" = true ]; then
         TEST_CMD="$TEST_CMD -- --coverage --coverageDirectory=$PROJECT_ROOT/test_reports/frontend/coverage"
     fi
-    
+
     if [ "$QUICK" = true ]; then
         TEST_CMD="$TEST_CMD -- --testPathIgnorePatterns=integration"
     fi
-    
+
     # Run tests
     mkdir -p "$PROJECT_ROOT/test_reports/frontend"
     $TEST_CMD
-    
+
     if [ "$COVERAGE" = true ]; then
         log "SUCCESS" "Frontend test coverage report generated at $PROJECT_ROOT/test_reports/frontend/coverage"
     fi
-    
+
     log "SUCCESS" "Frontend tests completed"
 }
 
@@ -191,37 +191,37 @@ run_frontend_tests() {
 run_ai_model_tests() {
     log "INFO" "Running AI model tests..."
     cd "$PROJECT_ROOT/code/ai_models"
-    
+
     # Install test dependencies if needed
     pip install pytest pytest-cov > /dev/null
-    
+
     # Build test command
     TEST_CMD="python -m pytest"
-    
+
     if [ "$VERBOSE" = true ]; then
         TEST_CMD="$TEST_CMD -v"
     fi
-    
+
     if [ "$COVERAGE" = true ]; then
         TEST_CMD="$TEST_CMD --cov=. --cov-report=html:$PROJECT_ROOT/test_reports/ai_models/coverage"
     fi
-    
+
     if [ "$PARALLEL" = true ]; then
         TEST_CMD="$TEST_CMD -xvs -n auto"
     fi
-    
+
     if [ "$QUICK" = true ]; then
         TEST_CMD="$TEST_CMD -k 'not slow'"
     fi
-    
+
     # Run tests
     mkdir -p "$PROJECT_ROOT/test_reports/ai_models"
     $TEST_CMD --junitxml="$PROJECT_ROOT/test_reports/ai_models/results.xml"
-    
+
     if [ "$COVERAGE" = true ]; then
         log "SUCCESS" "AI model test coverage report generated at $PROJECT_ROOT/test_reports/ai_models/coverage"
     fi
-    
+
     log "SUCCESS" "AI model tests completed"
 }
 
@@ -229,29 +229,29 @@ run_ai_model_tests() {
 run_blockchain_tests() {
     log "INFO" "Running blockchain tests..."
     cd "$PROJECT_ROOT/code/blockchain"
-    
+
     # Build test command
     TEST_CMD="npx hardhat test"
-    
+
     if [ "$VERBOSE" = true ]; then
         TEST_CMD="$TEST_CMD --verbose"
     fi
-    
+
     if [ "$COVERAGE" = true ]; then
         TEST_CMD="npx hardhat coverage"
         mkdir -p "$PROJECT_ROOT/test_reports/blockchain/coverage"
     fi
-    
+
     # Run tests
     mkdir -p "$PROJECT_ROOT/test_reports/blockchain"
     $TEST_CMD
-    
+
     if [ "$COVERAGE" = true ]; then
         # Move coverage report to standard location
         cp -r coverage/* "$PROJECT_ROOT/test_reports/blockchain/coverage/"
         log "SUCCESS" "Blockchain test coverage report generated at $PROJECT_ROOT/test_reports/blockchain/coverage"
     fi
-    
+
     log "SUCCESS" "Blockchain tests completed"
 }
 
@@ -261,59 +261,59 @@ run_integration_tests() {
         log "INFO" "Skipping integration tests in quick mode"
         return 0
     fi
-    
+
     log "INFO" "Running integration tests..."
     cd "$PROJECT_ROOT"
-    
+
     # Start services in background for integration testing
     log "INFO" "Starting services for integration testing..."
-    
+
     # Start backend
     cd "$PROJECT_ROOT/code/backend"
     python app.py > /dev/null 2>&1 &
     BACKEND_PID=$!
-    
+
     # Start frontend
     cd "$PROJECT_ROOT/code/web-frontend"
     npm start > /dev/null 2>&1 &
     FRONTEND_PID=$!
-    
+
     # Wait for services to start
     log "INFO" "Waiting for services to start..."
     sleep 10
-    
+
     # Run integration tests
     cd "$PROJECT_ROOT/tests/integration"
-    
+
     # Build test command
     TEST_CMD="python -m pytest"
-    
+
     if [ "$VERBOSE" = true ]; then
         TEST_CMD="$TEST_CMD -v"
     fi
-    
+
     if [ "$COVERAGE" = true ]; then
         TEST_CMD="$TEST_CMD --cov=. --cov-report=html:$PROJECT_ROOT/test_reports/integration/coverage"
     fi
-    
+
     # Run tests
     mkdir -p "$PROJECT_ROOT/test_reports/integration"
     $TEST_CMD --junitxml="$PROJECT_ROOT/test_reports/integration/results.xml"
-    
+
     # Clean up background processes
     kill $BACKEND_PID $FRONTEND_PID
-    
+
     log "SUCCESS" "Integration tests completed"
 }
 
 # Function to generate combined test report
 generate_test_report() {
     log "INFO" "Generating combined test report..."
-    
+
     # Create report directory
     REPORT_DIR="$PROJECT_ROOT/test_reports"
     mkdir -p "$REPORT_DIR"
-    
+
     # Generate HTML report
     cat > "$REPORT_DIR/index.html" << EOF
 <!DOCTYPE html>
@@ -341,12 +341,12 @@ generate_test_report() {
         <p>Generated on: $(date)</p>
         <p>Components tested: $COMPONENT</p>
     </div>
-    
+
     <div class="component">
         <h2>Test Results</h2>
         <p>For detailed results, see the individual component reports in the test_reports directory.</p>
     </div>
-    
+
     <div class="component">
         <h2>Coverage Reports</h2>
         <ul>

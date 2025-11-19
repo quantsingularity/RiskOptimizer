@@ -72,7 +72,7 @@ exclude = .git,__pycache__,build,dist
 ignore = E203,W503
 EOF
   fi
-  
+
   # Run flake8 on Python files
   echo "Running flake8 on Python files..."
   python_dirs=("code/backend" "code/ai_models")
@@ -99,7 +99,7 @@ if [ -d "code/frontend" ]; then
       echo "Found package.json. Installing npm dependencies if needed..."
       npm install --no-fund || echo "Warning: npm install failed, continuing with linting..."
     fi
-    
+
     # Create a basic ESLint config if it doesn't exist
     if [ ! -f ".eslintrc.js" ] && [ ! -f ".eslintrc.json" ] && [ ! -f ".eslintrc.yml" ]; then
       echo "Creating basic ESLint configuration..."
@@ -126,7 +126,7 @@ EOF
       # Install ESLint dependencies if needed
       npm install --save-dev eslint --no-fund || echo "Warning: ESLint installation failed, continuing..."
     fi
-    
+
     echo "Running ESLint with --fix for JavaScript files..."
     # Use the existing lint script if available
     if grep -q "\"lint\":" package.json; then
@@ -156,7 +156,7 @@ if [ -d "code/blockchain" ]; then
       echo "Found package.json. Installing npm dependencies if needed..."
       npm install --no-fund || echo "Warning: npm install failed, continuing with linting..."
     fi
-    
+
     # Create a basic ESLint config if it doesn't exist
     if [ ! -f ".eslintrc.js" ] && [ ! -f ".eslintrc.json" ] && [ ! -f ".eslintrc.yml" ]; then
       echo "Creating basic ESLint configuration for blockchain..."
@@ -184,7 +184,7 @@ EOF
       # Install ESLint dependencies if needed
       npm install --save-dev eslint --no-fund || echo "Warning: ESLint installation failed, continuing..."
     fi
-    
+
     echo "Running ESLint with --fix for JavaScript files..."
     # Use the existing lint script if available
     if grep -q "\"lint\":" package.json; then
@@ -210,11 +210,11 @@ echo "Running HTMLHint for HTML files..."
 if [ -d "code/frontend" ]; then
   (
     cd code/frontend
-    
+
     # Install HTMLHint if needed
     echo "Installing HTMLHint..."
     npm install --save-dev htmlhint --no-fund || echo "Warning: HTMLHint installation failed, continuing..."
-    
+
     # Create a basic HTMLHint config if it doesn't exist
     if [ ! -f ".htmlhintrc" ]; then
       echo "Creating basic HTMLHint configuration..."
@@ -233,7 +233,7 @@ if [ -d "code/frontend" ]; then
 }
 EOF
     fi
-    
+
     echo "Running HTMLHint for HTML files..."
     # Find all HTML files and run HTMLHint
     html_files=$(find . -type f -name "*.html")
@@ -256,11 +256,11 @@ echo "Running Stylelint for CSS files..."
 if [ -d "code/frontend" ]; then
   (
     cd code/frontend
-    
+
     # Install Stylelint if needed
     echo "Installing Stylelint..."
     npm install --save-dev stylelint stylelint-config-standard --no-fund || echo "Warning: Stylelint installation failed, continuing..."
-    
+
     # Create a basic Stylelint config if it doesn't exist
     if [ ! -f ".stylelintrc.json" ]; then
       echo "Creating basic Stylelint configuration..."
@@ -295,7 +295,7 @@ if [ -d "code/frontend" ]; then
 }
 EOF
     fi
-    
+
     echo "Running Stylelint with --fix for CSS files..."
     # Find all CSS files and run Stylelint
     css_files=$(find . -type f -name "*.css")
@@ -316,15 +316,15 @@ fi
 if [ "$DOS2UNIX_AVAILABLE" = true ]; then
   echo "----------------------------------------"
   echo "Converting line endings to Unix format..."
-  
+
   # Define file extensions to process
   extensions=("py" "js" "html" "css" "json" "md" "sh")
-  
+
   for ext in "${extensions[@]}"; do
     echo "Processing .$ext files..."
     find code -type f -name "*.$ext" -exec dos2unix {} \; 2>/dev/null || echo "No .$ext files found or dos2unix failed."
   done
-  
+
   echo "Line ending conversion completed."
 else
   echo "----------------------------------------"
@@ -337,11 +337,11 @@ echo "Running Prettier for consistent code formatting..."
 if [ -d "code/frontend" ]; then
   (
     cd code/frontend
-    
+
     # Install Prettier if needed
     echo "Installing Prettier..."
     npm install --save-dev prettier --no-fund || echo "Warning: Prettier installation failed, continuing..."
-    
+
     # Create a basic Prettier config if it doesn't exist
     if [ ! -f ".prettierrc.json" ]; then
       echo "Creating basic Prettier configuration..."
@@ -355,7 +355,7 @@ if [ -d "code/frontend" ]; then
 }
 EOF
     fi
-    
+
     echo "Running Prettier with --write for JavaScript, HTML, and CSS files..."
     npx prettier --write "**/*.{js,html,css}" || {
       echo "Prettier encountered some issues. Please review the above errors."
@@ -370,10 +370,10 @@ fi
 cleanup_backup_files() {
   echo "----------------------------------------"
   echo "Cleaning up unnecessary backup (.bak) and temporary (.tmp) files..."
-  
+
   # Define directories to clean up
   cleanup_directories=("." "code" "code/backend" "code/frontend" "code/blockchain" "code/ai_models")
-  
+
   for dir in "${cleanup_directories[@]}"; do
     if [ -d "$dir" ]; then
       echo "Cleaning up in directory: $dir"
@@ -384,7 +384,7 @@ cleanup_backup_files() {
       echo "Directory $dir not found. Skipping cleanup for this directory."
     fi
   done
-  
+
   echo "Cleanup completed."
 }
 

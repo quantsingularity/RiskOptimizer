@@ -31,4 +31,3 @@ security/
 - Regular security reviews and updates are mandatory
 - Incident response procedures must be tested quarterly
 - Security metrics and KPIs must be monitored continuously
-

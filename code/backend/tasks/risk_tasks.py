@@ -10,9 +10,14 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-from tasks.celery_app import (TaskError, TaskTimeoutError, TaskValidationError,
-                              celery_app, task_result_manager,
-                              task_with_progress)
+from tasks.celery_app import (
+    TaskError,
+    TaskTimeoutError,
+    TaskValidationError,
+    celery_app,
+    task_result_manager,
+    task_with_progress,
+)
 
 logger = logging.getLogger(__name__)
 

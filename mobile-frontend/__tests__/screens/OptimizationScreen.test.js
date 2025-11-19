@@ -19,7 +19,7 @@ import { View, Text, Button, ActivityIndicator, StyleSheet, ScrollView } from "r
 const MockPicker = ({ selectedValue, onValueChange, children, testID }) => (
   <View testID={testID}>
     <Text>Selected: {selectedValue}</Text>
-    {/* Simulate changing value for testing */} 
+    {/* Simulate changing value for testing */}
     <Button title="Change Value (Mock)" onPress={() => onValueChange("mock_change")} />
     {children}
   </View>
@@ -185,4 +185,3 @@ describe("Optimization Screen", () => {
 
   // Add tests for picker value changes if using a real Picker component and context
 });
-

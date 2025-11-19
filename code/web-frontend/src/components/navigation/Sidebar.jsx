@@ -1,13 +1,13 @@
 import React from 'react';
-import { 
-  Drawer, 
-  List, 
-  ListItem, 
-  ListItemIcon, 
-  ListItemText, 
-  Divider, 
-  Box, 
-  useTheme 
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Box,
+  useTheme
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -41,14 +41,14 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
 
   const drawer = (
     <div>
-      <Box sx={{ 
-        height: 64, 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
-        <Box 
+        <Box
           component="img"
           src="/favicon.ico"
           alt="RiskOptimizer Logo"
@@ -57,11 +57,11 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
       </Box>
       <List sx={{ pt: 2 }}>
         {menuItems.map((item) => (
-          <ListItem 
-            button 
+          <ListItem
+            button
             key={item.text}
             onClick={() => handleNavigation(item.path)}
-            sx={{ 
+            sx={{
               mb: 1,
               mx: 1,
               borderRadius: 1,
@@ -71,15 +71,15 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
               }
             }}
           >
-            <ListItemIcon sx={{ 
+            <ListItemIcon sx={{
               color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
               minWidth: 40
             }}>
               {item.icon}
             </ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
-              sx={{ 
+            <ListItemText
+              primary={item.text}
+              sx={{
                 color: location.pathname === item.path ? 'primary.main' : 'text.primary',
                 '& .MuiTypography-root': {
                   fontWeight: location.pathname === item.path ? 600 : 400,
@@ -116,8 +116,8 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
         }}
         sx={{
           display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { 
-            boxSizing: 'border-box', 
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
             backgroundColor: 'background.paper',
           },
@@ -125,14 +125,14 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
       >
         {drawer}
       </Drawer>
-      
+
       {/* Desktop drawer */}
       <Drawer
         variant="permanent"
         sx={{
           display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { 
-            boxSizing: 'border-box', 
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
             backgroundColor: 'background.paper',
             borderRight: '1px solid rgba(255, 255, 255, 0.1)'

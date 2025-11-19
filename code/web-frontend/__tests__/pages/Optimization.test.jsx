@@ -175,4 +175,3 @@ describe("Optimization Page", () => {
 
   // Add tests for displaying child components like OptimizationTool if used
 });
-

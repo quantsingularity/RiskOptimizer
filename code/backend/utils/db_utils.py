@@ -150,8 +150,8 @@ class DatabaseOptimizer:
             # Get index information (PostgreSQL specific)
             index_query = text(
                 """
-                SELECT indexname, indexdef 
-                FROM pg_indexes 
+                SELECT indexname, indexdef
+                FROM pg_indexes
                 WHERE tablename = :table_name
             """
             )

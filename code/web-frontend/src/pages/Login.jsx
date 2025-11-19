@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  Paper, 
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Paper,
   Avatar,
   CircularProgress,
   Alert
@@ -23,12 +23,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (!address) {
       setError('Please enter your wallet address');
       return;
     }
-    
+
     const success = await login(address);
     if (success) {
       navigate('/');
@@ -67,13 +67,13 @@ const Login = () => {
           <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             RiskOptimizer Login
           </Typography>
-          
+
           {error && (
             <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
               {error}
             </Alert>
           )}
-          
+
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
             <TextField
               margin="normal"
@@ -97,7 +97,7 @@ const Login = () => {
             >
               {loading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
-            
+
             <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2 }}>
               For demo purposes, you can use any wallet address.
             </Typography>

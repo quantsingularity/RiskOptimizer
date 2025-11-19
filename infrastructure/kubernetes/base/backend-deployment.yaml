@@ -60,16 +60,16 @@ spec:
         seccompProfile:
           type: RuntimeDefault
         supplementalGroups: [10001]
-      
+
       # Service Account
       serviceAccountName: riskoptimizer-backend
       automountServiceAccountToken: true
-      
+
       # Node Selection and Affinity
       nodeSelector:
         node-type: application
         security-zone: internal
-      
+
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -94,14 +94,14 @@ spec:
                 operator: In
                 values:
                 - internal
-      
+
       # Tolerations
       tolerations:
       - key: "application-workload"
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
-      
+
       # Init Containers
       initContainers:
       - name: database-migration
@@ -134,13 +134,13 @@ spec:
           requests:
             cpu: 100m
             memory: 256Mi
-      
+
       # Main Containers
       containers:
       - name: riskoptimizer-backend
         image: riskoptimizer/backend:v1.0.0
         imagePullPolicy: Always
-        
+
         # Security Context
         securityContext:
           runAsNonRoot: true
@@ -153,7 +153,7 @@ spec:
             - ALL
             add:
             - NET_BIND_SERVICE
-        
+
         # Ports
         ports:
         - name: http
@@ -165,7 +165,7 @@ spec:
         - name: health
           containerPort: 8082
           protocol: TCP
-        
+
         # Environment Variables
         env:
         - name: NODE_ENV
@@ -208,14 +208,14 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        
+
         # Environment from Secrets and ConfigMaps
         envFrom:
         - secretRef:
             name: riskoptimizer-app-secrets
         - configMapRef:
             name: riskoptimizer-app-config
-        
+
         # Volume Mounts
         volumeMounts:
         - name: tmp-volume
@@ -233,7 +233,7 @@ spec:
         - name: app-config
           mountPath: /app/config
           readOnly: true
-        
+
         # Resource Limits and Requests
         resources:
           limits:
@@ -244,7 +244,7 @@ spec:
             cpu: 500m
             memory: 1Gi
             ephemeral-storage: 1Gi
-        
+
         # Health Checks
         livenessProbe:
           httpGet:
@@ -256,7 +256,7 @@ spec:
           timeoutSeconds: 10
           successThreshold: 1
           failureThreshold: 3
-        
+
         readinessProbe:
           httpGet:
             path: /health/ready
@@ -267,7 +267,7 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 3
-        
+
         startupProbe:
           httpGet:
             path: /health/startup
@@ -278,7 +278,7 @@ spec:
           timeoutSeconds: 3
           successThreshold: 1
           failureThreshold: 30
-        
+
         # Lifecycle Hooks
         lifecycle:
           preStop:
@@ -287,7 +287,7 @@ spec:
               - /bin/sh
               - -c
               - "sleep 15"
-      
+
       # Sidecar Containers
       - name: vault-agent
         image: vault:1.12.0
@@ -314,7 +314,7 @@ spec:
           requests:
             cpu: 50m
             memory: 64Mi
-      
+
       - name: log-forwarder
         image: fluent/fluent-bit:1.9.0
         securityContext:
@@ -340,7 +340,7 @@ spec:
           requests:
             cpu: 50m
             memory: 64Mi
-      
+
       # Volumes
       volumes:
       - name: tmp-volume
@@ -369,11 +369,11 @@ spec:
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
-      
+
       # Image Pull Secrets
       imagePullSecrets:
       - name: riskoptimizer-registry-secret
-      
+
       # DNS Configuration
       dnsPolicy: ClusterFirst
       dnsConfig:
@@ -381,13 +381,12 @@ spec:
         - name: ndots
           value: "2"
         - name: edns0
-      
+
       # Termination Grace Period
       terminationGracePeriodSeconds: 30
-      
+
       # Priority and Preemption
       priorityClassName: high-priority
-      
+
       # Restart Policy
       restartPolicy: Always
-

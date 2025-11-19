@@ -230,30 +230,29 @@ api.ssl.truststore.password: "${LOGSTASH_TRUSTSTORE_PASSWORD}"
 riskoptimizer:
   # Environment
   environment: production
-  
+
   # Data retention policies
   retention:
     application_logs: 90
     security_logs: 730
     audit_logs: 2555
     performance_logs: 30
-  
+
   # Compliance settings
   compliance:
     gdpr_enabled: true
     pci_dss_enabled: true
     sox_enabled: true
     data_classification: true
-  
+
   # Security settings
   security:
     field_anonymization: true
     pii_detection: true
     sensitive_data_masking: true
-  
+
   # Performance settings
   performance:
     batch_processing: true
     parallel_processing: true
     memory_optimization: true
-

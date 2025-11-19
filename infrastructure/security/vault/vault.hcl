@@ -4,7 +4,7 @@
 storage "consul" {
   address = "127.0.0.1:8500"
   path    = "vault/"
-  
+
   # Enable TLS for Consul communication
   scheme = "https"
   tls_ca_file = "/opt/vault/tls/consul-ca.pem"
@@ -16,7 +16,7 @@ storage "consul" {
 ha_storage "consul" {
   address = "127.0.0.1:8500"
   path    = "vault/"
-  
+
   scheme = "https"
   tls_ca_file = "/opt/vault/tls/consul-ca.pem"
   tls_cert_file = "/opt/vault/tls/consul-cert.pem"
@@ -64,4 +64,3 @@ disable_mlock = false
 
 # Plugin directory
 plugin_directory = "/opt/vault/plugins"
-

@@ -167,4 +167,3 @@ echo "4. Refer to '$PROJECT_DIR/README.md' for instructions on running the appli
 echo "   - Backend: Activate venv ('source $PYTHON_VENV_DIR/bin/activate') and run (e.g., 'flask run' or 'gunicorn ...')"
 echo "   - Web Frontend: 'cd $WEB_FRONTEND_DIR && npm start'"
 echo "   - Mobile Frontend: 'cd $MOBILE_FRONTEND_DIR && npm run android' or 'npm run ios'"
-

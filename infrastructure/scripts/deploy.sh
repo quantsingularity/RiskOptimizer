@@ -27,14 +27,14 @@ log() {
     shift
     local message="$*"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
+
     case "$level" in
         INFO)  echo -e "${GREEN}[INFO]${NC} $message" ;;
         WARN)  echo -e "${YELLOW}[WARN]${NC} $message" ;;
         ERROR) echo -e "${RED}[ERROR]${NC} $message" ;;
         DEBUG) echo -e "${BLUE}[DEBUG]${NC} $message" ;;
     esac
-    
+
     echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
 }
 
@@ -56,7 +56,7 @@ trap cleanup EXIT
 # Validation functions
 validate_environment() {
     log INFO "Validating environment: $ENVIRONMENT"
-    
+
     case "$ENVIRONMENT" in
         development|staging|production)
             log INFO "Environment validation passed"
@@ -69,32 +69,32 @@ validate_environment() {
 
 validate_prerequisites() {
     log INFO "Validating prerequisites..."
-    
+
     local required_tools=("terraform" "kubectl" "helm" "aws" "docker" "jq")
-    
+
     for tool in "${required_tools[@]}"; do
         if ! command -v "$tool" &> /dev/null; then
             error_exit "Required tool not found: $tool"
         fi
     done
-    
+
     # Validate AWS credentials
     if ! aws sts get-caller-identity &> /dev/null; then
         error_exit "AWS credentials not configured or invalid"
     fi
-    
+
     # Validate Terraform version
     local tf_version=$(terraform version -json | jq -r '.terraform_version')
     if [[ ! "$tf_version" =~ ^1\.[5-9]\. ]]; then
         error_exit "Terraform version 1.5+ required, found: $tf_version"
     fi
-    
+
     log INFO "Prerequisites validation passed"
 }
 
 validate_security() {
     log INFO "Running security validation..."
-    
+
     # Check for secrets in code
     if command -v gitleaks &> /dev/null; then
         log INFO "Running GitLeaks secret detection..."
@@ -102,7 +102,7 @@ validate_security() {
             error_exit "Security validation failed: secrets detected in code"
         fi
     fi
-    
+
     # Validate Terraform security
     if command -v checkov &> /dev/null; then
         log INFO "Running Checkov security scan..."
@@ -110,23 +110,23 @@ validate_security() {
             log WARN "Security scan found issues, review before proceeding"
         fi
     fi
-    
+
     log INFO "Security validation completed"
 }
 
 # Infrastructure deployment functions
 deploy_terraform() {
     log INFO "Deploying Terraform infrastructure..."
-    
+
     local tf_dir="$PROJECT_ROOT/terraform"
     local tf_vars_file="$tf_dir/environments/${ENVIRONMENT}.tfvars"
-    
+
     if [[ ! -f "$tf_vars_file" ]]; then
         error_exit "Terraform variables file not found: $tf_vars_file"
     fi
-    
+
     cd "$tf_dir"
-    
+
     # Initialize Terraform
     log INFO "Initializing Terraform..."
     terraform init \
@@ -134,74 +134,74 @@ deploy_terraform() {
         -backend-config="key=riskoptimizer/${ENVIRONMENT}/terraform.tfstate" \
         -backend-config="region=${AWS_REGION:-us-west-2}" \
         -backend-config="encrypt=true"
-    
+
     # Validate configuration
     log INFO "Validating Terraform configuration..."
     terraform validate
-    
+
     # Plan deployment
     log INFO "Planning Terraform deployment..."
     terraform plan \
         -var-file="$tf_vars_file" \
         -out="tfplan-${ENVIRONMENT}" \
         -detailed-exitcode
-    
+
     local plan_exit_code=$?
-    
+
     if [[ $plan_exit_code -eq 0 ]]; then
         log INFO "No changes detected in Terraform plan"
         return 0
     elif [[ $plan_exit_code -eq 2 ]]; then
         log INFO "Changes detected in Terraform plan"
-        
+
         if [[ "$DRY_RUN" == "true" ]]; then
             log INFO "Dry run mode: skipping Terraform apply"
             return 0
         fi
-        
+
         # Apply changes
         log INFO "Applying Terraform changes..."
         terraform apply -auto-approve "tfplan-${ENVIRONMENT}"
-        
+
         # Save outputs
         terraform output -json > "/tmp/terraform-outputs-${ENVIRONMENT}.json"
-        
+
     else
         error_exit "Terraform plan failed with exit code: $plan_exit_code"
     fi
-    
+
     log INFO "Terraform deployment completed"
 }
 
 deploy_kubernetes() {
     log INFO "Deploying Kubernetes resources..."
-    
+
     local k8s_dir="$PROJECT_ROOT/kubernetes"
     local cluster_name="riskoptimizer-${ENVIRONMENT}-eks"
-    
+
     # Update kubeconfig
     log INFO "Updating kubeconfig for cluster: $cluster_name"
     aws eks update-kubeconfig \
         --region "${AWS_REGION:-us-west-2}" \
         --name "$cluster_name"
-    
+
     # Verify cluster connectivity
     if ! kubectl cluster-info &> /dev/null; then
         error_exit "Cannot connect to Kubernetes cluster"
     fi
-    
+
     # Create namespace if it doesn't exist
     local namespace="riskoptimizer-${ENVIRONMENT}"
     kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
-    
+
     # Apply security policies first
     log INFO "Applying security policies..."
     kubectl apply -f "$k8s_dir/base/security-policies.yaml" -n "$namespace"
-    
+
     # Apply secrets management
     log INFO "Applying secrets management..."
     kubectl apply -f "$k8s_dir/base/secrets-management.yaml" -n "$namespace"
-    
+
     # Deploy application using Helm
     log INFO "Deploying application with Helm..."
     helm upgrade --install "riskoptimizer-${ENVIRONMENT}" "$k8s_dir/helm-chart" \
@@ -210,12 +210,12 @@ deploy_kubernetes() {
         --set "image.tag=${IMAGE_TAG:-latest}" \
         --set "environment=${ENVIRONMENT}" \
         --wait --timeout=10m
-    
+
     # Verify deployment
     log INFO "Verifying deployment..."
     kubectl wait --for=condition=available --timeout=300s \
         deployment/riskoptimizer-backend -n "$namespace"
-    
+
     log INFO "Kubernetes deployment completed"
 }
 
@@ -224,23 +224,23 @@ run_tests() {
         log INFO "Skipping tests as requested"
         return 0
     fi
-    
+
     log INFO "Running deployment tests..."
-    
+
     local namespace="riskoptimizer-${ENVIRONMENT}"
-    
+
     # Health check tests
     log INFO "Running health check tests..."
     kubectl exec -n "$namespace" deployment/riskoptimizer-backend -- \
         curl -f http://localhost:8082/health/live || error_exit "Health check failed"
-    
+
     # Integration tests
     if [[ -f "$PROJECT_ROOT/tests/integration/run.sh" ]]; then
         log INFO "Running integration tests..."
         bash "$PROJECT_ROOT/tests/integration/run.sh" "$ENVIRONMENT" || \
             error_exit "Integration tests failed"
     fi
-    
+
     log INFO "Tests completed successfully"
 }
 
@@ -249,34 +249,34 @@ setup_monitoring() {
         log INFO "Monitoring setup skipped"
         return 0
     fi
-    
+
     log INFO "Setting up monitoring and alerting..."
-    
+
     local namespace="riskoptimizer-${ENVIRONMENT}"
-    
+
     # Deploy monitoring stack
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     helm repo add grafana https://grafana.github.io/helm-charts
     helm repo update
-    
+
     # Install Prometheus
     helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
         --namespace monitoring \
         --create-namespace \
         --values "$PROJECT_ROOT/monitoring/prometheus/values-${ENVIRONMENT}.yaml" \
         --wait
-    
+
     # Install Grafana dashboards
     kubectl apply -f "$PROJECT_ROOT/monitoring/grafana/dashboards/" -n monitoring
-    
+
     log INFO "Monitoring setup completed"
 }
 
 generate_deployment_report() {
     log INFO "Generating deployment report..."
-    
+
     local report_file="/tmp/deployment-report-${ENVIRONMENT}-$(date +%Y%m%d-%H%M%S).json"
-    
+
     cat > "$report_file" << EOF
 {
   "deployment": {
@@ -302,9 +302,9 @@ generate_deployment_report() {
   }
 }
 EOF
-    
+
     log INFO "Deployment report generated: $report_file"
-    
+
     # Send notification if configured
     if [[ -n "${SLACK_WEBHOOK_URL:-}" ]]; then
         curl -X POST -H 'Content-type: application/json' \
@@ -317,25 +317,25 @@ EOF
 main() {
     log INFO "Starting RiskOptimizer deployment to $ENVIRONMENT"
     log INFO "Dry run mode: $DRY_RUN"
-    
+
     # Validation phase
     validate_environment
     validate_prerequisites
     validate_security
-    
+
     # Deployment phase
     deploy_terraform
     deploy_kubernetes
-    
+
     # Testing phase
     run_tests
-    
+
     # Monitoring setup
     setup_monitoring
-    
+
     # Reporting
     generate_deployment_report
-    
+
     log INFO "Deployment completed successfully!"
 }
 
@@ -405,4 +405,3 @@ mkdir -p "$(dirname "$LOG_FILE")"
 
 # Run main function
 main "$@"
-

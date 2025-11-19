@@ -277,4 +277,3 @@ web:
     key-file: /etc/prometheus/tls/prometheus-key.pem
     client-ca-file: /etc/prometheus/tls/ca.pem
     client-auth-type: "RequireAndVerifyClientCert"
-

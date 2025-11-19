@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Box, 
-  Grid, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
   Divider,
   Button,
   IconButton,
@@ -36,8 +36,8 @@ const RiskAnalysis = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Risk Analysis
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           startIcon={<DownloadIcon />}
         >
           Export Report
@@ -48,8 +48,8 @@ const RiskAnalysis = () => {
         {/* Risk Metrics Summary */}
         <Grid item xs={12}>
           <Card>
-            <CardHeader 
-              title="Risk Metrics Summary" 
+            <CardHeader
+              title="Risk Metrics Summary"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -136,7 +136,7 @@ const RiskAnalysis = () => {
                   <Typography variant="body2" paragraph>
                     Value at Risk (VaR) estimates the maximum potential loss of your portfolio over a specific time period at a given confidence level.
                   </Typography>
-                  
+
                   <Grid container spacing={3} sx={{ mb: 3 }}>
                     <Grid item xs={12} md={6}>
                       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
@@ -150,7 +150,7 @@ const RiskAnalysis = () => {
                           <MenuItem value={99}>99%</MenuItem>
                         </Select>
                       </FormControl>
-                      
+
                       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
                         <InputLabel>Time Horizon</InputLabel>
                         <Select
@@ -163,7 +163,7 @@ const RiskAnalysis = () => {
                           <MenuItem value={60}>3 Months (60 Days)</MenuItem>
                         </Select>
                       </FormControl>
-                      
+
                       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
                         <InputLabel>Calculation Method</InputLabel>
                         <Select
@@ -175,16 +175,16 @@ const RiskAnalysis = () => {
                           <MenuItem value="montecarlo">Monte Carlo Simulation</MenuItem>
                         </Select>
                       </FormControl>
-                      
-                      <Button 
-                        variant="contained" 
+
+                      <Button
+                        variant="contained"
                         startIcon={<CalculateIcon />}
                         fullWidth
                       >
                         Calculate VaR
                       </Button>
                     </Grid>
-                    
+
                     <Grid item xs={12} md={6}>
                       <Card variant="outlined" sx={{ height: '100%', backgroundColor: 'background.default' }}>
                         <CardContent>
@@ -219,7 +219,7 @@ const RiskAnalysis = () => {
                       </Card>
                     </Grid>
                   </Grid>
-                  
+
                   <Box sx={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">
                       VaR distribution chart will be implemented with real data integration
@@ -227,7 +227,7 @@ const RiskAnalysis = () => {
                   </Box>
                 </Box>
               )}
-              
+
               {tabValue === 1 && (
                 <Box>
                   <Typography variant="h6" gutterBottom>
@@ -236,7 +236,7 @@ const RiskAnalysis = () => {
                   <Typography variant="body2" paragraph>
                     Stress testing evaluates how your portfolio would perform under extreme market conditions or historical crisis scenarios.
                   </Typography>
-                  
+
                   <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
                       <Typography variant="subtitle2" gutterBottom>
@@ -254,15 +254,15 @@ const RiskAnalysis = () => {
                           <MenuItem value="custom">Custom Scenario</MenuItem>
                         </Select>
                       </FormControl>
-                      
-                      <Button 
-                        variant="contained" 
+
+                      <Button
+                        variant="contained"
                         fullWidth
                         sx={{ mb: 3 }}
                       >
                         Run Stress Test
                       </Button>
-                      
+
                       <Typography variant="subtitle2" gutterBottom>
                         Custom Stress Factors
                       </Typography>
@@ -271,37 +271,37 @@ const RiskAnalysis = () => {
                           <Typography variant="body2">Equity Markets</Typography>
                         </Grid>
                         <Grid item xs={4}>
-                          <TextField 
-                            size="small" 
-                            defaultValue="-30" 
+                          <TextField
+                            size="small"
+                            defaultValue="-30"
                             InputProps={{ endAdornment: '%' }}
                           />
                         </Grid>
-                        
+
                         <Grid item xs={8}>
                           <Typography variant="body2">Bond Yields</Typography>
                         </Grid>
                         <Grid item xs={4}>
-                          <TextField 
-                            size="small" 
-                            defaultValue="+1.5" 
+                          <TextField
+                            size="small"
+                            defaultValue="+1.5"
                             InputProps={{ endAdornment: '%' }}
                           />
                         </Grid>
-                        
+
                         <Grid item xs={8}>
                           <Typography variant="body2">Cryptocurrency</Typography>
                         </Grid>
                         <Grid item xs={4}>
-                          <TextField 
-                            size="small" 
-                            defaultValue="-45" 
+                          <TextField
+                            size="small"
+                            defaultValue="-45"
                             InputProps={{ endAdornment: '%' }}
                           />
                         </Grid>
                       </Grid>
                     </Grid>
-                    
+
                     <Grid item xs={12} md={6}>
                       <Card variant="outlined" sx={{ backgroundColor: 'background.default' }}>
                         <CardContent>
@@ -321,7 +321,7 @@ const RiskAnalysis = () => {
                           </Typography>
                           <Box sx={{ mb: 1 }}>
                             <Typography variant="body2" display="inline">
-                              Equities: 
+                              Equities:
                             </Typography>
                             <Typography variant="body2" color="error.main" display="inline" sx={{ ml: 1 }}>
                               -42.5%
@@ -329,7 +329,7 @@ const RiskAnalysis = () => {
                           </Box>
                           <Box sx={{ mb: 1 }}>
                             <Typography variant="body2" display="inline">
-                              Bonds: 
+                              Bonds:
                             </Typography>
                             <Typography variant="body2" color="success.main" display="inline" sx={{ ml: 1 }}>
                               +5.2%
@@ -337,7 +337,7 @@ const RiskAnalysis = () => {
                           </Box>
                           <Box sx={{ mb: 1 }}>
                             <Typography variant="body2" display="inline">
-                              Crypto: 
+                              Crypto:
                             </Typography>
                             <Typography variant="body2" color="error.main" display="inline" sx={{ ml: 1 }}>
                               -60.8%
@@ -345,7 +345,7 @@ const RiskAnalysis = () => {
                           </Box>
                           <Box sx={{ mb: 1 }}>
                             <Typography variant="body2" display="inline">
-                              Gold: 
+                              Gold:
                             </Typography>
                             <Typography variant="body2" color="success.main" display="inline" sx={{ ml: 1 }}>
                               +12.3%
@@ -353,7 +353,7 @@ const RiskAnalysis = () => {
                           </Box>
                         </CardContent>
                       </Card>
-                      
+
                       <Box sx={{ mt: 3, height: 200, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Typography variant="body2" color="text.secondary">
                           Stress test visualization will be implemented with real data integration
@@ -363,7 +363,7 @@ const RiskAnalysis = () => {
                   </Grid>
                 </Box>
               )}
-              
+
               {tabValue === 2 && (
                 <Box>
                   <Typography variant="h6" gutterBottom>
@@ -372,7 +372,7 @@ const RiskAnalysis = () => {
                   <Typography variant="body2" paragraph>
                     Correlation analysis helps you understand how assets in your portfolio move in relation to each other, which is crucial for diversification.
                   </Typography>
-                  
+
                   <Box sx={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">
                       Correlation matrix heatmap will be implemented with real data integration
@@ -380,7 +380,7 @@ const RiskAnalysis = () => {
                   </Box>
                 </Box>
               )}
-              
+
               {tabValue === 3 && (
                 <Box>
                   <Typography variant="h6" gutterBottom>
@@ -389,7 +389,7 @@ const RiskAnalysis = () => {
                   <Typography variant="body2" paragraph>
                     Risk contribution analysis shows how much each asset contributes to your portfolio's overall risk.
                   </Typography>
-                  
+
                   <Box sx={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">
                       Risk contribution chart will be implemented with real data integration

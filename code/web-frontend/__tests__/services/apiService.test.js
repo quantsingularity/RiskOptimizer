@@ -34,7 +34,7 @@ describe("API Service", () => {
       const email = "test@example.com";
       const password = "password123";
       const mockResponse = { data: { token: "fake_token", user: { id: 1, email } } };
-      
+
       axios.post.mockResolvedValueOnce(mockResponse);
 
       const result = await apiService.login(email, password);
@@ -52,17 +52,17 @@ describe("API Service", () => {
 
     it("should remove token from localStorage on logout", async () => {
       await apiService.logout();
-      
+
       expect(localStorageMock.removeItem).toHaveBeenCalledWith("token");
     });
 
     it("should check if user is authenticated", () => {
       localStorageMock.getItem.mockReturnValueOnce("fake_token");
-      
+
       expect(apiService.isAuthenticated()).toBe(true);
-      
+
       localStorageMock.getItem.mockReturnValueOnce(null);
-      
+
       expect(apiService.isAuthenticated()).toBe(false);
     });
   });
@@ -85,7 +85,7 @@ describe("API Service", () => {
 
     it("should throw an error if token is missing for authenticated request", async () => {
       localStorageMock.getItem.mockReturnValueOnce(null);
-      
+
       await expect(apiService.getDashboardData()).rejects.toThrow("Authentication required");
     });
   });
@@ -178,18 +178,18 @@ describe("API Service", () => {
     it("should run optimization for a portfolio", async () => {
       const portfolioId = "123";
       const params = { riskLevel: "high", targetReturn: 0.1 };
-      const mockResponse = { 
-        success: true, 
-        results: { 
-          weights: { 
-            "AAPL": 0.4, 
-            "MSFT": 0.3, 
-            "GOOGL": 0.3 
+      const mockResponse = {
+        success: true,
+        results: {
+          weights: {
+            "AAPL": 0.4,
+            "MSFT": 0.3,
+            "GOOGL": 0.3
           },
           expectedReturn: 0.12,
           expectedRisk: 0.08,
           sharpeRatio: 1.5
-        } 
+        }
       };
       axios.post.mockResolvedValueOnce({ data: mockResponse });
 
@@ -311,4 +311,3 @@ describe("API Service", () => {
     });
   });
 });
-

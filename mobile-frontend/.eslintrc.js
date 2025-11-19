@@ -16,4 +16,3 @@ module.exports = {
     'react/jsx-uses-react': 'off', // Not needed with newer React versions
   },
 };
-

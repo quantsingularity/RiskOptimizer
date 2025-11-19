@@ -2,8 +2,17 @@ from datetime import datetime
 from typing import List
 
 from riskoptimizer.infrastructure.database.session import Base
-from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
-                        Numeric, String, Text)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
 
 

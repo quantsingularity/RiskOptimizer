@@ -16,7 +16,7 @@ export const usePortfolioManagement = () => {
     const loadPortfolioData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         // In a real app, this would use the portfolio data from the context
         // For demo purposes, we'll set some mock data
@@ -31,7 +31,7 @@ export const usePortfolioManagement = () => {
         setLoading(false);
       }
     };
-    
+
     loadPortfolioData();
   }, []);
 
@@ -39,7 +39,7 @@ export const usePortfolioManagement = () => {
   const updatePortfolio = async (updatedAssets) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // In a real app, this would call the savePortfolio function from the context
       // For demo purposes, we'll just update the local state
@@ -47,7 +47,7 @@ export const usePortfolioManagement = () => {
         ...portfolioData,
         assets: updatedAssets
       });
-      
+
       return true;
     } catch (err) {
       setError(err.message || 'Failed to update portfolio');

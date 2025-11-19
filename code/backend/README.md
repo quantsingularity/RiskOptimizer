@@ -95,10 +95,10 @@ The platform offers a comprehensive suite of financial and technical features:
    ```bash
    # Start API server
    uvicorn app:app --reload --host 0.0.0.0 --port 8000
-   
+
    # Start Celery worker (in another terminal)
    celery -A tasks.celery_app worker --loglevel=info
-   
+
    # Start Celery beat scheduler (in another terminal)
    celery -A tasks.celery_app beat --loglevel=info
    ```

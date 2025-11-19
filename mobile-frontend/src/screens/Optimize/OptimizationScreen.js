@@ -334,4 +334,3 @@ const pickerSelectStyles = StyleSheet.create({
 });
 
 export default OptimizationScreen;
-

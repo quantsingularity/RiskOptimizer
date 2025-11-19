@@ -19,7 +19,7 @@ const RecentTransactions = ({ transactions }) => {
         <Typography variant="h6" gutterBottom>
           Recent Transactions
         </Typography>
-        
+
         <TableContainer>
           <Table size="small">
             <TableHead>
@@ -36,8 +36,8 @@ const RecentTransactions = ({ transactions }) => {
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.asset}</TableCell>
                   <TableCell>
-                    <Typography 
-                      variant="body2" 
+                    <Typography
+                      variant="body2"
                       color={transaction.type === 'Buy' ? 'success.main' : 'error.main'}
                     >
                       {transaction.type}

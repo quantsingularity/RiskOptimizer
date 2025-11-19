@@ -57,4 +57,3 @@ describe("PortfolioSummary Component", () => {
 
   // Add tests for loading states or error states if applicable
 });
-

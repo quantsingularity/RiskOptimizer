@@ -195,4 +195,3 @@ volumes:
 networks:
   riskoptimizer-network:
     driver: bridge
-

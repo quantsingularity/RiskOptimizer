@@ -523,4 +523,3 @@ suricata-update:
     - "drop (.* msg:\".*\"; .* sid:1; .*)" | "alert ${1}"
 
   output: /var/lib/suricata/rules/suricata.rules
-

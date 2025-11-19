@@ -23,10 +23,14 @@ import pandas as pd
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from frontend.dashboard.dashboard_framework import (ChartComponent, Dashboard,
-                                                    DashboardComponent)
+from frontend.dashboard.dashboard_framework import (
+    ChartComponent,
+    Dashboard,
+    DashboardComponent,
+)
 from reporting.reporting_framework import ReportGenerator, ReportTemplate
 from risk_engine.parallel_risk_engine import ParallelRiskEngine
+
 # Import modules to test
 from risk_models.extreme_value_theory import ExtremeValueRisk
 from risk_models.ml_risk_models import CopulaMLRiskModel, MLRiskModel

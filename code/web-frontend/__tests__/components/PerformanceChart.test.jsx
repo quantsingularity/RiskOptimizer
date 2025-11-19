@@ -19,7 +19,7 @@ import { render, screen } from "@testing-library/react";
 const MockPerformanceChart = ({ data }) => (
   <div>
     <h3>Performance Chart</h3>
-    {/* Basic representation of chart data for testing */} 
+    {/* Basic representation of chart data for testing */}
     <div data-testid="chart-data">{JSON.stringify(data)}</div>
   </div>
 );
@@ -63,4 +63,3 @@ describe("PerformanceChart Component", () => {
 
   // Add tests for tooltips, legends, different timeframes, loading states etc. if applicable
 });
-

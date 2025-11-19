@@ -2,8 +2,7 @@ from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from flask import Response, g, jsonify, request
-from riskoptimizer.core.exceptions import (AuthenticationError,
-                                           AuthorizationError)
+from riskoptimizer.core.exceptions import AuthenticationError, AuthorizationError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.auth_service import auth_service
 

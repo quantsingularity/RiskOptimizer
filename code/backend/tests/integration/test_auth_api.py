@@ -7,6 +7,7 @@ import requests
 # Assuming the backend is running on localhost:8000
 BASE_URL = "http://localhost:8000/api/v1"
 
+
 class TestAuthAPI(unittest.TestCase):
 
     def setUp(self):
@@ -14,7 +15,9 @@ class TestAuthAPI(unittest.TestCase):
         try:
             requests.get(f"{BASE_URL}/health")
         except requests.exceptions.ConnectionError:
-            self.fail("Backend not running. Please start the backend server before running integration tests.")
+            self.fail(
+                "Backend not running. Please start the backend server before running integration tests."
+            )
 
         self.test_user_email = "integration_test@example.com"
         self.test_user_username = "integration_test_user"
@@ -32,7 +35,10 @@ class TestAuthAPI(unittest.TestCase):
         # or direct database access for cleanup.
         try:
             # Attempt to log in to get a token for deletion if user exists
-            login_data = {"email": self.test_user_email, "password": self.test_user_password}
+            login_data = {
+                "email": self.test_user_email,
+                "password": self.test_user_password,
+            }
             login_response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
             if login_response.status_code == 200:
                 access_token = login_response.json()["access_token"]
@@ -42,7 +48,7 @@ class TestAuthAPI(unittest.TestCase):
                 # delete_response = requests.delete(f"{BASE_URL}/users/{user_id}", headers=headers)
                 # if delete_response.status_code == 204:
                 #     print(f"Cleaned up user {self.test_user_email}")
-                pass # For now, we'll just register and let subsequent tests handle conflicts
+                pass  # For now, we'll just register and let subsequent tests handle conflicts
         except Exception as e:
             print(f"Error during test user cleanup: {e}")
 
@@ -51,10 +57,14 @@ class TestAuthAPI(unittest.TestCase):
         register_data = {
             "email": self.test_user_email,
             "username": self.test_user_username,
-            "password": self.test_user_password
+            "password": self.test_user_password,
         }
         response = requests.post(f"{BASE_URL}/auth/register", json=register_data)
-        self.assertEqual(response.status_code, 201, f"Expected 201, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            201,
+            f"Expected 201, got {response.status_code}: {response.text}",
+        )
         data = response.json()
         self.assertIn("user", data)
         self.assertIn("tokens", data)
@@ -64,12 +74,19 @@ class TestAuthAPI(unittest.TestCase):
 
     def test_2_login_user(self):
         # Ensure user is registered first (depends on test_1_register_user)
-        self.test_1_register_user() # Register the user if not already
+        self.test_1_register_user()  # Register the user if not already
 
         # Test user login
-        login_data = {"email": self.test_user_email, "password": self.test_user_password}
+        login_data = {
+            "email": self.test_user_email,
+            "password": self.test_user_password,
+        }
         response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
-        self.assertEqual(response.status_code, 200, f"Expected 200, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            200,
+            f"Expected 200, got {response.status_code}: {response.text}",
+        )
         data = response.json()
         self.assertIn("user", data)
         self.assertIn("tokens", data)
@@ -85,22 +102,33 @@ class TestAuthAPI(unittest.TestCase):
         register_data = {
             "email": self.test_user_email,
             "username": "another_username",
-            "password": "AnotherPassword123!"
+            "password": "AnotherPassword123!",
         }
         response = requests.post(f"{BASE_URL}/auth/register", json=register_data)
-        self.assertEqual(response.status_code, 409, f"Expected 409, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            409,
+            f"Expected 409, got {response.status_code}: {response.text}",
+        )
         self.assertIn("User with email", response.json()["detail"])
 
     def test_4_login_invalid_credentials(self):
         # Test login with wrong password
         login_data = {"email": self.test_user_email, "password": "wrongpassword"}
         response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
-        self.assertEqual(response.status_code, 401, f"Expected 401, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            401,
+            f"Expected 401, got {response.status_code}: {response.text}",
+        )
         self.assertIn("Invalid email or password", response.json()["detail"])
 
     def test_5_refresh_token(self):
         # Login to get tokens
-        login_data = {"email": self.test_user_email, "password": self.test_user_password}
+        login_data = {
+            "email": self.test_user_email,
+            "password": self.test_user_password,
+        }
         login_response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
         self.assertEqual(login_response.status_code, 200)
         refresh_token = login_response.json()["tokens"]["refresh_token"]
@@ -108,7 +136,11 @@ class TestAuthAPI(unittest.TestCase):
         # Use refresh token to get new access token
         refresh_data = {"refresh_token": refresh_token}
         response = requests.post(f"{BASE_URL}/auth/refresh", json=refresh_data)
-        self.assertEqual(response.status_code, 200, f"Expected 200, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            200,
+            f"Expected 200, got {response.status_code}: {response.text}",
+        )
         data = response.json()
         self.assertIn("access_token", data)
         self.assertIn("token_type", data)
@@ -116,7 +148,10 @@ class TestAuthAPI(unittest.TestCase):
 
     def test_6_logout_user(self):
         # Login to get tokens
-        login_data = {"email": self.test_user_email, "password": self.test_user_password}
+        login_data = {
+            "email": self.test_user_email,
+            "password": self.test_user_password,
+        }
         login_response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
         self.assertEqual(login_response.status_code, 200)
         tokens = login_response.json()["tokens"]
@@ -124,19 +159,28 @@ class TestAuthAPI(unittest.TestCase):
         # Logout
         logout_data = {
             "access_token": tokens["access_token"],
-            "refresh_token": tokens["refresh_token"]
+            "refresh_token": tokens["refresh_token"],
         }
         response = requests.post(f"{BASE_URL}/auth/logout", json=logout_data)
-        self.assertEqual(response.status_code, 200, f"Expected 200, got {response.status_code}: {response.text}")
+        self.assertEqual(
+            response.status_code,
+            200,
+            f"Expected 200, got {response.status_code}: {response.text}",
+        )
         self.assertIn("message", response.json())
         self.assertEqual(response.json()["message"], "Successfully logged out.")
 
         # Try to use blacklisted access token
         headers = {"Authorization": f"Bearer {tokens["access_token"]}"}
-        protected_response = requests.get(f"{BASE_URL}/users/me", headers=headers) # Assuming a protected endpoint
-        self.assertEqual(protected_response.status_code, 401, f"Expected 401 after logout, got {protected_response.status_code}: {protected_response.text}")
+        protected_response = requests.get(
+            f"{BASE_URL}/users/me", headers=headers
+        )  # Assuming a protected endpoint
+        self.assertEqual(
+            protected_response.status_code,
+            401,
+            f"Expected 401 after logout, got {protected_response.status_code}: {protected_response.text}",
+        )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
-
-

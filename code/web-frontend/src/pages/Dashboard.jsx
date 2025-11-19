@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Box, 
-  Grid, 
-  Paper, 
-  Typography, 
-  Card, 
-  CardContent, 
+import {
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Card,
+  CardContent,
   CardHeader,
   Divider,
   Button,
@@ -30,8 +30,8 @@ const Dashboard = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Dashboard
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           startIcon={<RefreshIcon />}
           size="small"
         >
@@ -64,7 +64,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 2 }}>
@@ -88,7 +88,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 2 }}>
@@ -112,7 +112,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 2 }}>
@@ -143,8 +143,8 @@ const Dashboard = () => {
         {/* Performance Chart */}
         <Grid item xs={12} lg={8}>
           <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title="Portfolio Performance" 
+            <CardHeader
+              title="Portfolio Performance"
               action={
                 <Box sx={{ display: 'flex' }}>
                   <Button size="small" sx={{ mr: 1 }}>1D</Button>
@@ -170,8 +170,8 @@ const Dashboard = () => {
         {/* Asset Allocation */}
         <Grid item xs={12} md={6} lg={4}>
           <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title="Asset Allocation" 
+            <CardHeader
+              title="Asset Allocation"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -192,8 +192,8 @@ const Dashboard = () => {
         {/* Risk Metrics */}
         <Grid item xs={12} md={6} lg={4}>
           <Card sx={{ height: '100%' }}>
-            <CardHeader 
-              title="Risk Metrics" 
+            <CardHeader
+              title="Risk Metrics"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -237,8 +237,8 @@ const Dashboard = () => {
                 </Grid>
               </Grid>
               <Box sx={{ mt: 2 }}>
-                <Button 
-                  variant="outlined" 
+                <Button
+                  variant="outlined"
                   fullWidth
                   size="small"
                   href="/risk-analysis"
@@ -253,11 +253,11 @@ const Dashboard = () => {
         {/* Recent Transactions */}
         <Grid item xs={12} lg={8}>
           <Card>
-            <CardHeader 
-              title="Recent Transactions" 
+            <CardHeader
+              title="Recent Transactions"
               action={
-                <Button 
-                  variant="text" 
+                <Button
+                  variant="text"
                   size="small"
                   endIcon={<AccountBalanceWalletIcon />}
                 >
@@ -279,8 +279,8 @@ const Dashboard = () => {
         {/* Optimization Suggestions */}
         <Grid item xs={12} md={6} lg={4}>
           <Card>
-            <CardHeader 
-              title="Optimization Suggestions" 
+            <CardHeader
+              title="Optimization Suggestions"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -314,8 +314,8 @@ const Dashboard = () => {
                   • Consumer discretionary (-1.2%)
                 </Typography>
               </Box>
-              <Button 
-                variant="contained" 
+              <Button
+                variant="contained"
                 fullWidth
                 size="small"
                 href="/optimization"

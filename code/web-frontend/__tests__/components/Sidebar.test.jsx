@@ -54,4 +54,3 @@ describe("Sidebar Component", () => {
 
   // Add tests for responsiveness (e.g., collapsing on smaller screens) if applicable
 });
-

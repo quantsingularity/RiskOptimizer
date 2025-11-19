@@ -275,7 +275,7 @@ const PortfolioDetailScreen = ({ route, navigation }) => {
                 </Card>
             )}
 
-            {/* Links Section */} 
+            {/* Links Section */}
             <View style={{ backgroundColor: theme.colors.white, marginVertical: 10 }}>
                 <TouchableOpacity onPress={() => alert('Navigate to Performance Chart')} style={styles.sectionLink}>
                     <Icon name="chart-timeline-variant" type="material-community" color={theme.colors.primary} />
@@ -296,7 +296,7 @@ const PortfolioDetailScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {/* Assets List Section */} 
+            {/* Assets List Section */}
             <Card containerStyle={styles.assetsCard}>
                 <Card.Title>Assets</Card.Title>
                 <Card.Divider />

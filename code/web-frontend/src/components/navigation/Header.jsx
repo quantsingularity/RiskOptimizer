@@ -8,11 +8,11 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const Header = ({ onMenuClick }) => {
   const theme = useTheme();
-  
+
   return (
-    <AppBar 
-      position="fixed" 
-      sx={{ 
+    <AppBar
+      position="fixed"
+      sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         backgroundColor: 'background.paper',
         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
@@ -28,12 +28,12 @@ const Header = ({ onMenuClick }) => {
         >
           <MenuIcon />
         </IconButton>
-        
+
         <Typography
           variant="h6"
           noWrap
           component="div"
-          sx={{ 
+          sx={{
             flexGrow: 1,
             display: 'flex',
             alignItems: 'center',
@@ -41,7 +41,7 @@ const Header = ({ onMenuClick }) => {
             fontWeight: 600
           }}
         >
-          <Box 
+          <Box
             component="img"
             src="/favicon.ico"
             alt="RiskOptimizer Logo"
@@ -49,18 +49,18 @@ const Header = ({ onMenuClick }) => {
           />
           RiskOptimizer
         </Typography>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton color="inherit" sx={{ ml: 1 }}>
             {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          
+
           <IconButton color="inherit" sx={{ ml: 1 }}>
             <Badge badgeContent={4} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          
+
           <IconButton color="inherit" sx={{ ml: 1 }}>
             <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
               <AccountCircleIcon />

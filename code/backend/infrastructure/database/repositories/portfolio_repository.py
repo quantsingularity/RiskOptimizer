@@ -3,10 +3,10 @@ from typing import Any, Dict, List, Optional
 
 from riskoptimizer.core.exceptions import DatabaseError, NotFoundError
 from riskoptimizer.core.logging import get_logger
-from riskoptimizer.domain.services.audit_service import \
-    audit_service  # Import audit service
-from riskoptimizer.infrastructure.database.models import (Allocation,
-                                                          Portfolio, User)
+from riskoptimizer.domain.services.audit_service import (  # Import audit service
+    audit_service,
+)
+from riskoptimizer.infrastructure.database.models import Allocation, Portfolio, User
 from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session

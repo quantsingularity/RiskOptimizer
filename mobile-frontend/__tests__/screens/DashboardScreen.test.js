@@ -68,7 +68,7 @@ describe("Dashboard Screen", () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Setup default mock responses
     apiService.getPortfolios.mockResolvedValue({
       data: [
@@ -85,7 +85,7 @@ describe("Dashboard Screen", () => {
         }
       ]
     });
-    
+
     apiService.getRiskMetrics.mockResolvedValue({
       data: {
         sharpeRatio: 1.2,
@@ -94,7 +94,7 @@ describe("Dashboard Screen", () => {
         beta: 0.9
       }
     });
-    
+
     apiService.getAssetPriceHistory.mockResolvedValue({
       data: {
         indicators: {
@@ -125,11 +125,11 @@ describe("Dashboard Screen", () => {
 
   it("should display portfolio summary after successful data load", async () => {
     renderDashboardScreen();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
-    
+
     expect(screen.getByText("Test Portfolio")).toBeTruthy();
     expect(screen.getByText("$10,000.00")).toBeTruthy();
     expect(screen.getByText("+2.5%")).toBeTruthy();
@@ -137,11 +137,11 @@ describe("Dashboard Screen", () => {
 
   it("should display risk metrics after successful data load", async () => {
     renderDashboardScreen();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
-    
+
     expect(screen.getByText("Sharpe Ratio: 1.2")).toBeTruthy();
     expect(screen.getByText("Volatility: 15%")).toBeTruthy();
     expect(screen.getByText("Max Drawdown: -10%")).toBeTruthy();
@@ -150,39 +150,38 @@ describe("Dashboard Screen", () => {
 
   it("should display performance chart after successful data load", async () => {
     renderDashboardScreen();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
-    
+
     expect(screen.getByTestId("line-chart")).toBeTruthy();
   });
 
   it("should display error message if data loading fails", async () => {
     // Mock API to throw error
     apiService.getPortfolios.mockRejectedValueOnce(new Error("API Error"));
-    
+
     renderDashboardScreen();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
-    
+
     expect(screen.getByText("Failed to load dashboard data")).toBeTruthy();
   });
 
   it("should navigate to portfolio details when portfolio card is pressed", async () => {
     const { navigate } = require("@react-navigation/native").useNavigation();
-    
+
     renderDashboardScreen();
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
-    
+
     fireEvent.click(screen.getByTestId("card"));
-    
+
     expect(navigate).toHaveBeenCalledWith("PortfolioDetail", { portfolioId: "1" });
   });
 });
-

@@ -81,4 +81,3 @@ infrastructure/
 - Privacy impact assessments are required for data processing changes
 
 For detailed implementation guides, refer to the specific directories and their documentation.
-

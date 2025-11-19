@@ -63,7 +63,7 @@ class Database:
     def get_portfolio(self, user_address):
         """Get portfolio for a specific user"""
         query = """
-        SELECT p.id, p.user_address, p.created_at, 
+        SELECT p.id, p.user_address, p.created_at,
                a.asset_symbol, a.percentage
         FROM portfolios p
         LEFT JOIN allocations a ON p.id = a.portfolio_id

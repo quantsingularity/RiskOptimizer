@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Box, 
-  Grid, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
   Divider,
   Button,
   IconButton,
@@ -35,8 +35,8 @@ const PortfolioManagement = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Portfolio Management
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           startIcon={<AddIcon />}
         >
           Add Asset
@@ -47,21 +47,21 @@ const PortfolioManagement = () => {
         {/* Current Portfolio */}
         <Grid item xs={12}>
           <Card>
-            <CardHeader 
-              title="Current Portfolio" 
+            <CardHeader
+              title="Current Portfolio"
               action={
                 <Box sx={{ display: 'flex' }}>
-                  <Button 
-                    variant="outlined" 
-                    size="small" 
+                  <Button
+                    variant="outlined"
+                    size="small"
                     startIcon={<EditIcon />}
                     sx={{ mr: 1 }}
                   >
                     Edit
                   </Button>
-                  <Button 
-                    variant="contained" 
-                    size="small" 
+                  <Button
+                    variant="contained"
+                    size="small"
                     startIcon={<SaveIcon />}
                   >
                     Save
@@ -104,10 +104,10 @@ const PortfolioManagement = () => {
                             <Slider
                               value={asset.allocation}
                               disabled
-                              sx={{ 
-                                width: '100px', 
+                              sx={{
+                                width: '100px',
                                 mr: 2,
-                                color: asset.performance.startsWith('+') ? 'success.main' : 
+                                color: asset.performance.startsWith('+') ? 'success.main' :
                                        asset.performance.startsWith('-') ? 'error.main' : 'primary.main'
                               }}
                             />
@@ -115,8 +115,8 @@ const PortfolioManagement = () => {
                           </Box>
                         </TableCell>
                         <TableCell>{asset.value}</TableCell>
-                        <TableCell sx={{ 
-                          color: asset.performance.startsWith('+') ? 'success.main' : 
+                        <TableCell sx={{
+                          color: asset.performance.startsWith('+') ? 'success.main' :
                                  asset.performance.startsWith('-') ? 'error.main' : 'text.primary'
                         }}>
                           {asset.performance}
@@ -141,8 +141,8 @@ const PortfolioManagement = () => {
         {/* Portfolio Rebalancing */}
         <Grid item xs={12} md={6}>
           <Card>
-            <CardHeader 
-              title="Portfolio Rebalancing" 
+            <CardHeader
+              title="Portfolio Rebalancing"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -154,7 +154,7 @@ const PortfolioManagement = () => {
               <Typography variant="body2" paragraph>
                 Your portfolio is currently 8.5% away from your target allocation. We recommend rebalancing to maintain your risk profile.
               </Typography>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Rebalancing Strategy
@@ -169,7 +169,7 @@ const PortfolioManagement = () => {
                   </Select>
                 </FormControl>
               </Box>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Tax Optimization
@@ -184,9 +184,9 @@ const PortfolioManagement = () => {
                   </Select>
                 </FormControl>
               </Box>
-              
-              <Button 
-                variant="contained" 
+
+              <Button
+                variant="contained"
                 fullWidth
               >
                 Generate Rebalancing Plan
@@ -198,8 +198,8 @@ const PortfolioManagement = () => {
         {/* Transaction History */}
         <Grid item xs={12} md={6}>
           <Card>
-            <CardHeader 
-              title="Transaction History" 
+            <CardHeader
+              title="Transaction History"
               action={
                 <IconButton>
                   <MoreVertIcon />
@@ -232,7 +232,7 @@ const PortfolioManagement = () => {
                       <TableRow key={index}>
                         <TableCell>{transaction.date}</TableCell>
                         <TableCell>{transaction.asset}</TableCell>
-                        <TableCell sx={{ 
+                        <TableCell sx={{
                           color: transaction.type === 'Buy' ? 'success.main' : 'error.main'
                         }}>
                           {transaction.type}

@@ -2,6 +2,7 @@
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+
 # Assuming Database class is in db.database
 # Adjust import path if necessary
 from db.database import Database
@@ -173,7 +174,7 @@ def test_get_portfolio_success(mock_execute_query):
 
     assert result == mock_data
     expected_query = """
-        SELECT p.id, p.user_address, p.created_at, 
+        SELECT p.id, p.user_address, p.created_at,
                a.asset_symbol, a.percentage
         FROM portfolios p
         LEFT JOIN allocations a ON p.id = a.portfolio_id

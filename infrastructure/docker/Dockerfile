@@ -78,4 +78,3 @@ LABEL maintainer="devops@riskoptimizer.com" \
       compliance.gdpr="true" \
       compliance.pci-dss="true" \
       compliance.sox="true"
-

@@ -37,7 +37,7 @@ export default function OptimizationTool() {
       <Button variant="contained" color="primary" onClick={optimize}>
         Optimize Portfolio
       </Button>
-      
+
       {result && (
         <Box mt={3}>
           <Typography variant="h6">Optimized Allocation</Typography>

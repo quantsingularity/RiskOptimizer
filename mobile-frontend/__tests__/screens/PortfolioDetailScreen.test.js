@@ -83,9 +83,9 @@ const MockPortfolioDetailScreen = ({ route, navigation }) => {
       <Text style={styles.title}>{portfolio.name}</Text>
       <Text style={styles.description}>{portfolio.description}</Text>
       <Text style={styles.totalValue}>Total Value: ${portfolio.totalValue?.toLocaleString()}</Text>
-      
+
       <Button title="Add Asset" onPress={() => navigation.navigate("AddAsset", { portfolioId: portfolio.id })} testID="add-asset-button" />
-      
+
       <Text style={styles.assetsHeader}>Assets:</Text>
       <FlatList
         data={portfolio.assets}
@@ -192,4 +192,3 @@ describe("Portfolio Detail Screen", () => {
 
   // Add tests for Edit/Delete/History buttons if they exist
 });
-

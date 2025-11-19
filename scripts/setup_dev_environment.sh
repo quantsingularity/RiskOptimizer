@@ -15,14 +15,14 @@ log() {
     local level=$1
     local message=$2
     local color=$NC
-    
+
     case $level in
         "INFO") color=$BLUE ;;
         "SUCCESS") color=$GREEN ;;
         "WARNING") color=$YELLOW ;;
         "ERROR") color=$RED ;;
     esac
-    
+
     echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message${NC}"
 }
 
@@ -58,7 +58,7 @@ log "INFO" "Checking for required system tools..."
 check_command() {
     local cmd=$1
     local install_guide=$2
-    
+
     if ! command -v $cmd &> /dev/null; then
         log "WARNING" "$cmd is not installed."
         log "INFO" "Installation guide: $install_guide"
@@ -142,7 +142,7 @@ log "INFO" "Setting up git hooks..."
 if [ -d "$PROJECT_ROOT/.git" ]; then
     # Create pre-commit hook
     PRE_COMMIT_HOOK="$PROJECT_ROOT/.git/hooks/pre-commit"
-    
+
     cat > "$PRE_COMMIT_HOOK" << 'EOF'
 #!/bin/bash
 # Pre-commit hook for RiskOptimizer
@@ -171,7 +171,7 @@ fi
 
 exit 0
 EOF
-    
+
     chmod +x "$PRE_COMMIT_HOOK"
     log "SUCCESS" "Git pre-commit hook installed"
 else

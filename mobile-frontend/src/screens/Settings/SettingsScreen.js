@@ -135,4 +135,3 @@ const SettingsScreen = ({ navigation }) => {
 import { ScrollView } from 'react-native';
 
 export default SettingsScreen;
-

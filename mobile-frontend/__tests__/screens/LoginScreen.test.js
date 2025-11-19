@@ -44,7 +44,7 @@ const mockLogin = jest.fn();
 jest.mock("@rneui/themed", () => {
   const React = require("react");
   const originalModule = jest.requireActual("@rneui/themed");
-  
+
   return {
     ...originalModule,
     useTheme: () => ({
@@ -161,4 +161,3 @@ describe("Login Screen", () => {
     expect(mockLogin).not.toHaveBeenCalled();
   });
 });
-

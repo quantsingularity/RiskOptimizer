@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Box, 
-  Grid, 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  Typography, 
+import {
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
   Divider,
   Button,
   IconButton,
@@ -43,8 +43,8 @@ const Settings = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Settings
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           startIcon={<SaveIcon />}
         >
           Save Changes
@@ -67,7 +67,7 @@ const Settings = () => {
               <Typography variant="h6" gutterBottom>
                 Account Settings
               </Typography>
-              
+
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -124,7 +124,7 @@ const Settings = () => {
                       </Box>
                     </CardContent>
                   </Card>
-                  
+
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                     <Button variant="outlined" color="error">
                       Delete Account
@@ -137,33 +137,33 @@ const Settings = () => {
               </Grid>
             </Box>
           )}
-          
+
           {tabValue === 1 && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 Preferences
               </Typography>
-              
+
               <List>
                 <ListItem>
                   <ListItemIcon>
                     <DarkModeIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Dark Mode" 
+                  <ListItemText
+                    primary="Dark Mode"
                     secondary="Enable dark mode for better visibility in low light"
                   />
                   <Switch defaultChecked />
                 </ListItem>
-                
+
                 <Divider variant="inset" component="li" />
-                
+
                 <ListItem>
                   <ListItemIcon>
                     <LanguageIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Language" 
+                  <ListItemText
+                    primary="Language"
                     secondary="Select your preferred language"
                   />
                   <TextField
@@ -183,15 +183,15 @@ const Settings = () => {
                     <option value="zh">Chinese</option>
                   </TextField>
                 </ListItem>
-                
+
                 <Divider variant="inset" component="li" />
-                
+
                 <ListItem>
                   <ListItemIcon>
                     <StorageIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Data Refresh Rate" 
+                  <ListItemText
+                    primary="Data Refresh Rate"
                     secondary="How often to refresh market data"
                   />
                   <TextField
@@ -212,7 +212,7 @@ const Settings = () => {
                   </TextField>
                 </ListItem>
               </List>
-              
+
               <Box sx={{ mt: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Chart Preferences
@@ -246,13 +246,13 @@ const Settings = () => {
               </Box>
             </Box>
           )}
-          
+
           {tabValue === 2 && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 API Connections
               </Typography>
-              
+
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Card variant="outlined" sx={{ mb: 2 }}>
@@ -279,8 +279,8 @@ const Settings = () => {
                         variant="outlined"
                         size="small"
                       />
-                      <Button 
-                        variant="outlined" 
+                      <Button
+                        variant="outlined"
                         fullWidth
                         sx={{ mt: 2 }}
                       >
@@ -289,7 +289,7 @@ const Settings = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                
+
                 <Grid item xs={12} md={6}>
                   <Card variant="outlined" sx={{ mb: 2 }}>
                     <CardContent>
@@ -316,8 +316,8 @@ const Settings = () => {
                         size="small"
                         type="password"
                       />
-                      <Button 
-                        variant="outlined" 
+                      <Button
+                        variant="outlined"
                         fullWidth
                         sx={{ mt: 2 }}
                       >
@@ -326,10 +326,10 @@ const Settings = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-                
+
                 <Grid item xs={12}>
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     fullWidth
                   >
                     Connect New API
@@ -338,13 +338,13 @@ const Settings = () => {
               </Grid>
             </Box>
           )}
-          
+
           {tabValue === 3 && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 Security Settings
               </Typography>
-              
+
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle2" gutterBottom>
@@ -371,8 +371,8 @@ const Settings = () => {
                     margin="normal"
                     variant="outlined"
                   />
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     fullWidth
                     sx={{ mt: 2 }}
                     startIcon={<VpnKeyIcon />}
@@ -380,7 +380,7 @@ const Settings = () => {
                     Update Password
                   </Button>
                 </Grid>
-                
+
                 <Grid item xs={12} md={6}>
                   <Typography variant="subtitle2" gutterBottom>
                     Two-Factor Authentication
@@ -398,8 +398,8 @@ const Settings = () => {
                       <Typography variant="body2" color="text.secondary" paragraph>
                         Two-factor authentication adds an extra layer of security to your account by requiring more than just a password to sign in.
                       </Typography>
-                      <Button 
-                        variant="outlined" 
+                      <Button
+                        variant="outlined"
                         color="error"
                         fullWidth
                       >
@@ -407,12 +407,12 @@ const Settings = () => {
                       </Button>
                     </CardContent>
                   </Card>
-                  
+
                   <Typography variant="subtitle2" gutterBottom>
                     Session Management
                   </Typography>
-                  <Button 
-                    variant="outlined" 
+                  <Button
+                    variant="outlined"
                     color="error"
                     fullWidth
                   >
@@ -422,63 +422,63 @@ const Settings = () => {
               </Grid>
             </Box>
           )}
-          
+
           {tabValue === 4 && (
             <Box>
               <Typography variant="h6" gutterBottom>
                 Notification Settings
               </Typography>
-              
+
               <List>
                 <ListItem>
-                  <ListItemText 
-                    primary="Email Notifications" 
+                  <ListItemText
+                    primary="Email Notifications"
                     secondary="Receive important updates via email"
                   />
                   <Switch defaultChecked />
                 </ListItem>
-                
+
                 <Divider component="li" />
-                
+
                 <ListItem>
-                  <ListItemText 
-                    primary="Portfolio Alerts" 
+                  <ListItemText
+                    primary="Portfolio Alerts"
                     secondary="Get notified about significant changes in your portfolio"
                   />
                   <Switch defaultChecked />
                 </ListItem>
-                
+
                 <Divider component="li" />
-                
+
                 <ListItem>
-                  <ListItemText 
-                    primary="Market Updates" 
+                  <ListItemText
+                    primary="Market Updates"
                     secondary="Receive daily market summaries and news"
                   />
                   <Switch />
                 </ListItem>
-                
+
                 <Divider component="li" />
-                
+
                 <ListItem>
-                  <ListItemText 
-                    primary="Risk Threshold Alerts" 
+                  <ListItemText
+                    primary="Risk Threshold Alerts"
                     secondary="Get notified when portfolio risk exceeds your threshold"
                   />
                   <Switch defaultChecked />
                 </ListItem>
-                
+
                 <Divider component="li" />
-                
+
                 <ListItem>
-                  <ListItemText 
-                    primary="Optimization Suggestions" 
+                  <ListItemText
+                    primary="Optimization Suggestions"
                     secondary="Receive AI-generated portfolio optimization suggestions"
                   />
                   <Switch defaultChecked />
                 </ListItem>
               </List>
-              
+
               <Box sx={{ mt: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
                   Notification Frequency

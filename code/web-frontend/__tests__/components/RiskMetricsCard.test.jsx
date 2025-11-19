@@ -47,4 +47,3 @@ describe("RiskMetricsCard Component", () => {
 
   // Add tests for different types of metrics or conditional rendering if applicable
 });
-

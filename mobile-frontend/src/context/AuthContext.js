@@ -95,20 +95,20 @@ export const AuthProvider = ({ children }) => {
       if (!authState.refreshToken) {
         throw new Error('No refresh token available');
       }
-      
+
       const response = await apiService.refreshToken(authState.refreshToken);
       const { access_token, refresh_token } = response.data;
-      
+
       await SecureStore.setItemAsync('accessToken', access_token);
       await SecureStore.setItemAsync('refreshToken', refresh_token);
       apiService.setAuthHeader(access_token);
-      
+
       setAuthState(prevState => ({
         ...prevState,
         accessToken: access_token,
         refreshToken: refresh_token
       }));
-      
+
       return access_token;
     } catch (error) {
       console.error('Token refresh failed:', error.response ? error.response.data : error.message);
@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
-  
+
   // Setup interceptor for automatic token refresh
   useEffect(() => {
     const setupInterceptor = () => {
@@ -126,11 +126,11 @@ export const AuthProvider = ({ children }) => {
         refreshTokens
       );
     };
-    
+
     if (authState.authenticated) {
       setupInterceptor();
     }
-    
+
     return () => {
       apiService.removeTokenRefreshInterceptor();
     };
@@ -149,4 +149,3 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-

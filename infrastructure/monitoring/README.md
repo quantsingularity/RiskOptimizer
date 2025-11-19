@@ -83,4 +83,3 @@ monitoring/
 4. Log retention must comply with regulatory requirements
 5. Monitoring data must be encrypted at rest and in transit
 6. Access to monitoring systems must be role-based and audited
-

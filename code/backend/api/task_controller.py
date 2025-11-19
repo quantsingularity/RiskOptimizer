@@ -8,9 +8,15 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from tasks import maintenance_tasks, portfolio_tasks, report_tasks, risk_tasks
-from tasks.celery_app import (cancel_task, celery_app, get_active_tasks,
-                              get_scheduled_tasks, get_task_status,
-                              get_worker_stats, task_result_manager)
+from tasks.celery_app import (
+    cancel_task,
+    celery_app,
+    get_active_tasks,
+    get_scheduled_tasks,
+    get_task_status,
+    get_worker_stats,
+    task_result_manager,
+)
 
 router = APIRouter(prefix="/api/v1/tasks", tags=["tasks"])
 

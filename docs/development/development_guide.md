@@ -121,11 +121,11 @@ Example:
 def calculate_portfolio_risk(portfolio_assets: List[Asset], time_period: int = 30) -> float:
     """
     Calculate the risk score for a portfolio based on historical volatility.
-    
+
     Args:
         portfolio_assets: List of assets in the portfolio
         time_period: Time period in days for historical analysis (default: 30)
-        
+
     Returns:
         Risk score as a float between 0 and 1
     """
@@ -290,9 +290,9 @@ test('displays portfolio name and value', () => {
     value: 10000,
     currency: 'USD'
   };
-  
+
   render(<PortfolioCard portfolio={portfolio} />);
-  
+
   expect(screen.getByText('Test Portfolio')).toBeInTheDocument();
   expect(screen.getByText('$10,000.00')).toBeInTheDocument();
 });
@@ -312,10 +312,10 @@ const PortfolioTracker = artifacts.require("PortfolioTracker");
 contract("PortfolioTracker", accounts => {
   const owner = accounts[0];
   const user = accounts[1];
-  
+
   it("should record a new transaction", async () => {
     const tracker = await PortfolioTracker.deployed();
-    
+
     await tracker.recordTransaction(
       "AAPL",
       100,
@@ -323,7 +323,7 @@ contract("PortfolioTracker", accounts => {
       true,  // isBuy
       { from: user }
     );
-    
+
     const transactions = await tracker.getTransactions(user);
     assert.equal(transactions.length, 1);
     assert.equal(transactions[0].symbol, "AAPL");

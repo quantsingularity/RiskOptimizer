@@ -15,14 +15,14 @@ log() {
     local level=$1
     local message=$2
     local color=$NC
-    
+
     case $level in
         "INFO") color=$BLUE ;;
         "SUCCESS") color=$GREEN ;;
         "WARNING") color=$YELLOW ;;
         "ERROR") color=$RED ;;
     esac
-    
+
     echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message${NC}"
 }
 
@@ -113,7 +113,7 @@ activate_venv() {
 get_staged_files() {
     local component=$1
     local extension=$2
-    
+
     if [ "$STAGED_ONLY" = true ]; then
         git diff --cached --name-only --diff-filter=ACMR | grep -E "^code/$component/.*\.$extension$" || true
     else
@@ -125,10 +125,10 @@ get_staged_files() {
 run_python_linting() {
     local component=$1
     log "INFO" "Running Python linting for $component..."
-    
+
     # Install linting tools if needed
     pip install flake8 black isort mypy > /dev/null
-    
+
     # Get Python files to check
     local python_files=()
     if [ "$STAGED_ONLY" = true ]; then
@@ -136,15 +136,15 @@ run_python_linting() {
     else
         mapfile -t python_files < <(find "$PROJECT_ROOT/code/$component" -name "*.py" -type f | sort)
     fi
-    
+
     if [ ${#python_files[@]} -eq 0 ]; then
         log "INFO" "No Python files to check for $component"
         return 0
     fi
-    
+
     # Create reports directory
     mkdir -p "$PROJECT_ROOT/code_quality_reports/$component"
-    
+
     # Run flake8
     log "INFO" "Running flake8..."
     if [ "$VERBOSE" = true ]; then
@@ -152,7 +152,7 @@ run_python_linting() {
     else
         flake8 "${python_files[@]}" --statistics > "$PROJECT_ROOT/code_quality_reports/$component/flake8.txt"
     fi
-    
+
     # Run black
     log "INFO" "Running black..."
     if [ "$FIX" = true ]; then
@@ -169,7 +169,7 @@ run_python_linting() {
             black --check "${python_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/black.txt" 2>&1 || true
         fi
     fi
-    
+
     # Run isort
     log "INFO" "Running isort..."
     if [ "$FIX" = true ]; then
@@ -186,7 +186,7 @@ run_python_linting() {
             isort --check-only "${python_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/isort.txt" 2>&1 || true
         fi
     fi
-    
+
     # Run mypy for type checking
     log "INFO" "Running mypy..."
     if [ "$VERBOSE" = true ]; then
@@ -194,7 +194,7 @@ run_python_linting() {
     else
         mypy "${python_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/mypy.txt" 2>&1 || true
     fi
-    
+
     log "SUCCESS" "Python linting completed for $component"
 }
 
@@ -202,21 +202,21 @@ run_python_linting() {
 run_js_linting() {
     local component=$1
     log "INFO" "Running JavaScript/TypeScript linting for $component..."
-    
+
     cd "$PROJECT_ROOT/code/$component"
-    
+
     # Check if package.json exists
     if [ ! -f "package.json" ]; then
         log "WARNING" "No package.json found in $component, skipping JavaScript/TypeScript linting"
         return 0
     fi
-    
+
     # Install ESLint and Prettier if needed
     if ! npm list -g eslint > /dev/null 2>&1; then
         log "INFO" "Installing ESLint and Prettier..."
         npm install -g eslint prettier > /dev/null
     fi
-    
+
     # Get JS/TS files to check
     local js_files=()
     if [ "$STAGED_ONLY" = true ]; then
@@ -224,15 +224,15 @@ run_js_linting() {
     else
         mapfile -t js_files < <(find . -regex ".*\.\(js\|jsx\|ts\|tsx\)" -type f | sort)
     fi
-    
+
     if [ ${#js_files[@]} -eq 0 ]; then
         log "INFO" "No JavaScript/TypeScript files to check for $component"
         return 0
     fi
-    
+
     # Create reports directory
     mkdir -p "$PROJECT_ROOT/code_quality_reports/$component"
-    
+
     # Run ESLint
     log "INFO" "Running ESLint..."
     if [ "$FIX" = true ]; then
@@ -249,7 +249,7 @@ run_js_linting() {
             npx eslint "${js_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/eslint.txt" 2>&1 || true
         fi
     fi
-    
+
     # Run Prettier
     log "INFO" "Running Prettier..."
     if [ "$FIX" = true ]; then
@@ -266,7 +266,7 @@ run_js_linting() {
             npx prettier --check "${js_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/prettier.txt" 2>&1 || true
         fi
     fi
-    
+
     log "SUCCESS" "JavaScript/TypeScript linting completed for $component"
 }
 
@@ -274,15 +274,15 @@ run_js_linting() {
 run_solidity_linting() {
     local component=$1
     log "INFO" "Running Solidity linting for $component..."
-    
+
     cd "$PROJECT_ROOT/code/$component"
-    
+
     # Check if package.json exists
     if [ ! -f "package.json" ]; then
         log "WARNING" "No package.json found in $component, skipping Solidity linting"
         return 0
     fi
-    
+
     # Get Solidity files to check
     local sol_files=()
     if [ "$STAGED_ONLY" = true ]; then
@@ -290,22 +290,22 @@ run_solidity_linting() {
     else
         mapfile -t sol_files < <(find . -name "*.sol" -type f | sort)
     fi
-    
+
     if [ ${#sol_files[@]} -eq 0 ]; then
         log "INFO" "No Solidity files to check for $component"
         return 0
     fi
-    
+
     # Create reports directory
     mkdir -p "$PROJECT_ROOT/code_quality_reports/$component"
-    
+
     # Run Solhint
     log "INFO" "Running Solhint..."
     if ! npm list -g solhint > /dev/null 2>&1; then
         log "INFO" "Installing Solhint..."
         npm install -g solhint > /dev/null
     fi
-    
+
     if [ "$FIX" = true ]; then
         if [ "$VERBOSE" = true ]; then
             npx solhint --fix "${sol_files[@]}" || true
@@ -320,18 +320,18 @@ run_solidity_linting() {
             npx solhint "${sol_files[@]}" > "$PROJECT_ROOT/code_quality_reports/$component/solhint.txt" 2>&1 || true
         fi
     fi
-    
+
     log "SUCCESS" "Solidity linting completed for $component"
 }
 
 # Function to generate code quality report
 generate_quality_report() {
     log "INFO" "Generating code quality report..."
-    
+
     # Create report directory
     REPORT_DIR="$PROJECT_ROOT/code_quality_reports"
     mkdir -p "$REPORT_DIR"
-    
+
     # Generate HTML report
     cat > "$REPORT_DIR/index.html" << EOF
 <!DOCTYPE html>

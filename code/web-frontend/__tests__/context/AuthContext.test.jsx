@@ -186,4 +186,3 @@ describe("Auth Context", () => {
 
   // Add test for initial state hydration from localStorage if implemented
 });
-

@@ -60,4 +60,3 @@ export const isInWatchlist = async (symbol) => {
         return false;
     }
 };
-

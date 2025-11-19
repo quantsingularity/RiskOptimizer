@@ -12,13 +12,13 @@ firewall_requirements:
       - isolated_network_segment
       - dedicated_vlans
       - strict_access_controls
-    
+
   firewall_rules:
     default_policy: "deny_all"
     explicit_allow_rules: true
     regular_review: "quarterly"
     change_management: true
-  
+
   documentation:
     network_diagrams: true
     firewall_configurations: true
@@ -32,7 +32,7 @@ network_design:
     web_servers: "dmz_segment"
     application_servers: "internal_segment"
     database_servers: "secure_segment"
-  
+
   access_controls:
     inbound_traffic: "restricted"
     outbound_traffic: "controlled"
@@ -48,12 +48,12 @@ hardening_standards:
     change_required: true
     complexity_requirements: true
     unique_per_system: true
-  
+
   unnecessary_services:
     disable_unused: true
     regular_audit: true
     documentation: true
-  
+
   security_parameters:
     encryption_enabled: true
     secure_protocols_only: true
@@ -68,7 +68,7 @@ configuration_standards:
     databases: true
     applications: true
     network_devices: true
-  
+
   change_control:
     approval_process: true
     testing_required: true
@@ -86,13 +86,13 @@ data_protection:
     key_management: "hsm_based"
     data_at_rest: true
     data_in_transit: true
-  
+
   data_retention:
     minimize_storage: true
     retention_policy: "business_justification_only"
     secure_deletion: true
     regular_purging: true
-  
+
   data_masking:
     pan_masking: "show_last_4_digits"
     test_environments: "no_real_data"
@@ -106,17 +106,17 @@ key_management:
     strong_cryptography: true
     secure_random_generation: true
     dual_control: true
-  
+
   key_distribution:
     secure_channels: true
     authentication_required: true
     integrity_protection: true
-  
+
   key_storage:
     hardware_security_modules: true
     encrypted_storage: true
     access_controls: true
-  
+
   key_rotation:
     regular_rotation: "annually"
     compromise_rotation: "immediate"
@@ -132,12 +132,12 @@ transmission_security:
     tls_version: "1.3_minimum"
     cipher_suites: "strong_only"
     certificate_validation: true
-  
+
   wireless_security:
     wpa3_encryption: true
     strong_authentication: true
     regular_key_rotation: true
-  
+
   messaging_security:
     end_to_end_encryption: true
     digital_signatures: true
@@ -154,13 +154,13 @@ malware_protection:
     real_time_protection: true
     regular_updates: true
     centralized_management: true
-  
+
   system_monitoring:
     behavioral_analysis: true
     anomaly_detection: true
     threat_intelligence: true
     automated_response: true
-  
+
   email_security:
     spam_filtering: true
     attachment_scanning: true
@@ -178,13 +178,13 @@ secure_development:
     threat_modeling: true
     secure_coding_standards: true
     security_testing: true
-  
+
   vulnerability_management:
     regular_scanning: true
     patch_management: true
     risk_assessment: true
     remediation_tracking: true
-  
+
   code_review:
     manual_review: true
     automated_scanning: true
@@ -199,7 +199,7 @@ change_management:
     separated_from_production: true
     test_data_protection: true
     access_controls: true
-  
+
   deployment_process:
     approval_required: true
     testing_mandatory: true
@@ -217,13 +217,13 @@ access_control:
     job_function_based: true
     regular_review: true
     approval_process: true
-  
+
   user_management:
     unique_user_ids: true
     strong_authentication: true
     account_lifecycle: true
     privileged_access_management: true
-  
+
   system_access:
     need_to_know_basis: true
     business_justification: true
@@ -240,13 +240,13 @@ authentication:
     unique_user_ids: true
     no_shared_accounts: true
     service_account_management: true
-  
+
   authentication_factors:
     multi_factor_authentication: true
     strong_passwords: true
     biometric_options: true
     token_based: true
-  
+
   session_management:
     session_timeouts: true
     re_authentication: true
@@ -263,13 +263,13 @@ physical_security:
     visitor_management: true
     escort_requirements: true
     access_logging: true
-  
+
   media_handling:
     secure_storage: true
     destruction_procedures: true
     transport_security: true
     inventory_management: true
-  
+
   device_controls:
     asset_inventory: true
     secure_disposal: true
@@ -287,13 +287,13 @@ logging_requirements:
     administrative_actions: true
     system_events: true
     security_events: true
-  
+
   log_management:
     centralized_logging: true
     log_integrity: true
     retention_policy: "1_year_minimum"
     secure_storage: true
-  
+
   monitoring:
     real_time_monitoring: true
     automated_alerting: true
@@ -309,7 +309,7 @@ log_analysis:
     pattern_recognition: true
     correlation_rules: true
     machine_learning: true
-  
+
   manual_review:
     daily_review: true
     weekly_analysis: true
@@ -327,13 +327,13 @@ security_testing:
     external_scanning: "quarterly"
     authenticated_scanning: true
     remediation_tracking: true
-  
+
   penetration_testing:
     annual_testing: true
     qualified_assessors: true
     comprehensive_scope: true
     remediation_required: true
-  
+
   intrusion_detection:
     network_ids: true
     host_ids: true
@@ -351,13 +351,13 @@ security_policies:
     annual_review: true
     staff_acknowledgment: true
     regular_updates: true
-  
+
   operational_procedures:
     incident_response: true
     business_continuity: true
     risk_management: true
     vendor_management: true
-  
+
   security_awareness:
     training_program: true
     regular_updates: true
@@ -375,7 +375,7 @@ compliance_automation:
     policy_violations: true
     security_controls: true
     audit_requirements: true
-  
+
   reporting:
     compliance_dashboard: true
     automated_reports: true
@@ -390,15 +390,14 @@ assessment_schedule:
     frequency: "quarterly"
     scope: "full_requirements"
     documentation: true
-  
+
   external_assessments:
     qsa_assessment: "annually"
     penetration_testing: "annually"
     vulnerability_scanning: "quarterly"
-  
+
   compliance_validation:
     aoc_generation: true
     roc_documentation: true
     attestation_submission: true
 ```
-

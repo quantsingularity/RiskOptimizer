@@ -112,5 +112,3 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     details JSONB, -- JSONB for flexible storage of action details (e.g., old_value, new_value, IP address)
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-

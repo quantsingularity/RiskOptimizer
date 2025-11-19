@@ -15,14 +15,14 @@ log() {
     local level=$1
     local message=$2
     local color=$NC
-    
+
     case $level in
         "INFO") color=$BLUE ;;
         "SUCCESS") color=$GREEN ;;
         "WARNING") color=$YELLOW ;;
         "ERROR") color=$RED ;;
     esac
-    
+
     echo -e "${color}[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message${NC}"
 }
 
@@ -132,10 +132,10 @@ activate_venv() {
 # Function to install required packages
 install_requirements() {
     log "INFO" "Installing required packages..."
-    
+
     # Install common ML packages
     pip install numpy pandas scikit-learn tensorflow matplotlib seaborn joblib > /dev/null
-    
+
     # Install model-specific packages
     case $MODEL_TYPE in
         "all"|"optimization")
@@ -148,25 +148,25 @@ install_requirements() {
             pip install keras prophet > /dev/null
             ;;
     esac
-    
+
     log "SUCCESS" "Required packages installed"
 }
 
 # Function to prepare dataset
 prepare_dataset() {
     log "INFO" "Preparing dataset for training..."
-    
+
     # Create data directory if it doesn't exist
     mkdir -p "$PROJECT_ROOT/code/ai_models/data"
-    
+
     # Handle different dataset options
     if [ "$DATASET" = "default" ]; then
         log "INFO" "Using default dataset"
-        
+
         # Check if default dataset exists
         if [ ! -f "$PROJECT_ROOT/code/ai_models/data/default_dataset.csv" ]; then
             log "INFO" "Default dataset not found, downloading..."
-            
+
             # Create Python script to download and prepare default dataset
             cat > "$PROJECT_ROOT/code/ai_models/data/download_default_data.py" << 'EOF'
 #!/usr/bin/env python3
@@ -180,7 +180,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 
 # Define tickers for S&P 500 components (using a subset for example)
-tickers = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'JPM', 'V', 'PG', 'UNH', 
+tickers = ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'JPM', 'V', 'PG', 'UNH',
            'HD', 'BAC', 'XOM', 'NVDA', 'DIS', 'ADBE', 'CRM', 'NFLX', 'CMCSA', 'PFE']
 
 # Calculate date ranges
@@ -229,50 +229,50 @@ print(f"Training set: {len(train_data)} rows")
 print(f"Testing set: {len(test_data)} rows")
 print("Files saved to:", output_dir)
 EOF
-            
+
             # Install yfinance package
             pip install yfinance > /dev/null
-            
+
             # Run the download script
             python "$PROJECT_ROOT/code/ai_models/data/download_default_data.py"
-            
+
             log "SUCCESS" "Default dataset downloaded and prepared"
         else
             log "INFO" "Default dataset already exists"
         fi
-        
+
         # Set dataset paths
         TRAIN_DATASET="$PROJECT_ROOT/code/ai_models/data/train_dataset.csv"
         TEST_DATASET="$PROJECT_ROOT/code/ai_models/data/test_dataset.csv"
-        
+
     elif [ "$DATASET" = "custom" ]; then
         log "INFO" "Using custom dataset from data directory"
-        
+
         # Check if custom dataset exists
         if [ ! -f "$PROJECT_ROOT/code/ai_models/data/custom_dataset.csv" ]; then
             log "ERROR" "Custom dataset not found at $PROJECT_ROOT/code/ai_models/data/custom_dataset.csv"
             exit 1
         fi
-        
+
         # Set dataset paths
         TRAIN_DATASET="$PROJECT_ROOT/code/ai_models/data/custom_dataset.csv"
         TEST_DATASET="$PROJECT_ROOT/code/ai_models/data/custom_dataset.csv"
-        
+
     else
         # Assume DATASET is a path
         log "INFO" "Using dataset from specified path: $DATASET"
-        
+
         # Check if dataset exists
         if [ ! -f "$DATASET" ]; then
             log "ERROR" "Dataset not found at $DATASET"
             exit 1
         fi
-        
+
         # Set dataset paths
         TRAIN_DATASET="$DATASET"
         TEST_DATASET="$DATASET"
     fi
-    
+
     log "SUCCESS" "Dataset prepared for training"
     return 0
 }
@@ -280,10 +280,10 @@ EOF
 # Function to train optimization model
 train_optimization_model() {
     log "INFO" "Training portfolio optimization model..."
-    
+
     # Create model directory
     mkdir -p "$PROJECT_ROOT/code/ai_models/models/optimization"
-    
+
     # Create Python script for training
     cat > "$PROJECT_ROOT/code/ai_models/train_optimization_model.py" << 'EOF'
 #!/usr/bin/env python3
@@ -394,7 +394,7 @@ metrics = {
     'r2': float(r2),
     'hyperparameters': default_hyperparams,
     'feature_importance': {
-        feature: float(importance) 
+        feature: float(importance)
         for feature, importance in zip(X_train.columns, model.feature_importances_)
     }
 }
@@ -404,7 +404,7 @@ with open(os.path.join(args.output_dir, 'metrics.json'), 'w') as f:
 
 print(f"Model and metrics saved to {args.output_dir}")
 EOF
-    
+
     # Run training script
     python "$PROJECT_ROOT/code/ai_models/train_optimization_model.py" \
         --train_data "$TRAIN_DATASET" \
@@ -413,17 +413,17 @@ EOF
         --hyperparams "$HYPERPARAMS" \
         --output_dir "$PROJECT_ROOT/code/ai_models/models/optimization" \
         $([ "$VERBOSE" = true ] && echo "--verbose")
-    
+
     log "SUCCESS" "Portfolio optimization model trained and saved"
 }
 
 # Function to train risk model
 train_risk_model() {
     log "INFO" "Training risk assessment model..."
-    
+
     # Create model directory
     mkdir -p "$PROJECT_ROOT/code/ai_models/models/risk"
-    
+
     # Create Python script for training
     cat > "$PROJECT_ROOT/code/ai_models/train_risk_model.py" << 'EOF'
 #!/usr/bin/env python3
@@ -534,7 +534,7 @@ metrics = {
     'r2': float(r2),
     'hyperparameters': default_hyperparams,
     'feature_importance': {
-        feature: float(importance) 
+        feature: float(importance)
         for feature, importance in zip(X_train.columns, model.feature_importances_)
     }
 }
@@ -544,7 +544,7 @@ with open(os.path.join(args.output_dir, 'metrics.json'), 'w') as f:
 
 print(f"Model and metrics saved to {args.output_dir}")
 EOF
-    
+
     # Run training script
     python "$PROJECT_ROOT/code/ai_models/train_risk_model.py" \
         --train_data "$TRAIN_DATASET" \
@@ -553,17 +553,17 @@ EOF
         --hyperparams "$HYPERPARAMS" \
         --output_dir "$PROJECT_ROOT/code/ai_models/models/risk" \
         $([ "$VERBOSE" = true ] && echo "--verbose")
-    
+
     log "SUCCESS" "Risk assessment model trained and saved"
 }
 
 # Function to train prediction model
 train_prediction_model() {
     log "INFO" "Training market prediction model..."
-    
+
     # Create model directory
     mkdir -p "$PROJECT_ROOT/code/ai_models/models/prediction"
-    
+
     # Create Python script for training
     cat > "$PROJECT_ROOT/code/ai_models/train_prediction_model.py" << 'EOF'
 #!/usr/bin/env python3
@@ -646,7 +646,7 @@ X_test, y_test = create_sequences(test_scaled, seq_length)
 
 # Build LSTM model
 model = Sequential([
-    LSTM(units=default_hyperparams['lstm_units'], return_sequences=True, 
+    LSTM(units=default_hyperparams['lstm_units'], return_sequences=True,
          input_shape=(X_train.shape[1], X_train.shape[2])),
     Dropout(default_hyperparams['dropout_rate']),
     LSTM(units=default_hyperparams['lstm_units']),
@@ -722,7 +722,7 @@ with open(os.path.join(args.output_dir, 'metrics.json'), 'w') as f:
 
 print(f"Model and metrics saved to {args.output_dir}")
 EOF
-    
+
     # Run training script
     python "$PROJECT_ROOT/code/ai_models/train_prediction_model.py" \
         --train_data "$TRAIN_DATASET" \
@@ -731,17 +731,17 @@ EOF
         --hyperparams "$HYPERPARAMS" \
         --output_dir "$PROJECT_ROOT/code/ai_models/models/prediction" \
         $([ "$VERBOSE" = true ] && echo "--verbose")
-    
+
     log "SUCCESS" "Market prediction model trained and saved"
 }
 
 # Function to evaluate models
 evaluate_models() {
     log "INFO" "Evaluating trained models..."
-    
+
     # Create evaluation directory
     mkdir -p "$PROJECT_ROOT/code/ai_models/evaluation"
-    
+
     # Create Python script for evaluation
     cat > "$PROJECT_ROOT/code/ai_models/evaluate_models.py" << 'EOF'
 #!/usr/bin/env python3
@@ -781,56 +781,56 @@ def evaluate_optimization_model():
     if not os.path.exists(model_dir):
         print(f"Optimization model directory not found: {model_dir}")
         return None
-    
+
     print("Evaluating optimization model...")
-    
+
     # Load model and scaler
     model_path = os.path.join(model_dir, 'optimization_model.pkl')
     scaler_path = os.path.join(model_dir, 'optimization_scaler.pkl')
-    
+
     if not os.path.exists(model_path) or not os.path.exists(scaler_path):
         print("Model or scaler file not found")
         return None
-    
+
     model = joblib.load(model_path)
     scaler = joblib.load(scaler_path)
-    
+
     # Extract features and targets
     return_cols = [col for col in test_data.columns if col.endswith('_return')]
     feature_cols = [col for col in test_data.columns if not col.endswith('_return')]
-    
+
     X_test = test_data[feature_cols]
     y_test = test_data[return_cols]
-    
+
     # Preprocess data
     X_test_scaled = scaler.transform(X_test)
-    
+
     # Make predictions
     y_pred = model.predict(X_test_scaled)
-    
+
     # Calculate metrics
     mse = mean_squared_error(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
-    
+
     print(f"Optimization Model Metrics:")
     print(f"Mean Squared Error: {mse:.6f}")
     print(f"Mean Absolute Error: {mae:.6f}")
     print(f"R² Score: {r2:.6f}")
-    
+
     # Create evaluation plots
     plt.figure(figsize=(12, 8))
-    
+
     # Plot actual vs predicted for a sample asset
     sample_asset = return_cols[0]
     plt.scatter(y_test[sample_asset], y_pred[:, 0], alpha=0.5)
-    plt.plot([y_test[sample_asset].min(), y_test[sample_asset].max()], 
+    plt.plot([y_test[sample_asset].min(), y_test[sample_asset].max()],
              [y_test[sample_asset].min(), y_test[sample_asset].max()], 'k--')
     plt.xlabel('Actual Returns')
     plt.ylabel('Predicted Returns')
     plt.title(f'Actual vs Predicted Returns for {sample_asset}')
     plt.savefig(os.path.join(args.output_dir, 'optimization_actual_vs_predicted.png'))
-    
+
     # Save metrics
     metrics = {
         'mse': float(mse),
@@ -841,10 +841,10 @@ def evaluate_optimization_model():
             'predicted': {col: y_pred[:5, i].tolist() for i, col in enumerate(y_test.columns)}
         }
     }
-    
+
     with open(os.path.join(args.output_dir, 'optimization_evaluation.json'), 'w') as f:
         json.dump(metrics, f, indent=2)
-    
+
     return metrics
 
 # Function to evaluate risk model
@@ -853,56 +853,56 @@ def evaluate_risk_model():
     if not os.path.exists(model_dir):
         print(f"Risk model directory not found: {model_dir}")
         return None
-    
+
     print("Evaluating risk model...")
-    
+
     # Load model and scaler
     model_path = os.path.join(model_dir, 'risk_model.pkl')
     scaler_path = os.path.join(model_dir, 'risk_scaler.pkl')
-    
+
     if not os.path.exists(model_path) or not os.path.exists(scaler_path):
         print("Model or scaler file not found")
         return None
-    
+
     model = joblib.load(model_path)
     scaler = joblib.load(scaler_path)
-    
+
     # Extract features and targets
     volatility_cols = [col for col in test_data.columns if col.endswith('_volatility')]
     feature_cols = [col for col in test_data.columns if not col.endswith('_volatility')]
-    
+
     X_test = test_data[feature_cols]
     y_test = test_data[volatility_cols]
-    
+
     # Preprocess data
     X_test_scaled = scaler.transform(X_test)
-    
+
     # Make predictions
     y_pred = model.predict(X_test_scaled)
-    
+
     # Calculate metrics
     mse = mean_squared_error(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
-    
+
     print(f"Risk Model Metrics:")
     print(f"Mean Squared Error: {mse:.6f}")
     print(f"Mean Absolute Error: {mae:.6f}")
     print(f"R² Score: {r2:.6f}")
-    
+
     # Create evaluation plots
     plt.figure(figsize=(12, 8))
-    
+
     # Plot actual vs predicted for a sample asset
     sample_asset = volatility_cols[0]
     plt.scatter(y_test[sample_asset], y_pred[:, 0], alpha=0.5)
-    plt.plot([y_test[sample_asset].min(), y_test[sample_asset].max()], 
+    plt.plot([y_test[sample_asset].min(), y_test[sample_asset].max()],
              [y_test[sample_asset].min(), y_test[sample_asset].max()], 'k--')
     plt.xlabel('Actual Volatility')
     plt.ylabel('Predicted Volatility')
     plt.title(f'Actual vs Predicted Volatility for {sample_asset}')
     plt.savefig(os.path.join(args.output_dir, 'risk_actual_vs_predicted.png'))
-    
+
     # Save metrics
     metrics = {
         'mse': float(mse),
@@ -913,10 +913,10 @@ def evaluate_risk_model():
             'predicted': {col: y_pred[:5, i].tolist() for i, col in enumerate(y_test.columns)}
         }
     }
-    
+
     with open(os.path.join(args.output_dir, 'risk_evaluation.json'), 'w') as f:
         json.dump(metrics, f, indent=2)
-    
+
     return metrics
 
 # Function to evaluate prediction model
@@ -925,29 +925,29 @@ def evaluate_prediction_model():
     if not os.path.exists(model_dir):
         print(f"Prediction model directory not found: {model_dir}")
         return None
-    
+
     print("Evaluating prediction model...")
-    
+
     # Load model and scaler
     model_path = os.path.join(model_dir, 'prediction_model')
     scaler_path = os.path.join(model_dir, 'prediction_scaler.pkl')
     seq_length_path = os.path.join(model_dir, 'sequence_length.pkl')
-    
+
     if not os.path.exists(model_path) or not os.path.exists(scaler_path) or not os.path.exists(seq_length_path):
         print("Model, scaler, or sequence length file not found")
         return None
-    
+
     model = tf.keras.models.load_model(model_path)
     scaler = joblib.load(scaler_path)
     seq_length = joblib.load(seq_length_path)
-    
+
     # Extract price columns for time series prediction
     price_cols = [col for col in test_data.columns if col.endswith('_price')]
     test_prices = test_data[price_cols]
-    
+
     # Preprocess data
     test_scaled = scaler.transform(test_prices)
-    
+
     # Create sequences for LSTM
     def create_sequences(data, seq_length):
         X, y = [], []
@@ -955,25 +955,25 @@ def evaluate_prediction_model():
             X.append(data[i:i + seq_length])
             y.append(data[i + seq_length])
         return np.array(X), np.array(y)
-    
+
     X_test, y_test = create_sequences(test_scaled, seq_length)
-    
+
     # Make predictions
     y_pred = model.predict(X_test)
-    
+
     # Calculate metrics
     mse = mean_squared_error(y_test, y_pred)
     mae = mean_absolute_error(y_test.reshape(-1), y_pred.reshape(-1))
     r2 = r2_score(y_test.reshape(-1), y_pred.reshape(-1))
-    
+
     print(f"Prediction Model Metrics:")
     print(f"Mean Squared Error: {mse:.6f}")
     print(f"Mean Absolute Error: {mae:.6f}")
     print(f"R² Score: {r2:.6f}")
-    
+
     # Create evaluation plots
     plt.figure(figsize=(12, 8))
-    
+
     # Plot actual vs predicted time series for a sample asset
     plt.figure(figsize=(12, 6))
     plt.plot(y_test[:, 0], label='Actual')
@@ -983,7 +983,7 @@ def evaluate_prediction_model():
     plt.ylabel('Scaled Price')
     plt.legend()
     plt.savefig(os.path.join(args.output_dir, 'prediction_time_series.png'))
-    
+
     # Save metrics
     metrics = {
         'mse': float(mse),
@@ -994,10 +994,10 @@ def evaluate_prediction_model():
             'predicted': y_pred[:5, 0].tolist()
         }
     }
-    
+
     with open(os.path.join(args.output_dir, 'prediction_evaluation.json'), 'w') as f:
         json.dump(metrics, f, indent=2)
-    
+
     return metrics
 
 # Evaluate all models
@@ -1040,7 +1040,7 @@ if results:
         <h1>RiskOptimizer Model Evaluation Report</h1>
         <p>Generated on: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
     """
-    
+
     if 'optimization' in results:
         html_report += f"""
         <div class="model-section">
@@ -1069,7 +1069,7 @@ if results:
             <img src="optimization_actual_vs_predicted.png" alt="Optimization Model: Actual vs Predicted">
         </div>
         """
-    
+
     if 'risk' in results:
         html_report += f"""
         <div class="model-section">
@@ -1098,7 +1098,7 @@ if results:
             <img src="risk_actual_vs_predicted.png" alt="Risk Model: Actual vs Predicted">
         </div>
         """
-    
+
     if 'prediction' in results:
         html_report += f"""
         <div class="model-section">
@@ -1127,34 +1127,34 @@ if results:
             <img src="prediction_time_series.png" alt="Prediction Model: Time Series">
         </div>
         """
-    
+
     html_report += """
     </body>
     </html>
     """
-    
+
     # Save HTML report
     with open(os.path.join(args.output_dir, 'evaluation_report.html'), 'w') as f:
         f.write(html_report)
-    
+
     # Save combined metrics
     with open(os.path.join(args.output_dir, 'all_models_evaluation.json'), 'w') as f:
         json.dump(results, f, indent=2)
-    
+
     print(f"Evaluation report saved to {os.path.join(args.output_dir, 'evaluation_report.html')}")
 else:
     print("No models were evaluated successfully")
 
 print("Evaluation complete")
 EOF
-    
+
     # Run evaluation script
     python "$PROJECT_ROOT/code/ai_models/evaluate_models.py" \
         --test_data "$TEST_DATASET" \
         --models_dir "$PROJECT_ROOT/code/ai_models/models" \
         --output_dir "$PROJECT_ROOT/code/ai_models/evaluation" \
         $([ "$VERBOSE" = true ] && echo "--verbose")
-    
+
     log "SUCCESS" "Models evaluated and reports generated"
 }
 
@@ -1176,11 +1176,11 @@ if [ "$EVALUATE_ONLY" = false ]; then
     if [ "$MODEL_TYPE" = "all" ] || [ "$MODEL_TYPE" = "optimization" ]; then
         train_optimization_model
     fi
-    
+
     if [ "$MODEL_TYPE" = "all" ] || [ "$MODEL_TYPE" = "risk" ]; then
         train_risk_model
     fi
-    
+
     if [ "$MODEL_TYPE" = "all" ] || [ "$MODEL_TYPE" = "prediction" ]; then
         train_prediction_model
     fi

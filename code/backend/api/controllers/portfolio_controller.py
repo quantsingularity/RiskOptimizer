@@ -6,13 +6,16 @@ Implements RESTful API design with proper error handling.
 from typing import Any, Dict, List
 
 from flask import Blueprint, Response, jsonify, request
-from riskoptimizer.api.middleware.auth_middleware import (jwt_required,
-                                                          optional_jwt)
+from riskoptimizer.api.middleware.auth_middleware import jwt_required, optional_jwt
 from riskoptimizer.api.schemas.portfolio_schema import (
-    validate_portfolio_request, validate_portfolio_update_request)
-from riskoptimizer.core.exceptions import (NotFoundError,
-                                           RiskOptimizerException,
-                                           ValidationError)
+    validate_portfolio_request,
+    validate_portfolio_update_request,
+)
+from riskoptimizer.core.exceptions import (
+    NotFoundError,
+    RiskOptimizerException,
+    ValidationError,
+)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.portfolio_service import portfolio_service
 from riskoptimizer.utils.pagination import create_paginated_response
@@ -23,46 +26,42 @@ logger = get_logger(__name__)
 portfolio_bp = Blueprint("portfolio", __name__, url_prefix="/api/v1/portfolios")
 
 
-def create_success_response(data: Any, message: str = None, meta: Dict[str, Any] = None) -> Dict[str, Any]:
+def create_success_response(
+    data: Any, message: str = None, meta: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """
     Create standardized success response.
-    
+
     Args:
         data: Response data
         message: Optional success message
         meta: Optional metadata
-        
+
     Returns:
         Standardized response dictionary
     """
-    response = {
-        "status": "success",
-        "data": data
-    }
-    
+    response = {"status": "success", "data": data}
+
     if message:
         response["message"] = message
-    
+
     if meta:
         response["meta"] = meta
-    
+
     return response
 
 
 def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:
     """
     Create standardized error response.
-    
+
     Args:
         error: Exception instance
-        
+
     Returns:
         Standardized error response dictionary
     """
-    return {
-        "status": "error",
-        "error": error.to_dict()
-    }
+    return {"status": "error", "error": error.to_dict()}
 
 
 @portfolio_bp.route("/address/<user_address>", methods=["GET"])
@@ -70,7 +69,7 @@ def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:
 def get_portfolio(user_address: str) -> Response:
     """
     Get portfolio by user address.
-    --- 
+    ---
     parameters:
         - in: path
           name: user_address
@@ -115,37 +114,44 @@ def get_portfolio(user_address: str) -> Response:
     """
     try:
         logger.info(f"Get portfolio request for address: {user_address}")
-        
+
         # Get portfolio from service
         portfolio_data = portfolio_service.get_portfolio_by_address(user_address)
-        
+
         # Create success response
         response = create_success_response(
-            data=portfolio_data,
-            message="Portfolio retrieved successfully"
+            data=portfolio_data, message="Portfolio retrieved successfully"
         )
-        
+
         logger.info(f"Portfolio retrieved successfully for address: {user_address}")
         return jsonify(response), 200
-        
+
     except NotFoundError as e:
         logger.warning(f"Portfolio not found for address {user_address}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 404
-        
+
     except ValidationError as e:
         logger.warning(f"Validation error for address {user_address}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except RiskOptimizerException as e:
-        logger.error(f"Error getting portfolio for address {user_address}: {str(e)}", exc_info=True)
+        logger.error(
+            f"Error getting portfolio for address {user_address}: {str(e)}",
+            exc_info=True,
+        )
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
-        logger.error(f"Unexpected error getting portfolio for address {user_address}: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        logger.error(
+            f"Unexpected error getting portfolio for address {user_address}: {str(e)}",
+            exc_info=True,
+        )
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
 
@@ -155,7 +161,7 @@ def get_portfolio(user_address: str) -> Response:
 def create_portfolio() -> Response:
     """
     Create a new portfolio for a user.
-    --- 
+    ---
     parameters:
         - in: body
           name: body
@@ -220,40 +226,41 @@ def create_portfolio() -> Response:
     """
     try:
         logger.info("Create portfolio request received")
-        
+
         # Get request data
         data = request.get_json()
         if not data:
             raise ValidationError("Request body is required")
-        
+
         # Validate request data
         # Note: This uses a generic validation, specific schema validation might be needed
         # if validate_portfolio_request is not suitable for create.
         # For now, assuming it covers the basic fields for creation.
-        validated_data = data # Assuming basic validation happens in service layer
-        
+        validated_data = data  # Assuming basic validation happens in service layer
+
         # Create portfolio
         portfolio_data = portfolio_service.create_portfolio(
             user_id=validated_data["user_id"],
             user_address=validated_data["user_address"],
             name=validated_data["name"],
-            description=validated_data.get("description")
+            description=validated_data.get("description"),
         )
-        
+
         # Create success response
         response = create_success_response(
-            data=portfolio_data,
-            message="Portfolio created successfully"
+            data=portfolio_data, message="Portfolio created successfully"
         )
-        
-        logger.info(f"Portfolio created successfully for user: {validated_data["user_id"]}")
+
+        logger.info(
+            f"Portfolio created successfully for user: {validated_data["user_id"]}"
+        )
         return jsonify(response), 201
-        
+
     except ValidationError as e:
         logger.warning(f"Validation error creating portfolio: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except NotFoundError as e:
         logger.warning(f"User not found during portfolio creation: {str(e)}")
         response = create_error_response(e)
@@ -263,10 +270,12 @@ def create_portfolio() -> Response:
         logger.error(f"Error creating portfolio: {str(e)}", exc_info=True)
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
         logger.error(f"Unexpected error creating portfolio: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
 
@@ -276,7 +285,7 @@ def create_portfolio() -> Response:
 def save_portfolio() -> Response:
     """
     Save portfolio allocations for a user.
-    --- 
+    ---
     parameters:
         - in: body
           name: body
@@ -329,44 +338,47 @@ def save_portfolio() -> Response:
     """
     try:
         logger.info("Save portfolio request received")
-        
+
         # Get request data
         data = request.get_json()
         if not data:
             raise ValidationError("Request body is required")
-        
+
         # Validate request data
         validated_data = validate_portfolio_request(data)
-        
+
         # Save portfolio
         portfolio_data = portfolio_service.save_portfolio(
             user_address=validated_data["user_address"],
             allocations=validated_data["allocations"],
-            name=validated_data.get("name", "Default Portfolio")
+            name=validated_data.get("name", "Default Portfolio"),
         )
-        
+
         # Create success response
         response = create_success_response(
-            data=portfolio_data,
-            message="Portfolio saved successfully"
+            data=portfolio_data, message="Portfolio saved successfully"
         )
-        
-        logger.info(f"Portfolio saved successfully for address: {validated_data["user_address"]}")
-        return jsonify(response), 200 # Changed to 200 as it's an update/save operation
-        
+
+        logger.info(
+            f"Portfolio saved successfully for address: {validated_data["user_address"]}"
+        )
+        return jsonify(response), 200  # Changed to 200 as it's an update/save operation
+
     except ValidationError as e:
         logger.warning(f"Validation error saving portfolio: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except RiskOptimizerException as e:
         logger.error(f"Error saving portfolio: {str(e)}", exc_info=True)
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
         logger.error(f"Unexpected error saving portfolio: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
 
@@ -376,7 +388,7 @@ def save_portfolio() -> Response:
 def update_portfolio(portfolio_id: int) -> Response:
     """
     Update an existing portfolio.
-    --- 
+    ---
     parameters:
         - in: path
           name: portfolio_id
@@ -440,45 +452,53 @@ def update_portfolio(portfolio_id: int) -> Response:
     """
     try:
         logger.info(f"Update portfolio request for ID: {portfolio_id}")
-        
+
         # Get request data
         data = request.get_json()
         if not data:
             raise ValidationError("Request body is required")
-        
+
         # Validate request data
         validated_data = validate_portfolio_update_request(data)
-        
+
         # Update portfolio
-        portfolio_data = portfolio_service.update_portfolio(portfolio_id, validated_data)
-        
+        portfolio_data = portfolio_service.update_portfolio(
+            portfolio_id, validated_data
+        )
+
         # Create success response
         response = create_success_response(
-            data=portfolio_data,
-            message="Portfolio updated successfully"
+            data=portfolio_data, message="Portfolio updated successfully"
         )
-        
+
         logger.info(f"Portfolio updated successfully for ID: {portfolio_id}")
         return jsonify(response), 200
-        
+
     except NotFoundError as e:
         logger.warning(f"Portfolio not found for ID {portfolio_id}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 404
-        
+
     except ValidationError as e:
         logger.warning(f"Validation error updating portfolio {portfolio_id}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except RiskOptimizerException as e:
-        logger.error(f"Error updating portfolio {portfolio_id}: {str(e)}", exc_info=True)
+        logger.error(
+            f"Error updating portfolio {portfolio_id}: {str(e)}", exc_info=True
+        )
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
-        logger.error(f"Unexpected error updating portfolio {portfolio_id}: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        logger.error(
+            f"Unexpected error updating portfolio {portfolio_id}: {str(e)}",
+            exc_info=True,
+        )
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
 
@@ -488,7 +508,7 @@ def update_portfolio(portfolio_id: int) -> Response:
 def delete_portfolio(portfolio_id: int) -> Response:
     """
     Delete a portfolio.
-    --- 
+    ---
     parameters:
         - in: path
           name: portfolio_id
@@ -507,34 +527,43 @@ def delete_portfolio(portfolio_id: int) -> Response:
     """
     try:
         logger.info(f"Delete portfolio request for ID: {portfolio_id}")
-        
+
         # Delete portfolio
         deleted = portfolio_service.delete_portfolio(portfolio_id)
-        
+
         if not deleted:
-            raise NotFoundError(f"Portfolio {portfolio_id} not found", "portfolio", str(portfolio_id))
-        
+            raise NotFoundError(
+                f"Portfolio {portfolio_id} not found", "portfolio", str(portfolio_id)
+            )
+
         # Create success response (204 No Content for successful deletion)
-        return Response(status=204) # No content for 204
-        
+        return Response(status=204)  # No content for 204
+
     except NotFoundError as e:
         logger.warning(f"Portfolio not found for ID {portfolio_id}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 404
-        
+
     except ValidationError as e:
         logger.warning(f"Validation error deleting portfolio {portfolio_id}: {str(e)}")
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except RiskOptimizerException as e:
-        logger.error(f"Error deleting portfolio {portfolio_id}: {str(e)}", exc_info=True)
+        logger.error(
+            f"Error deleting portfolio {portfolio_id}: {str(e)}", exc_info=True
+        )
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
-        logger.error(f"Unexpected error deleting portfolio {portfolio_id}: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        logger.error(
+            f"Unexpected error deleting portfolio {portfolio_id}: {str(e)}",
+            exc_info=True,
+        )
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
 
@@ -544,7 +573,7 @@ def delete_portfolio(portfolio_id: int) -> Response:
 def get_user_portfolios(user_id: int) -> Response:
     """
     Get all portfolios for a specific user.
-    --- 
+    ---
     parameters:
         - in: path
           name: user_id
@@ -593,33 +622,39 @@ def get_user_portfolios(user_id: int) -> Response:
     """
     try:
         logger.info(f"Get user portfolios request for user ID: {user_id}")
-        
+
         # Get user portfolios with pagination
         portfolios = portfolio_service.get_user_portfolios(user_id)
-        
+
         # Create paginated response
         response = create_paginated_response(
-            portfolios,
-            transform_func=lambda p: p  # No transformation needed
+            portfolios, transform_func=lambda p: p  # No transformation needed
         )
-        
+
         logger.info(f"Retrieved portfolios for user ID: {user_id}")
         return jsonify(response), 200
-        
+
     except ValidationError as e:
-        logger.warning(f"Validation error getting portfolios for user {user_id}: {str(e)}")
+        logger.warning(
+            f"Validation error getting portfolios for user {user_id}: {str(e)}"
+        )
         response = create_error_response(e)
         return jsonify(response), 400
-        
+
     except RiskOptimizerException as e:
-        logger.error(f"Error getting portfolios for user {user_id}: {str(e)}", exc_info=True)
+        logger.error(
+            f"Error getting portfolios for user {user_id}: {str(e)}", exc_info=True
+        )
         response = create_error_response(e)
         return jsonify(response), 500
-        
+
     except Exception as e:
-        logger.error(f"Unexpected error getting portfolios for user {user_id}: {str(e)}", exc_info=True)
-        error = RiskOptimizerException(f"Internal server error: {str(e)}", "INTERNAL_ERROR")
+        logger.error(
+            f"Unexpected error getting portfolios for user {user_id}: {str(e)}",
+            exc_info=True,
+        )
+        error = RiskOptimizerException(
+            f"Internal server error: {str(e)}", "INTERNAL_ERROR"
+        )
         response = create_error_response(error)
         return jsonify(response), 500
-
-

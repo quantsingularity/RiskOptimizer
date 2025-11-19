@@ -72,7 +72,7 @@ transport.port: 9300
 # Pass an initial list of hosts to perform discovery when this node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-discovery.seed_hosts: 
+discovery.seed_hosts:
   - elasticsearch-master-1.riskoptimizer.com
   - elasticsearch-master-2.riskoptimizer.com
   - elasticsearch-master-3.riskoptimizer.com
@@ -328,14 +328,13 @@ riskoptimizer:
     security_logs: 2y
     audit_logs: 7y
     performance_logs: 30d
-  
+
   compliance:
     gdpr_enabled: true
     pci_dss_enabled: true
     sox_enabled: true
-  
+
   security:
     field_level_security: true
     document_level_security: true
     audit_trail: true
-

@@ -18,7 +18,7 @@ const RiskMetricsCard = ({ riskMetrics }) => {
         <Typography variant="h6" gutterBottom>
           Risk Metrics
         </Typography>
-        
+
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={6} sm={3}>
             <Typography variant="body2" color="text.secondary">
@@ -28,7 +28,7 @@ const RiskMetricsCard = ({ riskMetrics }) => {
               {data.valueAtRisk}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={3}>
             <Typography variant="body2" color="text.secondary">
               Max Drawdown
@@ -37,7 +37,7 @@ const RiskMetricsCard = ({ riskMetrics }) => {
               {data.maxDrawdown}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={3}>
             <Typography variant="body2" color="text.secondary">
               Volatility
@@ -46,7 +46,7 @@ const RiskMetricsCard = ({ riskMetrics }) => {
               {data.volatility}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={3}>
             <Typography variant="body2" color="text.secondary">
               Beta

@@ -76,4 +76,3 @@ describe("RecentTransactions Component", () => {
 
   // Add tests for pagination, sorting, filtering if applicable
 });
-

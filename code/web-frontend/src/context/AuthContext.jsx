@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: true,
         profileImage: null
       };
-      
+
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       return true;

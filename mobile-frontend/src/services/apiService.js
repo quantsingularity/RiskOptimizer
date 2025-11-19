@@ -209,8 +209,8 @@ const searchAssets = async (query) => {
         { symbol: 'NVDA', name: 'NVIDIA Corporation' },
         { symbol: 'BTC-USD', name: 'Bitcoin USD' },
         { symbol: 'ETH-USD', name: 'Ethereum USD' },
-    ].filter(asset => 
-        asset.symbol.toLowerCase().includes(query.toLowerCase()) || 
+    ].filter(asset =>
+        asset.symbol.toLowerCase().includes(query.toLowerCase()) ||
         asset.name.toLowerCase().includes(query.toLowerCase())
     );
     return { data: { assets: mockResults.slice(0, 10) } }; // Return max 10 results

@@ -5,10 +5,12 @@ from riskoptimizer.core.exceptions import NotFoundError, ValidationError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
-from riskoptimizer.infrastructure.database.repositories.portfolio_repository import \
-    portfolio_repository
-from riskoptimizer.infrastructure.database.repositories.user_repository import \
-    user_repository
+from riskoptimizer.infrastructure.database.repositories.portfolio_repository import (
+    portfolio_repository,
+)
+from riskoptimizer.infrastructure.database.repositories.user_repository import (
+    user_repository,
+)
 from riskoptimizer.infrastructure.database.session import get_db_session
 from riskoptimizer.utils.cache_utils import cache_invalidate, cache_result
 

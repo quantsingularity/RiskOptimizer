@@ -57,4 +57,3 @@ ufw limit ssh comment 'Rate limit SSH connections'
 
 # Logging
 ufw logging on
-

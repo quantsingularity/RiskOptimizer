@@ -131,7 +131,7 @@ const MarketScreen = ({ navigation }) => {
         setRefreshing(true);
         // Reset search only if in 'All' view
         if (selectedViewIndex === 0) {
-             setSearchQuery(''); 
+             setSearchQuery('');
              setSearchResults([]);
              fetchInitialMarketData();
         } else {
@@ -258,7 +258,7 @@ const MarketScreen = ({ navigation }) => {
                 onPress={(value) => {
                     setSelectedViewIndex(value);
                     // Clear search when switching views
-                    setSearchQuery(''); 
+                    setSearchQuery('');
                     setSearchResults([]);
                 }}
                 containerStyle={styles.buttonGroupContainer}
@@ -317,4 +317,3 @@ const MarketScreen = ({ navigation }) => {
 };
 
 export default MarketScreen;
-

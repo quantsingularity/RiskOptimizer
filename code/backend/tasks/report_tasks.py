@@ -17,10 +17,21 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import (Image, Paragraph, SimpleDocTemplate, Spacer,
-                                Table, TableStyle)
-from tasks.celery_app import (TaskError, TaskValidationError, celery_app,
-                              task_result_manager, task_with_progress)
+from reportlab.platypus import (
+    Image,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
+from tasks.celery_app import (
+    TaskError,
+    TaskValidationError,
+    celery_app,
+    task_result_manager,
+    task_with_progress,
+)
 
 logger = logging.getLogger(__name__)
 

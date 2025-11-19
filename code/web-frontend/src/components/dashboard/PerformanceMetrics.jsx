@@ -20,7 +20,7 @@ const PerformanceMetrics = ({ metrics }) => {
         <Typography variant="h6" gutterBottom>
           Performance Metrics
         </Typography>
-        
+
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
@@ -30,7 +30,7 @@ const PerformanceMetrics = ({ metrics }) => {
               {data.dailyReturn}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
               Weekly Return
@@ -39,7 +39,7 @@ const PerformanceMetrics = ({ metrics }) => {
               {data.weeklyReturn}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
               Monthly Return
@@ -48,7 +48,7 @@ const PerformanceMetrics = ({ metrics }) => {
               {data.monthlyReturn}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
               Yearly Return
@@ -57,7 +57,7 @@ const PerformanceMetrics = ({ metrics }) => {
               {data.yearlyReturn}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
               Sharpe Ratio
@@ -66,7 +66,7 @@ const PerformanceMetrics = ({ metrics }) => {
               {data.sharpeRatio}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={6} sm={4}>
             <Typography variant="body2" color="text.secondary">
               Volatility

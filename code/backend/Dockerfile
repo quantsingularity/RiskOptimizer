@@ -122,4 +122,3 @@ USER appuser
 
 # Command for Celery beat
 CMD ["celery", "-A", "tasks.celery_app", "beat", "--loglevel=info"]
-

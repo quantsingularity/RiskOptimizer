@@ -56,4 +56,3 @@ describe("AssetAllocation Component", () => {
 
   // Add tests for tooltips, legends, interactions, loading states etc. if applicable
 });
-

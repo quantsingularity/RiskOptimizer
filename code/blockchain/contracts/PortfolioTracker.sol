@@ -8,9 +8,9 @@ contract PortfolioTracker {
         uint256[] allocations;
         uint256 timestamp;
     }
-    
+
     mapping(address => Portfolio) public portfolios;
-    
+
     event PortfolioUpdated(address indexed owner);
     event AssetRebalanced(address indexed owner, string asset, uint256 newAllocation);
 
@@ -21,14 +21,14 @@ contract PortfolioTracker {
             total += _allocations[i];
         }
         require(total == 10000, "Allocations must sum to 100%"); // Basis points
-        
+
         portfolios[msg.sender] = Portfolio({
             owner: msg.sender,
             assets: _assets,
             allocations: _allocations,
             timestamp: block.timestamp
         });
-        
+
         emit PortfolioUpdated(msg.sender);
     }
 

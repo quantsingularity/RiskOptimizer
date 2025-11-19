@@ -18,8 +18,8 @@ const MainLayout = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header onMenuClick={handleDrawerToggle} />
       <Box sx={{ display: 'flex', flex: 1 }}>
-        <Sidebar 
-          mobileOpen={mobileOpen} 
+        <Sidebar
+          mobileOpen={mobileOpen}
           onClose={handleDrawerToggle}
           isMobile={isMobile}
         />

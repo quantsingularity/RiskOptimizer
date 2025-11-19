@@ -10,7 +10,7 @@ const PerformanceChart = ({ performanceData }) => {
   }));
 
   const data = performanceData || defaultData;
-  
+
   // Format data for chart
   const xLabels = data.slice(-30).map(item => item.date);
   const yValues = data.slice(-30).map(item => item.value);
@@ -21,7 +21,7 @@ const PerformanceChart = ({ performanceData }) => {
         <Typography variant="h6" gutterBottom>
           Portfolio Performance
         </Typography>
-        
+
         <Box sx={{ height: 300, mt: 2 }}>
           <LineChart
             series={[

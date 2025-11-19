@@ -262,13 +262,13 @@
         subject: "RiskOptimizer Infrastructure Deployment Completed - {{ environment }}"
         body: |
           RiskOptimizer infrastructure deployment has completed successfully.
-          
+
           Environment: {{ environment }}
           Timestamp: {{ ansible_date_time.iso8601 }}
           Hosts Configured: {{ ansible_play_hosts | length }}
-          
+
           Deployment Report: /tmp/deployment_report_{{ ansible_date_time.epoch }}.txt
-          
+
           Please review the deployment logs and verify all services are operational.
         charset: utf8
       delegate_to: localhost
@@ -327,4 +327,3 @@
       systemd:
         name: fail2ban
         state: restarted
-

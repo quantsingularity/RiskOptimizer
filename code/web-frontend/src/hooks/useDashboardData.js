@@ -25,12 +25,12 @@ export const useDashboardData = () => {
     const loadDashboardData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         if (user && user.address) {
           // Fetch portfolio data
           await fetchPortfolio(user.address);
-          
+
           // For demo purposes, we'll set some mock data
           // In a real app, this would come from the backend
           setDashboardData({
@@ -56,7 +56,7 @@ export const useDashboardData = () => {
         setLoading(false);
       }
     };
-    
+
     loadDashboardData();
   }, [user, fetchPortfolio]);
 
@@ -71,18 +71,18 @@ export const useDashboardData = () => {
 const generateMockPerformanceData = () => {
   const data = [];
   const now = new Date();
-  
+
   // Generate data for the past year
   for (let i = 365; i >= 0; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);
-    
+
     data.push({
       date: date.toISOString().split('T')[0],
       value: 100000 + Math.random() * 30000
     });
   }
-  
+
   return data;
 };
 

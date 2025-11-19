@@ -183,4 +183,3 @@ describe("Portfolio List Screen", () => {
 
   // Add test for pull-to-refresh functionality if implemented
 });
-

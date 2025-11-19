@@ -134,4 +134,3 @@ describe("Mobile API Service", () => {
   // Add tests for other API service methods relevant to mobile (getPortfolioDetails, addAsset, etc.)
   // Test error handling (e.g., network errors, non-JSON responses, token expiry/refresh if implemented)
 });
-

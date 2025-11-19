@@ -33,7 +33,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-        
+
         {/* Protected routes */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />

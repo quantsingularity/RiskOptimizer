@@ -82,4 +82,3 @@ if command -v service >/dev/null 2>&1; then
 fi
 
 echo "iptables rules applied successfully"
-

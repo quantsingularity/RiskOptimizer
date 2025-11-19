@@ -282,4 +282,3 @@ groups:
           summary: "Deployment {{ $labels.deployment }} replicas mismatch"
           description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has mismatched replicas"
           runbook_url: "https://runbooks.riskoptimizer.com/kubernetes/deployment-replicas"
-

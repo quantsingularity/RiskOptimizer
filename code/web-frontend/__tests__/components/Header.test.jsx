@@ -65,4 +65,3 @@ describe("Header Component", () => {
 
   // Add more tests for responsiveness, themes, etc., if applicable
 });
-

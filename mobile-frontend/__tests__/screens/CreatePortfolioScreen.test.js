@@ -12,7 +12,7 @@ jest.mock("../../src/services/apiService", () => ({
 
 // Mock the navigation
 const mockGoBack = jest.fn();
-const mockNavigation = { 
+const mockNavigation = {
   goBack: mockGoBack,
   setOptions: jest.fn()
 };
@@ -54,7 +54,7 @@ describe("Create Portfolio Screen", () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Setup default mock response
     apiService.createPortfolio.mockResolvedValue({
       data: {
@@ -124,7 +124,7 @@ describe("Create Portfolio Screen", () => {
 
   it("should display error message if creation fails", async () => {
     apiService.createPortfolio.mockRejectedValueOnce(new Error("API Error"));
-    
+
     renderCreateScreen();
     const nameInput = screen.getByTestId("input-Portfolio Name");
     const createButton = screen.getByTestId("button");
@@ -138,4 +138,3 @@ describe("Create Portfolio Screen", () => {
     expect(mockGoBack).not.toHaveBeenCalled();
   });
 });
-

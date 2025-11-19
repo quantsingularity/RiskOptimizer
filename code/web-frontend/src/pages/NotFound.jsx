@@ -21,22 +21,22 @@ const NotFound = () => {
         className="fade-in"
       >
         <SentimentVeryDissatisfiedIcon sx={{ fontSize: 100, color: 'primary.main', mb: 4 }} />
-        
+
         <Typography variant="h1" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
           404
         </Typography>
-        
+
         <Typography variant="h4" component="h2" gutterBottom>
           Page Not Found
         </Typography>
-        
+
         <Typography variant="body1" color="text.secondary" paragraph sx={{ maxWidth: 500, mb: 4 }}>
-          The page you are looking for might have been removed, had its name changed, 
+          The page you are looking for might have been removed, had its name changed,
           or is temporarily unavailable.
         </Typography>
-        
-        <Button 
-          variant="contained" 
+
+        <Button
+          variant="contained"
           size="large"
           onClick={() => navigate('/')}
         >

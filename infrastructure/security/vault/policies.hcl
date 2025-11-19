@@ -109,4 +109,3 @@ path "pki/cert/ca" {
 path "pki/ca/pem" {
   capabilities = ["read"]
 }
-

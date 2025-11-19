@@ -484,4 +484,3 @@ variable "backup_window" {
     error_message = "Backup window must be in the format 'hh:mm-hh:mm'."
   }
 }
-
