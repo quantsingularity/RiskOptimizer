@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
+
 # Assuming RiskMetrics is in services.quant_analysis
 # Adjust import path if necessary
 from services.quant_analysis import RiskMetrics

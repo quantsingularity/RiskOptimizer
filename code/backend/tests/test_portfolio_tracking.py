@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
+
 # Import services to test
 from services.ai_optimization import AIOptimizationService
 from services.blockchain_service import BlockchainService

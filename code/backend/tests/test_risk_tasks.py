@@ -8,9 +8,13 @@ import numpy as np
 import pandas as pd
 import pytest
 from tasks.celery_app import TaskValidationError
-from tasks.risk_tasks import (calculate_portfolio_metrics, calculate_var_cvar,
-                              efficient_frontier_calculation,
-                              monte_carlo_simulation, stress_test_portfolio)
+from tasks.risk_tasks import (
+    calculate_portfolio_metrics,
+    calculate_var_cvar,
+    efficient_frontier_calculation,
+    monte_carlo_simulation,
+    stress_test_portfolio,
+)
 
 
 class TestMonteCarloSimulation:

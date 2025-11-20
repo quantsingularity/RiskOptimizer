@@ -2,8 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from cryptography.fernet import Fernet
 from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import (ConflictError, DatabaseError,
-                                           NotFoundError)
+from riskoptimizer.core.exceptions import ConflictError, DatabaseError, NotFoundError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.database.models import User

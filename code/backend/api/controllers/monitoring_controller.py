@@ -10,10 +10,12 @@ from riskoptimizer.api.middleware.auth_middleware import admin_required
 from riskoptimizer.core.exceptions import RiskOptimizerException
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.utils.cache_utils import cache_manager
-from riskoptimizer.utils.db_utils import (optimize_database_performance,
-                                          query_monitor)
-from riskoptimizer.utils.performance import (cache_monitor,
-                                             get_performance_report, metrics)
+from riskoptimizer.utils.db_utils import optimize_database_performance, query_monitor
+from riskoptimizer.utils.performance import (
+    cache_monitor,
+    get_performance_report,
+    metrics,
+)
 
 logger = get_logger(__name__)
 

@@ -8,13 +8,17 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 from tasks.celery_app import TaskValidationError
-from tasks.portfolio_tasks import (_calculate_tracking_error,
-                                   _check_constraints, _optimize_mean_variance,
-                                   _optimize_minimum_variance,
-                                   _optimize_risk_parity,
-                                   analyze_portfolio_performance,
-                                   optimize_portfolio, rebalance_portfolio,
-                                   update_portfolio_data)
+from tasks.portfolio_tasks import (
+    _calculate_tracking_error,
+    _check_constraints,
+    _optimize_mean_variance,
+    _optimize_minimum_variance,
+    _optimize_risk_parity,
+    analyze_portfolio_performance,
+    optimize_portfolio,
+    rebalance_portfolio,
+    update_portfolio_data,
+)
 
 
 class TestPortfolioOptimization:

@@ -7,11 +7,15 @@ from typing import Any, Dict
 
 from flask import Blueprint, Response, jsonify, request
 from riskoptimizer.api.schemas.auth_schema import (
-    validate_login_request, validate_refresh_token_request,
-    validate_register_request)
-from riskoptimizer.core.exceptions import (AuthenticationError,
-                                           RiskOptimizerException,
-                                           ValidationError)
+    validate_login_request,
+    validate_refresh_token_request,
+    validate_register_request,
+)
+from riskoptimizer.core.exceptions import (
+    AuthenticationError,
+    RiskOptimizerException,
+    ValidationError,
+)
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.auth_service import auth_service
 

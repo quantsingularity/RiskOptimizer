@@ -373,8 +373,7 @@ class RiskService:
         try:
             # Import PyPortfolioOpt components here to avoid circular imports and ensure it's available
             import pandas as pd
-            from pypfopt import (EfficientFrontier, expected_returns,
-                                 risk_models)
+            from pypfopt import EfficientFrontier, expected_returns, risk_models
         except ImportError:
             logger.error(
                 "PyPortfolioOpt library not installed. Please install it using 'pip install PyPortfolioOpt'",

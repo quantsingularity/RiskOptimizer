@@ -5,8 +5,11 @@ from unittest.mock import MagicMock
 import bcrypt
 import jwt
 from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import (AuthenticationError, ConflictError,
-                                           ValidationError)
+from riskoptimizer.core.exceptions import (
+    AuthenticationError,
+    ConflictError,
+    ValidationError,
+)
 from riskoptimizer.domain.services.auth_service import AuthService
 
 # Mock the config for testing
