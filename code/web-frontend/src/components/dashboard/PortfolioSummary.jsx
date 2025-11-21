@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import React from "react";
+import { Box, Typography, Card, CardContent } from "@mui/material";
 
 const PortfolioSummary = ({ portfolioData }) => {
   return (
@@ -15,7 +15,7 @@ const PortfolioSummary = ({ portfolioData }) => {
                 Total Assets: {portfolioData.assets?.length || 0}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Total Value: ${portfolioData.totalValue || '0.00'}
+                Total Value: ${portfolioData.totalValue || "0.00"}
               </Typography>
             </Box>
           ) : (

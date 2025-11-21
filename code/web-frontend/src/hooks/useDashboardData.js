@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { usePortfolio } from '../context/PortfolioContext';
-import { useRiskAnalysis } from '../context/RiskAnalysisContext';
-import { useAuth } from '../context/AuthContext';
+import React, { useEffect, useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
+import { useRiskAnalysis } from "../context/RiskAnalysisContext";
+import { useAuth } from "../context/AuthContext";
 
 // Custom hook to integrate dashboard with backend data
 export const useDashboardData = () => {
   const { user } = useAuth();
-  const { portfolio, fetchPortfolio, loading: portfolioLoading } = usePortfolio();
+  const {
+    portfolio,
+    fetchPortfolio,
+    loading: portfolioLoading,
+  } = usePortfolio();
   const { riskMetrics, loading: riskLoading } = useRiskAnalysis();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +22,7 @@ export const useDashboardData = () => {
     performanceData: [],
     assetAllocation: [],
     riskMetrics: {},
-    recentTransactions: []
+    recentTransactions: [],
   });
 
   useEffect(() => {
@@ -44,14 +48,14 @@ export const useDashboardData = () => {
               valueAtRisk: 4532.12,
               maxDrawdown: -12.4,
               volatility: 14.2,
-              beta: 0.85
+              beta: 0.85,
             },
-            recentTransactions: generateMockTransactions()
+            recentTransactions: generateMockTransactions(),
           });
         }
       } catch (err) {
-        setError(err.message || 'Failed to load dashboard data');
-        console.error('Dashboard data loading error:', err);
+        setError(err.message || "Failed to load dashboard data");
+        console.error("Dashboard data loading error:", err);
       } finally {
         setLoading(false);
       }
@@ -63,7 +67,7 @@ export const useDashboardData = () => {
   return {
     loading: loading || portfolioLoading || riskLoading,
     error,
-    dashboardData
+    dashboardData,
   };
 };
 
@@ -78,8 +82,8 @@ const generateMockPerformanceData = () => {
     date.setDate(date.getDate() - i);
 
     data.push({
-      date: date.toISOString().split('T')[0],
-      value: 100000 + Math.random() * 30000
+      date: date.toISOString().split("T")[0],
+      value: 100000 + Math.random() * 30000,
     });
   }
 
@@ -88,21 +92,21 @@ const generateMockPerformanceData = () => {
 
 const generateMockAssetAllocation = () => {
   return [
-    { name: 'Stocks', value: 60 },
-    { name: 'Bonds', value: 20 },
-    { name: 'Crypto', value: 10 },
-    { name: 'Cash', value: 5 },
-    { name: 'Gold', value: 5 }
+    { name: "Stocks", value: 60 },
+    { name: "Bonds", value: 20 },
+    { name: "Crypto", value: 10 },
+    { name: "Cash", value: 5 },
+    { name: "Gold", value: 5 },
   ];
 };
 
 const generateMockTransactions = () => {
   return [
-    { date: '2025-04-05', asset: 'AAPL', type: 'Buy', amount: '$2,500.00' },
-    { date: '2025-04-01', asset: 'TSLA', type: 'Sell', amount: '$1,800.00' },
-    { date: '2025-03-28', asset: 'BTC', type: 'Buy', amount: '$1,000.00' },
-    { date: '2025-03-15', asset: 'MSFT', type: 'Buy', amount: '$3,200.00' },
-    { date: '2025-03-10', asset: 'GLD', type: 'Sell', amount: '$2,100.00' }
+    { date: "2025-04-05", asset: "AAPL", type: "Buy", amount: "$2,500.00" },
+    { date: "2025-04-01", asset: "TSLA", type: "Sell", amount: "$1,800.00" },
+    { date: "2025-03-28", asset: "BTC", type: "Buy", amount: "$1,000.00" },
+    { date: "2025-03-15", asset: "MSFT", type: "Buy", amount: "$3,200.00" },
+    { date: "2025-03-10", asset: "GLD", type: "Sell", amount: "$2,100.00" },
   ];
 };
 

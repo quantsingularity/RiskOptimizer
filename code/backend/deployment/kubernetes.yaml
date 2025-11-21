@@ -16,54 +16,54 @@ spec:
         app: riskoptimizer-api
     spec:
       containers:
-      - name: api
-        image: riskoptimizer/backend:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: riskoptimizer-secrets
-              key: database-url
-        - name: REDIS_URL
-          value: "redis://riskoptimizer-redis:6379/0"
-        - name: CELERY_RESULT_BACKEND
-          value: "redis://riskoptimizer-redis:6379/1"
-        - name: ENVIRONMENT
-          value: "production"
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        volumeMounts:
-        - name: logs
-          mountPath: /app/logs
-        - name: tmp
-          mountPath: /app/tmp
+        - name: api
+          image: riskoptimizer/backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: database-url
+            - name: REDIS_URL
+              value: "redis://riskoptimizer-redis:6379/0"
+            - name: CELERY_RESULT_BACKEND
+              value: "redis://riskoptimizer-redis:6379/1"
+            - name: ENVIRONMENT
+              value: "production"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /app/tmp
       volumes:
-      - name: logs
-        persistentVolumeClaim:
-          claimName: riskoptimizer-logs-pvc
-      - name: tmp
-        emptyDir: {}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: riskoptimizer-logs-pvc
+        - name: tmp
+          emptyDir: {}
       imagePullSecrets:
-      - name: riskoptimizer-registry-secret
+        - name: riskoptimizer-registry-secret
 
 ---
 apiVersion: v1
@@ -76,9 +76,9 @@ spec:
   selector:
     app: riskoptimizer-api
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8000
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
   type: ClusterIP
 
 ---
@@ -100,41 +100,49 @@ spec:
         app: riskoptimizer-worker
     spec:
       containers:
-      - name: worker
-        image: riskoptimizer/backend:latest
-        command: ["celery", "-A", "tasks.celery_app", "worker", "--loglevel=info", "--concurrency=2"]
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: riskoptimizer-secrets
-              key: database-url
-        - name: REDIS_URL
-          value: "redis://riskoptimizer-redis:6379/0"
-        - name: CELERY_RESULT_BACKEND
-          value: "redis://riskoptimizer-redis:6379/1"
-        - name: ENVIRONMENT
-          value: "production"
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "1000m"
-        volumeMounts:
-        - name: logs
-          mountPath: /app/logs
-        - name: tmp
-          mountPath: /app/tmp
+        - name: worker
+          image: riskoptimizer/backend:latest
+          command:
+            [
+              "celery",
+              "-A",
+              "tasks.celery_app",
+              "worker",
+              "--loglevel=info",
+              "--concurrency=2",
+            ]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: database-url
+            - name: REDIS_URL
+              value: "redis://riskoptimizer-redis:6379/0"
+            - name: CELERY_RESULT_BACKEND
+              value: "redis://riskoptimizer-redis:6379/1"
+            - name: ENVIRONMENT
+              value: "production"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /app/tmp
       volumes:
-      - name: logs
-        persistentVolumeClaim:
-          claimName: riskoptimizer-logs-pvc
-      - name: tmp
-        emptyDir: {}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: riskoptimizer-logs-pvc
+        - name: tmp
+          emptyDir: {}
       imagePullSecrets:
-      - name: riskoptimizer-registry-secret
+        - name: riskoptimizer-registry-secret
 
 ---
 apiVersion: apps/v1
@@ -155,37 +163,38 @@ spec:
         app: riskoptimizer-beat
     spec:
       containers:
-      - name: beat
-        image: riskoptimizer/backend:latest
-        command: ["celery", "-A", "tasks.celery_app", "beat", "--loglevel=info"]
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: riskoptimizer-secrets
-              key: database-url
-        - name: REDIS_URL
-          value: "redis://riskoptimizer-redis:6379/0"
-        - name: CELERY_RESULT_BACKEND
-          value: "redis://riskoptimizer-redis:6379/1"
-        - name: ENVIRONMENT
-          value: "production"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "200m"
-        volumeMounts:
-        - name: logs
-          mountPath: /app/logs
+        - name: beat
+          image: riskoptimizer/backend:latest
+          command:
+            ["celery", "-A", "tasks.celery_app", "beat", "--loglevel=info"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: database-url
+            - name: REDIS_URL
+              value: "redis://riskoptimizer-redis:6379/0"
+            - name: CELERY_RESULT_BACKEND
+              value: "redis://riskoptimizer-redis:6379/1"
+            - name: ENVIRONMENT
+              value: "production"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
       volumes:
-      - name: logs
-        persistentVolumeClaim:
-          claimName: riskoptimizer-logs-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: riskoptimizer-logs-pvc
       imagePullSecrets:
-      - name: riskoptimizer-registry-secret
+        - name: riskoptimizer-registry-secret
 
 ---
 apiVersion: apps/v1
@@ -206,39 +215,39 @@ spec:
         app: riskoptimizer-redis
     spec:
       containers:
-      - name: redis
-        image: redis:7-alpine
-        ports:
-        - containerPort: 6379
-        command: ["redis-server", "--appendonly", "yes"]
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "200m"
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
-        livenessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server", "--appendonly", "yes"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 5
       volumes:
-      - name: redis-data
-        persistentVolumeClaim:
-          claimName: riskoptimizer-redis-pvc
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: riskoptimizer-redis-pvc
 
 ---
 apiVersion: v1
@@ -251,9 +260,9 @@ spec:
   selector:
     app: riskoptimizer-redis
   ports:
-  - protocol: TCP
-    port: 6379
-    targetPort: 6379
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
   type: ClusterIP
 
 ---
@@ -276,56 +285,56 @@ spec:
         app: riskoptimizer-postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:15-alpine
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_DB
-          value: "riskoptimizer"
-        - name: POSTGRES_USER
-          value: "riskoptimizer"
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: riskoptimizer-secrets
-              key: postgres-password
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "riskoptimizer"
+            - name: POSTGRES_USER
+              value: "riskoptimizer"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: postgres-password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - riskoptimizer
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - riskoptimizer
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        volumeMounts:
-        - name: postgres-data
-          mountPath: /var/lib/postgresql/data
-        livenessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -U
-            - riskoptimizer
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - -U
-            - riskoptimizer
-          initialDelaySeconds: 5
-          periodSeconds: 5
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Gi
+            storage: 10Gi
 
 ---
 apiVersion: v1
@@ -338,9 +347,9 @@ spec:
   selector:
     app: riskoptimizer-postgres
   ports:
-  - protocol: TCP
-    port: 5432
-    targetPort: 5432
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
   type: ClusterIP
 
 ---
@@ -355,20 +364,20 @@ metadata:
     nginx.ingress.kubernetes.io/rate-limit-window: "1m"
 spec:
   tls:
-  - hosts:
-    - api.riskoptimizer.com
-    secretName: riskoptimizer-tls
+    - hosts:
+        - api.riskoptimizer.com
+      secretName: riskoptimizer-tls
   rules:
-  - host: api.riskoptimizer.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: riskoptimizer-api-service
-            port:
-              number: 80
+    - host: api.riskoptimizer.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: riskoptimizer-api-service
+                port:
+                  number: 80
 
 ---
 apiVersion: v1
@@ -407,18 +416,18 @@ spec:
   minReplicas: 3
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
 
 ---
 apiVersion: autoscaling/v2
@@ -433,15 +442,15 @@ spec:
   minReplicas: 4
   maxReplicas: 20
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 80
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 85
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85

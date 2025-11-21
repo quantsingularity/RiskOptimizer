@@ -1,10 +1,19 @@
-import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Avatar, Badge, Box, useTheme } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Avatar,
+  Badge,
+  Box,
+  useTheme,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const Header = ({ onMenuClick }) => {
   const theme = useTheme();
@@ -14,8 +23,8 @@ const Header = ({ onMenuClick }) => {
       position="fixed"
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: 'background.paper',
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'
+        backgroundColor: "background.paper",
+        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
       }}
     >
       <Toolbar>
@@ -24,7 +33,7 @@ const Header = ({ onMenuClick }) => {
           aria-label="open drawer"
           edge="start"
           onClick={onMenuClick}
-          sx={{ mr: 2, display: { sm: 'none' } }}
+          sx={{ mr: 2, display: { sm: "none" } }}
         >
           <MenuIcon />
         </IconButton>
@@ -35,10 +44,10 @@ const Header = ({ onMenuClick }) => {
           component="div"
           sx={{
             flexGrow: 1,
-            display: 'flex',
-            alignItems: 'center',
-            fontFamily: 'Poppins',
-            fontWeight: 600
+            display: "flex",
+            alignItems: "center",
+            fontFamily: "Poppins",
+            fontWeight: 600,
           }}
         >
           <Box
@@ -50,9 +59,13 @@ const Header = ({ onMenuClick }) => {
           RiskOptimizer
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <IconButton color="inherit" sx={{ ml: 1 }}>
-            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            {theme.palette.mode === "dark" ? (
+              <Brightness7Icon />
+            ) : (
+              <Brightness4Icon />
+            )}
           </IconButton>
 
           <IconButton color="inherit" sx={{ ml: 1 }}>
@@ -62,7 +75,7 @@ const Header = ({ onMenuClick }) => {
           </IconButton>
 
           <IconButton color="inherit" sx={{ ml: 1 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main" }}>
               <AccountCircleIcon />
             </Avatar>
           </IconButton>

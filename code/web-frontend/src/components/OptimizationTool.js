@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { Button, Slider, Box, Typography } from '@material-ui/core';
+import React, { useState } from "react";
+import { Button, Slider, Box, Typography } from "@material-ui/core";
 
 export default function OptimizationTool() {
   const [riskTolerance, setRiskTolerance] = useState(5);
   const [result, setResult] = useState(null);
 
   const optimize = async () => {
-    const response = await fetch('/api/optimize', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+    const response = await fetch("/api/optimize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        historical_data: {/* market data */}
-      })
+        historical_data: {
+          /* market data */
+        },
+      }),
     });
     setResult(await response.json());
   };
@@ -36,7 +38,9 @@ export default function OptimizationTool() {
         <Box mt={3}>
           <Typography variant="h6">Optimized Allocation</Typography>
           <pre>{JSON.stringify(result.optimized_allocation, null, 2)}</pre>
-          <Typography>Expected Return: {result.performance_metrics[0]}</Typography>
+          <Typography>
+            Expected Return: {result.performance_metrics[0]}
+          </Typography>
           <Typography>Volatility: {result.performance_metrics[1]}</Typography>
           <Typography>Sharpe Ratio: {result.performance_metrics[2]}</Typography>
         </Box>

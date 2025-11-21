@@ -1,7 +1,12 @@
 // mobile-frontend/__tests__/screens/DashboardScreen.test.js
 
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react-native";
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+} from "@testing-library/react-native";
 import DashboardScreen from "../../src/screens/Dashboard/DashboardScreen";
 import apiService from "../../src/services/apiService";
 
@@ -9,7 +14,7 @@ import apiService from "../../src/services/apiService";
 jest.mock("../../src/services/apiService", () => ({
   getPortfolios: jest.fn(),
   getRiskMetrics: jest.fn(),
-  getAssetPriceHistory: jest.fn()
+  getAssetPriceHistory: jest.fn(),
 }));
 
 // Mock the useNavigation hook
@@ -17,8 +22,8 @@ jest.mock("@react-navigation/native", () => {
   return {
     ...jest.requireActual("@react-navigation/native"),
     useNavigation: () => ({
-      navigate: jest.fn()
-    })
+      navigate: jest.fn(),
+    }),
   };
 });
 
@@ -51,17 +56,23 @@ jest.mock("@rneui/themed", () => {
           {children}
         </div>
       )),
-      Content: ({ children }) => <div data-testid="list-item-content">{children}</div>,
-      Title: ({ children }) => <div data-testid="list-item-title">{children}</div>,
-      Subtitle: ({ children }) => <div data-testid="list-item-subtitle">{children}</div>,
+      Content: ({ children }) => (
+        <div data-testid="list-item-content">{children}</div>
+      ),
+      Title: ({ children }) => (
+        <div data-testid="list-item-title">{children}</div>
+      ),
+      Subtitle: ({ children }) => (
+        <div data-testid="list-item-subtitle">{children}</div>
+      ),
       Chevron: () => <span data-testid="list-item-chevron">></span>,
-    }
+    },
   };
 });
 
 // Mock the chart component
 jest.mock("react-native-chart-kit", () => ({
-  LineChart: () => <div data-testid="line-chart">Chart</div>
+  LineChart: () => <div data-testid="line-chart">Chart</div>,
 }));
 
 describe("Dashboard Screen", () => {
@@ -80,10 +91,10 @@ describe("Dashboard Screen", () => {
           assets: [
             { symbol: "AAPL", allocation: 0.4, value: 4000 },
             { symbol: "MSFT", allocation: 0.3, value: 3000 },
-            { symbol: "GOOGL", allocation: 0.3, value: 3000 }
-          ]
-        }
-      ]
+            { symbol: "GOOGL", allocation: 0.3, value: 3000 },
+          ],
+        },
+      ],
     });
 
     apiService.getRiskMetrics.mockResolvedValue({
@@ -91,19 +102,21 @@ describe("Dashboard Screen", () => {
         sharpeRatio: 1.2,
         volatility: 0.15,
         maxDrawdown: -0.1,
-        beta: 0.9
-      }
+        beta: 0.9,
+      },
     });
 
     apiService.getAssetPriceHistory.mockResolvedValue({
       data: {
         indicators: {
-          quote: [{
-            close: [100, 102, 105, 103, 106]
-          }]
+          quote: [
+            {
+              close: [100, 102, 105, 103, 106],
+            },
+          ],
         },
-        timestamp: [1620000000, 1620086400, 1620172800, 1620259200, 1620345600]
-      }
+        timestamp: [1620000000, 1620086400, 1620172800, 1620259200, 1620345600],
+      },
     });
   });
 
@@ -182,6 +195,8 @@ describe("Dashboard Screen", () => {
 
     fireEvent.click(screen.getByTestId("card"));
 
-    expect(navigate).toHaveBeenCalledWith("PortfolioDetail", { portfolioId: "1" });
+    expect(navigate).toHaveBeenCalledWith("PortfolioDetail", {
+      portfolioId: "1",
+    });
   });
 });

@@ -10,10 +10,16 @@ jest.mock("axios");
 const localStorageMock = (() => {
   let store = {};
   return {
-    getItem: jest.fn(key => store[key] || null),
-    setItem: jest.fn((key, value) => { store[key] = value.toString(); }),
-    removeItem: jest.fn(key => { delete store[key]; }),
-    clear: jest.fn(() => { store = {}; }),
+    getItem: jest.fn((key) => store[key] || null),
+    setItem: jest.fn((key, value) => {
+      store[key] = value.toString();
+    }),
+    removeItem: jest.fn((key) => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
   };
 })();
 Object.defineProperty(window, "localStorage", { value: localStorageMock });
@@ -33,21 +39,31 @@ describe("API Service", () => {
     it("should send POST request to /api/auth/login with credentials", async () => {
       const email = "test@example.com";
       const password = "password123";
-      const mockResponse = { data: { token: "fake_token", user: { id: 1, email } } };
+      const mockResponse = {
+        data: { token: "fake_token", user: { id: 1, email } },
+      };
 
       axios.post.mockResolvedValueOnce(mockResponse);
 
       const result = await apiService.login(email, password);
 
-      expect(axios.post).toHaveBeenCalledWith("/api/auth/login", { email, password });
+      expect(axios.post).toHaveBeenCalledWith("/api/auth/login", {
+        email,
+        password,
+      });
       expect(result).toEqual(mockResponse.data);
-      expect(localStorageMock.setItem).toHaveBeenCalledWith("token", "fake_token");
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        "token",
+        "fake_token",
+      );
     });
 
     it("should throw an error if login request fails", async () => {
       axios.post.mockRejectedValueOnce(new Error("Invalid credentials"));
 
-      await expect(apiService.login("wrong@example.com", "wrong")).rejects.toThrow("Invalid credentials");
+      await expect(
+        apiService.login("wrong@example.com", "wrong"),
+      ).rejects.toThrow("Invalid credentials");
     });
 
     it("should remove token from localStorage on logout", async () => {
@@ -77,8 +93,8 @@ describe("API Service", () => {
 
       expect(axios.get).toHaveBeenCalledWith("/api/dashboard", {
         headers: {
-          "Authorization": "Bearer test_token"
-        }
+          Authorization: "Bearer test_token",
+        },
       });
       expect(result).toEqual(mockData);
     });
@@ -86,7 +102,9 @@ describe("API Service", () => {
     it("should throw an error if token is missing for authenticated request", async () => {
       localStorageMock.getItem.mockReturnValueOnce(null);
 
-      await expect(apiService.getDashboardData()).rejects.toThrow("Authentication required");
+      await expect(apiService.getDashboardData()).rejects.toThrow(
+        "Authentication required",
+      );
     });
   });
 
@@ -96,62 +114,88 @@ describe("API Service", () => {
     });
 
     it("should get all portfolios", async () => {
-      const mockPortfolios = [{ id: "1", name: "Portfolio 1" }, { id: "2", name: "Portfolio 2" }];
+      const mockPortfolios = [
+        { id: "1", name: "Portfolio 1" },
+        { id: "2", name: "Portfolio 2" },
+      ];
       axios.get.mockResolvedValueOnce({ data: mockPortfolios });
 
       const result = await apiService.getPortfolios();
 
       expect(axios.get).toHaveBeenCalledWith("/api/portfolios", {
         headers: {
-          "Authorization": "Bearer test_token"
-        }
+          Authorization: "Bearer test_token",
+        },
       });
       expect(result).toEqual(mockPortfolios);
     });
 
     it("should get a specific portfolio by ID", async () => {
       const portfolioId = "123";
-      const mockPortfolio = { id: portfolioId, name: "Test Portfolio", assets: [] };
+      const mockPortfolio = {
+        id: portfolioId,
+        name: "Test Portfolio",
+        assets: [],
+      };
       axios.get.mockResolvedValueOnce({ data: mockPortfolio });
 
       const result = await apiService.getPortfolio(portfolioId);
 
       expect(axios.get).toHaveBeenCalledWith(`/api/portfolios/${portfolioId}`, {
         headers: {
-          "Authorization": "Bearer test_token"
-        }
+          Authorization: "Bearer test_token",
+        },
       });
       expect(result).toEqual(mockPortfolio);
     });
 
     it("should create a new portfolio", async () => {
-      const portfolioData = { name: "New Portfolio", description: "Test description" };
-      const mockResponse = { id: "new-id", ...portfolioData, createdAt: new Date().toISOString() };
+      const portfolioData = {
+        name: "New Portfolio",
+        description: "Test description",
+      };
+      const mockResponse = {
+        id: "new-id",
+        ...portfolioData,
+        createdAt: new Date().toISOString(),
+      };
       axios.post.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await apiService.createPortfolio(portfolioData);
 
-      expect(axios.post).toHaveBeenCalledWith("/api/portfolios", portfolioData, {
-        headers: {
-          "Authorization": "Bearer test_token"
-        }
-      });
+      expect(axios.post).toHaveBeenCalledWith(
+        "/api/portfolios",
+        portfolioData,
+        {
+          headers: {
+            Authorization: "Bearer test_token",
+          },
+        },
+      );
       expect(result).toEqual(mockResponse);
     });
 
     it("should update an existing portfolio", async () => {
       const portfolioId = "123";
       const updateData = { name: "Updated Portfolio" };
-      const mockResponse = { id: portfolioId, ...updateData, updatedAt: new Date().toISOString() };
+      const mockResponse = {
+        id: portfolioId,
+        ...updateData,
+        updatedAt: new Date().toISOString(),
+      };
       axios.put.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await apiService.updatePortfolio(portfolioId, updateData);
 
-      expect(axios.put).toHaveBeenCalledWith(`/api/portfolios/${portfolioId}`, updateData, {
-        headers: {
-          "Authorization": "Bearer test_token"
-        }
-      });
+      expect(axios.put).toHaveBeenCalledWith(
+        `/api/portfolios/${portfolioId}`,
+        updateData,
+        {
+          headers: {
+            Authorization: "Bearer test_token",
+          },
+        },
+      );
       expect(result).toEqual(mockResponse);
     });
 
@@ -161,11 +205,14 @@ describe("API Service", () => {
 
       const result = await apiService.deletePortfolio(portfolioId);
 
-      expect(axios.delete).toHaveBeenCalledWith(`/api/portfolios/${portfolioId}`, {
-        headers: {
-          "Authorization": "Bearer test_token"
-        }
-      });
+      expect(axios.delete).toHaveBeenCalledWith(
+        `/api/portfolios/${portfolioId}`,
+        {
+          headers: {
+            Authorization: "Bearer test_token",
+          },
+        },
+      );
       expect(result).toEqual({ success: true });
     });
   });
@@ -182,24 +229,28 @@ describe("API Service", () => {
         success: true,
         results: {
           weights: {
-            "AAPL": 0.4,
-            "MSFT": 0.3,
-            "GOOGL": 0.3
+            AAPL: 0.4,
+            MSFT: 0.3,
+            GOOGL: 0.3,
           },
           expectedReturn: 0.12,
           expectedRisk: 0.08,
-          sharpeRatio: 1.5
-        }
+          sharpeRatio: 1.5,
+        },
       };
       axios.post.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await apiService.runOptimization(portfolioId, params);
 
-      expect(axios.post).toHaveBeenCalledWith(`/api/optimize/portfolio/${portfolioId}`, params, {
-        headers: {
-          "Authorization": "Bearer test_token"
-        }
-      });
+      expect(axios.post).toHaveBeenCalledWith(
+        `/api/optimize/portfolio/${portfolioId}`,
+        params,
+        {
+          headers: {
+            Authorization: "Bearer test_token",
+          },
+        },
+      );
       expect(result).toEqual(mockResponse);
     });
 
@@ -209,17 +260,20 @@ describe("API Service", () => {
         sharpeRatio: 1.2,
         volatility: 0.15,
         maxDrawdown: -0.1,
-        beta: 0.9
+        beta: 0.9,
       };
       axios.get.mockResolvedValueOnce({ data: mockResponse });
 
       const result = await apiService.getRiskMetrics(portfolioId);
 
-      expect(axios.get).toHaveBeenCalledWith(`/api/risk/metrics/${portfolioId}`, {
-        headers: {
-          "Authorization": "Bearer test_token"
-        }
-      });
+      expect(axios.get).toHaveBeenCalledWith(
+        `/api/risk/metrics/${portfolioId}`,
+        {
+          headers: {
+            Authorization: "Bearer test_token",
+          },
+        },
+      );
       expect(result).toEqual(mockResponse);
     });
   });
@@ -235,17 +289,23 @@ describe("API Service", () => {
       const interval = "1d";
       const mockResponse = {
         prices: [100, 102, 105, 103, 106],
-        timestamps: [1620000000, 1620086400, 1620172800, 1620259200, 1620345600]
+        timestamps: [
+          1620000000, 1620086400, 1620172800, 1620259200, 1620345600,
+        ],
       };
       axios.get.mockResolvedValueOnce({ data: mockResponse });
 
-      const result = await apiService.getAssetPriceHistory(symbol, range, interval);
+      const result = await apiService.getAssetPriceHistory(
+        symbol,
+        range,
+        interval,
+      );
 
       expect(axios.get).toHaveBeenCalledWith(`/api/market/history/${symbol}`, {
         params: { range, interval },
         headers: {
-          "Authorization": "Bearer test_token"
-        }
+          Authorization: "Bearer test_token",
+        },
       });
       expect(result).toEqual(mockResponse);
     });
@@ -255,8 +315,8 @@ describe("API Service", () => {
       const mockResponse = {
         assets: [
           { symbol: "AAPL", name: "Apple Inc." },
-          { symbol: "AAPL.L", name: "Apple Inc. (London)" }
-        ]
+          { symbol: "AAPL.L", name: "Apple Inc. (London)" },
+        ],
       };
       axios.get.mockResolvedValueOnce({ data: mockResponse });
 
@@ -265,8 +325,8 @@ describe("API Service", () => {
       expect(axios.get).toHaveBeenCalledWith("/api/market/search", {
         params: { query },
         headers: {
-          "Authorization": "Bearer test_token"
-        }
+          Authorization: "Bearer test_token",
+        },
       });
       expect(result).toEqual(mockResponse);
     });
@@ -289,24 +349,28 @@ describe("API Service", () => {
       const errorResponse = {
         response: {
           data: { message: "Resource not found" },
-          status: 404
-        }
+          status: 404,
+        },
       };
       axios.get.mockRejectedValueOnce(errorResponse);
 
-      await expect(apiService.getPortfolio("999")).rejects.toThrow("Resource not found");
+      await expect(apiService.getPortfolio("999")).rejects.toThrow(
+        "Resource not found",
+      );
       expect(console.error).toHaveBeenCalled();
     });
 
     it("should handle unexpected API errors", async () => {
       const errorResponse = {
         response: {
-          status: 500
-        }
+          status: 500,
+        },
       };
       axios.post.mockRejectedValueOnce(errorResponse);
 
-      await expect(apiService.createPortfolio({ name: "Test" })).rejects.toThrow("Server error (500)");
+      await expect(
+        apiService.createPortfolio({ name: "Test" }),
+      ).rejects.toThrow("Server error (500)");
       expect(console.error).toHaveBeenCalled();
     });
   });

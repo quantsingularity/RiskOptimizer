@@ -1,30 +1,30 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#61DAFB',
+      main: "#61DAFB",
     },
     secondary: {
-      main: '#2E3B4E',
+      main: "#2E3B4E",
     },
     background: {
-      default: '#121212',
-      paper: '#1E2A38',
+      default: "#121212",
+      paper: "#1E2A38",
     },
     text: {
-      primary: '#F8F9FA',
-      secondary: '#ADB5BD',
+      primary: "#F8F9FA",
+      secondary: "#ADB5BD",
     },
     success: {
-      main: '#4CAF50',
+      main: "#4CAF50",
     },
     warning: {
-      main: '#FFC107',
+      main: "#FFC107",
     },
     error: {
-      main: '#F44336',
+      main: "#F44336",
     },
   },
   typography: {
@@ -54,15 +54,15 @@ const theme = createTheme({
       fontWeight: 600,
     },
     button: {
-      textTransform: 'none',
+      textTransform: "none",
       fontWeight: 500,
     },
     body1: {
-      fontSize: '1rem',
+      fontSize: "1rem",
       fontWeight: 400,
     },
     body2: {
-      fontSize: '0.875rem',
+      fontSize: "0.875rem",
       fontWeight: 400,
     },
   },
@@ -74,12 +74,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          padding: '8px 16px',
+          padding: "8px 16px",
         },
         contained: {
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',
+          boxShadow: "none",
+          "&:hover": {
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
           },
         },
       },
@@ -88,35 +88,35 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'none',
+          backgroundImage: "none",
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12)',
+          boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.12)",
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#1E2A38',
+          backgroundColor: "#1E2A38",
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
         },
         head: {
           fontWeight: 600,

@@ -20,6 +20,7 @@ compliance/
 ## Compliance Standards Implemented
 
 ### GDPR (General Data Protection Regulation)
+
 - Data protection impact assessments (DPIA)
 - Privacy by design implementation
 - Data subject rights management
@@ -27,6 +28,7 @@ compliance/
 - Data retention and deletion policies
 
 ### PCI DSS (Payment Card Industry Data Security Standard)
+
 - Network security controls
 - Cardholder data protection
 - Vulnerability management
@@ -34,6 +36,7 @@ compliance/
 - Regular monitoring and testing
 
 ### SOX (Sarbanes-Oxley Act)
+
 - IT general controls (ITGC)
 - Application controls
 - Change management procedures
@@ -41,6 +44,7 @@ compliance/
 - Audit trail requirements
 
 ### DORA (Digital Operational Resilience Act)
+
 - ICT risk management framework
 - Incident reporting mechanisms
 - Digital operational resilience testing
@@ -48,6 +52,7 @@ compliance/
 - Business continuity planning
 
 ### CIS Benchmarks
+
 - Operating system hardening
 - Database security configurations
 - Network device security
@@ -55,6 +60,7 @@ compliance/
 - Application security guidelines
 
 ### NIST Cybersecurity Framework
+
 - Identify: Asset management and risk assessment
 - Protect: Access controls and data security
 - Detect: Continuous monitoring and detection

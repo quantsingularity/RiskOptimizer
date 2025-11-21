@@ -1,14 +1,25 @@
-import React from 'react';
-import { Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import React from "react";
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 const RecentTransactions = ({ transactions }) => {
   // Default values if transactions aren't provided
   const defaultTransactions = [
-    { date: '2025-04-05', asset: 'AAPL', type: 'Buy', amount: '$2,500.00' },
-    { date: '2025-04-01', asset: 'TSLA', type: 'Sell', amount: '$1,800.00' },
-    { date: '2025-03-28', asset: 'BTC', type: 'Buy', amount: '$1,000.00' },
-    { date: '2025-03-15', asset: 'MSFT', type: 'Buy', amount: '$3,200.00' },
-    { date: '2025-03-10', asset: 'GLD', type: 'Sell', amount: '$2,100.00' }
+    { date: "2025-04-05", asset: "AAPL", type: "Buy", amount: "$2,500.00" },
+    { date: "2025-04-01", asset: "TSLA", type: "Sell", amount: "$1,800.00" },
+    { date: "2025-03-28", asset: "BTC", type: "Buy", amount: "$1,000.00" },
+    { date: "2025-03-15", asset: "MSFT", type: "Buy", amount: "$3,200.00" },
+    { date: "2025-03-10", asset: "GLD", type: "Sell", amount: "$2,100.00" },
   ];
 
   const data = transactions || defaultTransactions;
@@ -38,7 +49,11 @@ const RecentTransactions = ({ transactions }) => {
                   <TableCell>
                     <Typography
                       variant="body2"
-                      color={transaction.type === 'Buy' ? 'success.main' : 'error.main'}
+                      color={
+                        transaction.type === "Buy"
+                          ? "success.main"
+                          : "error.main"
+                      }
                     >
                       {transaction.type}
                     </Typography>

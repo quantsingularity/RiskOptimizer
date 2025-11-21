@@ -1,31 +1,38 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { Input, Button, Text, Card } from '@rneui/themed';
-import apiService from '../services/apiService';
+import React, { useState } from "react";
+import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { Input, Button, Text, Card } from "@rneui/themed";
+import apiService from "../services/apiService";
 
 const CreatePortfolioScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [currency, setCurrency] = useState('USD'); // Default or allow selection
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [currency, setCurrency] = useState("USD"); // Default or allow selection
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleCreate = async () => {
     if (!name) {
-      setError('Portfolio name is required.');
+      setError("Portfolio name is required.");
       return;
     }
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      const response = await apiService.createPortfolio({ name, description, currency });
+      const response = await apiService.createPortfolio({
+        name,
+        description,
+        currency,
+      });
       // Navigate back to portfolio list or to the new portfolio's detail screen
       // PortfolioListScreen should refresh on focus to show the new portfolio
       navigation.goBack();
     } catch (err) {
-      console.error('Failed to create portfolio:', err);
-      setError('Could not create portfolio. Please try again.');
-      Alert.alert('Error', 'Could not create portfolio. Please try again later.');
+      console.error("Failed to create portfolio:", err);
+      setError("Could not create portfolio. Please try again.");
+      Alert.alert(
+        "Error",
+        "Could not create portfolio. Please try again later.",
+      );
     } finally {
       setLoading(false);
     }
@@ -64,7 +71,11 @@ const CreatePortfolioScreen = ({ navigation }) => {
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         {loading ? (
-          <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
+          <ActivityIndicator
+            size="large"
+            color="#007AFF"
+            style={styles.loader}
+          />
         ) : (
           <Button
             title="Create Portfolio"
@@ -81,7 +92,7 @@ const CreatePortfolioScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     paddingTop: 20, // Add padding if header is not shown or for spacing
   },
   card: {
@@ -91,14 +102,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     borderRadius: 8,
     marginTop: 10,
     paddingVertical: 12,
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 10,
   },
   loader: {

@@ -19,6 +19,7 @@ These scripts automate various aspects of the RiskOptimizer development workflow
 Sets up the complete development environment for RiskOptimizer.
 
 **Features:**
+
 - Detects and installs required dependencies
 - Creates and configures Python virtual environment
 - Installs backend, frontend, and blockchain dependencies
@@ -26,6 +27,7 @@ Sets up the complete development environment for RiskOptimizer.
 - Creates default environment configuration
 
 **Usage:**
+
 ```bash
 ./setup_dev_environment.sh
 ```
@@ -35,6 +37,7 @@ Sets up the complete development environment for RiskOptimizer.
 Runs tests across all components of the RiskOptimizer platform.
 
 **Features:**
+
 - Supports testing specific components or all components
 - Generates test coverage reports
 - Supports parallel test execution
@@ -42,6 +45,7 @@ Runs tests across all components of the RiskOptimizer platform.
 - Creates comprehensive test reports
 
 **Usage:**
+
 ```bash
 # Run all tests
 ./run_tests.sh
@@ -64,6 +68,7 @@ Runs tests across all components of the RiskOptimizer platform.
 Performs code quality checks and formatting across all components.
 
 **Features:**
+
 - Lints Python code with flake8
 - Formats Python code with black and isort
 - Lints JavaScript/TypeScript with ESLint
@@ -73,6 +78,7 @@ Performs code quality checks and formatting across all components.
 - Can automatically fix common issues
 
 **Usage:**
+
 ```bash
 # Check code quality for all components
 ./code_quality.sh
@@ -92,6 +98,7 @@ Performs code quality checks and formatting across all components.
 Deploys RiskOptimizer components to different environments.
 
 **Features:**
+
 - Supports development, staging, and production environments
 - Can deploy specific components or all components
 - Runs tests before deployment
@@ -99,6 +106,7 @@ Deploys RiskOptimizer components to different environments.
 - Generates deployment packages for remote servers
 
 **Usage:**
+
 ```bash
 # Deploy all components to development environment
 ./deploy.sh -e dev
@@ -115,6 +123,7 @@ Deploys RiskOptimizer components to different environments.
 Automates AI model training, evaluation, and deployment.
 
 **Features:**
+
 - Trains different types of models (optimization, risk, prediction)
 - Supports custom datasets and hyperparameters
 - Evaluates model performance with various metrics
@@ -122,6 +131,7 @@ Automates AI model training, evaluation, and deployment.
 - Supports model deployment
 
 **Usage:**
+
 ```bash
 # Train all models with default settings
 ./model_training.sh

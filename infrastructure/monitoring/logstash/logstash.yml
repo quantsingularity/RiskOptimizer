@@ -192,17 +192,28 @@ pipeline.separate_logs: true
 xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch.username: logstash_system
 xpack.monitoring.elasticsearch.password: "${LOGSTASH_SYSTEM_PASSWORD}"
-xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch-1:9200", "https://elasticsearch-2:9200", "https://elasticsearch-3:9200"]
+xpack.monitoring.elasticsearch.hosts:
+  [
+    "https://elasticsearch-1:9200",
+    "https://elasticsearch-2:9200",
+    "https://elasticsearch-3:9200",
+  ]
 xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/certs/ca.crt
 xpack.monitoring.elasticsearch.ssl.verification_mode: certificate
 
 # X-Pack Management
 # https://www.elastic.co/guide/en/logstash/current/logstash-centralized-pipeline-management.html
 xpack.management.enabled: true
-xpack.management.pipeline.id: ["riskoptimizer-main", "riskoptimizer-security", "riskoptimizer-audit"]
+xpack.management.pipeline.id:
+  ["riskoptimizer-main", "riskoptimizer-security", "riskoptimizer-audit"]
 xpack.management.elasticsearch.username: logstash_writer
 xpack.management.elasticsearch.password: "${LOGSTASH_WRITER_PASSWORD}"
-xpack.management.elasticsearch.hosts: ["https://elasticsearch-1:9200", "https://elasticsearch-2:9200", "https://elasticsearch-3:9200"]
+xpack.management.elasticsearch.hosts:
+  [
+    "https://elasticsearch-1:9200",
+    "https://elasticsearch-2:9200",
+    "https://elasticsearch-3:9200",
+  ]
 xpack.management.elasticsearch.ssl.certificate_authority: /etc/logstash/certs/ca.crt
 xpack.management.elasticsearch.ssl.verification_mode: certificate
 

@@ -19,8 +19,10 @@ const MockAssetAllocation = ({ data }) => (
     <h4>Asset Allocation</h4>
     {/* Basic representation for testing */}
     <ul>
-      {data.map(item => (
-        <li key={item.name}>{item.name}: {item.value}%</li>
+      {data.map((item) => (
+        <li key={item.name}>
+          {item.name}: {item.value}%
+        </li>
       ))}
     </ul>
     <div data-testid="chart-data">{JSON.stringify(data)}</div>

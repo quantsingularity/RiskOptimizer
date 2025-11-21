@@ -29,21 +29,20 @@ const mockApiService = {
     throw new Error("Optimization failed");
   }),
   getPortfolios: jest.fn(async () => {
-      return [{id: "1", name: "Mock Portfolio"}];
+    return [{ id: "1", name: "Mock Portfolio" }];
   }),
   getPortfolioDetails: jest.fn(async (id) => {
-      if (id === "1") return {id: "1", name: "Mock Portfolio", assets: []};
-      throw new Error("Not found");
+    if (id === "1") return { id: "1", name: "Mock Portfolio", assets: [] };
+    throw new Error("Not found");
   }),
   createPortfolio: jest.fn(async (data) => {
-      if (data.name) return {id: "new", ...data};
-      throw new Error("Creation failed");
-  })
+    if (data.name) return { id: "new", ...data };
+    throw new Error("Creation failed");
+  }),
   // Add other methods based on apiService.js content
 };
 
 describe("Mobile API Service", () => {
-
   // beforeEach(async () => {
   //   // Reset mocks and clear AsyncStorage before each test
   //   fetch.mockClear();
@@ -112,7 +111,10 @@ describe("Mobile API Service", () => {
   describe("createPortfolio", () => {
     it("should send POST request to /api/portfolios with data and token", async () => {
       // await AsyncStorage.setItem("token", "test_token");
-      const portfolioData = { name: "New Mobile Portfolio", description: "Details" };
+      const portfolioData = {
+        name: "New Mobile Portfolio",
+        description: "Details",
+      };
       // const mockResponse = { id: "new_id", ...portfolioData };
       // fetch.mockResolvedValueOnce({ ok: true, json: async () => mockResponse });
 

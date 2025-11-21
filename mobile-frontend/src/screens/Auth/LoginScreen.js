@@ -1,27 +1,33 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
-import { Input, Button, Text, Card, useTheme } from '@rneui/themed'; // Import useTheme
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { Input, Button, Text, Card, useTheme } from "@rneui/themed"; // Import useTheme
+import { useAuth } from "../context/AuthContext";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const { theme } = useTheme(); // Access the theme
 
   const handleLogin = async () => {
     if (!email || !password) {
-      setError('Please enter both email and password.');
+      setError("Please enter both email and password.");
       return;
     }
     setLoading(true);
-    setError('');
+    setError("");
     const success = await login(email, password);
     setLoading(false);
     if (!success) {
-      setError('Login failed. Please check your credentials.');
+      setError("Login failed. Please check your credentials.");
     }
   };
 
@@ -29,18 +35,18 @@ const LoginScreen = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       backgroundColor: theme.colors.background, // Use theme background color
       padding: 20,
     },
     card: {
-      width: '100%',
+      width: "100%",
       maxWidth: 400,
       // Theme handles card styling (borderRadius, padding, shadow)
     },
     title: {
-      textAlign: 'center',
+      textAlign: "center",
       marginBottom: 20,
       // Theme handles h3 styling
     },
@@ -57,7 +63,7 @@ const LoginScreen = () => {
     },
     errorText: {
       color: theme.colors.error, // Use theme error color
-      textAlign: 'center',
+      textAlign: "center",
       marginBottom: 10,
       fontSize: 15,
     },
@@ -68,15 +74,21 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <Card containerStyle={styles.card}>
-        <Card.Title h3 style={styles.title}>RiskOptimizer Login</Card.Title>
+        <Card.Title h3 style={styles.title}>
+          RiskOptimizer Login
+        </Card.Title>
         <Card.Divider />
         <Input
           placeholder="Email"
-          leftIcon={{ type: 'material-community', name: 'email-outline', color: theme.colors.grey0 }} // Use theme color for icon
+          leftIcon={{
+            type: "material-community",
+            name: "email-outline",
+            color: theme.colors.grey0,
+          }} // Use theme color for icon
           onChangeText={setEmail}
           value={email}
           keyboardType="email-address"
@@ -87,7 +99,11 @@ const LoginScreen = () => {
         />
         <Input
           placeholder="Password"
-          leftIcon={{ type: 'material-community', name: 'lock-outline', color: theme.colors.grey0 }} // Use theme color for icon
+          leftIcon={{
+            type: "material-community",
+            name: "lock-outline",
+            color: theme.colors.grey0,
+          }} // Use theme color for icon
           onChangeText={setPassword}
           value={password}
           secureTextEntry
@@ -97,7 +113,11 @@ const LoginScreen = () => {
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         {loading ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} /> // Use theme primary color
+          <ActivityIndicator
+            size="large"
+            color={theme.colors.primary}
+            style={styles.loader}
+          /> // Use theme primary color
         ) : (
           <Button
             title="Login"

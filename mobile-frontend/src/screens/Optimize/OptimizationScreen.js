@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
-import { Card, Button, Slider, CheckBox, Input } from '@rneui/themed';
-import RNPickerSelect from 'react-native-picker-select'; // Need to install this
-import apiService from '../services/apiService';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { Card, Button, Slider, CheckBox, Input } from "@rneui/themed";
+import RNPickerSelect from "react-native-picker-select"; // Need to install this
+import apiService from "../services/apiService";
 
 // Placeholder for Efficient Frontier Chart
 const EfficientFrontierChart = () => (
@@ -14,32 +21,35 @@ const EfficientFrontierChart = () => (
 const OptimizationScreen = ({ navigation }) => {
   const [portfolios, setPortfolios] = useState([]);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
-  const [riskTolerance, setRiskTolerance] = useState('moderate'); // low, moderate, high
-  const [investmentHorizon, setInvestmentHorizon] = useState('long_term'); // short_term, medium_term, long_term
-  const [maxAllocation, setMaxAllocation] = useState(0.20);
+  const [riskTolerance, setRiskTolerance] = useState("moderate"); // low, moderate, high
+  const [investmentHorizon, setInvestmentHorizon] = useState("long_term"); // short_term, medium_term, long_term
+  const [maxAllocation, setMaxAllocation] = useState(0.2);
   const [minAllocation, setMinAllocation] = useState(0.05);
   const [excludedSectors, setExcludedSectors] = useState([]); // Example: ['Energy', 'Tobacco']
   const [loadingPortfolios, setLoadingPortfolios] = useState(true);
   const [loadingOptimization, setLoadingOptimization] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Fetch portfolios for selection
   useEffect(() => {
     const fetchPortfolios = async () => {
       setLoadingPortfolios(true);
-      setError('');
+      setError("");
       try {
         const response = await apiService.getPortfolios();
-        const portfolioItems = (response.data.portfolios || []).map(p => ({ label: p.name, value: p.id }));
+        const portfolioItems = (response.data.portfolios || []).map((p) => ({
+          label: p.name,
+          value: p.id,
+        }));
         setPortfolios(portfolioItems);
         if (portfolioItems.length > 0) {
           // Optionally pre-select the first portfolio
           // setSelectedPortfolio(portfolioItems[0].value);
         }
       } catch (err) {
-        console.error('Failed to fetch portfolios for optimization:', err);
-        setError('Could not load portfolios.');
+        console.error("Failed to fetch portfolios for optimization:", err);
+        setError("Could not load portfolios.");
       } finally {
         setLoadingPortfolios(false);
       }
@@ -49,11 +59,14 @@ const OptimizationScreen = ({ navigation }) => {
 
   const handleRunOptimization = async () => {
     if (!selectedPortfolio) {
-      Alert.alert('Selection Required', 'Please select a portfolio to optimize.');
+      Alert.alert(
+        "Selection Required",
+        "Please select a portfolio to optimize.",
+      );
       return;
     }
     setLoadingOptimization(true);
-    setError('');
+    setError("");
     setOptimizationResult(null);
 
     const params = {
@@ -71,19 +84,37 @@ const OptimizationScreen = ({ navigation }) => {
       const response = await apiService.getOptimizationRecommendations(params);
       setOptimizationResult(response.data);
     } catch (err) {
-      console.error('Optimization failed:', err);
-      setError('Optimization failed. Please try again.');
-      Alert.alert('Error', 'Optimization failed. Please check parameters or try again later.');
+      console.error("Optimization failed:", err);
+      setError("Optimization failed. Please try again.");
+      Alert.alert(
+        "Error",
+        "Optimization failed. Please check parameters or try again later.",
+      );
     } finally {
       setLoadingOptimization(false);
     }
   };
 
   // Example sector handling - replace with actual data/logic
-  const availableSectors = ['Technology', 'Healthcare', 'Financials', 'Energy', 'Consumer Staples', 'Industrials', 'Utilities', 'Real Estate', 'Materials', 'Communication Services', 'Consumer Discretionary', 'Tobacco'];
+  const availableSectors = [
+    "Technology",
+    "Healthcare",
+    "Financials",
+    "Energy",
+    "Consumer Staples",
+    "Industrials",
+    "Utilities",
+    "Real Estate",
+    "Materials",
+    "Communication Services",
+    "Consumer Discretionary",
+    "Tobacco",
+  ];
   const toggleSectorExclusion = (sector) => {
-    setExcludedSectors(prev =>
-      prev.includes(sector) ? prev.filter(s => s !== sector) : [...prev, sector]
+    setExcludedSectors((prev) =>
+      prev.includes(sector)
+        ? prev.filter((s) => s !== sector)
+        : [...prev, sector],
     );
   };
 
@@ -99,7 +130,7 @@ const OptimizationScreen = ({ navigation }) => {
           <ActivityIndicator />
         ) : portfolios.length > 0 ? (
           <RNPickerSelect
-            placeholder={{ label: 'Select a portfolio...', value: null }}
+            placeholder={{ label: "Select a portfolio...", value: null }}
             items={portfolios}
             onValueChange={(value) => setSelectedPortfolio(value)}
             style={pickerSelectStyles}
@@ -107,16 +138,18 @@ const OptimizationScreen = ({ navigation }) => {
             useNativeAndroidPickerStyle={false} // Recommended for styling consistency
           />
         ) : (
-          <Text style={styles.infoText}>No portfolios available. Create one first.</Text>
+          <Text style={styles.infoText}>
+            No portfolios available. Create one first.
+          </Text>
         )}
 
         <Text style={styles.label}>Risk Tolerance</Text>
         <RNPickerSelect
           placeholder={{}}
           items={[
-            { label: 'Low', value: 'low' },
-            { label: 'Moderate', value: 'moderate' },
-            { label: 'High', value: 'high' },
+            { label: "Low", value: "low" },
+            { label: "Moderate", value: "moderate" },
+            { label: "High", value: "high" },
           ]}
           onValueChange={(value) => setRiskTolerance(value)}
           style={pickerSelectStyles}
@@ -128,9 +161,9 @@ const OptimizationScreen = ({ navigation }) => {
         <RNPickerSelect
           placeholder={{}}
           items={[
-            { label: 'Short Term', value: 'short_term' },
-            { label: 'Medium Term', value: 'medium_term' },
-            { label: 'Long Term', value: 'long_term' },
+            { label: "Short Term", value: "short_term" },
+            { label: "Medium Term", value: "medium_term" },
+            { label: "Long Term", value: "long_term" },
           ]}
           onValueChange={(value) => setInvestmentHorizon(value)}
           style={pickerSelectStyles}
@@ -138,7 +171,9 @@ const OptimizationScreen = ({ navigation }) => {
           useNativeAndroidPickerStyle={false}
         />
 
-        <Text style={styles.label}>Max Allocation per Asset: {(maxAllocation * 100).toFixed(0)}%</Text>
+        <Text style={styles.label}>
+          Max Allocation per Asset: {(maxAllocation * 100).toFixed(0)}%
+        </Text>
         <Slider
           value={maxAllocation}
           onValueChange={setMaxAllocation}
@@ -149,7 +184,9 @@ const OptimizationScreen = ({ navigation }) => {
           trackStyle={styles.track}
         />
 
-        <Text style={styles.label}>Min Allocation per Asset: {(minAllocation * 100).toFixed(0)}%</Text>
+        <Text style={styles.label}>
+          Min Allocation per Asset: {(minAllocation * 100).toFixed(0)}%
+        </Text>
         <Slider
           value={minAllocation}
           onValueChange={setMinAllocation}
@@ -162,7 +199,7 @@ const OptimizationScreen = ({ navigation }) => {
 
         <Text style={styles.label}>Exclude Sectors:</Text>
         <View style={styles.checkboxContainer}>
-          {availableSectors.map(sector => (
+          {availableSectors.map((sector) => (
             <CheckBox
               key={sector}
               title={sector}
@@ -189,21 +226,38 @@ const OptimizationScreen = ({ navigation }) => {
         <Card containerStyle={styles.card}>
           <Card.Title>Optimization Results</Card.Title>
           <Card.Divider />
-          <Text style={styles.resultText}>Optimized Risk Score: {optimizationResult.optimized_risk_score?.toFixed(2)} (Current: {optimizationResult.current_risk_score?.toFixed(2)})</Text>
-          <Text style={styles.resultText}>Expected Return: {(optimizationResult.expected_return * 100)?.toFixed(2)}%</Text>
-          <Text style={styles.resultText}>Sharpe Ratio: {optimizationResult.sharpe_ratio?.toFixed(2)}</Text>
+          <Text style={styles.resultText}>
+            Optimized Risk Score:{" "}
+            {optimizationResult.optimized_risk_score?.toFixed(2)} (Current:{" "}
+            {optimizationResult.current_risk_score?.toFixed(2)})
+          </Text>
+          <Text style={styles.resultText}>
+            Expected Return:{" "}
+            {(optimizationResult.expected_return * 100)?.toFixed(2)}%
+          </Text>
+          <Text style={styles.resultText}>
+            Sharpe Ratio: {optimizationResult.sharpe_ratio?.toFixed(2)}
+          </Text>
 
           <Text style={styles.subHeader}>Recommendations:</Text>
           {optimizationResult.recommendations?.map((rec, index) => (
             <View key={index} style={styles.recommendationItem}>
-              <Text style={styles.recSymbol}>{rec.symbol}: <Text style={styles.recAction}>{rec.action.toUpperCase()}</Text></Text>
-              <Text>New Allocation: {(rec.recommended_allocation * 100).toFixed(2)}% (Current: {(rec.current_allocation * 100).toFixed(2)}%)</Text>
+              <Text style={styles.recSymbol}>
+                {rec.symbol}:{" "}
+                <Text style={styles.recAction}>{rec.action.toUpperCase()}</Text>
+              </Text>
+              <Text>
+                New Allocation: {(rec.recommended_allocation * 100).toFixed(2)}%
+                (Current: {(rec.current_allocation * 100).toFixed(2)}%)
+              </Text>
               {/* Optionally show quantity change */}
             </View>
           ))}
 
           <Text style={styles.subHeader}>Efficient Frontier:</Text>
-          <EfficientFrontierChart data={optimizationResult.efficient_frontier} />
+          <EfficientFrontierChart
+            data={optimizationResult.efficient_frontier}
+          />
         </Card>
       )}
     </ScrollView>
@@ -213,14 +267,14 @@ const OptimizationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     margin: 20,
-    color: '#333',
-    textAlign: 'center',
+    color: "#333",
+    textAlign: "center",
   },
   card: {
     borderRadius: 10,
@@ -228,7 +282,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
     marginTop: 15,
     marginBottom: 5,
     marginLeft: 10,
@@ -236,19 +290,19 @@ const styles = StyleSheet.create({
   thumb: {
     height: 20,
     width: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
   },
   track: {
     height: 4,
     borderRadius: 2,
   },
   checkboxContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: 5,
   },
   checkbox: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 0,
     padding: 2,
     margin: 0,
@@ -257,10 +311,10 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     fontSize: 12,
-    fontWeight: 'normal',
+    fontWeight: "normal",
   },
   runButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: "#34C759",
     marginTop: 20,
     borderRadius: 8,
   },
@@ -270,7 +324,7 @@ const styles = StyleSheet.create({
   },
   subHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 15,
     marginBottom: 10,
   },
@@ -278,30 +332,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 10,
     borderLeftWidth: 3,
-    borderLeftColor: '#007AFF',
+    borderLeftColor: "#007AFF",
   },
   recSymbol: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   recAction: {
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   chartPlaceholder: {
     height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#eee',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eee",
     borderRadius: 8,
     marginTop: 10,
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginTop: 10,
   },
   infoText: {
-    textAlign: 'center',
-    color: 'gray',
+    textAlign: "center",
+    color: "gray",
     marginVertical: 10,
   },
 });
@@ -312,9 +366,9 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 4,
-    color: 'black',
+    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
     marginTop: 5,
     marginBottom: 15,
@@ -324,9 +378,9 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 8,
-    color: 'black',
+    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
     marginTop: 5,
     marginBottom: 15,

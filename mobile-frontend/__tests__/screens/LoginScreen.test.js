@@ -1,7 +1,12 @@
 // mobile-frontend/__tests__/screens/LoginScreen.test.js
 
 import React from "react";
-import { render, fireEvent, waitFor, screen } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+} from "@testing-library/react-native";
 import LoginScreen from "../../src/screens/Auth/LoginScreen";
 import { AuthProvider, AuthContext } from "../../src/context/AuthContext";
 
@@ -18,8 +23,8 @@ jest.mock("../../src/context/AuthContext", () => {
       login: mockLogin,
       loading: false,
       authenticated: false,
-      user: null
-    })
+      user: null,
+    }),
   };
 });
 
@@ -27,14 +32,14 @@ jest.mock("../../src/context/AuthContext", () => {
 jest.mock("../../src/services/apiService", () => ({
   login: jest.fn(),
   getUserProfile: jest.fn(),
-  setAuthHeader: jest.fn()
+  setAuthHeader: jest.fn(),
 }));
 
 // Mock SecureStore
 jest.mock("expo-secure-store", () => ({
   setItemAsync: jest.fn(() => Promise.resolve()),
   getItemAsync: jest.fn(() => Promise.resolve(null)),
-  deleteItemAsync: jest.fn(() => Promise.resolve())
+  deleteItemAsync: jest.fn(() => Promise.resolve()),
 }));
 
 // Mock context login function
@@ -53,11 +58,20 @@ jest.mock("@rneui/themed", () => {
           primary: "#007AFF",
           background: "#FFFFFF",
           error: "#FF3B30",
-          grey0: "#000000"
-        }
-      }
+          grey0: "#000000",
+        },
+      },
     }),
-    Input: ({ placeholder, leftIcon, onChangeText, value, secureTextEntry, containerStyle, disabled, testID }) => (
+    Input: ({
+      placeholder,
+      leftIcon,
+      onChangeText,
+      value,
+      secureTextEntry,
+      containerStyle,
+      disabled,
+      testID,
+    }) => (
       <React.Fragment>
         <input
           placeholder={placeholder}
@@ -70,7 +84,11 @@ jest.mock("@rneui/themed", () => {
       </React.Fragment>
     ),
     Button: ({ title, onPress, buttonStyle, disabled, testID }) => (
-      <button onClick={onPress} disabled={disabled} data-testid={testID || "button"}>
+      <button
+        onClick={onPress}
+        disabled={disabled}
+        data-testid={testID || "button"}
+      >
         {title}
       </button>
     ),
@@ -82,8 +100,8 @@ jest.mock("@rneui/themed", () => {
         <div ref={ref} style={containerStyle}>
           {children}
         </div>
-      ))
-    }
+      )),
+    },
   };
 });
 
@@ -146,7 +164,9 @@ describe("Login Screen", () => {
     fireEvent.click(loginButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Login failed. Please check your credentials.")).toBeTruthy();
+      expect(
+        screen.getByText("Login failed. Please check your credentials."),
+      ).toBeTruthy();
     });
   });
 
@@ -157,7 +177,9 @@ describe("Login Screen", () => {
     // Try to login without entering credentials
     fireEvent.click(loginButton);
 
-    expect(screen.getByText("Please enter both email and password.")).toBeTruthy();
+    expect(
+      screen.getByText("Please enter both email and password."),
+    ).toBeTruthy();
     expect(mockLogin).not.toHaveBeenCalled();
   });
 });

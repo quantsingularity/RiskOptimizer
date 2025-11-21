@@ -1,7 +1,12 @@
 // mobile-frontend/__tests__/screens/PortfolioListScreen.test.js
 
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react-native";
 // import PortfolioListScreen from "../../src/screens/Portfolios/PortfolioListScreen"; // Adjust path
 // import { PortfolioContext } from "../../src/context/PortfolioContext";
 
@@ -22,7 +27,15 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react-nativ
 // };
 
 // Mock Screen component for placeholder tests
-import { View, Text, FlatList, Button, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Button,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
 const MockPortfolioListScreen = ({ navigation }) => {
   const [loading, setLoading] = React.useState(true);
@@ -40,7 +53,7 @@ const MockPortfolioListScreen = ({ navigation }) => {
       setError(null);
       try {
         // Simulate API call or context loading
-        await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
+        await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate delay
         setPortfolios(mockPortfoliosData);
       } catch (err) {
         setError("Failed to load portfolios");
@@ -52,23 +65,43 @@ const MockPortfolioListScreen = ({ navigation }) => {
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate("PortfolioDetail", { portfolioId: item.id })} style={styles.itemContainer} testID={`portfolio-item-${item.id}`}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("PortfolioDetail", { portfolioId: item.id })
+      }
+      style={styles.itemContainer}
+      testID={`portfolio-item-${item.id}`}
+    >
       <Text style={styles.itemName}>{item.name}</Text>
       <Text>Value: ${item.totalValue.toLocaleString()}</Text>
     </TouchableOpacity>
   );
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" testID="loading-indicator" /></View>;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" testID="loading-indicator" />
+      </View>
+    );
   }
 
   if (error) {
-    return <View style={styles.center}><Text style={styles.errorText} testID="error-message">{error}</Text></View>;
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText} testID="error-message">
+          {error}
+        </Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Button title="Create New Portfolio" onPress={() => navigation.navigate("CreatePortfolio")} testID="create-portfolio-button" />
+      <Button
+        title="Create New Portfolio"
+        onPress={() => navigation.navigate("CreatePortfolio")}
+        testID="create-portfolio-button"
+      />
       <FlatList
         data={portfolios}
         renderItem={renderItem}
@@ -83,7 +116,11 @@ const MockPortfolioListScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  itemContainer: { padding: 15, borderBottomWidth: 1, borderBottomColor: "#ccc" },
+  itemContainer: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
   itemName: { fontSize: 18, fontWeight: "bold" },
   errorText: { color: "red" },
 });
@@ -120,7 +157,9 @@ describe("Portfolio List Screen", () => {
     //   expect(screen.getByText(/income portfolio/i)).toBeOnTheScreen();
     //   expect(screen.getByText(/\$15,000/)).toBeOnTheScreen();
     // });
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading-indicator")).toBeNull(),
+    );
     expect(screen.getByTestId("portfolio-item-1")).toBeDefined();
     expect(screen.getByTestId("portfolio-item-2")).toBeDefined();
     expect(true).toBe(true); // Placeholder assertion
@@ -128,7 +167,9 @@ describe("Portfolio List Screen", () => {
 
   it("should navigate to PortfolioDetail screen when a portfolio is pressed", async () => {
     renderListScreen();
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading-indicator")).toBeNull(),
+    );
 
     const portfolioItem = screen.getByTestId("portfolio-item-1");
     fireEvent.press(portfolioItem);
@@ -140,7 +181,9 @@ describe("Portfolio List Screen", () => {
 
   it("should navigate to CreatePortfolio screen when 'Create New Portfolio' button is pressed", async () => {
     renderListScreen();
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading-indicator")).toBeNull(),
+    );
 
     const createButton = screen.getByTestId("create-portfolio-button");
     fireEvent.press(createButton);
@@ -161,7 +204,9 @@ describe("Portfolio List Screen", () => {
     //   expect(screen.queryByTestId("loading-indicator")).toBeNull();
     //   expect(screen.getByText(/failed to load portfolios/i)).toBeOnTheScreen();
     // });
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading-indicator")).toBeNull(),
+    );
     // Modify mock to test error path
     expect(true).toBe(true); // Placeholder assertion
   });
@@ -176,7 +221,9 @@ describe("Portfolio List Screen", () => {
     //   expect(screen.queryByTestId("loading-indicator")).toBeNull();
     //   expect(screen.getByText(/no portfolios found/i)).toBeOnTheScreen();
     // });
-    await waitFor(() => expect(screen.queryByTestId("loading-indicator")).toBeNull());
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading-indicator")).toBeNull(),
+    );
     // Modify mock to test empty path
     expect(true).toBe(true); // Placeholder assertion
   });

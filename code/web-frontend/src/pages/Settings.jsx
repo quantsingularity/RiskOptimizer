@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Grid,
@@ -17,18 +17,18 @@ import {
   ListItemText,
   ListItemIcon,
   Tabs,
-  Tab
-} from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import SecurityIcon from '@mui/icons-material/Security';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ApiIcon from '@mui/icons-material/Api';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LanguageIcon from '@mui/icons-material/Language';
-import StorageIcon from '@mui/icons-material/Storage';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import SaveIcon from '@mui/icons-material/Save';
+  Tab,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SecurityIcon from "@mui/icons-material/Security";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ApiIcon from "@mui/icons-material/Api";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LanguageIcon from "@mui/icons-material/Language";
+import StorageIcon from "@mui/icons-material/Storage";
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
+import SaveIcon from "@mui/icons-material/Save";
 
 const Settings = () => {
   const [tabValue, setTabValue] = React.useState(0);
@@ -39,26 +39,54 @@ const Settings = () => {
 
   return (
     <Box className="fade-in">
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
           Settings
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<SaveIcon />}
-        >
+        <Button variant="contained" startIcon={<SaveIcon />}>
           Save Changes
         </Button>
       </Box>
 
       <Card>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="settings tabs">
-            <Tab label="Account" icon={<AccountCircleIcon />} iconPosition="start" />
-            <Tab label="Preferences" icon={<DarkModeIcon />} iconPosition="start" />
-            <Tab label="API Connections" icon={<ApiIcon />} iconPosition="start" />
-            <Tab label="Security" icon={<SecurityIcon />} iconPosition="start" />
-            <Tab label="Notifications" icon={<NotificationsIcon />} iconPosition="start" />
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="settings tabs"
+          >
+            <Tab
+              label="Account"
+              icon={<AccountCircleIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              label="Preferences"
+              icon={<DarkModeIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              label="API Connections"
+              icon={<ApiIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              label="Security"
+              icon={<SecurityIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              label="Notifications"
+              icon={<NotificationsIcon />}
+              iconPosition="start"
+            />
           </Tabs>
         </Box>
         <CardContent>
@@ -93,7 +121,10 @@ const Settings = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Card variant="outlined" sx={{ mb: 2, backgroundColor: 'background.default' }}>
+                  <Card
+                    variant="outlined"
+                    sx={{ mb: 2, backgroundColor: "background.default" }}
+                  >
                     <CardContent>
                       <Typography variant="subtitle2" gutterBottom>
                         Account Information
@@ -102,17 +133,13 @@ const Settings = () => {
                         <Typography variant="body2" color="text.secondary">
                           Account Type
                         </Typography>
-                        <Typography variant="body1">
-                          Premium
-                        </Typography>
+                        <Typography variant="body1">Premium</Typography>
                       </Box>
                       <Box sx={{ mb: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                           Member Since
                         </Typography>
-                        <Typography variant="body1">
-                          April 15, 2023
-                        </Typography>
+                        <Typography variant="body1">April 15, 2023</Typography>
                       </Box>
                       <Box>
                         <Typography variant="body2" color="text.secondary">
@@ -125,13 +152,17 @@ const Settings = () => {
                     </CardContent>
                   </Card>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
                     <Button variant="outlined" color="error">
                       Delete Account
                     </Button>
-                    <Button variant="contained">
-                      Update Profile
-                    </Button>
+                    <Button variant="contained">Update Profile</Button>
                   </Box>
                 </Grid>
               </Grid>
@@ -257,7 +288,14 @@ const Settings = () => {
                 <Grid item xs={12} md={6}>
                   <Card variant="outlined" sx={{ mb: 2 }}>
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 2,
+                        }}
+                      >
                         <Typography variant="subtitle1">
                           Blockchain Connection
                         </Typography>
@@ -279,11 +317,7 @@ const Settings = () => {
                         variant="outlined"
                         size="small"
                       />
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                      >
+                      <Button variant="outlined" fullWidth sx={{ mt: 2 }}>
                         Test Connection
                       </Button>
                     </CardContent>
@@ -293,7 +327,14 @@ const Settings = () => {
                 <Grid item xs={12} md={6}>
                   <Card variant="outlined" sx={{ mb: 2 }}>
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 2,
+                        }}
+                      >
                         <Typography variant="subtitle1">
                           Market Data API
                         </Typography>
@@ -316,11 +357,7 @@ const Settings = () => {
                         size="small"
                         type="password"
                       />
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                      >
+                      <Button variant="outlined" fullWidth sx={{ mt: 2 }}>
                         Verify API Key
                       </Button>
                     </CardContent>
@@ -328,10 +365,7 @@ const Settings = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                  >
+                  <Button variant="contained" fullWidth>
                     Connect New API
                   </Button>
                 </Grid>
@@ -385,24 +419,38 @@ const Settings = () => {
                   <Typography variant="subtitle2" gutterBottom>
                     Two-Factor Authentication
                   </Typography>
-                  <Card variant="outlined" sx={{ mb: 2, backgroundColor: 'background.default' }}>
+                  <Card
+                    variant="outlined"
+                    sx={{ mb: 2, backgroundColor: "background.default" }}
+                  >
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="body1">
-                          2FA Status
-                        </Typography>
-                        <Typography variant="body1" color="success.main" sx={{ fontWeight: 600 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 2,
+                        }}
+                      >
+                        <Typography variant="body1">2FA Status</Typography>
+                        <Typography
+                          variant="body1"
+                          color="success.main"
+                          sx={{ fontWeight: 600 }}
+                        >
                           Enabled
                         </Typography>
                       </Box>
-                      <Typography variant="body2" color="text.secondary" paragraph>
-                        Two-factor authentication adds an extra layer of security to your account by requiring more than just a password to sign in.
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        fullWidth
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
                       >
+                        Two-factor authentication adds an extra layer of
+                        security to your account by requiring more than just a
+                        password to sign in.
+                      </Typography>
+                      <Button variant="outlined" color="error" fullWidth>
                         Disable 2FA
                       </Button>
                     </CardContent>
@@ -411,11 +459,7 @@ const Settings = () => {
                   <Typography variant="subtitle2" gutterBottom>
                     Session Management
                   </Typography>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    fullWidth
-                  >
+                  <Button variant="outlined" color="error" fullWidth>
                     Log Out All Other Devices
                   </Button>
                 </Grid>

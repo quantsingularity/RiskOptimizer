@@ -9,13 +9,15 @@ const MockPortfolioSummary = ({ totalValue, change, changePercent }) => (
   <div>
     <h2>Portfolio Summary</h2>
     <p>Total Value: ${totalValue}</p>
-    <p>Day Change: ${change} ({changePercent}%)</p>
+    <p>
+      Day Change: ${change} ({changePercent}%)
+    </p>
   </div>
 );
 
 describe("PortfolioSummary Component", () => {
   const mockData = {
-    totalValue: 15000.50,
+    totalValue: 15000.5,
     change: 120.75,
     changePercent: 0.81,
   };
@@ -48,7 +50,11 @@ describe("PortfolioSummary Component", () => {
   });
 
   it("should indicate negative change visually", () => {
-    const negativeData = { totalValue: 14800, change: -50.20, changePercent: -0.34 };
+    const negativeData = {
+      totalValue: 14800,
+      change: -50.2,
+      changePercent: -0.34,
+    };
     renderSummary(negativeData);
     // const changeElement = screen.getByText(/-\$50\.20/);
     // expect(changeElement).toHaveClass("negative-change"); // Assuming a class for styling

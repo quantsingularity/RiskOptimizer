@@ -4,18 +4,18 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'riskoptimizer-prod'
-    environment: 'production'
-    region: 'us-west-2'
+    cluster: "riskoptimizer-prod"
+    environment: "production"
+    region: "us-west-2"
 
 # Alertmanager configuration
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          - alertmanager-1:9093
-          - alertmanager-2:9093
-          - alertmanager-3:9093
+            - alertmanager-1:9093
+            - alertmanager-2:9093
+            - alertmanager-3:9093
       scheme: https
       tls_config:
         ca_file: /etc/prometheus/tls/ca.pem
@@ -32,9 +32,9 @@ rule_files:
 # Scrape configurations
 scrape_configs:
   # Prometheus itself
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
     scrape_interval: 5s
     metrics_path: /metrics
     scheme: https
@@ -44,14 +44,14 @@ scrape_configs:
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
   # Node Exporter for system metrics
-  - job_name: 'node-exporter'
+  - job_name: "node-exporter"
     kubernetes_sd_configs:
       - role: node
     relabel_configs:
       - source_labels: [__address__]
-        regex: '(.*):10250'
+        regex: "(.*):10250"
         target_label: __address__
-        replacement: '${1}:9100'
+        replacement: "${1}:9100"
       - source_labels: [__meta_kubernetes_node_label_kubernetes_io_hostname]
         target_label: instance
     scrape_interval: 30s
@@ -62,7 +62,7 @@ scrape_configs:
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
   # Kubernetes API Server
-  - job_name: 'kubernetes-apiservers'
+  - job_name: "kubernetes-apiservers"
     kubernetes_sd_configs:
       - role: endpoints
     scheme: https
@@ -70,12 +70,17 @@ scrape_configs:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
     relabel_configs:
-      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+      - source_labels:
+          [
+            __meta_kubernetes_namespace,
+            __meta_kubernetes_service_name,
+            __meta_kubernetes_endpoint_port_name,
+          ]
         action: keep
         regex: default;kubernetes;https
 
   # Kubernetes Nodes
-  - job_name: 'kubernetes-nodes'
+  - job_name: "kubernetes-nodes"
     kubernetes_sd_configs:
       - role: node
     scheme: https
@@ -87,7 +92,7 @@ scrape_configs:
         regex: __meta_kubernetes_node_label_(.+)
 
   # Kubernetes Pods
-  - job_name: 'kubernetes-pods'
+  - job_name: "kubernetes-pods"
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
@@ -98,7 +103,8 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      - source_labels:
+          [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
         action: replace
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
@@ -113,7 +119,7 @@ scrape_configs:
         target_label: kubernetes_pod_name
 
   # RiskOptimizer Application
-  - job_name: 'riskoptimizer-app'
+  - job_name: "riskoptimizer-app"
     kubernetes_sd_configs:
       - role: pod
         namespaces:
@@ -131,7 +137,8 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      - source_labels:
+          [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
         action: replace
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
@@ -145,7 +152,7 @@ scrape_configs:
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
   # Database Exporters
-  - job_name: 'postgres-exporter'
+  - job_name: "postgres-exporter"
     static_configs:
       - targets:
           - postgres-exporter-1:9187
@@ -157,7 +164,7 @@ scrape_configs:
       cert_file: /etc/prometheus/tls/prometheus-cert.pem
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
-  - job_name: 'redis-exporter'
+  - job_name: "redis-exporter"
     static_configs:
       - targets:
           - redis-exporter-1:9121
@@ -170,7 +177,7 @@ scrape_configs:
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
   # Vault Metrics
-  - job_name: 'vault'
+  - job_name: "vault"
     static_configs:
       - targets:
           - vault-1:8200
@@ -178,7 +185,7 @@ scrape_configs:
           - vault-3:8200
     metrics_path: /v1/sys/metrics
     params:
-      format: ['prometheus']
+      format: ["prometheus"]
     scheme: https
     tls_config:
       ca_file: /etc/prometheus/tls/ca.pem
@@ -187,7 +194,7 @@ scrape_configs:
     bearer_token_file: /etc/prometheus/vault-token
 
   # Nginx Ingress Controller
-  - job_name: 'nginx-ingress'
+  - job_name: "nginx-ingress"
     kubernetes_sd_configs:
       - role: pod
         namespaces:
@@ -203,7 +210,7 @@ scrape_configs:
     scrape_interval: 30s
 
   # Elasticsearch Exporter
-  - job_name: 'elasticsearch-exporter'
+  - job_name: "elasticsearch-exporter"
     static_configs:
       - targets:
           - elasticsearch-exporter:9114
@@ -215,7 +222,7 @@ scrape_configs:
       key_file: /etc/prometheus/tls/prometheus-key.pem
 
   # Blackbox Exporter for external monitoring
-  - job_name: 'blackbox-http'
+  - job_name: "blackbox-http"
     metrics_path: /probe
     params:
       module: [http_2xx]
@@ -234,7 +241,7 @@ scrape_configs:
     scrape_interval: 30s
 
   # Certificate Exporter
-  - job_name: 'cert-exporter'
+  - job_name: "cert-exporter"
     static_configs:
       - targets:
           - cert-exporter:9117

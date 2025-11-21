@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
-import apiService from '../services/apiService';
+import React, { createContext, useContext, useState } from "react";
+import apiService from "../services/apiService";
 
 // Create context
 const RiskAnalysisContext = createContext();
@@ -16,20 +16,20 @@ export const RiskAnalysisProvider = ({ children }) => {
     setError(null);
     try {
       const response = await apiService.calculateVaR(returns, confidence);
-      if (response.status === 'success') {
+      if (response.status === "success") {
         const updatedMetrics = {
           ...riskMetrics,
-          valueAtRisk: response.value_at_risk
+          valueAtRisk: response.value_at_risk,
         };
         setRiskMetrics(updatedMetrics);
         return response;
       } else {
-        setError(response.message || 'Failed to calculate VaR');
+        setError(response.message || "Failed to calculate VaR");
         return null;
       }
     } catch (err) {
-      setError(err.message || 'An error occurred while calculating VaR');
-      console.error('VaR calculation error:', err);
+      setError(err.message || "An error occurred while calculating VaR");
+      console.error("VaR calculation error:", err);
       return null;
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export const RiskAnalysisProvider = ({ children }) => {
       // This would be connected to a real API endpoint in a production app
       // For now, we'll simulate a response
       const simulatedResponse = {
-        status: 'success',
+        status: "success",
         stress_test_results: {
           scenario: scenario,
           estimated_loss: -32.8,
@@ -52,22 +52,22 @@ export const RiskAnalysisProvider = ({ children }) => {
             equities: -42.5,
             bonds: 5.2,
             crypto: -60.8,
-            gold: 12.3
-          }
-        }
+            gold: 12.3,
+          },
+        },
       };
 
       // Update risk metrics with stress test results
       const updatedMetrics = {
         ...riskMetrics,
-        stressTest: simulatedResponse.stress_test_results
+        stressTest: simulatedResponse.stress_test_results,
       };
       setRiskMetrics(updatedMetrics);
 
       return simulatedResponse;
     } catch (err) {
-      setError(err.message || 'An error occurred while running stress test');
-      console.error('Stress test error:', err);
+      setError(err.message || "An error occurred while running stress test");
+      console.error("Stress test error:", err);
       return null;
     } finally {
       setLoading(false);
@@ -94,7 +94,9 @@ export const RiskAnalysisProvider = ({ children }) => {
 export const useRiskAnalysis = () => {
   const context = useContext(RiskAnalysisContext);
   if (context === undefined) {
-    throw new Error('useRiskAnalysis must be used within a RiskAnalysisProvider');
+    throw new Error(
+      "useRiskAnalysis must be used within a RiskAnalysisProvider",
+    );
   }
   return context;
 };

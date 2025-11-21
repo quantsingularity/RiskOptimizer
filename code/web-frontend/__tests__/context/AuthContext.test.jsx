@@ -33,7 +33,7 @@ const MockAuthProvider = ({ children }) => {
     try {
       // Simulate API call
       // const data = await apiService.login(email, password);
-      await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
+      await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate delay
       if (email === "test@example.com" && password === "password") {
         const mockData = { token: "mock_token", user: { id: 1, email } };
         // localStorage.setItem("token", mockData.token);
@@ -67,7 +67,11 @@ const MockAuthProvider = ({ children }) => {
 
   const value = { user, loading, error, login, logout };
 
-  return <MockAuthContext.Provider value={value}>{children}</MockAuthContext.Provider>;
+  return (
+    <MockAuthContext.Provider value={value}>
+      {children}
+    </MockAuthContext.Provider>
+  );
 };
 
 // Test component to consume the context
@@ -87,8 +91,12 @@ const TestComponent = () => {
       ) : (
         <p>Not logged in</p>
       )}
-      <button onClick={() => login("test@example.com", "password")}>Login Success</button>
-      <button onClick={() => login("wrong@example.com", "wrong")}>Login Fail</button>
+      <button onClick={() => login("test@example.com", "password")}>
+        Login Success
+      </button>
+      <button onClick={() => login("wrong@example.com", "wrong")}>
+        Login Fail
+      </button>
     </div>
   );
 };
@@ -103,7 +111,7 @@ describe("Auth Context", () => {
     return render(
       <MockAuthProvider>
         <TestComponent />
-      </MockAuthProvider>
+      </MockAuthProvider>,
     );
   };
 
@@ -136,7 +144,9 @@ describe("Auth Context", () => {
     //   expect(localStorageMock.getItem("token")).toBe("fake_token");
     //   expect(JSON.parse(localStorageMock.getItem("user"))).toEqual(mockUserData);
     // });
-    await waitFor(() => expect(screen.getByTestId("user-email")).toBeInTheDocument()); // Wait for mock login
+    await waitFor(() =>
+      expect(screen.getByTestId("user-email")).toBeInTheDocument(),
+    ); // Wait for mock login
     expect(true).toBe(true); // Placeholder assertion
   });
 
@@ -161,7 +171,9 @@ describe("Auth Context", () => {
     //   expect(screen.getByText(/not logged in/i)).toBeInTheDocument();
     //   expect(localStorageMock.getItem("token")).toBeNull();
     // });
-    await waitFor(() => expect(screen.getByTestId("error-message")).toBeInTheDocument()); // Wait for mock login fail
+    await waitFor(() =>
+      expect(screen.getByTestId("error-message")).toBeInTheDocument(),
+    ); // Wait for mock login fail
     expect(true).toBe(true); // Placeholder assertion
   });
 

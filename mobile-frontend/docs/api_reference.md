@@ -21,6 +21,7 @@ POST /auth/login
 ```
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -29,6 +30,7 @@ POST /auth/login
 ```
 
 **Response:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -57,6 +59,7 @@ GET /users/profile
 ```
 
 **Response:**
+
 ```json
 {
   "id": "user123",
@@ -77,6 +80,7 @@ PUT /users/profile
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "John Smith",
@@ -88,6 +92,7 @@ PUT /users/profile
 ```
 
 **Response:**
+
 ```json
 {
   "id": "user123",
@@ -111,6 +116,7 @@ GET /portfolios
 ```
 
 **Response:**
+
 ```json
 {
   "portfolios": [
@@ -118,7 +124,7 @@ GET /portfolios
       "id": "portfolio123",
       "name": "Retirement Fund",
       "created_at": "2025-02-10T09:15:00Z",
-      "total_value": 125000.50,
+      "total_value": 125000.5,
       "currency": "USD",
       "risk_score": 0.65
     },
@@ -142,6 +148,7 @@ GET /portfolios/{portfolio_id}
 ```
 
 **Response:**
+
 ```json
 {
   "id": "portfolio123",
@@ -149,7 +156,7 @@ GET /portfolios/{portfolio_id}
   "description": "Long-term retirement investment portfolio",
   "created_at": "2025-02-10T09:15:00Z",
   "updated_at": "2025-04-18T11:20:00Z",
-  "total_value": 125000.50,
+  "total_value": 125000.5,
   "currency": "USD",
   "risk_score": 0.65,
   "assets": [
@@ -159,8 +166,8 @@ GET /portfolios/{portfolio_id}
       "name": "Apple Inc.",
       "quantity": 50,
       "purchase_price": 150.25,
-      "current_price": 175.50,
-      "value": 8775.00,
+      "current_price": 175.5,
+      "value": 8775.0,
       "allocation_percentage": 7.02,
       "performance": 16.81
     },
@@ -170,8 +177,8 @@ GET /portfolios/{portfolio_id}
       "name": "Microsoft Corporation",
       "quantity": 30,
       "purchase_price": 220.75,
-      "current_price": 280.30,
-      "value": 8409.00,
+      "current_price": 280.3,
+      "value": 8409.0,
       "allocation_percentage": 6.73,
       "performance": 26.98
     }
@@ -193,6 +200,7 @@ POST /portfolios
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "Tech Investments",
@@ -202,15 +210,16 @@ POST /portfolios
 ```
 
 **Response:**
+
 ```json
 {
   "id": "portfolio789",
   "name": "Tech Investments",
   "description": "Portfolio focused on technology sector",
   "created_at": "2025-04-25T10:30:00Z",
-  "total_value": 0.00,
+  "total_value": 0.0,
   "currency": "USD",
-  "risk_score": 0.00,
+  "risk_score": 0.0,
   "assets": []
 }
 ```
@@ -222,26 +231,28 @@ POST /portfolios/{portfolio_id}/assets
 ```
 
 **Request Body:**
+
 ```json
 {
   "symbol": "GOOGL",
   "quantity": 10,
-  "purchase_price": 2750.50,
+  "purchase_price": 2750.5,
   "purchase_date": "2025-04-20T00:00:00Z"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "id": "asset789",
   "symbol": "GOOGL",
   "name": "Alphabet Inc.",
   "quantity": 10,
-  "purchase_price": 2750.50,
+  "purchase_price": 2750.5,
   "current_price": 2800.25,
-  "value": 28002.50,
-  "allocation_percentage": 22.40,
+  "value": 28002.5,
+  "allocation_percentage": 22.4,
   "performance": 1.81,
   "purchase_date": "2025-04-20T00:00:00Z"
 }
@@ -256,13 +267,14 @@ POST /optimization/recommendations
 ```
 
 **Request Body:**
+
 ```json
 {
   "portfolio_id": "portfolio123",
   "risk_tolerance": "moderate",
   "investment_horizon": "long_term",
   "constraints": {
-    "max_allocation_per_asset": 0.20,
+    "max_allocation_per_asset": 0.2,
     "min_allocation_per_asset": 0.05,
     "excluded_sectors": ["Energy", "Tobacco"]
   }
@@ -270,6 +282,7 @@ POST /optimization/recommendations
 ```
 
 **Response:**
+
 ```json
 {
   "portfolio_id": "portfolio123",
@@ -281,7 +294,7 @@ POST /optimization/recommendations
     {
       "symbol": "AAPL",
       "current_allocation": 0.0702,
-      "recommended_allocation": 0.10,
+      "recommended_allocation": 0.1,
       "action": "buy",
       "quantity_change": 15
     },
@@ -295,19 +308,19 @@ POST /optimization/recommendations
     {
       "symbol": "XOM",
       "current_allocation": 0.05,
-      "recommended_allocation": 0.00,
+      "recommended_allocation": 0.0,
       "action": "sell",
       "quantity_change": -25
     }
   ],
   "efficient_frontier": [
-    {"risk": 0.2, "return": 0.05},
-    {"risk": 0.3, "return": 0.07},
-    {"risk": 0.4, "return": 0.09},
-    {"risk": 0.5, "return": 0.11},
-    {"risk": 0.6, "return": 0.13},
-    {"risk": 0.7, "return": 0.15},
-    {"risk": 0.8, "return": 0.18}
+    { "risk": 0.2, "return": 0.05 },
+    { "risk": 0.3, "return": 0.07 },
+    { "risk": 0.4, "return": 0.09 },
+    { "risk": 0.5, "return": 0.11 },
+    { "risk": 0.6, "return": 0.13 },
+    { "risk": 0.7, "return": 0.15 },
+    { "risk": 0.8, "return": 0.18 }
   ]
 }
 ```
@@ -321,6 +334,7 @@ GET /risk/metrics/{portfolio_id}
 ```
 
 **Response:**
+
 ```json
 {
   "portfolio_id": "portfolio123",
@@ -334,11 +348,11 @@ GET /risk/metrics/{portfolio_id}
   "alpha": 0.02,
   "r_squared": 0.85,
   "risk_contribution": [
-    {"symbol": "AAPL", "contribution": 0.25},
-    {"symbol": "MSFT", "contribution": 0.20},
-    {"symbol": "AMZN", "contribution": 0.30},
-    {"symbol": "BND", "contribution": 0.10},
-    {"symbol": "VTI", "contribution": 0.15}
+    { "symbol": "AAPL", "contribution": 0.25 },
+    { "symbol": "MSFT", "contribution": 0.2 },
+    { "symbol": "AMZN", "contribution": 0.3 },
+    { "symbol": "BND", "contribution": 0.1 },
+    { "symbol": "VTI", "contribution": 0.15 }
   ]
 }
 ```
@@ -352,6 +366,7 @@ GET /blockchain/transactions/{portfolio_id}
 ```
 
 **Response:**
+
 ```json
 {
   "portfolio_id": "portfolio123",
@@ -363,8 +378,8 @@ GET /blockchain/transactions/{portfolio_id}
       "action": "buy",
       "symbol": "AAPL",
       "quantity": 10,
-      "price": 175.50,
-      "value": 1755.00,
+      "price": 175.5,
+      "value": 1755.0,
       "status": "confirmed"
     },
     {
@@ -374,8 +389,8 @@ GET /blockchain/transactions/{portfolio_id}
       "action": "sell",
       "symbol": "MSFT",
       "quantity": 5,
-      "price": 280.30,
-      "value": 1401.50,
+      "price": 280.3,
+      "value": 1401.5,
       "status": "confirmed"
     }
   ],
@@ -390,6 +405,7 @@ GET /blockchain/verify/{portfolio_id}
 ```
 
 **Response:**
+
 ```json
 {
   "portfolio_id": "portfolio123",
@@ -410,10 +426,12 @@ GET /market/history/{symbol}?period=1y&interval=1d
 ```
 
 **Parameters:**
+
 - `period`: Time period (1d, 1w, 1m, 3m, 6m, 1y, 5y)
 - `interval`: Data interval (1m, 5m, 15m, 30m, 1h, 1d, 1w)
 
 **Response:**
+
 ```json
 {
   "symbol": "AAPL",
@@ -422,16 +440,37 @@ GET /market/history/{symbol}?period=1y&interval=1d
   "interval": "1d",
   "currency": "USD",
   "data": [
-    {"timestamp": "2024-04-25T00:00:00Z", "open": 170.50, "high": 175.25, "low": 169.75, "close": 173.50, "volume": 75000000},
-    {"timestamp": "2024-04-26T00:00:00Z", "open": 173.75, "high": 176.50, "low": 172.25, "close": 175.00, "volume": 68000000},
+    {
+      "timestamp": "2024-04-25T00:00:00Z",
+      "open": 170.5,
+      "high": 175.25,
+      "low": 169.75,
+      "close": 173.5,
+      "volume": 75000000
+    },
+    {
+      "timestamp": "2024-04-26T00:00:00Z",
+      "open": 173.75,
+      "high": 176.5,
+      "low": 172.25,
+      "close": 175.0,
+      "volume": 68000000
+    },
     // Additional data points...
-    {"timestamp": "2025-04-24T00:00:00Z", "open": 174.25, "high": 178.50, "low": 173.75, "close": 177.50, "volume": 82000000}
+    {
+      "timestamp": "2025-04-24T00:00:00Z",
+      "open": 174.25,
+      "high": 178.5,
+      "low": 173.75,
+      "close": 177.5,
+      "volume": 82000000
+    }
   ],
   "summary": {
     "change_percentage": 4.11,
     "high": 190.25,
     "low": 140.75,
-    "average": 165.30
+    "average": 165.3
   }
 }
 ```
@@ -513,6 +552,7 @@ POST /webhooks
 ```
 
 **Request Body:**
+
 ```json
 {
   "url": "https://your-server.com/webhook",
@@ -522,6 +562,7 @@ POST /webhooks
 ```
 
 **Response:**
+
 ```json
 {
   "id": "webhook123",

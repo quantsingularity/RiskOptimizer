@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import apiService from '../services/apiService'; // Assuming apiService is set up later
+import React, { createContext, useState, useEffect, useContext } from "react";
+import * as SecureStore from "expo-secure-store";
+import apiService from "../services/apiService"; // Assuming apiService is set up later
 
 const AuthContext = createContext();
 
@@ -16,9 +16,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadTokens = async () => {
       try {
-        const accessToken = await SecureStore.getItemAsync('accessToken');
-        const refreshToken = await SecureStore.getItemAsync('refreshToken');
-        const userString = await SecureStore.getItemAsync('user');
+        const accessToken = await SecureStore.getItemAsync("accessToken");
+        const refreshToken = await SecureStore.getItemAsync("refreshToken");
+        const userString = await SecureStore.getItemAsync("user");
         const user = userString ? JSON.parse(userString) : null;
 
         if (accessToken) {
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
           setAuthState((prevState) => ({ ...prevState, loading: false }));
         }
       } catch (e) {
-        console.error('Failed to load auth tokens:', e);
+        console.error("Failed to load auth tokens:", e);
         setAuthState((prevState) => ({ ...prevState, loading: false }));
       }
     };
@@ -47,14 +47,14 @@ export const AuthProvider = ({ children }) => {
       const response = await apiService.login(email, password);
       const { access_token, refresh_token } = response.data;
 
-      await SecureStore.setItemAsync('accessToken', access_token);
-      await SecureStore.setItemAsync('refreshToken', refresh_token);
+      await SecureStore.setItemAsync("accessToken", access_token);
+      await SecureStore.setItemAsync("refreshToken", refresh_token);
       apiService.setAuthHeader(access_token); // Update header in apiService
 
       // Fetch user profile after login
       const profileResponse = await apiService.getUserProfile();
       const user = profileResponse.data;
-      await SecureStore.setItemAsync('user', JSON.stringify(user));
+      await SecureStore.setItemAsync("user", JSON.stringify(user));
 
       setAuthState({
         accessToken: access_token,
@@ -65,7 +65,10 @@ export const AuthProvider = ({ children }) => {
       });
       return true;
     } catch (error) {
-      console.error('Login failed:', error.response ? error.response.data : error.message);
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message,
+      );
       // Handle specific error messages if needed
       return false;
     }
@@ -73,9 +76,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await SecureStore.deleteItemAsync('accessToken');
-      await SecureStore.deleteItemAsync('refreshToken');
-      await SecureStore.deleteItemAsync('user');
+      await SecureStore.deleteItemAsync("accessToken");
+      await SecureStore.deleteItemAsync("refreshToken");
+      await SecureStore.deleteItemAsync("user");
       apiService.setAuthHeader(null); // Clear header in apiService
       setAuthState({
         accessToken: null,
@@ -85,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         loading: false,
       });
     } catch (e) {
-      console.error('Logout failed:', e);
+      console.error("Logout failed:", e);
     }
   };
 
@@ -93,25 +96,28 @@ export const AuthProvider = ({ children }) => {
   const refreshTokens = async () => {
     try {
       if (!authState.refreshToken) {
-        throw new Error('No refresh token available');
+        throw new Error("No refresh token available");
       }
 
       const response = await apiService.refreshToken(authState.refreshToken);
       const { access_token, refresh_token } = response.data;
 
-      await SecureStore.setItemAsync('accessToken', access_token);
-      await SecureStore.setItemAsync('refreshToken', refresh_token);
+      await SecureStore.setItemAsync("accessToken", access_token);
+      await SecureStore.setItemAsync("refreshToken", refresh_token);
       apiService.setAuthHeader(access_token);
 
-      setAuthState(prevState => ({
+      setAuthState((prevState) => ({
         ...prevState,
         accessToken: access_token,
-        refreshToken: refresh_token
+        refreshToken: refresh_token,
       }));
 
       return access_token;
     } catch (error) {
-      console.error('Token refresh failed:', error.response ? error.response.data : error.message);
+      console.error(
+        "Token refresh failed:",
+        error.response ? error.response.data : error.message,
+      );
       // If refresh fails, log the user out
       await logout();
       return null;
@@ -123,7 +129,7 @@ export const AuthProvider = ({ children }) => {
     const setupInterceptor = () => {
       apiService.setupTokenRefreshInterceptor(
         () => authState.accessToken,
-        refreshTokens
+        refreshTokens,
       );
     };
 
@@ -140,7 +146,7 @@ export const AuthProvider = ({ children }) => {
     ...authState,
     login,
     logout,
-    refreshTokens
+    refreshTokens,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

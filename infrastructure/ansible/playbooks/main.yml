@@ -8,7 +8,7 @@
   gather_facts: true
   vars:
     ansible_ssh_pipelining: true
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/dev/null'
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/dev/null"
   pre_tasks:
     - name: Verify Ansible version
       assert:
@@ -54,17 +54,17 @@
     max_fail_percentage: 10
   roles:
     - role: common
-      tags: ['common', 'security', 'baseline']
+      tags: ["common", "security", "baseline"]
     - role: security-hardening
-      tags: ['security', 'hardening', 'cis']
+      tags: ["security", "hardening", "cis"]
     - role: compliance
-      tags: ['compliance', 'audit', 'gdpr', 'pci-dss']
+      tags: ["compliance", "audit", "gdpr", "pci-dss"]
     - role: monitoring-agent
-      tags: ['monitoring', 'observability']
+      tags: ["monitoring", "observability"]
   post_tasks:
     - name: Verify security baseline compliance
       include_tasks: tasks/verify_security_baseline.yml
-      tags: ['verification', 'security']
+      tags: ["verification", "security"]
 
 - name: Configure HashiCorp Vault cluster
   hosts: vault_servers
@@ -81,7 +81,7 @@
         fail_msg: "Vault cluster must have an odd number of nodes (minimum 3)"
   roles:
     - role: vault
-      tags: ['vault', 'secrets', 'security']
+      tags: ["vault", "secrets", "security"]
   post_tasks:
     - name: Verify Vault cluster health
       uri:
@@ -110,11 +110,11 @@
       when: database_type == "postgresql"
   roles:
     - role: database
-      tags: ['database', 'postgresql', 'mysql']
+      tags: ["database", "postgresql", "mysql"]
     - role: database-security
-      tags: ['database', 'security', 'encryption']
+      tags: ["database", "security", "encryption"]
     - role: database-backup
-      tags: ['database', 'backup', 'disaster-recovery']
+      tags: ["database", "backup", "disaster-recovery"]
   post_tasks:
     - name: Verify database connectivity
       postgresql_ping:
@@ -135,11 +135,11 @@
     rate_limiting_enabled: true
   roles:
     - role: webserver
-      tags: ['webserver', 'nginx', 'apache']
+      tags: ["webserver", "nginx", "apache"]
     - role: ssl-certificates
-      tags: ['ssl', 'certificates', 'security']
+      tags: ["ssl", "certificates", "security"]
     - role: web-security
-      tags: ['security', 'waf', 'headers']
+      tags: ["security", "waf", "headers"]
   post_tasks:
     - name: Verify web server SSL configuration
       uri:
@@ -161,11 +161,11 @@
     application_home: /opt/riskoptimizer
   roles:
     - role: application-runtime
-      tags: ['application', 'runtime', 'java', 'python']
+      tags: ["application", "runtime", "java", "python"]
     - role: application-security
-      tags: ['application', 'security', 'rbac']
+      tags: ["application", "security", "rbac"]
     - role: application-monitoring
-      tags: ['application', 'monitoring', 'metrics']
+      tags: ["application", "monitoring", "metrics"]
   post_tasks:
     - name: Verify application health
       uri:
@@ -185,15 +185,15 @@
     elasticsearch_cluster_name: riskoptimizer-logs
   roles:
     - role: prometheus
-      tags: ['monitoring', 'prometheus', 'metrics']
+      tags: ["monitoring", "prometheus", "metrics"]
     - role: grafana
-      tags: ['monitoring', 'grafana', 'dashboards']
+      tags: ["monitoring", "grafana", "dashboards"]
     - role: elasticsearch
-      tags: ['logging', 'elasticsearch', 'search']
+      tags: ["logging", "elasticsearch", "search"]
     - role: logstash
-      tags: ['logging', 'logstash', 'processing']
+      tags: ["logging", "logstash", "processing"]
     - role: kibana
-      tags: ['logging', 'kibana', 'visualization']
+      tags: ["logging", "kibana", "visualization"]
   post_tasks:
     - name: Verify monitoring stack health
       uri:
@@ -204,7 +204,9 @@
       loop:
         - { url: "https://{{ ansible_default_ipv4.address }}:9090/-/healthy" }
         - { url: "https://{{ ansible_default_ipv4.address }}:3000/api/health" }
-        - { url: "https://{{ ansible_default_ipv4.address }}:9200/_cluster/health" }
+        - {
+            url: "https://{{ ansible_default_ipv4.address }}:9200/_cluster/health",
+          }
       register: monitoring_health_checks
 
 - name: Configure security infrastructure
@@ -216,11 +218,11 @@
     security_monitoring_enabled: true
   roles:
     - role: intrusion-detection
-      tags: ['security', 'ids', 'ossec', 'suricata']
+      tags: ["security", "ids", "ossec", "suricata"]
     - role: vulnerability-scanner
-      tags: ['security', 'vulnerability', 'nessus', 'openvas']
+      tags: ["security", "vulnerability", "nessus", "openvas"]
     - role: security-monitoring
-      tags: ['security', 'monitoring', 'siem']
+      tags: ["security", "monitoring", "siem"]
   post_tasks:
     - name: Verify security services
       systemd:
@@ -252,7 +254,7 @@
       template:
         src: deployment_report.j2
         dest: "/tmp/deployment_report_{{ ansible_date_time.epoch }}.txt"
-        mode: '0644'
+        mode: "0644"
       delegate_to: localhost
       run_once: true
 

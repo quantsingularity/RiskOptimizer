@@ -20,30 +20,35 @@ monitoring/
 ## Monitoring Stack Overview
 
 ### Metrics Collection (Prometheus)
+
 - Time-series metrics collection
 - Service discovery and auto-configuration
 - High availability and federation
 - Long-term storage with Thanos
 
 ### Visualization (Grafana)
+
 - Real-time dashboards
 - Alerting and notifications
 - Multi-data source support
 - Role-based access control
 
 ### Centralized Logging (ELK Stack)
+
 - **Elasticsearch**: Log storage and indexing
 - **Logstash**: Log processing and enrichment
 - **Kibana**: Log visualization and analysis
 - **Fluentd**: Log collection and forwarding
 
 ### Distributed Tracing (Jaeger)
+
 - End-to-end request tracing
 - Performance analysis
 - Dependency mapping
 - Root cause analysis
 
 ### Alerting (AlertManager)
+
 - Intelligent alert routing
 - Deduplication and grouping
 - Escalation policies
@@ -52,24 +57,28 @@ monitoring/
 ## Key Features
 
 ### Financial Industry Compliance
+
 - Audit trail preservation
 - Regulatory reporting capabilities
 - Data retention policies
 - Security event monitoring
 
 ### High Availability
+
 - Multi-zone deployment
 - Automatic failover
 - Data replication
 - Backup and recovery
 
 ### Security Monitoring
+
 - Authentication and authorization events
 - Suspicious activity detection
 - Compliance violation alerts
 - Security metrics and KPIs
 
 ### Performance Monitoring
+
 - Application performance metrics
 - Infrastructure health monitoring
 - Capacity planning data

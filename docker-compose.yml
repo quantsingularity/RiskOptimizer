@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # ----------------------------------------------------------------
@@ -190,9 +190,9 @@ services:
       - ./code/backend/deployment/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
     networks:
       - riskoptimizer-network
     restart: unless-stopped

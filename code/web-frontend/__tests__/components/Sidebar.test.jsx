@@ -10,11 +10,21 @@ const MockSidebar = () => (
   <aside>
     <nav>
       <ul>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/portfolios">Portfolios</a></li>
-        <li><a href="/optimize">Optimize</a></li>
-        <li><a href="/risk">Risk Analysis</a></li>
-        <li><a href="/settings">Settings</a></li>
+        <li>
+          <a href="/dashboard">Dashboard</a>
+        </li>
+        <li>
+          <a href="/portfolios">Portfolios</a>
+        </li>
+        <li>
+          <a href="/optimize">Optimize</a>
+        </li>
+        <li>
+          <a href="/risk">Risk Analysis</a>
+        </li>
+        <li>
+          <a href="/settings">Settings</a>
+        </li>
       </ul>
     </nav>
   </aside>

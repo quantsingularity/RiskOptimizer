@@ -302,4 +302,4 @@ RiskOptimizer is designed to help users maintain compliance with:
 - Securities and Exchange Commission (SEC) guidelines
 - General Data Protection Regulation (GDPR)
 
-*Note: While RiskOptimizer provides tools to assist with compliance, users are responsible for ensuring their own regulatory compliance.*
+_Note: While RiskOptimizer provides tools to assist with compliance, users are responsible for ensuring their own regulatory compliance._

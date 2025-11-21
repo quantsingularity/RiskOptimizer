@@ -33,9 +33,26 @@ const MockRecentTransactions = ({ transactions }) => (
 
 describe("RecentTransactions Component", () => {
   const mockTransactions = [
-    { date: "2025-05-03T10:00:00Z", type: "Buy", asset: "AAPL", amount: 10, value: 1500 },
-    { date: "2025-05-02T15:30:00Z", type: "Sell", asset: "GOOGL", amount: -5, value: -12500 },
-    { date: "2025-05-01T09:05:00Z", type: "Deposit", asset: "Cash", amount: 5000 },
+    {
+      date: "2025-05-03T10:00:00Z",
+      type: "Buy",
+      asset: "AAPL",
+      amount: 10,
+      value: 1500,
+    },
+    {
+      date: "2025-05-02T15:30:00Z",
+      type: "Sell",
+      asset: "GOOGL",
+      amount: -5,
+      value: -12500,
+    },
+    {
+      date: "2025-05-01T09:05:00Z",
+      type: "Deposit",
+      asset: "Cash",
+      amount: 5000,
+    },
   ];
 
   const renderTransactions = (props = { transactions: mockTransactions }) => {

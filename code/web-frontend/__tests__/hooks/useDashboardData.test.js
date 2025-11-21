@@ -9,7 +9,13 @@ import { renderHook, waitFor } from "@testing-library/react";
 
 // Mock Hook for placeholder tests
 const mockUseDashboardData = () => {
-  const [data, setData] = React.useState({ summaryData: null, chartData: [], allocationData: [], transactions: [], riskMetrics: [] });
+  const [data, setData] = React.useState({
+    summaryData: null,
+    chartData: [],
+    allocationData: [],
+    transactions: [],
+    riskMetrics: [],
+  });
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
@@ -20,13 +26,19 @@ const mockUseDashboardData = () => {
       try {
         // Simulate API call
         // const response = await apiService.getDashboardData();
-        await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
+        await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate delay
         const mockResponse = {
           summaryData: { totalValue: 12345, change: 50, changePercent: 0.4 },
-          chartData: [{ name: "Mon", value: 12300 }, { name: "Tue", value: 12345 }],
-          allocationData: [{ name: "Tech", value: 80 }, { name: "Other", value: 20 }],
+          chartData: [
+            { name: "Mon", value: 12300 },
+            { name: "Tue", value: 12345 },
+          ],
+          allocationData: [
+            { name: "Tech", value: 80 },
+            { name: "Other", value: 20 },
+          ],
           transactions: [{ id: 1, type: "Buy", asset: "XYZ" }],
-          riskMetrics: [{ title: "Sharpe Ratio", value: "1.5" }]
+          riskMetrics: [{ title: "Sharpe Ratio", value: "1.5" }],
         };
         setData(mockResponse);
       } catch (err) {
@@ -42,7 +54,6 @@ const mockUseDashboardData = () => {
 };
 
 describe("useDashboardData Hook", () => {
-
   // beforeEach(() => {
   //   // Reset mocks before each test
   //   apiService.getDashboardData.mockClear();

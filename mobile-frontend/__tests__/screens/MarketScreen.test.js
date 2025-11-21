@@ -10,29 +10,77 @@ import { useMarketData } from "../../project/mobile-frontend/src/hooks/useMarket
 jest.mock("../../project/mobile-frontend/src/hooks/useMarketData");
 
 // Mock child components if MarketScreen uses specific ones (e.g., AssetList, SearchBar)
-jest.mock("../../project/mobile-frontend/src/components/market/AssetList", () => () => <View testID="mock-asset-list"><Text>Mock Asset List</Text></View>);
-jest.mock("../../project/mobile-frontend/src/components/market/SearchBar", () => () => <View testID="mock-search-bar"><Text>Mock Search Bar</Text></View>);
+jest.mock(
+  "../../project/mobile-frontend/src/components/market/AssetList",
+  () => () => (
+    <View testID="mock-asset-list">
+      <Text>Mock Asset List</Text>
+    </View>
+  ),
+);
+jest.mock(
+  "../../project/mobile-frontend/src/components/market/SearchBar",
+  () => () => (
+    <View testID="mock-search-bar">
+      <Text>Mock Search Bar</Text>
+    </View>
+  ),
+);
 
 // --- Test Utilities ---
 const renderMarketScreen = () => {
   // Add Context Providers if needed
-  return render(<MarketScreen navigation={{ /* mock navigation if needed */ }} />);
+  return render(
+    <MarketScreen
+      navigation={
+        {
+          /* mock navigation if needed */
+        }
+      }
+    />,
+  );
 };
 
 // --- Test Data ---
 const MOCK_MARKET_DATA = [
-  { id: "asset1", symbol: "BTC", name: "Bitcoin", price: 45000, change24h: 2.5 },
-  { id: "asset2", symbol: "ETH", name: "Ethereum", price: 3000, change24h: -1.2 },
+  {
+    id: "asset1",
+    symbol: "BTC",
+    name: "Bitcoin",
+    price: 45000,
+    change24h: 2.5,
+  },
+  {
+    id: "asset2",
+    symbol: "ETH",
+    name: "Ethereum",
+    price: 3000,
+    change24h: -1.2,
+  },
 ];
 const mockRefetchMarketData = jest.fn();
 
-const HOOK_STATE_LOADING = { marketData: [], loading: true, error: null, refetch: mockRefetchMarketData };
-const HOOK_STATE_LOADED = { marketData: MOCK_MARKET_DATA, loading: false, error: null, refetch: mockRefetchMarketData };
-const HOOK_STATE_ERROR = { marketData: [], loading: false, error: "Failed to load market data", refetch: mockRefetchMarketData };
+const HOOK_STATE_LOADING = {
+  marketData: [],
+  loading: true,
+  error: null,
+  refetch: mockRefetchMarketData,
+};
+const HOOK_STATE_LOADED = {
+  marketData: MOCK_MARKET_DATA,
+  loading: false,
+  error: null,
+  refetch: mockRefetchMarketData,
+};
+const HOOK_STATE_ERROR = {
+  marketData: [],
+  loading: false,
+  error: "Failed to load market data",
+  refetch: mockRefetchMarketData,
+};
 
 // --- Test Suite ---
 describe("Market Screen", () => {
-
   beforeEach(() => {
     useMarketData.mockClear();
     mockRefetchMarketData.mockClear();
@@ -70,7 +118,9 @@ describe("Market Screen", () => {
       expect(screen.queryByTestId("loading-indicator")).toBeNull();
     });
 
-    expect(screen.getByText(new RegExp(HOOK_STATE_ERROR.error, "i"))).toBeOnTheScreen();
+    expect(
+      screen.getByText(new RegExp(HOOK_STATE_ERROR.error, "i")),
+    ).toBeOnTheScreen();
     expect(screen.queryByTestId("mock-asset-list")).not.toBeOnTheScreen();
   });
 
@@ -93,7 +143,9 @@ describe("Market Screen", () => {
       });
       expect(mockRefetchMarketData).toHaveBeenCalledTimes(1);
     } else {
-      console.warn("Test skipped: refreshControl not found on market-scrollview.");
+      console.warn(
+        "Test skipped: refreshControl not found on market-scrollview.",
+      );
       expect(true).toBe(true);
     }
   });

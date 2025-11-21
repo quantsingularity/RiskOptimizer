@@ -46,6 +46,7 @@ This will start the database, blockchain node, and other required services.
 4. **Install Dependencies**
 
 For backend development:
+
 ```bash
 cd code/backend
 python -m venv venv
@@ -54,12 +55,14 @@ pip install -r requirements.txt
 ```
 
 For frontend development:
+
 ```bash
 cd code/frontend
 npm install
 ```
 
 For blockchain development:
+
 ```bash
 cd code/blockchain
 npm install
@@ -68,12 +71,14 @@ npm install
 5. **Run Development Servers**
 
 Backend:
+
 ```bash
 cd code/backend
 python app.py
 ```
 
 Frontend:
+
 ```bash
 cd code/frontend
 npm start
@@ -117,6 +122,7 @@ RiskOptimizer/
 - Format code with Black and lint with Flake8
 
 Example:
+
 ```python
 def calculate_portfolio_risk(portfolio_assets: List[Asset], time_period: int = 30) -> float:
     """
@@ -142,6 +148,7 @@ def calculate_portfolio_risk(portfolio_assets: List[Asset], time_period: int = 3
 - Document components and functions with JSDoc comments
 
 Example:
+
 ```typescript
 /**
  * Calculates the Sharpe ratio for a given portfolio
@@ -153,10 +160,10 @@ Example:
 function calculateSharpeRatio(
   portfolioReturn: number,
   riskFreeRate: number,
-  portfolioStdDev: number
+  portfolioStdDev: number,
 ): number {
   if (portfolioStdDev === 0) {
-    throw new Error('Portfolio standard deviation cannot be zero');
+    throw new Error("Portfolio standard deviation cannot be zero");
   }
   return (portfolioReturn - riskFreeRate) / portfolioStdDev;
 }
@@ -171,6 +178,7 @@ function calculateSharpeRatio(
 - Always perform security audits before deployment
 
 Example:
+
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -211,6 +219,7 @@ Follow the Conventional Commits specification:
 ```
 
 Types:
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation changes
@@ -220,6 +229,7 @@ Types:
 - `chore`: Changes to the build process or auxiliary tools
 
 Example:
+
 ```
 feat(optimization): implement Black-Litterman model
 
@@ -250,6 +260,7 @@ Closes #123
 - Use fixtures for test data
 
 Example:
+
 ```python
 import pytest
 from app.services.portfolio import calculate_risk_metrics
@@ -279,22 +290,23 @@ def test_risk_calculation(sample_portfolio):
 - Test all user interactions and state changes
 
 Example:
-```javascript
-import { render, screen, fireEvent } from '@testing-library/react';
-import PortfolioCard from './PortfolioCard';
 
-test('displays portfolio name and value', () => {
+```javascript
+import { render, screen, fireEvent } from "@testing-library/react";
+import PortfolioCard from "./PortfolioCard";
+
+test("displays portfolio name and value", () => {
   const portfolio = {
-    id: '123',
-    name: 'Test Portfolio',
+    id: "123",
+    name: "Test Portfolio",
     value: 10000,
-    currency: 'USD'
+    currency: "USD",
   };
 
   render(<PortfolioCard portfolio={portfolio} />);
 
-  expect(screen.getByText('Test Portfolio')).toBeInTheDocument();
-  expect(screen.getByText('$10,000.00')).toBeInTheDocument();
+  expect(screen.getByText("Test Portfolio")).toBeInTheDocument();
+  expect(screen.getByText("$10,000.00")).toBeInTheDocument();
 });
 ```
 
@@ -306,10 +318,11 @@ test('displays portfolio name and value', () => {
 - Simulate different network conditions
 
 Example:
+
 ```javascript
 const PortfolioTracker = artifacts.require("PortfolioTracker");
 
-contract("PortfolioTracker", accounts => {
+contract("PortfolioTracker", (accounts) => {
   const owner = accounts[0];
   const user = accounts[1];
 
@@ -319,16 +332,16 @@ contract("PortfolioTracker", accounts => {
     await tracker.recordTransaction(
       "AAPL",
       100,
-      150.50,
-      true,  // isBuy
-      { from: user }
+      150.5,
+      true, // isBuy
+      { from: user },
     );
 
     const transactions = await tracker.getTransactions(user);
     assert.equal(transactions.length, 1);
     assert.equal(transactions[0].symbol, "AAPL");
     assert.equal(transactions[0].quantity, 100);
-    assert.equal(transactions[0].price, 150.50);
+    assert.equal(transactions[0].price, 150.5);
     assert.equal(transactions[0].isBuy, true);
   });
 });

@@ -1,38 +1,40 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { Input, Button, Text, Card } from '@rneui/themed';
-import apiService from '../services/apiService';
+import React, { useState } from "react";
+import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { Input, Button, Text, Card } from "@rneui/themed";
+import apiService from "../services/apiService";
 // Consider adding a date picker component
 
 const AddAssetScreen = ({ route, navigation }) => {
   const { portfolioId } = route.params;
-  const [symbol, setSymbol] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [purchasePrice, setPurchasePrice] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]); // Default to today, YYYY-MM-DD
+  const [symbol, setSymbol] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [purchasePrice, setPurchasePrice] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState(
+    new Date().toISOString().split("T")[0],
+  ); // Default to today, YYYY-MM-DD
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleAddAsset = async () => {
     if (!symbol || !quantity || !purchasePrice || !purchaseDate) {
-      setError('All fields are required.');
+      setError("All fields are required.");
       return;
     }
     const qty = parseFloat(quantity);
     const price = parseFloat(purchasePrice);
     if (isNaN(qty) || qty <= 0 || isNaN(price) || price < 0) {
-      setError('Please enter valid quantity and purchase price.');
+      setError("Please enter valid quantity and purchase price.");
       return;
     }
 
     // Basic date validation (YYYY-MM-DD)
     if (!/^\d{4}-\d{2}-\d{2}$/.test(purchaseDate)) {
-        setError('Please enter date in YYYY-MM-DD format.');
-        return;
+      setError("Please enter date in YYYY-MM-DD format.");
+      return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const assetData = {
         symbol: symbol.toUpperCase(),
@@ -44,10 +46,12 @@ const AddAssetScreen = ({ route, navigation }) => {
       // Navigate back - PortfolioDetailScreen should refresh on focus
       navigation.goBack();
     } catch (err) {
-      console.error('Failed to add asset:', err);
-      const apiError = err.response?.data?.error?.message || 'Could not add asset. Please try again.';
+      console.error("Failed to add asset:", err);
+      const apiError =
+        err.response?.data?.error?.message ||
+        "Could not add asset. Please try again.";
       setError(apiError);
-      Alert.alert('Error', apiError);
+      Alert.alert("Error", apiError);
     } finally {
       setLoading(false);
     }
@@ -95,7 +99,11 @@ const AddAssetScreen = ({ route, navigation }) => {
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         {loading ? (
-          <ActivityIndicator size="large" color="#007AFF" style={styles.loader} />
+          <ActivityIndicator
+            size="large"
+            color="#007AFF"
+            style={styles.loader}
+          />
         ) : (
           <Button
             title="Add Asset"
@@ -112,7 +120,7 @@ const AddAssetScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     paddingTop: 20,
   },
   card: {
@@ -122,14 +130,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     borderRadius: 8,
     marginTop: 10,
     paddingVertical: 12,
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 10,
   },
   loader: {

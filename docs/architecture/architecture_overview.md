@@ -18,6 +18,7 @@ The frontend is built using React.js with D3.js for interactive visualizations. 
 - Track transactions via blockchain integration
 
 **Key Technologies:**
+
 - React.js for component-based UI
 - D3.js for data visualization
 - Redux for state management
@@ -33,6 +34,7 @@ The backend is implemented using Flask/FastAPI and provides RESTful APIs for:
 - Blockchain data integration
 
 **Key Technologies:**
+
 - Flask/FastAPI for API endpoints
 - JWT for authentication
 - SQLAlchemy for database ORM
@@ -48,6 +50,7 @@ The AI component consists of machine learning models that:
 - Generate investment recommendations
 
 **Key Technologies:**
+
 - TensorFlow/PyTorch for deep learning models
 - Scikit-learn for traditional ML algorithms
 - Pandas for data manipulation
@@ -62,6 +65,7 @@ The blockchain component provides:
 - Smart contract-based verification
 
 **Key Technologies:**
+
 - Ethereum/Solana blockchain
 - Smart contracts (Solidity)
 - Web3.js for blockchain interaction
@@ -76,6 +80,7 @@ The database layer stores:
 - Model training data
 
 **Key Technologies:**
+
 - PostgreSQL for relational data
 - Redis for caching
 - TimescaleDB for time-series data

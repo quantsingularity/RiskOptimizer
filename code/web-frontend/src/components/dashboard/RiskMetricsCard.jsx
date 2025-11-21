@@ -1,13 +1,13 @@
-import React from 'react';
-import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
+import React from "react";
+import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
 
 const RiskMetricsCard = ({ riskMetrics }) => {
   // Default values if risk metrics aren't provided
   const defaultMetrics = {
-    valueAtRisk: '$4,532.12',
-    maxDrawdown: '-12.4%',
-    volatility: '14.2%',
-    beta: '0.85'
+    valueAtRisk: "$4,532.12",
+    maxDrawdown: "-12.4%",
+    volatility: "14.2%",
+    beta: "0.85",
   };
 
   const data = riskMetrics || defaultMetrics;
@@ -24,7 +24,11 @@ const RiskMetricsCard = ({ riskMetrics }) => {
             <Typography variant="body2" color="text.secondary">
               Value at Risk (95%)
             </Typography>
-            <Typography variant="body1" color="error.main" sx={{ fontWeight: 500 }}>
+            <Typography
+              variant="body1"
+              color="error.main"
+              sx={{ fontWeight: 500 }}
+            >
               {data.valueAtRisk}
             </Typography>
           </Grid>
@@ -33,7 +37,11 @@ const RiskMetricsCard = ({ riskMetrics }) => {
             <Typography variant="body2" color="text.secondary">
               Max Drawdown
             </Typography>
-            <Typography variant="body1" color="error.main" sx={{ fontWeight: 500 }}>
+            <Typography
+              variant="body1"
+              color="error.main"
+              sx={{ fontWeight: 500 }}
+            >
               {data.maxDrawdown}
             </Typography>
           </Grid>

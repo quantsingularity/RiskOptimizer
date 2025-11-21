@@ -39,8 +39,11 @@ const MockOptimization = () => {
     //   setLoading(false);
     // }
     // Mock response
-    await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
-    setResults({ optimizedWeights: { AAPL: 0.7, MSFT: 0.3 }, expectedReturn: 0.12 });
+    await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate delay
+    setResults({
+      optimizedWeights: { AAPL: 0.7, MSFT: 0.3 },
+      expectedReturn: 0.12,
+    });
     setLoading(false);
   };
 
@@ -49,13 +52,25 @@ const MockOptimization = () => {
       <h2>Portfolio Optimization</h2>
       <div>
         <label htmlFor="portfolio-select">Select Portfolio:</label>
-        <select id="portfolio-select" value={selectedPortfolio} onChange={(e) => setSelectedPortfolio(e.target.value)}>
-          {portfolios.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+        <select
+          id="portfolio-select"
+          value={selectedPortfolio}
+          onChange={(e) => setSelectedPortfolio(e.target.value)}
+        >
+          {portfolios.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
         </select>
       </div>
       <div>
         <label htmlFor="risk-level">Risk Level:</label>
-        <select id="risk-level" value={riskLevel} onChange={(e) => setRiskLevel(e.target.value)}>
+        <select
+          id="risk-level"
+          value={riskLevel}
+          onChange={(e) => setRiskLevel(e.target.value)}
+        >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -121,7 +136,9 @@ describe("Optimization Page", () => {
     // const user = userEvent.setup();
     // apiService.runOptimization.mockResolvedValue({ /* mock results */ });
     renderOptimization();
-    const optimizeButton = screen.getByRole("button", { name: /run optimization/i });
+    const optimizeButton = screen.getByRole("button", {
+      name: /run optimization/i,
+    });
 
     // Select options first if needed
     // await user.selectOptions(screen.getByLabelText(/select portfolio/i), "1");
@@ -145,7 +162,9 @@ describe("Optimization Page", () => {
     // const mockResults = { optimizedWeights: { TSLA: 1.0 }, expectedReturn: 0.25 };
     // apiService.runOptimization.mockResolvedValue(mockResults);
     renderOptimization();
-    const optimizeButton = screen.getByRole("button", { name: /run optimization/i });
+    const optimizeButton = screen.getByRole("button", {
+      name: /run optimization/i,
+    });
 
     // await user.click(optimizeButton);
     fireEvent.click(optimizeButton);
@@ -154,7 +173,9 @@ describe("Optimization Page", () => {
     //   expect(screen.getByTestId("optimization-results")).toBeInTheDocument();
     //   expect(screen.getByText(/TSLA: 1.0/)).toBeInTheDocument(); // Check for specific result content
     // });
-    expect(await screen.findByTestId("optimization-results")).toBeInTheDocument(); // Check mock results
+    expect(
+      await screen.findByTestId("optimization-results"),
+    ).toBeInTheDocument(); // Check mock results
     expect(true).toBe(true); // Placeholder assertion
   });
 
@@ -162,7 +183,9 @@ describe("Optimization Page", () => {
     // const user = userEvent.setup();
     // apiService.runOptimization.mockRejectedValue(new Error("API Error"));
     renderOptimization();
-    const optimizeButton = screen.getByRole("button", { name: /run optimization/i });
+    const optimizeButton = screen.getByRole("button", {
+      name: /run optimization/i,
+    });
 
     // await user.click(optimizeButton);
     fireEvent.click(optimizeButton);

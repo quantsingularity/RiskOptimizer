@@ -1,9 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
-import { Card, Button, Icon, useTheme } from '@rneui/themed'; // Import useTheme
-import { useAuth } from '../context/AuthContext';
-import apiService from '../services/apiService';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import { Card, Button, Icon, useTheme } from "@rneui/themed"; // Import useTheme
+import { useAuth } from "../context/AuthContext";
+import apiService from "../services/apiService";
+import { useFocusEffect } from "@react-navigation/native";
 // Import chart component later
 // import PerformanceChart from '../components/dashboard/PerformanceChart';
 
@@ -12,11 +19,11 @@ const DashboardScreen = ({ navigation }) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { theme } = useTheme(); // Access the theme
 
   const fetchData = useCallback(async () => {
-    setError('');
+    setError("");
     try {
       // Fetch necessary data for dashboard - API might need a dedicated dashboard endpoint
       // For now, let's assume we fetch portfolios and calculate total value
@@ -24,22 +31,21 @@ const DashboardScreen = ({ navigation }) => {
       const portfolios = portfolioResponse.data.portfolios || [];
 
       let totalValue = 0;
-      portfolios.forEach(p => {
+      portfolios.forEach((p) => {
         totalValue += p.total_value || 0;
       });
 
       // Placeholder for other dashboard metrics
       setDashboardData({
         totalPortfolioValue: totalValue,
-        currency: portfolios.length > 0 ? portfolios[0].currency : 'USD',
+        currency: portfolios.length > 0 ? portfolios[0].currency : "USD",
         overallChange: 1.5, // Placeholder
-        topPerformer: { symbol: 'AAPL', change: 5.2 }, // Placeholder
+        topPerformer: { symbol: "AAPL", change: 5.2 }, // Placeholder
         riskScore: 0.7, // Placeholder
       });
-
     } catch (err) {
-      console.error('Failed to fetch dashboard data:', err);
-      setError('Could not load dashboard data.');
+      console.error("Failed to fetch dashboard data:", err);
+      setError("Could not load dashboard data.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -50,7 +56,7 @@ const DashboardScreen = ({ navigation }) => {
     useCallback(() => {
       setLoading(true);
       fetchData();
-    }, [fetchData])
+    }, [fetchData]),
   );
 
   const onRefresh = useCallback(() => {
@@ -66,21 +72,21 @@ const DashboardScreen = ({ navigation }) => {
     },
     centered: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       backgroundColor: theme.colors.background,
       padding: 20,
     },
     welcomeText: {
       fontSize: 26, // Slightly larger welcome text
-      fontWeight: '600', // Semibold
+      fontWeight: "600", // Semibold
       marginVertical: 20,
       marginHorizontal: 15,
       color: theme.colors.black, // Use theme black
     },
     summaryCard: {
       // Theme handles card styling
-      alignItems: 'center',
+      alignItems: "center",
       marginBottom: 20, // Increased margin
     },
     summaryLabel: {
@@ -90,7 +96,7 @@ const DashboardScreen = ({ navigation }) => {
     },
     summaryValue: {
       fontSize: 32, // Larger value text
-      fontWeight: 'bold',
+      fontWeight: "bold",
       color: theme.colors.black,
     },
     // chartCard: { // Styles for chart card if implemented
@@ -98,8 +104,8 @@ const DashboardScreen = ({ navigation }) => {
     //   marginBottom: 20,
     // },
     quickActionsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
+      flexDirection: "row",
+      justifyContent: "space-around",
       marginHorizontal: 15,
       marginBottom: 20,
     },
@@ -117,8 +123,8 @@ const DashboardScreen = ({ navigation }) => {
       marginBottom: 20,
     },
     metricRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      justifyContent: "space-between",
       paddingVertical: 10, // Increased padding
     },
     metricLabel: {
@@ -127,40 +133,56 @@ const DashboardScreen = ({ navigation }) => {
     },
     metricValue: {
       fontSize: 16,
-      fontWeight: '600', // Semibold
+      fontWeight: "600", // Semibold
       color: theme.colors.black,
     },
     errorText: {
       color: theme.colors.error, // Use theme error color
       fontSize: 16,
-      textAlign: 'center',
+      textAlign: "center",
     },
   });
 
-  if (loading && !refreshing) { // Show full screen loader only on initial load
-    return <View style={styles.centered}><ActivityIndicator size="large" color={theme.colors.primary} /></View>;
+  if (loading && !refreshing) {
+    // Show full screen loader only on initial load
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
   }
 
-  if (error && !dashboardData) { // Show error only if no data is available
+  if (error && !dashboardData) {
+    // Show error only if no data is available
     return (
-        <View style={styles.centered}>
-            <Text style={styles.errorText}>{error}</Text>
-            <Button title="Retry" onPress={fetchData} />
-        </View>
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+        <Button title="Retry" onPress={fetchData} />
+      </View>
     );
   }
 
   return (
     <ScrollView
-        style={styles.container}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.colors.primary}
+        />
+      }
     >
-      <Text style={styles.welcomeText}>Welcome, {user?.name || 'User'}!</Text>
+      <Text style={styles.welcomeText}>Welcome, {user?.name || "User"}!</Text>
 
       <Card containerStyle={styles.summaryCard}>
         <Text style={styles.summaryLabel}>Total Portfolio Value</Text>
         <Text style={styles.summaryValue}>
-          {dashboardData?.currency} {dashboardData?.totalPortfolioValue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+          {dashboardData?.currency}{" "}
+          {dashboardData?.totalPortfolioValue?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) || "0.00"}
         </Text>
         {/* TODO: Add overall change indicator here using theme colors */}
       </Card>
@@ -175,16 +197,28 @@ const DashboardScreen = ({ navigation }) => {
       <View style={styles.quickActionsContainer}>
         <Button
           title="View Portfolios"
-          icon={<Icon name="briefcase-outline" type="material-community" color={theme.colors.white} />} // Use theme white for icon
+          icon={
+            <Icon
+              name="briefcase-outline"
+              type="material-community"
+              color={theme.colors.white}
+            />
+          } // Use theme white for icon
           buttonStyle={styles.actionButton}
-          onPress={() => navigation.navigate('Portfolios')}
+          onPress={() => navigation.navigate("Portfolios")}
           // Theme handles styling
         />
         <Button
           title="Optimize"
-          icon={<Icon name="chart-line" type="material-community" color={theme.colors.white} />} // Use theme white for icon
+          icon={
+            <Icon
+              name="chart-line"
+              type="material-community"
+              color={theme.colors.white}
+            />
+          } // Use theme white for icon
           buttonStyle={[styles.actionButton, styles.optimizeButton]}
-          onPress={() => navigation.navigate('Optimize')}
+          onPress={() => navigation.navigate("Optimize")}
           // Theme handles styling
         />
       </View>
@@ -192,18 +226,25 @@ const DashboardScreen = ({ navigation }) => {
       <Card containerStyle={styles.metricCard}>
         <Card.Title>Quick Metrics</Card.Title>
         <Card.Divider />
-        {error && <Text style={[styles.errorText, {marginBottom: 10}]}>{error}</Text>} {/* Show error within card if data exists */}
+        {error && (
+          <Text style={[styles.errorText, { marginBottom: 10 }]}>{error}</Text>
+        )}{" "}
+        {/* Show error within card if data exists */}
         <View style={styles.metricRow}>
           <Text style={styles.metricLabel}>Overall Risk Score:</Text>
-          <Text style={styles.metricValue}>{dashboardData?.riskScore?.toFixed(2) || 'N/A'}</Text>
+          <Text style={styles.metricValue}>
+            {dashboardData?.riskScore?.toFixed(2) || "N/A"}
+          </Text>
         </View>
         <View style={styles.metricRow}>
           <Text style={styles.metricLabel}>Top Performer (24h):</Text>
-          <Text style={styles.metricValue}>{dashboardData?.topPerformer?.symbol || 'N/A'} (+{dashboardData?.topPerformer?.change || 0}%)</Text>
+          <Text style={styles.metricValue}>
+            {dashboardData?.topPerformer?.symbol || "N/A"} (+
+            {dashboardData?.topPerformer?.change || 0}%)
+          </Text>
         </View>
         {/* Add more metrics as needed */}
       </Card>
-
     </ScrollView>
   );
 };

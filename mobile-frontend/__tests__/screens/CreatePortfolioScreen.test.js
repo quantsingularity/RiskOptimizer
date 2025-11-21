@@ -1,20 +1,25 @@
 // mobile-frontend/__tests__/screens/CreatePortfolioScreen.test.js
 
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react-native";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react-native";
 import CreatePortfolioScreen from "../../src/screens/Portfolios/CreatePortfolioScreen";
 import apiService from "../../src/services/apiService";
 
 // Mock the apiService
 jest.mock("../../src/services/apiService", () => ({
-  createPortfolio: jest.fn()
+  createPortfolio: jest.fn(),
 }));
 
 // Mock the navigation
 const mockGoBack = jest.fn();
 const mockNavigation = {
   goBack: mockGoBack,
-  setOptions: jest.fn()
+  setOptions: jest.fn(),
 };
 
 // Mock the components used in CreatePortfolioScreen
@@ -22,7 +27,16 @@ jest.mock("@rneui/themed", () => {
   const React = require("react");
   return {
     ...jest.requireActual("@rneui/themed"),
-    Input: ({ placeholder, leftIcon, onChangeText, value, multiline, containerStyle, disabled, testID }) => (
+    Input: ({
+      placeholder,
+      leftIcon,
+      onChangeText,
+      value,
+      multiline,
+      containerStyle,
+      disabled,
+      testID,
+    }) => (
       <React.Fragment>
         <input
           placeholder={placeholder}
@@ -35,7 +49,11 @@ jest.mock("@rneui/themed", () => {
       </React.Fragment>
     ),
     Button: ({ title, onPress, buttonStyle, disabled, testID }) => (
-      <button onClick={onPress} disabled={disabled} data-testid={testID || "button"}>
+      <button
+        onClick={onPress}
+        disabled={disabled}
+        data-testid={testID || "button"}
+      >
         {title}
       </button>
     ),
@@ -45,8 +63,8 @@ jest.mock("@rneui/themed", () => {
         <div ref={ref} style={containerStyle} data-testid="card">
           {children}
         </div>
-      ))
-    }
+      )),
+    },
   };
 });
 
@@ -61,8 +79,8 @@ describe("Create Portfolio Screen", () => {
         id: "new-portfolio-id",
         name: "Test Portfolio",
         description: "Test Description",
-        createdAt: new Date().toISOString()
-      }
+        createdAt: new Date().toISOString(),
+      },
     });
   });
 
@@ -83,7 +101,9 @@ describe("Create Portfolio Screen", () => {
     const descriptionInput = screen.getByTestId("input-Description (Optional)");
 
     fireEvent.change(nameInput, { target: { value: "My New Portfolio" } });
-    fireEvent.change(descriptionInput, { target: { value: "Focus on tech stocks" } });
+    fireEvent.change(descriptionInput, {
+      target: { value: "Focus on tech stocks" },
+    });
 
     expect(nameInput.value).toBe("My New Portfolio");
     expect(descriptionInput.value).toBe("Focus on tech stocks");
@@ -102,7 +122,7 @@ describe("Create Portfolio Screen", () => {
     await waitFor(() => {
       expect(apiService.createPortfolio).toHaveBeenCalledWith({
         name: "Success Portfolio",
-        description: "Description"
+        description: "Description",
       });
       expect(apiService.createPortfolio).toHaveBeenCalledTimes(1);
       expect(mockGoBack).toHaveBeenCalledTimes(1);
