@@ -17,7 +17,6 @@ import os
 import uuid
 import warnings
 from io import BytesIO
-from pathlib import Path
 
 import jinja2
 import markdown
@@ -27,13 +26,13 @@ import pandas as pd
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger("reporting_framework")
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings("ignore")
+
 
 class ReportTemplate:
     """Report template for risk reports"""
@@ -75,7 +74,7 @@ class ReportTemplate:
             "id": str(uuid.uuid4())[:8],
             "title": title,
             "content": content,
-            "type": section_type
+            "type": section_type,
         }
 
         if position is None:
@@ -147,7 +146,7 @@ class ReportTemplate:
             "author": self.author,
             "version": self.version,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
         }
 
     def save(self, filepath):
@@ -165,7 +164,7 @@ class ReportTemplate:
             os.makedirs(os.path.dirname(os.path.abspath(filepath)), exist_ok=True)
 
             # Save template
-            with open(filepath, 'w') as f:
+            with open(filepath, "w") as f:
                 json.dump(self.to_dict(), f, indent=2)
 
             logger.info(f"Template saved to {filepath}")
@@ -187,7 +186,7 @@ class ReportTemplate:
         """
         try:
             # Load template
-            with open(filepath, 'r') as f:
+            with open(filepath, "r") as f:
                 data = json.load(f)
 
             # Create template
@@ -196,7 +195,7 @@ class ReportTemplate:
                 sections=data.get("sections", []),
                 description=data.get("description", ""),
                 author=data.get("author", ""),
-                version=data.get("version", "1.0")
+                version=data.get("version", "1.0"),
             )
 
             # Set additional attributes
@@ -224,10 +223,10 @@ class ReportGenerator:
         self.template = template
         self.jinja_env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(os.path.dirname(os.path.abspath(__file__))),
-            autoescape=jinja2.select_autoescape(['html', 'xml'])
+            autoescape=jinja2.select_autoescape(["html", "xml"]),
         )
 
-    def generate_html(self, filepath, d    def generate_html(self, output_path, data=None):
+    def generate_html(self, output_path, data=None):
         """
         Generate HTML report
 
@@ -252,13 +251,13 @@ class ReportGenerator:
             os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
 
             # Save to file
-            with open(output_path, 'w') as f:
+            with open(output_path, "w") as f:
                 f.write(html)
 
             return True
         except Exception as e:
             logger.error(f"Error generating HTML report: {e}")
-            return False  return False
+            return False
 
     def generate_pdf(self, filepath, data=None):
         """
@@ -276,7 +275,7 @@ class ReportGenerator:
             os.makedirs(os.path.dirname(os.path.abspath(filepath)), exist_ok=True)
 
             # Generate HTML first
-            html_filepath = filepath.replace('.pdf', '.html')
+            html_filepath = filepath.replace(".pdf", ".html")
             if not self.generate_html(html_filepath, data):
                 return False
 
@@ -288,6 +287,7 @@ class ReportGenerator:
             # Convert HTML to PDF
             try:
                 from weasyprint import HTML
+
                 HTML(filename=html_filepath).write_pdf(filepath)
                 logger.info(f"PDF report saved to {filepath}")
                 return True
@@ -424,7 +424,7 @@ class ReportGenerator:
             "version": self.template.version,
             "date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "generated_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "sections": []
+            "sections": [],
         }
 
         # Add data if provided
@@ -436,7 +436,7 @@ class ReportGenerator:
             processed_section = {
                 "title": section["title"],
                 "type": section["type"],
-                "content": section["content"]
+                "content": section["content"],
             }
 
             # Process content based on type
@@ -447,7 +447,10 @@ class ReportGenerator:
 
             elif section["type"] == "chart":
                 # Generate chart if content is a chart specification
-                if isinstance(section["content"], dict) and "chart_type" in section["content"]:
+                if (
+                    isinstance(section["content"], dict)
+                    and "chart_type" in section["content"]
+                ):
                     chart_spec = section["content"]
                     chart_data = data.get(chart_spec.get("data_key", ""), None)
 
@@ -455,20 +458,22 @@ class ReportGenerator:
                         chart_image = self._generate_chart(
                             chart_type=chart_spec["chart_type"],
                             data=chart_data,
-                            options=chart_spec.get("options", {})
+                            options=chart_spec.get("options", {}),
                         )
                         processed_section["content"] = chart_image
 
             elif section["type"] == "table":
                 # Generate table if content is a table specification
-                if isinstance(section["content"], dict) and "data_key" in section["content"]:
+                if (
+                    isinstance(section["content"], dict)
+                    and "data_key" in section["content"]
+                ):
                     table_spec = section["content"]
                     table_data = data.get(table_spec.get("data_key", ""), None)
 
                     if table_data is not None:
                         table_html = self._generate_table(
-                            data=table_data,
-                            options=table_spec.get("options", {})
+                            data=table_data, options=table_spec.get("options", {})
                         )
                         processed_section["content"] = table_html
 
@@ -514,75 +519,111 @@ class ReportGenerator:
         fig, ax = plt.subplots(figsize=(10, 6))
 
         # Plot based on chart type
-        if chart_type == 'line':
+        if chart_type == "line":
             if isinstance(data, pd.DataFrame):
                 data.plot(ax=ax)
-            elif isinstance(data, dict) and 'x' in data and 'y' in data:
-                ax.plot(data['x'], data['y'])
+            elif isinstance(data, dict) and "x" in data and "y" in data:
+                ax.plot(data["x"], data["y"])
             else:
-                ax.text(0.5, 0.5, "Invalid data format for line chart",
-                       ha='center', va='center', fontsize=12)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Invalid data format for line chart",
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                )
 
-        elif chart_type == 'bar':
+        elif chart_type == "bar":
             if isinstance(data, pd.DataFrame):
-                data.plot(kind='bar', ax=ax)
-            elif isinstance(data, dict) and 'x' in data and 'y' in data:
-                ax.bar(data['x'], data['y'])
+                data.plot(kind="bar", ax=ax)
+            elif isinstance(data, dict) and "x" in data and "y" in data:
+                ax.bar(data["x"], data["y"])
             else:
-                ax.text(0.5, 0.5, "Invalid data format for bar chart",
-                       ha='center', va='center', fontsize=12)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Invalid data format for bar chart",
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                )
 
-        elif chart_type == 'scatter':
+        elif chart_type == "scatter":
             if isinstance(data, pd.DataFrame) and len(data.columns) >= 2:
                 ax.scatter(data.iloc[:, 0], data.iloc[:, 1])
-            elif isinstance(data, dict) and 'x' in data and 'y' in data:
-                ax.scatter(data['x'], data['y'])
+            elif isinstance(data, dict) and "x" in data and "y" in data:
+                ax.scatter(data["x"], data["y"])
             else:
-                ax.text(0.5, 0.5, "Invalid data format for scatter chart",
-                       ha='center', va='center', fontsize=12)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Invalid data format for scatter chart",
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                )
 
-        elif chart_type == 'pie':
+        elif chart_type == "pie":
             if isinstance(data, pd.DataFrame) and len(data.columns) >= 2:
-                ax.pie(data.iloc[:, 1], labels=data.iloc[:, 0], autopct='%1.1f%%')
-            elif isinstance(data, dict) and 'values' in data and 'labels' in data:
-                ax.pie(data['values'], labels=data['labels'], autopct='%1.1f%%')
+                ax.pie(data.iloc[:, 1], labels=data.iloc[:, 0], autopct="%1.1f%%")
+            elif isinstance(data, dict) and "values" in data and "labels" in data:
+                ax.pie(data["values"], labels=data["labels"], autopct="%1.1f%%")
             else:
-                ax.text(0.5, 0.5, "Invalid data format for pie chart",
-                       ha='center', va='center', fontsize=12)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Invalid data format for pie chart",
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                )
 
-        elif chart_type == 'heatmap':
+        elif chart_type == "heatmap":
             if isinstance(data, pd.DataFrame):
                 im = ax.imshow(data)
                 plt.colorbar(im, ax=ax)
             else:
-                ax.text(0.5, 0.5, "Invalid data format for heatmap",
-                       ha='center', va='center', fontsize=12)
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Invalid data format for heatmap",
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                )
 
         else:
-            ax.text(0.5, 0.5, f"Unsupported chart type: {chart_type}",
-                   ha='center', va='center', fontsize=12)
+            ax.text(
+                0.5,
+                0.5,
+                f"Unsupported chart type: {chart_type}",
+                ha="center",
+                va="center",
+                fontsize=12,
+            )
 
         # Apply options
-        if 'title' in options:
-            ax.set_title(options['title'])
-        if 'xlabel' in options:
-            ax.set_xlabel(options['xlabel'])
-        if 'ylabel' in options:
-            ax.set_ylabel(options['ylabel'])
-        if 'grid' in options and options['grid']:
+        if "title" in options:
+            ax.set_title(options["title"])
+        if "xlabel" in options:
+            ax.set_xlabel(options["xlabel"])
+        if "ylabel" in options:
+            ax.set_ylabel(options["ylabel"])
+        if "grid" in options and options["grid"]:
             ax.grid(True)
-        if 'legend' in options and options['legend']:
+        if "legend" in options and options["legend"]:
             ax.legend()
 
         # Save to buffer
         buffer = BytesIO()
         plt.tight_layout()
-        fig.savefig(buffer, format='png')
+        fig.savefig(buffer, format="png")
         plt.close(fig)
 
         # Convert to base64
         buffer.seek(0)
-        image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+        image_base64 = base64.b64encode(buffer.read()).decode("utf-8")
 
         return image_base64
 
@@ -607,8 +648,8 @@ class ReportGenerator:
         # Generate HTML table
         if isinstance(data, pd.DataFrame):
             table_html = data.to_html(
-                index=options.get('show_index', True),
-                classes=options.get('classes', 'table table-striped')
+                index=options.get("show_index", True),
+                classes=options.get("classes", "table table-striped"),
             )
             return table_html
         else:
@@ -625,7 +666,9 @@ class ReportScheduler:
         Args:
             storage_dir: Directory for report storage
         """
-        self.storage_dir = storage_dir or os.path.join(os.path.expanduser('~'), '.reports')
+        self.storage_dir = storage_dir or os.path.join(
+            os.path.expanduser("~"), ".reports"
+        )
         os.makedirs(self.storage_dir, exist_ok=True)
         self.schedules = self._load_schedules()
 
@@ -636,11 +679,11 @@ class ReportScheduler:
         Returns:
             schedules: Dictionary of schedules
         """
-        schedule_path = os.path.join(self.storage_dir, 'schedules.json')
+        schedule_path = os.path.join(self.storage_dir, "schedules.json")
 
         if os.path.exists(schedule_path):
             try:
-                with open(schedule_path, 'r') as f:
+                with open(schedule_path, "r") as f:
                     return json.load(f)
             except:
                 return {}
@@ -654,16 +697,24 @@ class ReportScheduler:
         Returns:
             success: Whether save was successful
         """
-        schedule_path = os.path.join(self.storage_dir, 'schedules.json')
+        schedule_path = os.path.join(self.storage_dir, "schedules.json")
 
         try:
-            with open(schedule_path, 'w') as f:
+            with open(schedule_path, "w") as f:
                 json.dump(self.schedules, f, indent=2)
             return True
         except:
             return False
 
-    def add_schedule(self, name, template_path, output_path, frequency, data_provider=None, recipients=None):
+    def add_schedule(
+        self,
+        name,
+        template_path,
+        output_path,
+        frequency,
+        data_provider=None,
+        recipients=None,
+    ):
         """
         Add report schedule
 
@@ -681,15 +732,15 @@ class ReportScheduler:
         schedule_id = str(uuid.uuid4())[:8]
 
         self.schedules[schedule_id] = {
-            'name': name,
-            'template_path': template_path,
-            'output_path': output_path,
-            'frequency': frequency,
-            'data_provider': data_provider,
-            'recipients': recipients or [],
-            'last_run': None,
-            'next_run': self._calculate_next_run(frequency),
-            'created_at': datetime.datetime.now().isoformat()
+            "name": name,
+            "template_path": template_path,
+            "output_path": output_path,
+            "frequency": frequency,
+            "data_provider": data_provider,
+            "recipients": recipients or [],
+            "last_run": None,
+            "next_run": self._calculate_next_run(frequency),
+            "created_at": datetime.datetime.now().isoformat(),
         }
 
         return self._save_schedules()
@@ -719,11 +770,11 @@ class ReportScheduler:
         """
         return [
             {
-                'id': id,
-                'name': schedule['name'],
-                'frequency': schedule['frequency'],
-                'last_run': schedule['last_run'],
-                'next_run': schedule['next_run']
+                "id": id,
+                "name": schedule["name"],
+                "frequency": schedule["frequency"],
+                "last_run": schedule["last_run"],
+                "next_run": schedule["next_run"],
             }
             for id, schedule in self.schedules.items()
         ]
@@ -739,7 +790,7 @@ class ReportScheduler:
         results = {}
 
         for id, schedule in self.schedules.items():
-            next_run = datetime.datetime.fromisoformat(schedule['next_run'])
+            next_run = datetime.datetime.fromisoformat(schedule["next_run"])
 
             if next_run <= now:
                 # Run report
@@ -747,9 +798,9 @@ class ReportScheduler:
                 results[id] = result
 
                 # Update schedule
-                self.schedules[id]['last_run'] = now.isoformat()
-                self.schedules[id]['next_run'] = self._calculate_next_run(
-                    schedule['frequency'], now
+                self.schedules[id]["last_run"] = now.isoformat()
+                self.schedules[id]["next_run"] = self._calculate_next_run(
+                    schedule["frequency"], now
                 )
 
         # Save updated schedules
@@ -768,43 +819,46 @@ class ReportScheduler:
             result: Report generation result
         """
         if schedule_id not in self.schedules:
-            return {'success': False, 'error': 'Schedule not found'}
+            return {"success": False, "error": "Schedule not found"}
 
         schedule = self.schedules[schedule_id]
 
         try:
             # Load template
-            template = ReportTemplate.load(schedule['template_path'])
+            template = ReportTemplate.load(schedule["template_path"])
             if template is None:
-                return {'success': False, 'error': 'Failed to load template'}
+                return {"success": False, "error": "Failed to load template"}
 
             # Create generator
             generator = ReportGenerator(template)
 
             # Get data
             data = None
-            if schedule['data_provider']:
+            if schedule["data_provider"]:
                 try:
                     # This is a simplified approach; in practice, you'd need a more robust way to call the data provider
-                    data = eval(schedule['data_provider'])()
+                    data = eval(schedule["data_provider"])()
                 except:
-                    return {'success': False, 'error': 'Failed to get data from provider'}
+                    return {
+                        "success": False,
+                        "error": "Failed to get data from provider",
+                    }
 
             # Generate report
-            output_path = schedule['output_path']
-            if output_path.endswith('.pdf'):
+            output_path = schedule["output_path"]
+            if output_path.endswith(".pdf"):
                 success = generator.generate_pdf(output_path, data)
             else:
                 success = generator.generate_html(output_path, data)
 
             # Send report if recipients specified
-            if success and schedule['recipients']:
-                self._send_report(output_path, schedule['recipients'])
+            if success and schedule["recipients"]:
+                self._send_report(output_path, schedule["recipients"])
 
-            return {'success': success, 'output_path': output_path}
+            return {"success": success, "output_path": output_path}
 
         except Exception as e:
-            return {'success': False, 'error': str(e)}
+            return {"success": False, "error": str(e)}
 
     def _calculate_next_run(self, frequency, from_date=None):
         """
@@ -820,22 +874,26 @@ class ReportScheduler:
         if from_date is None:
             from_date = datetime.datetime.now()
 
-        if frequency == 'daily':
+        if frequency == "daily":
             next_run = from_date + datetime.timedelta(days=1)
-        elif frequency == 'weekly':
+        elif frequency == "weekly":
             next_run = from_date + datetime.timedelta(days=7)
-        elif frequency == 'monthly':
+        elif frequency == "monthly":
             # Add one month (approximate)
             if from_date.month == 12:
                 next_run = datetime.datetime(from_date.year + 1, 1, from_date.day)
             else:
-                next_run = datetime.datetime(from_date.year, from_date.month + 1, from_date.day)
+                next_run = datetime.datetime(
+                    from_date.year, from_date.month + 1, from_date.day
+                )
         else:
             # Default to daily
             next_run = from_date + datetime.timedelta(days=1)
 
         # Set time to midnight
-        next_run = datetime.datetime(next_run.year, next_run.month, next_run.day, 0, 0, 0)
+        next_run = datetime.datetime(
+            next_run.year, next_run.month, next_run.day, 0, 0, 0
+        )
 
         return next_run.isoformat()
 
@@ -866,7 +924,9 @@ class ReportArchive:
         Args:
             archive_dir: Directory for report archive
         """
-        self.archive_dir = archive_dir or os.path.join(os.path.expanduser('~'), '.report_archive')
+        self.archive_dir = archive_dir or os.path.join(
+            os.path.expanduser("~"), ".report_archive"
+        )
         os.makedirs(self.archive_dir, exist_ok=True)
 
     def archive_report(self, report_path, report_type, metadata=None):
@@ -895,12 +955,13 @@ class ReportArchive:
         # Copy report to archive
         try:
             import shutil
+
             shutil.copy2(report_path, archive_path)
 
             # Save metadata
             if metadata:
-                metadata_path = archive_path + '.meta'
-                with open(metadata_path, 'w') as f:
+                metadata_path = archive_path + ".meta"
+                with open(metadata_path, "w") as f:
                     json.dump(metadata, f, indent=2)
 
             logger.info(f"Report archived to {archive_path}")
@@ -926,7 +987,9 @@ class ReportArchive:
             # List reports of specific type
             report_type_dir = os.path.join(self.archive_dir, report_type)
             if os.path.exists(report_type_dir):
-                reports.extend(self._list_reports_in_dir(report_type_dir, report_type, limit))
+                reports.extend(
+                    self._list_reports_in_dir(report_type_dir, report_type, limit)
+                )
         else:
             # List all reports
             for dir_name in os.listdir(self.archive_dir):
@@ -935,7 +998,7 @@ class ReportArchive:
                     reports.extend(self._list_reports_in_dir(dir_path, dir_name, limit))
 
         # Sort by timestamp (newest first)
-        reports.sort(key=lambda r: r['timestamp'], reverse=True)
+        reports.sort(key=lambda r: r["timestamp"], reverse=True)
 
         # Apply limit
         return reports[:limit]
@@ -955,39 +1018,47 @@ class ReportArchive:
         reports = []
 
         for filename in os.listdir(dir_path):
-            if filename.endswith('.meta'):
+            if filename.endswith(".meta"):
                 continue
 
             file_path = os.path.join(dir_path, filename)
             if os.path.isfile(file_path):
                 # Extract timestamp from filename
-                parts = filename.split('_')
+                parts = filename.split("_")
                 if len(parts) >= 2:
                     try:
-                        timestamp_str = parts[-2] + '_' + parts[-1].split('.')[0]
-                        timestamp = datetime.datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                        timestamp_str = parts[-2] + "_" + parts[-1].split(".")[0]
+                        timestamp = datetime.datetime.strptime(
+                            timestamp_str, "%Y%m%d_%H%M%S"
+                        )
                     except:
-                        timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+                        timestamp = datetime.datetime.fromtimestamp(
+                            os.path.getmtime(file_path)
+                        )
                 else:
-                    timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+                    timestamp = datetime.datetime.fromtimestamp(
+                        os.path.getmtime(file_path)
+                    )
 
                 # Get metadata if available
                 metadata = {}
-                metadata_path = file_path + '.meta'
+                metadata_path = file_path + ".meta"
                 if os.path.exists(metadata_path):
                     try:
-                        with open(metadata_path, 'r') as f:
+                        with open(metadata_path, "r") as f:
                             metadata = json.load(f)
                     except:
                         pass
 
-                reports.append({
-                    'path': file_path,
-                    'filename': filename,
-                    'report_type': report_type,
-                    'timestamp': timestamp,
-                    'metadata': metadata
-                })
+                reports.append(
+                    {
+                        "path": file_path,
+                        "filename": filename,
+                        "report_type": report_type,
+                        "timestamp": timestamp,
+                        "metadata": metadata,
+                    }
+                )
 
         return reports
 
@@ -1002,7 +1073,7 @@ class ReportArchive:
             content: Report content
         """
         try:
-            with open(report_path, 'r') as f:
+            with open(report_path, "r") as f:
                 return f.read()
         except Exception as e:
             logger.error(f"Error reading report: {e}")
@@ -1021,23 +1092,24 @@ class ReportArchive:
         """
         try:
             # Read reports
-            with open(report_path1, 'r') as f:
+            with open(report_path1, "r") as f:
                 content1 = f.read()
 
-            with open(report_path2, 'r') as f:
+            with open(report_path2, "r") as f:
                 content2 = f.read()
 
             # Compare reports
             import difflib
+
             diff = difflib.unified_diff(
                 content1.splitlines(),
                 content2.splitlines(),
                 fromfile=os.path.basename(report_path1),
                 tofile=os.path.basename(report_path2),
-                lineterm=''
+                lineterm="",
             )
 
-            return '\n'.join(diff)
+            return "\n".join(diff)
         except Exception as e:
             logger.error(f"Error comparing reports: {e}")
             return None
@@ -1049,23 +1121,20 @@ if __name__ == "__main__":
     template = ReportTemplate(
         title="Risk Analysis Report",
         description="Analysis of portfolio risk metrics",
-        author="RiskOptimizer"
+        author="RiskOptimizer",
     )
 
     # Add sections
     template.add_section(
         title="Portfolio Overview",
         content="This report provides an analysis of portfolio risk metrics.",
-        section_type="text"
+        section_type="text",
     )
 
     template.add_section(
         title="Risk Metrics",
-        content={
-            "data_key": "risk_metrics",
-            "options": {"show_index": False}
-        },
-        section_type="table"
+        content={"data_key": "risk_metrics", "options": {"show_index": False}},
+        section_type="table",
     )
 
     template.add_section(
@@ -1077,10 +1146,10 @@ if __name__ == "__main__":
                 "title": "Returns Distribution",
                 "xlabel": "Return",
                 "ylabel": "Frequency",
-                "grid": True
-            }
+                "grid": True,
+            },
         },
-        section_type="chart"
+        section_type="chart",
     )
 
     # Save template
@@ -1090,10 +1159,18 @@ if __name__ == "__main__":
     np.random.seed(42)
     returns = np.random.normal(0.001, 0.02, 1000)
 
-    risk_metrics = pd.DataFrame({
-        "Metric": ["Volatility", "VaR (95%)", "ES (95%)", "Sharpe Ratio", "Max Drawdown"],
-        "Value": [0.02, 0.033, 0.041, 0.8, 0.15]
-    })
+    risk_metrics = pd.DataFrame(
+        {
+            "Metric": [
+                "Volatility",
+                "VaR (95%)",
+                "ES (95%)",
+                "Sharpe Ratio",
+                "Max Drawdown",
+            ],
+            "Value": [0.02, 0.033, 0.041, 0.8, 0.15],
+        }
+    )
 
     # Create report generator
     generator = ReportGenerator(template)
@@ -1105,8 +1182,8 @@ if __name__ == "__main__":
             "portfolio_name": "Sample Portfolio",
             "date": datetime.datetime.now().strftime("%Y-%m-%d"),
             "returns": returns,
-            "risk_metrics": risk_metrics
-        }
+            "risk_metrics": risk_metrics,
+        },
     )
 
     print("Report generated: risk_report.html")
