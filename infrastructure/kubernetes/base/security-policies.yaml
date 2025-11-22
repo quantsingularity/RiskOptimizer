@@ -4,252 +4,252 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: riskoptimizer-restricted
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    security-policy: restricted
+    name: riskoptimizer-restricted
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        security-policy: restricted
 spec:
-  privileged: false
-  allowPrivilegeEscalation: false
-  requiredDropCapabilities:
-    - ALL
-  allowedCapabilities:
-    - NET_BIND_SERVICE
-  volumes:
-    - "configMap"
-    - "emptyDir"
-    - "projected"
-    - "secret"
-    - "downwardAPI"
-    - "persistentVolumeClaim"
-  hostNetwork: false
-  hostIPC: false
-  hostPID: false
-  runAsUser:
-    rule: "MustRunAsNonRoot"
-  supplementalGroups:
-    rule: "MustRunAs"
-    ranges:
-      - min: 10000
-        max: 65535
-  fsGroup:
-    rule: "MustRunAs"
-    ranges:
-      - min: 10000
-        max: 65535
-  seLinux:
-    rule: "RunAsAny"
-  readOnlyRootFilesystem: true
-  forbiddenSysctls:
-    - "*"
+    privileged: false
+    allowPrivilegeEscalation: false
+    requiredDropCapabilities:
+        - ALL
+    allowedCapabilities:
+        - NET_BIND_SERVICE
+    volumes:
+        - 'configMap'
+        - 'emptyDir'
+        - 'projected'
+        - 'secret'
+        - 'downwardAPI'
+        - 'persistentVolumeClaim'
+    hostNetwork: false
+    hostIPC: false
+    hostPID: false
+    runAsUser:
+        rule: 'MustRunAsNonRoot'
+    supplementalGroups:
+        rule: 'MustRunAs'
+        ranges:
+            - min: 10000
+              max: 65535
+    fsGroup:
+        rule: 'MustRunAs'
+        ranges:
+            - min: 10000
+              max: 65535
+    seLinux:
+        rule: 'RunAsAny'
+    readOnlyRootFilesystem: true
+    forbiddenSysctls:
+        - '*'
 
 ---
 # Network Policy - Default Deny All
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny-all
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: security
+    name: default-deny-all
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: security
 spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
-    - Egress
+    podSelector: {}
+    policyTypes:
+        - Ingress
+        - Egress
 
 ---
 # Network Policy - Allow Backend to Database
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: backend-to-database
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: application
+    name: backend-to-database
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: application
 spec:
-  podSelector:
-    matchLabels:
-      app: riskoptimizer-backend
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              app: riskoptimizer-database
-      ports:
-        - protocol: TCP
-          port: 5432
-    - to:
-        - podSelector:
-            matchLabels:
-              app: riskoptimizer-redis
-      ports:
-        - protocol: TCP
-          port: 6379
+    podSelector:
+        matchLabels:
+            app: riskoptimizer-backend
+    policyTypes:
+        - Egress
+    egress:
+        - to:
+              - podSelector:
+                    matchLabels:
+                        app: riskoptimizer-database
+          ports:
+              - protocol: TCP
+                port: 5432
+        - to:
+              - podSelector:
+                    matchLabels:
+                        app: riskoptimizer-redis
+          ports:
+              - protocol: TCP
+                port: 6379
 
 ---
 # Network Policy - Allow Frontend to Backend
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: frontend-to-backend
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: application
+    name: frontend-to-backend
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: application
 spec:
-  podSelector:
-    matchLabels:
-      app: riskoptimizer-backend
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: riskoptimizer-frontend
-        - podSelector:
-            matchLabels:
-              app: nginx-ingress
-      ports:
-        - protocol: TCP
-          port: 8080
+    podSelector:
+        matchLabels:
+            app: riskoptimizer-backend
+    policyTypes:
+        - Ingress
+    ingress:
+        - from:
+              - podSelector:
+                    matchLabels:
+                        app: riskoptimizer-frontend
+              - podSelector:
+                    matchLabels:
+                        app: nginx-ingress
+          ports:
+              - protocol: TCP
+                port: 8080
 
 ---
 # Network Policy - Allow Monitoring Access
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-monitoring
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: monitoring
+    name: allow-monitoring
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: monitoring
 spec:
-  podSelector:
-    matchLabels:
-      prometheus.io/scrape: "true"
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              name: monitoring
-        - podSelector:
-            matchLabels:
-              app: prometheus
-      ports:
-        - protocol: TCP
-          port: 8081
+    podSelector:
+        matchLabels:
+            prometheus.io/scrape: 'true'
+    policyTypes:
+        - Ingress
+    ingress:
+        - from:
+              - namespaceSelector:
+                    matchLabels:
+                        name: monitoring
+              - podSelector:
+                    matchLabels:
+                        app: prometheus
+          ports:
+              - protocol: TCP
+                port: 8081
 
 ---
 # Network Policy - Allow DNS Resolution
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-dns
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: infrastructure
+    name: allow-dns
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: infrastructure
 spec:
-  podSelector: {}
-  policyTypes:
-    - Egress
-  egress:
-    - to: []
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
+    podSelector: {}
+    policyTypes:
+        - Egress
+    egress:
+        - to: []
+          ports:
+              - protocol: UDP
+                port: 53
+              - protocol: TCP
+                port: 53
 
 ---
 # Network Policy - Allow Vault Access
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-vault-access
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: security
+    name: allow-vault-access
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: security
 spec:
-  podSelector:
-    matchLabels:
-      vault.hashicorp.com/agent-inject: "true"
-  policyTypes:
-    - Egress
-  egress:
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 8200
+    podSelector:
+        matchLabels:
+            vault.hashicorp.com/agent-inject: 'true'
+    policyTypes:
+        - Egress
+    egress:
+        - to: []
+          ports:
+              - protocol: TCP
+                port: 8200
 
 ---
 # Network Policy - Allow Logging
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-logging
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: logging
+    name: allow-logging
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: logging
 spec:
-  podSelector: {}
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: logging
-      ports:
-        - protocol: TCP
-          port: 5044 # Logstash
-        - protocol: TCP
-          port: 9200 # Elasticsearch
+    podSelector: {}
+    policyTypes:
+        - Egress
+    egress:
+        - to:
+              - namespaceSelector:
+                    matchLabels:
+                        name: logging
+          ports:
+              - protocol: TCP
+                port: 5044 # Logstash
+              - protocol: TCP
+                port: 9200 # Elasticsearch
 
 ---
 # Network Policy - Allow Tracing
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-tracing
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
-    policy-type: observability
+    name: allow-tracing
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
+        policy-type: observability
 spec:
-  podSelector: {}
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: tracing
-      ports:
-        - protocol: TCP
-          port: 14268 # Jaeger Collector
+    podSelector: {}
+    policyTypes:
+        - Egress
+    egress:
+        - to:
+              - namespaceSelector:
+                    matchLabels:
+                        name: tracing
+          ports:
+              - protocol: TCP
+                port: 14268 # Jaeger Collector
 
 ---
 # RBAC - Service Account
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer-backend
-    component: api
+    name: riskoptimizer-backend
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer-backend
+        component: api
 automountServiceAccountToken: true
 
 ---
@@ -257,172 +257,172 @@ automountServiceAccountToken: true
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer-backend
-    component: api
+    name: riskoptimizer-backend
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer-backend
+        component: api
 rules:
-  - apiGroups: [""]
-    resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "list", "watch"]
+    - apiGroups: ['']
+      resources: ['configmaps', 'secrets']
+      verbs: ['get', 'list', 'watch']
+    - apiGroups: ['']
+      resources: ['pods']
+      verbs: ['get', 'list', 'watch']
+    - apiGroups: ['apps']
+      resources: ['deployments']
+      verbs: ['get', 'list', 'watch']
 
 ---
 # RBAC - Role Binding
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer-backend
-    component: api
-subjects:
-  - kind: ServiceAccount
     name: riskoptimizer-backend
     namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer-backend
+        component: api
+subjects:
+    - kind: ServiceAccount
+      name: riskoptimizer-backend
+      namespace: riskoptimizer-prod
 roleRef:
-  kind: Role
-  name: riskoptimizer-backend
-  apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: riskoptimizer-backend
+    apiGroup: rbac.authorization.k8s.io
 
 ---
 # Priority Class
 apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
-  name: high-priority
-  labels:
-    app: riskoptimizer
+    name: high-priority
+    labels:
+        app: riskoptimizer
 value: 1000
 globalDefault: false
-description: "High priority class for critical RiskOptimizer components"
+description: 'High priority class for critical RiskOptimizer components'
 
 ---
 # Resource Quota
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: riskoptimizer-quota
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
+    name: riskoptimizer-quota
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
 spec:
-  hard:
-    requests.cpu: "20"
-    requests.memory: 40Gi
-    requests.storage: 100Gi
-    limits.cpu: "40"
-    limits.memory: 80Gi
-    persistentvolumeclaims: "10"
-    pods: "50"
-    services: "20"
-    secrets: "50"
-    configmaps: "50"
+    hard:
+        requests.cpu: '20'
+        requests.memory: 40Gi
+        requests.storage: 100Gi
+        limits.cpu: '40'
+        limits.memory: 80Gi
+        persistentvolumeclaims: '10'
+        pods: '50'
+        services: '20'
+        secrets: '50'
+        configmaps: '50'
 
 ---
 # Limit Range
 apiVersion: v1
 kind: LimitRange
 metadata:
-  name: riskoptimizer-limits
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer
+    name: riskoptimizer-limits
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer
 spec:
-  limits:
-    - type: Container
-      default:
-        cpu: 500m
-        memory: 1Gi
-        ephemeral-storage: 1Gi
-      defaultRequest:
-        cpu: 100m
-        memory: 256Mi
-        ephemeral-storage: 512Mi
-      max:
-        cpu: 4
-        memory: 8Gi
-        ephemeral-storage: 4Gi
-      min:
-        cpu: 50m
-        memory: 128Mi
-        ephemeral-storage: 256Mi
-    - type: Pod
-      max:
-        cpu: 8
-        memory: 16Gi
-        ephemeral-storage: 8Gi
-    - type: PersistentVolumeClaim
-      max:
-        storage: 50Gi
-      min:
-        storage: 1Gi
+    limits:
+        - type: Container
+          default:
+              cpu: 500m
+              memory: 1Gi
+              ephemeral-storage: 1Gi
+          defaultRequest:
+              cpu: 100m
+              memory: 256Mi
+              ephemeral-storage: 512Mi
+          max:
+              cpu: 4
+              memory: 8Gi
+              ephemeral-storage: 4Gi
+          min:
+              cpu: 50m
+              memory: 128Mi
+              ephemeral-storage: 256Mi
+        - type: Pod
+          max:
+              cpu: 8
+              memory: 16Gi
+              ephemeral-storage: 8Gi
+        - type: PersistentVolumeClaim
+          max:
+              storage: 50Gi
+          min:
+              storage: 1Gi
 
 ---
 # Pod Disruption Budget
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: riskoptimizer-backend-pdb
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer-backend
+    name: riskoptimizer-backend-pdb
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer-backend
 spec:
-  minAvailable: 2
-  selector:
-    matchLabels:
-      app: riskoptimizer-backend
+    minAvailable: 2
+    selector:
+        matchLabels:
+            app: riskoptimizer-backend
 
 ---
 # Horizontal Pod Autoscaler
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: riskoptimizer-backend-hpa
-  namespace: riskoptimizer-prod
-  labels:
-    app: riskoptimizer-backend
+    name: riskoptimizer-backend-hpa
+    namespace: riskoptimizer-prod
+    labels:
+        app: riskoptimizer-backend
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: riskoptimizer-backend
-  minReplicas: 3
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
-  behavior:
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      policies:
-        - type: Percent
-          value: 10
-          periodSeconds: 60
-    scaleUp:
-      stabilizationWindowSeconds: 60
-      policies:
-        - type: Percent
-          value: 50
-          periodSeconds: 60
-        - type: Pods
-          value: 2
-          periodSeconds: 60
-      selectPolicy: Max
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: riskoptimizer-backend
+    minReplicas: 3
+    maxReplicas: 10
+    metrics:
+        - type: Resource
+          resource:
+              name: cpu
+              target:
+                  type: Utilization
+                  averageUtilization: 70
+        - type: Resource
+          resource:
+              name: memory
+              target:
+                  type: Utilization
+                  averageUtilization: 80
+    behavior:
+        scaleDown:
+            stabilizationWindowSeconds: 300
+            policies:
+                - type: Percent
+                  value: 10
+                  periodSeconds: 60
+        scaleUp:
+            stabilizationWindowSeconds: 60
+            policies:
+                - type: Percent
+                  value: 50
+                  periodSeconds: 60
+                - type: Pods
+                  value: 2
+                  periodSeconds: 60
+            selectPolicy: Max

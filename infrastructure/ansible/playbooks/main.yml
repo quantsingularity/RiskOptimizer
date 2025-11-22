@@ -7,325 +7,323 @@
   become: true
   gather_facts: true
   vars:
-    ansible_ssh_pipelining: true
-    ansible_ssh_common_args: "-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/dev/null"
+      ansible_ssh_pipelining: true
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=yes -o UserKnownHostsFile=/dev/null'
   pre_tasks:
-    - name: Verify Ansible version
-      assert:
-        that:
-          - ansible_version.full is version('2.9', '>=')
-        fail_msg: "Ansible version 2.9 or higher is required"
-        success_msg: "Ansible version check passed"
+      - name: Verify Ansible version
+        assert:
+            that:
+                - ansible_version.full is version('2.9', '>=')
+            fail_msg: 'Ansible version 2.9 or higher is required'
+            success_msg: 'Ansible version check passed'
 
-    - name: Check if running as root
-      fail:
-        msg: "This playbook should not be run as root user"
-      when: ansible_user_id == "root"
+      - name: Check if running as root
+        fail:
+            msg: 'This playbook should not be run as root user'
+        when: ansible_user_id == "root"
 
-    - name: Validate target environment
-      assert:
-        that:
-          - environment is defined
-          - environment in ['development', 'staging', 'production']
-        fail_msg: "Environment must be defined and valid (development, staging, production)"
+      - name: Validate target environment
+        assert:
+            that:
+                - environment is defined
+                - environment in ['development', 'staging', 'production']
+            fail_msg: 'Environment must be defined and valid (development, staging, production)'
 
-    - name: Set security baseline facts
-      set_fact:
-        security_baseline_enabled: true
-        compliance_mode: "{{ 'strict' if environment == 'production' else 'standard' }}"
-        audit_logging_enabled: true
-        encryption_required: true
+      - name: Set security baseline facts
+        set_fact:
+            security_baseline_enabled: true
+            compliance_mode: "{{ 'strict' if environment == 'production' else 'standard' }}"
+            audit_logging_enabled: true
+            encryption_required: true
 
   tasks:
-    - name: Display deployment information
-      debug:
-        msg: |
-          Deploying RiskOptimizer infrastructure
-          Environment: {{ environment }}
-          Compliance Mode: {{ compliance_mode }}
-          Target Hosts: {{ ansible_play_hosts | length }}
-          Timestamp: {{ ansible_date_time.iso8601 }}
+      - name: Display deployment information
+        debug:
+            msg: |
+                Deploying RiskOptimizer infrastructure
+                Environment: {{ environment }}
+                Compliance Mode: {{ compliance_mode }}
+                Target Hosts: {{ ansible_play_hosts | length }}
+                Timestamp: {{ ansible_date_time.iso8601 }}
 
 - name: Configure common security baseline
   hosts: all
   become: true
   serial: "{{ deployment_batch_size | default('25%') }}"
   vars:
-    max_fail_percentage: 10
+      max_fail_percentage: 10
   roles:
-    - role: common
-      tags: ["common", "security", "baseline"]
-    - role: security-hardening
-      tags: ["security", "hardening", "cis"]
-    - role: compliance
-      tags: ["compliance", "audit", "gdpr", "pci-dss"]
-    - role: monitoring-agent
-      tags: ["monitoring", "observability"]
+      - role: common
+        tags: ['common', 'security', 'baseline']
+      - role: security-hardening
+        tags: ['security', 'hardening', 'cis']
+      - role: compliance
+        tags: ['compliance', 'audit', 'gdpr', 'pci-dss']
+      - role: monitoring-agent
+        tags: ['monitoring', 'observability']
   post_tasks:
-    - name: Verify security baseline compliance
-      include_tasks: tasks/verify_security_baseline.yml
-      tags: ["verification", "security"]
+      - name: Verify security baseline compliance
+        include_tasks: tasks/verify_security_baseline.yml
+        tags: ['verification', 'security']
 
 - name: Configure HashiCorp Vault cluster
   hosts: vault_servers
   become: true
   serial: 1
   vars:
-    vault_cluster_size: "{{ groups['vault_servers'] | length }}"
+      vault_cluster_size: "{{ groups['vault_servers'] | length }}"
   pre_tasks:
-    - name: Validate Vault cluster configuration
-      assert:
-        that:
-          - vault_cluster_size | int >= 3
-          - vault_cluster_size | int % 2 == 1
-        fail_msg: "Vault cluster must have an odd number of nodes (minimum 3)"
+      - name: Validate Vault cluster configuration
+        assert:
+            that:
+                - vault_cluster_size | int >= 3
+                - vault_cluster_size | int % 2 == 1
+            fail_msg: 'Vault cluster must have an odd number of nodes (minimum 3)'
   roles:
-    - role: vault
-      tags: ["vault", "secrets", "security"]
+      - role: vault
+        tags: ['vault', 'secrets', 'security']
   post_tasks:
-    - name: Verify Vault cluster health
-      uri:
-        url: "https://{{ ansible_default_ipv4.address }}:8200/v1/sys/health"
-        method: GET
-        validate_certs: true
-        status_code: [200, 429, 472, 473]
-      register: vault_health_check
-      retries: 5
-      delay: 10
+      - name: Verify Vault cluster health
+        uri:
+            url: 'https://{{ ansible_default_ipv4.address }}:8200/v1/sys/health'
+            method: GET
+            validate_certs: true
+            status_code: [200, 429, 472, 473]
+        register: vault_health_check
+        retries: 5
+        delay: 10
 
 - name: Configure database servers
   hosts: databases
   become: true
   serial: 1
   vars:
-    database_backup_enabled: true
-    database_encryption_enabled: true
-    database_audit_logging: true
+      database_backup_enabled: true
+      database_encryption_enabled: true
+      database_audit_logging: true
   pre_tasks:
-    - name: Check database storage requirements
-      assert:
-        that:
-          - ansible_mounts | selectattr('mount', 'equalto', '/var/lib/postgresql') | list | length > 0
-        fail_msg: "Dedicated storage mount for database required"
-      when: database_type == "postgresql"
+      - name: Check database storage requirements
+        assert:
+            that:
+                - ansible_mounts | selectattr('mount', 'equalto', '/var/lib/postgresql') | list | length > 0
+            fail_msg: 'Dedicated storage mount for database required'
+        when: database_type == "postgresql"
   roles:
-    - role: database
-      tags: ["database", "postgresql", "mysql"]
-    - role: database-security
-      tags: ["database", "security", "encryption"]
-    - role: database-backup
-      tags: ["database", "backup", "disaster-recovery"]
+      - role: database
+        tags: ['database', 'postgresql', 'mysql']
+      - role: database-security
+        tags: ['database', 'security', 'encryption']
+      - role: database-backup
+        tags: ['database', 'backup', 'disaster-recovery']
   post_tasks:
-    - name: Verify database connectivity
-      postgresql_ping:
-        db: "{{ database_name }}"
-        login_host: "{{ ansible_default_ipv4.address }}"
-        login_user: "{{ database_admin_user }}"
-        login_password: "{{ database_admin_password }}"
-        ssl_mode: require
-      when: database_type == "postgresql"
+      - name: Verify database connectivity
+        postgresql_ping:
+            db: '{{ database_name }}'
+            login_host: '{{ ansible_default_ipv4.address }}'
+            login_user: '{{ database_admin_user }}'
+            login_password: '{{ database_admin_password }}'
+            ssl_mode: require
+        when: database_type == "postgresql"
 
 - name: Configure web servers and load balancers
   hosts: webservers
   become: true
   serial: "{{ deployment_batch_size | default('50%') }}"
   vars:
-    ssl_certificate_validation: true
-    security_headers_enabled: true
-    rate_limiting_enabled: true
+      ssl_certificate_validation: true
+      security_headers_enabled: true
+      rate_limiting_enabled: true
   roles:
-    - role: webserver
-      tags: ["webserver", "nginx", "apache"]
-    - role: ssl-certificates
-      tags: ["ssl", "certificates", "security"]
-    - role: web-security
-      tags: ["security", "waf", "headers"]
+      - role: webserver
+        tags: ['webserver', 'nginx', 'apache']
+      - role: ssl-certificates
+        tags: ['ssl', 'certificates', 'security']
+      - role: web-security
+        tags: ['security', 'waf', 'headers']
   post_tasks:
-    - name: Verify web server SSL configuration
-      uri:
-        url: "https://{{ ansible_default_ipv4.address }}"
-        method: GET
-        validate_certs: true
-        status_code: [200, 301, 302]
-      register: ssl_check
-      retries: 3
-      delay: 5
+      - name: Verify web server SSL configuration
+        uri:
+            url: 'https://{{ ansible_default_ipv4.address }}'
+            method: GET
+            validate_certs: true
+            status_code: [200, 301, 302]
+        register: ssl_check
+        retries: 3
+        delay: 5
 
 - name: Configure application servers
   hosts: app_servers
   become: true
   serial: "{{ deployment_batch_size | default('33%') }}"
   vars:
-    application_user: riskoptimizer
-    application_group: riskoptimizer
-    application_home: /opt/riskoptimizer
+      application_user: riskoptimizer
+      application_group: riskoptimizer
+      application_home: /opt/riskoptimizer
   roles:
-    - role: application-runtime
-      tags: ["application", "runtime", "java", "python"]
-    - role: application-security
-      tags: ["application", "security", "rbac"]
-    - role: application-monitoring
-      tags: ["application", "monitoring", "metrics"]
+      - role: application-runtime
+        tags: ['application', 'runtime', 'java', 'python']
+      - role: application-security
+        tags: ['application', 'security', 'rbac']
+      - role: application-monitoring
+        tags: ['application', 'monitoring', 'metrics']
   post_tasks:
-    - name: Verify application health
-      uri:
-        url: "http://{{ ansible_default_ipv4.address }}:8080/health"
-        method: GET
-        status_code: 200
-      register: app_health_check
-      retries: 5
-      delay: 10
+      - name: Verify application health
+        uri:
+            url: 'http://{{ ansible_default_ipv4.address }}:8080/health'
+            method: GET
+            status_code: 200
+        register: app_health_check
+        retries: 5
+        delay: 10
 
 - name: Configure monitoring infrastructure
   hosts: monitoring
   become: true
   vars:
-    prometheus_retention_days: 15
-    grafana_admin_password: "{{ vault_grafana_admin_password }}"
-    elasticsearch_cluster_name: riskoptimizer-logs
+      prometheus_retention_days: 15
+      grafana_admin_password: '{{ vault_grafana_admin_password }}'
+      elasticsearch_cluster_name: riskoptimizer-logs
   roles:
-    - role: prometheus
-      tags: ["monitoring", "prometheus", "metrics"]
-    - role: grafana
-      tags: ["monitoring", "grafana", "dashboards"]
-    - role: elasticsearch
-      tags: ["logging", "elasticsearch", "search"]
-    - role: logstash
-      tags: ["logging", "logstash", "processing"]
-    - role: kibana
-      tags: ["logging", "kibana", "visualization"]
+      - role: prometheus
+        tags: ['monitoring', 'prometheus', 'metrics']
+      - role: grafana
+        tags: ['monitoring', 'grafana', 'dashboards']
+      - role: elasticsearch
+        tags: ['logging', 'elasticsearch', 'search']
+      - role: logstash
+        tags: ['logging', 'logstash', 'processing']
+      - role: kibana
+        tags: ['logging', 'kibana', 'visualization']
   post_tasks:
-    - name: Verify monitoring stack health
-      uri:
-        url: "{{ item.url }}"
-        method: GET
-        status_code: 200
-        validate_certs: true
-      loop:
-        - { url: "https://{{ ansible_default_ipv4.address }}:9090/-/healthy" }
-        - { url: "https://{{ ansible_default_ipv4.address }}:3000/api/health" }
-        - {
-            url: "https://{{ ansible_default_ipv4.address }}:9200/_cluster/health",
-          }
-      register: monitoring_health_checks
+      - name: Verify monitoring stack health
+        uri:
+            url: '{{ item.url }}'
+            method: GET
+            status_code: 200
+            validate_certs: true
+        loop:
+            - { url: 'https://{{ ansible_default_ipv4.address }}:9090/-/healthy' }
+            - { url: 'https://{{ ansible_default_ipv4.address }}:3000/api/health' }
+            - { url: 'https://{{ ansible_default_ipv4.address }}:9200/_cluster/health' }
+        register: monitoring_health_checks
 
 - name: Configure security infrastructure
   hosts: security
   become: true
   vars:
-    ids_enabled: true
-    vulnerability_scanning_enabled: true
-    security_monitoring_enabled: true
+      ids_enabled: true
+      vulnerability_scanning_enabled: true
+      security_monitoring_enabled: true
   roles:
-    - role: intrusion-detection
-      tags: ["security", "ids", "ossec", "suricata"]
-    - role: vulnerability-scanner
-      tags: ["security", "vulnerability", "nessus", "openvas"]
-    - role: security-monitoring
-      tags: ["security", "monitoring", "siem"]
+      - role: intrusion-detection
+        tags: ['security', 'ids', 'ossec', 'suricata']
+      - role: vulnerability-scanner
+        tags: ['security', 'vulnerability', 'nessus', 'openvas']
+      - role: security-monitoring
+        tags: ['security', 'monitoring', 'siem']
   post_tasks:
-    - name: Verify security services
-      systemd:
-        name: "{{ item }}"
-        state: started
-        enabled: true
-      loop:
-        - ossec-hids
-        - suricata
-      register: security_services_check
+      - name: Verify security services
+        systemd:
+            name: '{{ item }}'
+            state: started
+            enabled: true
+        loop:
+            - ossec-hids
+            - suricata
+        register: security_services_check
 
 - name: Post-deployment validation and compliance checks
   hosts: all
   become: true
   gather_facts: false
   tasks:
-    - name: Run CIS benchmark compliance check
-      shell: |
-        if command -v lynis >/dev/null 2>&1; then
-          lynis audit system --quick --quiet
-        else
-          echo "Lynis not installed, skipping CIS compliance check"
-        fi
-      register: cis_compliance_check
-      changed_when: false
-      failed_when: false
+      - name: Run CIS benchmark compliance check
+        shell: |
+            if command -v lynis >/dev/null 2>&1; then
+              lynis audit system --quick --quiet
+            else
+              echo "Lynis not installed, skipping CIS compliance check"
+            fi
+        register: cis_compliance_check
+        changed_when: false
+        failed_when: false
 
-    - name: Generate deployment report
-      template:
-        src: deployment_report.j2
-        dest: "/tmp/deployment_report_{{ ansible_date_time.epoch }}.txt"
-        mode: "0644"
-      delegate_to: localhost
-      run_once: true
+      - name: Generate deployment report
+        template:
+            src: deployment_report.j2
+            dest: '/tmp/deployment_report_{{ ansible_date_time.epoch }}.txt'
+            mode: '0644'
+        delegate_to: localhost
+        run_once: true
 
-    - name: Send deployment notification
-      mail:
-        to: "{{ deployment_notification_email | default('devops@riskoptimizer.com') }}"
-        subject: "RiskOptimizer Infrastructure Deployment Completed - {{ environment }}"
-        body: |
-          RiskOptimizer infrastructure deployment has completed successfully.
+      - name: Send deployment notification
+        mail:
+            to: "{{ deployment_notification_email | default('devops@riskoptimizer.com') }}"
+            subject: 'RiskOptimizer Infrastructure Deployment Completed - {{ environment }}'
+            body: |
+                RiskOptimizer infrastructure deployment has completed successfully.
 
-          Environment: {{ environment }}
-          Timestamp: {{ ansible_date_time.iso8601 }}
-          Hosts Configured: {{ ansible_play_hosts | length }}
+                Environment: {{ environment }}
+                Timestamp: {{ ansible_date_time.iso8601 }}
+                Hosts Configured: {{ ansible_play_hosts | length }}
 
-          Deployment Report: /tmp/deployment_report_{{ ansible_date_time.epoch }}.txt
+                Deployment Report: /tmp/deployment_report_{{ ansible_date_time.epoch }}.txt
 
-          Please review the deployment logs and verify all services are operational.
-        charset: utf8
-      delegate_to: localhost
-      run_once: true
-      when: deployment_notification_email is defined
+                Please review the deployment logs and verify all services are operational.
+            charset: utf8
+        delegate_to: localhost
+        run_once: true
+        when: deployment_notification_email is defined
 
 - name: Cleanup and finalization
   hosts: all
   become: true
   gather_facts: false
   tasks:
-    - name: Clean up temporary files
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - /tmp/ansible_setup
-        - /tmp/deployment_temp
-        - /var/tmp/ansible_*
-      ignore_errors: true
+      - name: Clean up temporary files
+        file:
+            path: '{{ item }}'
+            state: absent
+        loop:
+            - /tmp/ansible_setup
+            - /tmp/deployment_temp
+            - /var/tmp/ansible_*
+        ignore_errors: true
 
-    - name: Update system package cache
-      package:
-        update_cache: true
-      when: ansible_os_family in ['Debian', 'RedHat']
+      - name: Update system package cache
+        package:
+            update_cache: true
+        when: ansible_os_family in ['Debian', 'RedHat']
 
-    - name: Restart rsyslog for log forwarding
-      systemd:
-        name: rsyslog
-        state: restarted
-        enabled: true
-      when: centralized_logging_enabled | default(true)
+      - name: Restart rsyslog for log forwarding
+        systemd:
+            name: rsyslog
+            state: restarted
+            enabled: true
+        when: centralized_logging_enabled | default(true)
 
-    - name: Final security scan
-      shell: |
-        if command -v rkhunter >/dev/null 2>&1; then
-          rkhunter --update --quiet
-          rkhunter --check --skip-keypress --quiet
-        fi
-      register: final_security_scan
-      changed_when: false
-      failed_when: false
+      - name: Final security scan
+        shell: |
+            if command -v rkhunter >/dev/null 2>&1; then
+              rkhunter --update --quiet
+              rkhunter --check --skip-keypress --quiet
+            fi
+        register: final_security_scan
+        changed_when: false
+        failed_when: false
 
   handlers:
-    - name: restart firewall
-      systemd:
-        name: "{{ firewall_service | default('ufw') }}"
-        state: restarted
+      - name: restart firewall
+        systemd:
+            name: "{{ firewall_service | default('ufw') }}"
+            state: restarted
 
-    - name: restart ssh
-      systemd:
-        name: ssh
-        state: restarted
+      - name: restart ssh
+        systemd:
+            name: ssh
+            state: restarted
 
-    - name: restart fail2ban
-      systemd:
-        name: fail2ban
-        state: restarted
+      - name: restart fail2ban
+        systemd:
+            name: fail2ban
+            state: restarted
