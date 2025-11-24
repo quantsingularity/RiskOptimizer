@@ -181,20 +181,20 @@ After installation, verify that all components are running correctly:
 ### Common Issues
 
 1. **Database Connection Errors**:
-   - Verify database credentials in `.env` file
-   - Ensure database service is running
+    - Verify database credentials in `.env` file
+    - Ensure database service is running
 
 2. **Blockchain Connection Issues**:
-   - Check if local blockchain node is running
-   - Verify contract addresses in configuration
+    - Check if local blockchain node is running
+    - Verify contract addresses in configuration
 
 3. **Frontend Build Failures**:
-   - Clear npm cache: `npm cache clean --force`
-   - Delete node_modules and reinstall: `rm -rf node_modules && npm install`
+    - Clear npm cache: `npm cache clean --force`
+    - Delete node_modules and reinstall: `rm -rf node_modules && npm install`
 
 4. **Backend API Errors**:
-   - Check logs for detailed error messages: `tail -f logs/api.log`
-   - Verify environment variables are set correctly
+    - Check logs for detailed error messages: `tail -f logs/api.log`
+    - Verify environment variables are set correctly
 
 ### Getting Help
 

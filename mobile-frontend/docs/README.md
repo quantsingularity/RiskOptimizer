@@ -36,19 +36,19 @@ The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed 
 ### **Core Technologies**
 
 1. **Blockchain (Planned)**:
-   - Ethereum or Solana for secure transaction tracking and transparency.
+    - Ethereum or Solana for secure transaction tracking and transparency.
 2. **AI/ML (Backend)**:
-   - TensorFlow, PyTorch, and Scikit-learn for predictive and optimization models.
+    - TensorFlow, PyTorch, and Scikit-learn for predictive and optimization models.
 3. **Quantitative Finance (Backend)**:
-   - Efficient Frontier, Black-Litterman Model, and CAPM for portfolio optimization.
+    - Efficient Frontier, Black-Litterman Model, and CAPM for portfolio optimization.
 4. **Database (Backend)**:
-   - PostgreSQL for storing user portfolios and financial data.
+    - PostgreSQL for storing user portfolios and financial data.
 5. **Web Frontend**:
-   - React.js with D3.js/Recharts/MUI for interactive and dynamic visualizations.
+    - React.js with D3.js/Recharts/MUI for interactive and dynamic visualizations.
 6. **Mobile Frontend**:
-   - React Native with React Native Elements and React Native Chart Kit.
+    - React Native with React Native Elements and React Native Chart Kit.
 7. **Backend**:
-   - Flask or FastAPI for managing APIs and integrating AI models.
+    - Flask or FastAPI for managing APIs and integrating AI models.
 
 ---
 
@@ -58,34 +58,34 @@ The **AI-Powered Portfolio Optimization Tool** is an advanced platform designed 
 
 - **Tech Stack**: React.js + Visualization Libraries (D3.js, Recharts, etc.)
 - **Responsibilities**:
-  - Provide a comprehensive web interface with interactive charts and detailed analysis tools.
-  - Enable users to input and adjust portfolio parameters dynamically.
+    - Provide a comprehensive web interface with interactive charts and detailed analysis tools.
+    - Enable users to input and adjust portfolio parameters dynamically.
 
 ### **2. Mobile Frontend**
 
 - **Tech Stack**: React Native + React Native Elements + React Native Chart Kit
 - **Responsibilities**:
-  - Offer a streamlined mobile experience for portfolio monitoring and basic management.
-  - Display real-time market data, watchlists, and portfolio summaries.
-  - Provide theme customization (Light/Dark/System).
+    - Offer a streamlined mobile experience for portfolio monitoring and basic management.
+    - Display real-time market data, watchlists, and portfolio summaries.
+    - Provide theme customization (Light/Dark/System).
 
 ### **3. Backend**
 
 - **Tech Stack**: Flask/FastAPI + Python Libraries
 - **Responsibilities**:
-  - Serve APIs for user authentication, portfolio data, market data (proxy/cache), optimization recommendations, and risk analysis.
-  - Integrate AI models and (future) blockchain data.
+    - Serve APIs for user authentication, portfolio data, market data (proxy/cache), optimization recommendations, and risk analysis.
+    - Integrate AI models and (future) blockchain data.
 
 ### **4. Blockchain Integration (Planned)**
 
 - **Smart Contract Usage**:
-  - Record transactions and portfolio changes on-chain for security and transparency.
+    - Record transactions and portfolio changes on-chain for security and transparency.
 
 ### **5. AI Models (Backend)**
 
 - **Models Used**:
-  - Neural networks for predictive modeling.
-  - Optimization algorithms like Markowitz Model for portfolio allocation.
+    - Neural networks for predictive modeling.
+    - Optimization algorithms like Markowitz Model for portfolio allocation.
 
 ---
 

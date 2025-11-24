@@ -60,84 +60,84 @@ The platform offers a comprehensive suite of financial and technical features:
 
 1. **Clone the repository**
 
-   ```bash
-   git clone https://github.com/abrar2030/RiskOptimizer.git
-   cd RiskOptimizer/code/backend
-   ```
+    ```bash
+    git clone https://github.com/abrar2030/RiskOptimizer.git
+    cd RiskOptimizer/code/backend
+    ```
 
 2. **Create virtual environment**
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
 
 3. **Install dependencies**
 
-   ```bash
-   pip install -r requirements.txt
-   pip install -r tests/requirements-test.txt
-   ```
+    ```bash
+    pip install -r requirements.txt
+    pip install -r tests/requirements-test.txt
+    ```
 
 4. **Set up environment variables**
 
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+    ```bash
+    cp .env.example .env
+    # Edit .env with your configuration
+    ```
 
 5. **Start services with Docker Compose**
 
-   ```bash
-   docker-compose up -d postgres redis
-   ```
+    ```bash
+    docker-compose up -d postgres redis
+    ```
 
 6. **Run database migrations**
 
-   ```bash
-   alembic upgrade head
-   ```
+    ```bash
+    alembic upgrade head
+    ```
 
 7. **Start the application**
 
-   ```bash
-   # Start API server
-   uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    ```bash
+    # Start API server
+    uvicorn app:app --reload --host 0.0.0.0 --port 8000
 
-   # Start Celery worker (in another terminal)
-   celery -A tasks.celery_app worker --loglevel=info
+    # Start Celery worker (in another terminal)
+    celery -A tasks.celery_app worker --loglevel=info
 
-   # Start Celery beat scheduler (in another terminal)
-   celery -A tasks.celery_app beat --loglevel=info
-   ```
+    # Start Celery beat scheduler (in another terminal)
+    celery -A tasks.celery_app beat --loglevel=info
+    ```
 
 ### Docker Deployment
 
 1. **Build and start all services**
 
-   ```bash
-   docker-compose up --build
-   ```
+    ```bash
+    docker-compose up --build
+    ```
 
 2. **Access the application**
-   - API: http://localhost:8000
-   - API Documentation: http://localhost:8000/apidocs/
-   - Flower (Celery monitoring): http://localhost:5555
-   - Grafana: http://localhost:3000
+    - API: http://localhost:8000
+    - API Documentation: http://localhost:8000/apidocs/
+    - Flower (Celery monitoring): http://localhost:5555
+    - Grafana: http://localhost:3000
 
 ### Kubernetes Deployment
 
 1. **Apply Kubernetes manifests**
 
-   ```bash
-   kubectl apply -f deployment/kubernetes.yaml
-   ```
+    ```bash
+    kubectl apply -f deployment/kubernetes.yaml
+    ```
 
 2. **Configure ingress and SSL**
-   ```bash
-   # Update ingress configuration for your domain
-   kubectl apply -f deployment/ingress.yaml
-   ```
+    ```bash
+    # Update ingress configuration for your domain
+    kubectl apply -f deployment/ingress.yaml
+    ```
 
 ## 📚 API Documentation
 

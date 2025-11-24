@@ -9,15 +9,15 @@ Welcome to the RiskOptimizer User Guide. This comprehensive guide will help you 
 ### Account Creation and Login
 
 1. **Creating an Account**:
-   - Visit the RiskOptimizer website at [www.riskoptimizer.com](http://www.riskoptimizer.com)
-   - Click on "Sign Up" in the top-right corner
-   - Fill in your personal information and create a password
-   - Verify your email address through the confirmation link
+    - Visit the RiskOptimizer website at [www.riskoptimizer.com](http://www.riskoptimizer.com)
+    - Click on "Sign Up" in the top-right corner
+    - Fill in your personal information and create a password
+    - Verify your email address through the confirmation link
 
 2. **Logging In**:
-   - Navigate to the login page
-   - Enter your email and password
-   - Enable two-factor authentication (recommended)
+    - Navigate to the login page
+    - Enter your email and password
+    - Enable two-factor authentication (recommended)
 
 ### Dashboard Overview
 
@@ -38,10 +38,10 @@ After logging in, you'll be directed to the main dashboard, which displays:
 1. Click on "Portfolios" in the main navigation
 2. Select "Create New Portfolio"
 3. Enter portfolio details:
-   - Portfolio name
-   - Investment goals
-   - Risk tolerance (Low, Moderate, High)
-   - Investment horizon (Short-term, Medium-term, Long-term)
+    - Portfolio name
+    - Investment goals
+    - Risk tolerance (Low, Moderate, High)
+    - Investment horizon (Short-term, Medium-term, Long-term)
 4. Click "Create Portfolio"
 
 ### Adding Assets to Your Portfolio
@@ -50,18 +50,18 @@ After logging in, you'll be directed to the main dashboard, which displays:
 2. Click "Add Asset"
 3. Search for assets by ticker symbol or company name
 4. Enter the following details:
-   - Quantity
-   - Purchase price
-   - Purchase date
+    - Quantity
+    - Purchase price
+    - Purchase date
 5. Click "Add to Portfolio"
 
 ### Importing Existing Portfolios
 
 1. Go to "Portfolios" > "Import Portfolio"
 2. Choose import method:
-   - CSV file upload
-   - Connect to brokerage (supported brokerages listed)
-   - Manual entry
+    - CSV file upload
+    - Connect to brokerage (supported brokerages listed)
+    - Manual entry
 3. Follow the on-screen instructions to complete the import
 
 ### Portfolio Rebalancing
@@ -98,10 +98,10 @@ The Risk Dashboard provides visual representations of:
 
 1. Navigate to "Risk Settings"
 2. Adjust parameters according to your preferences:
-   - Risk tolerance level
-   - Confidence intervals for VaR calculations
-   - Stress test scenarios
-   - Correlation assumptions
+    - Risk tolerance level
+    - Confidence intervals for VaR calculations
+    - Stress test scenarios
+    - Correlation assumptions
 3. Save your preferences
 
 ## AI-Powered Optimization
@@ -111,10 +111,10 @@ The Risk Dashboard provides visual representations of:
 1. Select the portfolio to optimize
 2. Click "Optimize Portfolio"
 3. Set optimization parameters:
-   - Target return
-   - Risk constraints
-   - Asset class limitations
-   - Sector diversification requirements
+    - Target return
+    - Risk constraints
+    - Asset class limitations
+    - Sector diversification requirements
 4. Click "Generate Recommendations"
 
 ### Understanding Optimization Results
@@ -130,8 +130,8 @@ The optimization results include:
 
 1. Review the optimization recommendations
 2. Select which recommendations to implement:
-   - All recommendations
-   - Selected recommendations only
+    - All recommendations
+    - Selected recommendations only
 3. Click "Apply to Portfolio"
 4. Confirm the changes
 
@@ -142,9 +142,9 @@ The optimization results include:
 1. Navigate to "Blockchain" > "Transaction History"
 2. View all portfolio transactions recorded on the blockchain
 3. Filter transactions by:
-   - Date range
-   - Asset type
-   - Transaction type (buy/sell)
+    - Date range
+    - Asset type
+    - Transaction type (buy/sell)
 
 ### Verifying Portfolio Integrity
 
@@ -167,10 +167,10 @@ The blockchain integration provides:
 
 1. Navigate to "Reports" > "Create Custom Report"
 2. Select report components:
-   - Performance metrics
-   - Risk analysis
-   - Asset allocation
-   - Transaction history
+    - Performance metrics
+    - Risk analysis
+    - Asset allocation
+    - Transaction history
 3. Choose time period and comparison benchmarks
 4. Generate and download the report
 
@@ -178,10 +178,10 @@ The blockchain integration provides:
 
 1. Go to "Analysis" > "Scenario Testing"
 2. Create custom scenarios or select from pre-defined ones:
-   - Market crash
-   - Interest rate hikes
-   - Sector-specific downturns
-   - Economic recession
+    - Market crash
+    - Interest rate hikes
+    - Sector-specific downturns
+    - Economic recession
 3. Run the analysis to see how your portfolio would perform
 4. Review results and consider portfolio adjustments
 
@@ -197,8 +197,8 @@ The blockchain integration provides:
 ### Installing the Mobile App
 
 1. Download the RiskOptimizer app from:
-   - Apple App Store (iOS)
-   - Google Play Store (Android)
+    - Apple App Store (iOS)
+    - Google Play Store (Android)
 2. Log in using your existing account credentials
 
 ### Mobile Features
@@ -216,19 +216,19 @@ The mobile app provides:
 ### Common Issues and Solutions
 
 1. **Login Problems**:
-   - Reset your password through the "Forgot Password" link
-   - Clear browser cache and cookies
-   - Ensure you're using a supported browser
+    - Reset your password through the "Forgot Password" link
+    - Clear browser cache and cookies
+    - Ensure you're using a supported browser
 
 2. **Data Import Issues**:
-   - Verify CSV format matches the template
-   - Check brokerage connection settings
-   - Contact support for assistance with API connections
+    - Verify CSV format matches the template
+    - Check brokerage connection settings
+    - Contact support for assistance with API connections
 
 3. **Optimization Errors**:
-   - Ensure portfolio contains sufficient assets
-   - Check for invalid constraints
-   - Try adjusting optimization parameters
+    - Ensure portfolio contains sufficient assets
+    - Check for invalid constraints
+    - Try adjusting optimization parameters
 
 ### Getting Support
 

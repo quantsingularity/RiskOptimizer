@@ -158,14 +158,14 @@ Example:
  * @returns {number} The Sharpe ratio
  */
 function calculateSharpeRatio(
-  portfolioReturn: number,
-  riskFreeRate: number,
-  portfolioStdDev: number,
+    portfolioReturn: number,
+    riskFreeRate: number,
+    portfolioStdDev: number,
 ): number {
-  if (portfolioStdDev === 0) {
-    throw new Error("Portfolio standard deviation cannot be zero");
-  }
-  return (portfolioReturn - riskFreeRate) / portfolioStdDev;
+    if (portfolioStdDev === 0) {
+        throw new Error('Portfolio standard deviation cannot be zero');
+    }
+    return (portfolioReturn - riskFreeRate) / portfolioStdDev;
 }
 ```
 
@@ -183,7 +183,7 @@ Example:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 /**
  * @title Portfolio Tracker
@@ -292,21 +292,21 @@ def test_risk_calculation(sample_portfolio):
 Example:
 
 ```javascript
-import { render, screen, fireEvent } from "@testing-library/react";
-import PortfolioCard from "./PortfolioCard";
+import { render, screen, fireEvent } from '@testing-library/react';
+import PortfolioCard from './PortfolioCard';
 
-test("displays portfolio name and value", () => {
-  const portfolio = {
-    id: "123",
-    name: "Test Portfolio",
-    value: 10000,
-    currency: "USD",
-  };
+test('displays portfolio name and value', () => {
+    const portfolio = {
+        id: '123',
+        name: 'Test Portfolio',
+        value: 10000,
+        currency: 'USD',
+    };
 
-  render(<PortfolioCard portfolio={portfolio} />);
+    render(<PortfolioCard portfolio={portfolio} />);
 
-  expect(screen.getByText("Test Portfolio")).toBeInTheDocument();
-  expect(screen.getByText("$10,000.00")).toBeInTheDocument();
+    expect(screen.getByText('Test Portfolio')).toBeInTheDocument();
+    expect(screen.getByText('$10,000.00')).toBeInTheDocument();
 });
 ```
 
@@ -320,30 +320,30 @@ test("displays portfolio name and value", () => {
 Example:
 
 ```javascript
-const PortfolioTracker = artifacts.require("PortfolioTracker");
+const PortfolioTracker = artifacts.require('PortfolioTracker');
 
-contract("PortfolioTracker", (accounts) => {
-  const owner = accounts[0];
-  const user = accounts[1];
+contract('PortfolioTracker', (accounts) => {
+    const owner = accounts[0];
+    const user = accounts[1];
 
-  it("should record a new transaction", async () => {
-    const tracker = await PortfolioTracker.deployed();
+    it('should record a new transaction', async () => {
+        const tracker = await PortfolioTracker.deployed();
 
-    await tracker.recordTransaction(
-      "AAPL",
-      100,
-      150.5,
-      true, // isBuy
-      { from: user },
-    );
+        await tracker.recordTransaction(
+            'AAPL',
+            100,
+            150.5,
+            true, // isBuy
+            { from: user },
+        );
 
-    const transactions = await tracker.getTransactions(user);
-    assert.equal(transactions.length, 1);
-    assert.equal(transactions[0].symbol, "AAPL");
-    assert.equal(transactions[0].quantity, 100);
-    assert.equal(transactions[0].price, 150.5);
-    assert.equal(transactions[0].isBuy, true);
-  });
+        const transactions = await tracker.getTransactions(user);
+        assert.equal(transactions.length, 1);
+        assert.equal(transactions[0].symbol, 'AAPL');
+        assert.equal(transactions[0].quantity, 100);
+        assert.equal(transactions[0].price, 150.5);
+        assert.equal(transactions[0].isBuy, true);
+    });
 });
 ```
 

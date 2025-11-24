@@ -40,13 +40,13 @@ The mobile app will mirror the core functionalities of the web application, adap
 
 - **Portfolio List Screen:** Cards displaying each portfolio's name, total value, and perhaps a mini-chart or risk indicator. Floating action button (+) to create a new portfolio.
 - **Portfolio Detail Screen:**
-  - Header with portfolio name, value, currency.
-  - Tabs or sections for:
-    - **Overview:** Key metrics (risk score, performance summary).
-    - **Assets:** List of assets (symbol, name, quantity, value, allocation %). Ability to tap an asset to view more details or navigate to Market Data screen. Button to add a new asset.
-    - **Performance:** Detailed performance charts (daily, weekly, monthly, yearly, etc.).
-    - **Risk:** Link to navigate to the detailed Risk Analysis screen for this portfolio.
-    - **Transactions:** Link to view blockchain transaction history for this portfolio.
+    - Header with portfolio name, value, currency.
+    - Tabs or sections for:
+        - **Overview:** Key metrics (risk score, performance summary).
+        - **Assets:** List of assets (symbol, name, quantity, value, allocation %). Ability to tap an asset to view more details or navigate to Market Data screen. Button to add a new asset.
+        - **Performance:** Detailed performance charts (daily, weekly, monthly, yearly, etc.).
+        - **Risk:** Link to navigate to the detailed Risk Analysis screen for this portfolio.
+        - **Transactions:** Link to view blockchain transaction history for this portfolio.
 - **Create/Edit Portfolio Screen:** Form to input name, description, currency.
 - **Add Asset Screen:** Form to search/input asset symbol, quantity, purchase price, purchase date.
 
