@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Grid,
@@ -18,6 +18,7 @@ import {
     ListItemIcon,
     Tabs,
     Tab,
+    Alert,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SecurityIcon from '@mui/icons-material/Security';
@@ -31,10 +32,17 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import SaveIcon from '@mui/icons-material/Save';
 
 const Settings = () => {
-    const [tabValue, setTabValue] = React.useState(0);
+    const [tabValue, setTabValue] = useState(0);
+    const [isSaved, setIsSaved] = useState(false);
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
+    };
+
+    const handleSave = () => {
+        // Simulate saving settings
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 3000);
     };
 
     return (
@@ -50,9 +58,16 @@ const Settings = () => {
                 <Typography variant="h4" component="h1" gutterBottom>
                     Settings
                 </Typography>
-                <Button variant="contained" startIcon={<SaveIcon />}>
-                    Save Changes
-                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {isSaved && (
+                        <Alert severity="success" sx={{ mr: 2, py: 0 }}>
+                            Settings saved!
+                        </Alert>
+                    )}
+                    <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave}>
+                        Save Changes
+                    </Button>
+                </Box>
             </Box>
 
             <Card>
@@ -324,8 +339,8 @@ const Settings = () => {
                                             </Box>
                                             <TextField
                                                 fullWidth
-                                                label="API Provider"
-                                                defaultValue="Alpha Vantage"
+                                                label="API Endpoint"
+                                                defaultValue="https://api.marketdata.com/v1"
                                                 margin="normal"
                                                 variant="outlined"
                                                 size="small"
@@ -333,23 +348,17 @@ const Settings = () => {
                                             <TextField
                                                 fullWidth
                                                 label="API Key"
-                                                defaultValue="••••••••••••••••"
+                                                type="password"
+                                                defaultValue="****************"
                                                 margin="normal"
                                                 variant="outlined"
                                                 size="small"
-                                                type="password"
                                             />
                                             <Button variant="outlined" fullWidth sx={{ mt: 2 }}>
-                                                Verify API Key
+                                                Test Connection
                                             </Button>
                                         </CardContent>
                                     </Card>
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <Button variant="contained" fullWidth>
-                                        Connect New API
-                                    </Button>
                                 </Grid>
                             </Grid>
                         </Box>
@@ -360,92 +369,33 @@ const Settings = () => {
                             <Typography variant="h6" gutterBottom>
                                 Security Settings
                             </Typography>
-
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                    <Typography variant="subtitle2" gutterBottom>
+                            <List>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <VpnKeyIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Two-Factor Authentication (2FA)"
+                                        secondary="Add an extra layer of security to your account"
+                                    />
+                                    <Button variant="outlined" size="small">
+                                        Enable 2FA
+                                    </Button>
+                                </ListItem>
+                                <Divider variant="inset" component="li" />
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <SecurityIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Change Password"
+                                        secondary="Update your account password"
+                                    />
+                                    <Button variant="outlined" size="small">
                                         Change Password
-                                    </Typography>
-                                    <TextField
-                                        fullWidth
-                                        label="Current Password"
-                                        type="password"
-                                        margin="normal"
-                                        variant="outlined"
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="New Password"
-                                        type="password"
-                                        margin="normal"
-                                        variant="outlined"
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        label="Confirm New Password"
-                                        type="password"
-                                        margin="normal"
-                                        variant="outlined"
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        fullWidth
-                                        sx={{ mt: 2 }}
-                                        startIcon={<VpnKeyIcon />}
-                                    >
-                                        Update Password
                                     </Button>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        Two-Factor Authentication
-                                    </Typography>
-                                    <Card
-                                        variant="outlined"
-                                        sx={{ mb: 2, backgroundColor: 'background.default' }}
-                                    >
-                                        <CardContent>
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center',
-                                                    mb: 2,
-                                                }}
-                                            >
-                                                <Typography variant="body1">2FA Status</Typography>
-                                                <Typography
-                                                    variant="body1"
-                                                    color="success.main"
-                                                    sx={{ fontWeight: 600 }}
-                                                >
-                                                    Enabled
-                                                </Typography>
-                                            </Box>
-                                            <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                paragraph
-                                            >
-                                                Two-factor authentication adds an extra layer of
-                                                security to your account by requiring more than just
-                                                a password to sign in.
-                                            </Typography>
-                                            <Button variant="outlined" color="error" fullWidth>
-                                                Disable 2FA
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        Session Management
-                                    </Typography>
-                                    <Button variant="outlined" color="error" fullWidth>
-                                        Log Out All Other Devices
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                                </ListItem>
+                            </List>
                         </Box>
                     )}
 
@@ -454,78 +404,40 @@ const Settings = () => {
                             <Typography variant="h6" gutterBottom>
                                 Notification Settings
                             </Typography>
-
                             <List>
                                 <ListItem>
+                                    <ListItemIcon>
+                                        <NotificationsIcon />
+                                    </ListItemIcon>
                                     <ListItemText
                                         primary="Email Notifications"
-                                        secondary="Receive important updates via email"
+                                        secondary="Receive alerts and updates via email"
                                     />
                                     <Switch defaultChecked />
                                 </ListItem>
-
-                                <Divider component="li" />
-
+                                <Divider variant="inset" component="li" />
                                 <ListItem>
+                                    <ListItemIcon>
+                                        <NotificationsIcon />
+                                    </ListItemIcon>
                                     <ListItemText
-                                        primary="Portfolio Alerts"
-                                        secondary="Get notified about significant changes in your portfolio"
+                                        primary="Optimization Completion"
+                                        secondary="Notify me when a portfolio optimization run is complete"
                                     />
                                     <Switch defaultChecked />
                                 </ListItem>
-
-                                <Divider component="li" />
-
+                                <Divider variant="inset" component="li" />
                                 <ListItem>
+                                    <ListItemIcon>
+                                        <NotificationsIcon />
+                                    </ListItemIcon>
                                     <ListItemText
-                                        primary="Market Updates"
-                                        secondary="Receive daily market summaries and news"
+                                        primary="Risk Threshold Alerts"
+                                        secondary="Notify me when portfolio risk exceeds a set threshold"
                                     />
                                     <Switch />
                                 </ListItem>
-
-                                <Divider component="li" />
-
-                                <ListItem>
-                                    <ListItemText
-                                        primary="Risk Threshold Alerts"
-                                        secondary="Get notified when portfolio risk exceeds your threshold"
-                                    />
-                                    <Switch defaultChecked />
-                                </ListItem>
-
-                                <Divider component="li" />
-
-                                <ListItem>
-                                    <ListItemText
-                                        primary="Optimization Suggestions"
-                                        secondary="Receive AI-generated portfolio optimization suggestions"
-                                    />
-                                    <Switch defaultChecked />
-                                </ListItem>
                             </List>
-
-                            <Box sx={{ mt: 3 }}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Notification Frequency
-                                </Typography>
-                                <TextField
-                                    select
-                                    label="Email Digest Frequency"
-                                    defaultValue="daily"
-                                    SelectProps={{
-                                        native: true,
-                                    }}
-                                    fullWidth
-                                    variant="outlined"
-                                    margin="normal"
-                                >
-                                    <option value="realtime">Real-time</option>
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                </TextField>
-                            </Box>
                         </Box>
                     )}
                 </CardContent>
