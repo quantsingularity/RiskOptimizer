@@ -1,5 +1,4 @@
 from typing import Any, Dict, List, Optional
-
 from cryptography.fernet import Fernet
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import ConflictError, DatabaseError, NotFoundError
@@ -23,7 +22,7 @@ class UserRepository:
     and integrates with an audit service for logging database actions.
     """
 
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Optional[Session] = None) -> Any:
         """
         Initializes the UserRepository.
 
@@ -32,7 +31,6 @@ class UserRepository:
                      methods will obtain a session internally.
         """
         self._session = session
-        # Initialize Fernet for symmetric encryption of sensitive data
         self.fernet = Fernet(config.security.data_encryption_key.encode("utf-8"))
         self.audit_service = audit_service
 
@@ -79,7 +77,6 @@ class UserRepository:
             return self.fernet.decrypt(data.encode("utf-8")).decode("utf-8")
         except Exception as e:
             logger.error(f"Error decrypting data: {str(e)}", exc_info=True)
-            # Depending on security policy, you might want to raise an error here
             return None
 
     def get_by_id(
@@ -255,11 +252,7 @@ class UserRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Encrypt the wallet address before storing it in the database
             encrypted_wallet_address = self._encrypt_data(wallet_address)
-
-            # Create a new User instance
             user = User(
                 email=email,
                 username=username,
@@ -267,14 +260,10 @@ class UserRepository:
                 wallet_address=encrypted_wallet_address,
                 role=role,
             )
-
             db.add(user)
-            db.flush()  # Flush to get the ID and trigger unique constraint checks
-
-            # Decrypt wallet address before returning the user object for consistency
+            db.flush()
             if user.wallet_address:
                 user.wallet_address = self._decrypt_data(user.wallet_address)
-
             logger.info(f"Created user {user.id} with email {email}")
             self.audit_service.log_action(
                 user_id=user.id,
@@ -285,7 +274,6 @@ class UserRepository:
             )
             return user
         except IntegrityError as e:
-            # Handle unique constraint violations (e.g., duplicate email, username, wallet address)
             logger.error(f"Error creating user (conflict): {str(e)}", exc_info=True)
             self.audit_service.log_action(
                 user_id=None,
@@ -311,7 +299,6 @@ class UserRepository:
             else:
                 raise ConflictError("User already exists", "user")
         except SQLAlchemyError as e:
-            # Handle other SQLAlchemy errors
             logger.error(f"Error creating user: {str(e)}", exc_info=True)
             self.audit_service.log_action(
                 user_id=None,
@@ -348,32 +335,20 @@ class UserRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Retrieve the user to be updated
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 raise NotFoundError(f"User {user_id} not found", "user", str(user_id))
-
-            # Store old data for audit logging before modification
             old_data = {
                 key: getattr(user, key) for key in data.keys() if hasattr(user, key)
             }
-
-            # Encrypt wallet_address if present in the update data before applying changes
             if "wallet_address" in data and data["wallet_address"] is not None:
                 data["wallet_address"] = self._encrypt_data(data["wallet_address"])
-
-            # Apply updates to the user object
             for key, value in data.items():
                 if hasattr(user, key):
                     setattr(user, key, value)
-
-            db.flush()  # Flush to apply changes and check for integrity errors
-
-            # Decrypt wallet address before returning the user object
+            db.flush()
             if user.wallet_address:
                 user.wallet_address = self._decrypt_data(user.wallet_address)
-
             logger.info(f"Updated user {user_id}")
             self.audit_service.log_action(
                 user_id=user.id,
@@ -384,9 +359,8 @@ class UserRepository:
             )
             return user
         except NotFoundError:
-            raise  # Re-raise NotFoundError directly
+            raise
         except IntegrityError as e:
-            # Handle unique constraint violations during update
             logger.error(f"Error updating user (conflict): {str(e)}", exc_info=True)
             self.audit_service.log_action(
                 user_id=user_id,
@@ -401,14 +375,13 @@ class UserRepository:
             )
             if "email" in str(e).lower():
                 raise ConflictError(
-                    f"User with email {data.get("email")} already exists", "user"
+                    f"User with email {data.get('email')} already exists", "user"
                 )
             elif "username" in str(e).lower():
                 raise ConflictError(
-                    f"User with username {data.get("username")} already exists", "user"
+                    f"User with username {data.get('username')} already exists", "user"
                 )
             elif "wallet_address" in str(e).lower():
-                # Decrypt the wallet address for the error message if it was encrypted in data
                 display_wallet_address = (
                     self._decrypt_data(data.get("wallet_address"))
                     if data.get("wallet_address")
@@ -421,7 +394,6 @@ class UserRepository:
             else:
                 raise ConflictError("Update violates unique constraints", "user")
         except SQLAlchemyError as e:
-            # Handle other SQLAlchemy errors
             logger.error(f"Error updating user: {str(e)}", exc_info=True)
             self.audit_service.log_action(
                 user_id=user_id,
@@ -452,23 +424,16 @@ class UserRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Find the user to delete
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
-                return False  # User not found
-
-            # Store data for audit logging before deletion
+                return False
             audit_details = {
                 "user_id": user.id,
                 "email": user.email,
                 "username": user.username,
             }
-
-            # Delete the user record (configured cascades will handle related entities)
             db.delete(user)
-            db.flush()  # Flush to commit deletion
-
+            db.flush()
             logger.info(f"Deleted user {user_id}")
             self.audit_service.log_action(
                 user_id=user.id,
@@ -509,7 +474,6 @@ class UserRepository:
         try:
             db = self._get_session(session)
             users = db.query(User).offset(skip).limit(limit).all()
-            # Decrypt wallet addresses for all retrieved users
             for user in users:
                 if user.wallet_address:
                     user.wallet_address = self._decrypt_data(user.wallet_address)
@@ -552,5 +516,4 @@ class UserRepository:
             raise DatabaseError(f"Failed to count users: {str(e)}")
 
 
-# Singleton instance of UserRepository for application-wide use
 user_repository = UserRepository()

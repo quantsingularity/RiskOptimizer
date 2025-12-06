@@ -11,7 +11,7 @@ class RiskOptimizerException(Exception):
 
     def __init__(
         self, message: str, error_code: str = None, details: Dict[str, Any] = None
-    ):
+    ) -> Any:
         self.message = message
         self.error_code = error_code or self.__class__.__name__.upper()
         self.details = details or {}
@@ -31,7 +31,7 @@ class ValidationError(RiskOptimizerException):
 
     def __init__(
         self, message: str = "Validation failed", field: str = None, value: Any = None
-    ):
+    ) -> Any:
         details = {}
         if field:
             details["field"] = field
@@ -43,14 +43,16 @@ class ValidationError(RiskOptimizerException):
 class AuthenticationError(RiskOptimizerException):
     """Raised when authentication fails."""
 
-    def __init__(self, message: str = "Authentication failed"):
+    def __init__(self, message: str = "Authentication failed") -> Any:
         super().__init__(message, "AUTHENTICATION_ERROR")
 
 
 class AuthorizationError(RiskOptimizerException):
     """Raised when authorization fails."""
 
-    def __init__(self, message: str = "Access denied", required_permission: str = None):
+    def __init__(
+        self, message: str = "Access denied", required_permission: str = None
+    ) -> Any:
         details = {}
         if required_permission:
             details["required_permission"] = required_permission
@@ -65,7 +67,7 @@ class NotFoundError(RiskOptimizerException):
         message: str = "Resource not found",
         resource_type: str = None,
         resource_id: str = None,
-    ):
+    ) -> Any:
         details = {}
         if resource_type:
             details["resource_type"] = resource_type
@@ -77,7 +79,9 @@ class NotFoundError(RiskOptimizerException):
 class ConflictError(RiskOptimizerException):
     """Raised when a resource conflict occurs."""
 
-    def __init__(self, message: str = "Resource conflict", resource_type: str = None):
+    def __init__(
+        self, message: str = "Resource conflict", resource_type: str = None
+    ) -> Any:
         details = {}
         if resource_type:
             details["resource_type"] = resource_type
@@ -89,7 +93,7 @@ class DatabaseError(RiskOptimizerException):
 
     def __init__(
         self, message: str = "Database operation failed", operation: str = None
-    ):
+    ) -> Any:
         details = {}
         if operation:
             details["operation"] = operation
@@ -104,7 +108,7 @@ class ExternalServiceError(RiskOptimizerException):
         message: str = "External service error",
         service: str = None,
         status_code: int = None,
-    ):
+    ) -> Any:
         details = {}
         if service:
             details["service"] = service
@@ -121,7 +125,7 @@ class RateLimitError(RiskOptimizerException):
         message: str = "Rate limit exceeded",
         limit: int = None,
         window: int = None,
-    ):
+    ) -> Any:
         details = {}
         if limit:
             details["limit"] = limit
@@ -133,7 +137,9 @@ class RateLimitError(RiskOptimizerException):
 class ModelError(RiskOptimizerException):
     """Raised when AI model operations fail."""
 
-    def __init__(self, message: str = "Model operation failed", model_type: str = None):
+    def __init__(
+        self, message: str = "Model operation failed", model_type: str = None
+    ) -> Any:
         details = {}
         if model_type:
             details["model_type"] = model_type
@@ -145,7 +151,7 @@ class CalculationError(RiskOptimizerException):
 
     def __init__(
         self, message: str = "Calculation failed", calculation_type: str = None
-    ):
+    ) -> Any:
         details = {}
         if calculation_type:
             details["calculation_type"] = calculation_type
@@ -157,7 +163,7 @@ class BlockchainError(RiskOptimizerException):
 
     def __init__(
         self, message: str = "Blockchain operation failed", transaction_hash: str = None
-    ):
+    ) -> Any:
         details = {}
         if transaction_hash:
             details["transaction_hash"] = transaction_hash
@@ -167,7 +173,9 @@ class BlockchainError(RiskOptimizerException):
 class CacheError(RiskOptimizerException):
     """Raised when cache operations fail."""
 
-    def __init__(self, message: str = "Cache operation failed", operation: str = None):
+    def __init__(
+        self, message: str = "Cache operation failed", operation: str = None
+    ) -> Any:
         details = {}
         if operation:
             details["operation"] = operation
@@ -182,7 +190,7 @@ class TaskError(RiskOptimizerException):
         message: str = "Task operation failed",
         task_id: str = None,
         task_type: str = None,
-    ):
+    ) -> Any:
         details = {}
         if task_id:
             details["task_id"] = task_id

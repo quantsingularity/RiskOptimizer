@@ -1,11 +1,8 @@
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
-
 from riskoptimizer.core.exceptions import DatabaseError, NotFoundError
 from riskoptimizer.core.logging import get_logger
-from riskoptimizer.domain.services.audit_service import (
-    audit_service,
-)  # Import audit service
+from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.database.models import Allocation, Portfolio, User
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -16,7 +13,7 @@ logger = get_logger(__name__)
 class PortfolioRepository:
     """Repository for portfolio-related database operations."""
 
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Optional[Session] = None) -> Any:
         """
         Initialize repository with optional session.
 
@@ -168,18 +165,14 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Create portfolio
             portfolio = Portfolio(
                 user_id=user_id,
                 user_address=user_address,
                 name=name,
                 description=description,
             )
-
             db.add(portfolio)
-            db.flush()  # Flush to get the ID
-
+            db.flush()
             logger.info(f"Created portfolio {portfolio.id} for user {user_id}")
             self.audit_service.log_action(
                 user_id=user_id,
@@ -224,8 +217,6 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Get portfolio
             portfolio = db.query(Portfolio).filter(Portfolio.id == portfolio_id).first()
             if not portfolio:
                 raise NotFoundError(
@@ -233,21 +224,15 @@ class PortfolioRepository:
                     "portfolio",
                     str(portfolio_id),
                 )
-
-            # Store old data for audit
             old_data = {
                 key: getattr(portfolio, key)
                 for key in data.keys()
                 if hasattr(portfolio, key)
             }
-
-            # Update fields
             for key, value in data.items():
                 if hasattr(portfolio, key):
                     setattr(portfolio, key, value)
-
             db.flush()
-
             logger.info(f"Updated portfolio {portfolio_id}")
             self.audit_service.log_action(
                 user_id=portfolio.user_id,
@@ -290,23 +275,16 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Get portfolio
             portfolio = db.query(Portfolio).filter(Portfolio.id == portfolio_id).first()
             if not portfolio:
                 return False
-
-            # Store data for audit before deletion
             audit_details = {
                 "portfolio_id": portfolio.id,
                 "name": portfolio.name,
                 "user_address": portfolio.user_address,
             }
-
-            # Delete portfolio (cascade will delete allocations)
             db.delete(portfolio)
             db.flush()
-
             logger.info(f"Deleted portfolio {portfolio_id}")
             self.audit_service.log_action(
                 user_id=portfolio.user_id,
@@ -353,8 +331,6 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Get portfolio
             portfolio = db.query(Portfolio).filter(Portfolio.id == portfolio_id).first()
             if not portfolio:
                 raise NotFoundError(
@@ -362,13 +338,9 @@ class PortfolioRepository:
                     "portfolio",
                     str(portfolio_id),
                 )
-
-            # Delete existing allocations
             db.query(Allocation).filter(
                 Allocation.portfolio_id == portfolio_id
             ).delete()
-
-            # Create new allocations
             allocation_objects = []
             for asset, percentage in allocations.items():
                 allocation = Allocation(
@@ -376,9 +348,7 @@ class PortfolioRepository:
                 )
                 db.add(allocation)
                 allocation_objects.append(allocation)
-
             db.flush()
-
             logger.info(
                 f"Saved {len(allocation_objects)} allocations for portfolio {portfolio_id}"
             )
@@ -463,8 +433,6 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Get portfolio
             portfolio = (
                 db.query(Portfolio)
                 .filter(Portfolio.user_address == user_address)
@@ -476,24 +444,16 @@ class PortfolioRepository:
                     "portfolio",
                     user_address,
                 )
-
-            # Get allocations
             allocations = (
                 db.query(Allocation)
                 .filter(Allocation.portfolio_id == portfolio.id)
                 .all()
             )
-
-            # Format response
             assets = []
             allocation_percentages = []
-
             for allocation in allocations:
                 assets.append(allocation.asset_symbol)
-                allocation_percentages.append(
-                    float(allocation.percentage)
-                )  # Convert Decimal to float for external use
-
+                allocation_percentages.append(float(allocation.percentage))
             return {
                 "user_address": user_address,
                 "portfolio_id": portfolio.id,
@@ -504,7 +464,7 @@ class PortfolioRepository:
                     float(portfolio.total_value)
                     if portfolio.total_value is not None
                     else None
-                ),  # Convert Decimal to float
+                ),
             }
         except NotFoundError:
             raise
@@ -548,37 +508,25 @@ class PortfolioRepository:
         """
         try:
             db = self._get_session(session)
-
-            # Check if user exists
             user = db.query(User).filter(User.wallet_address == user_address).first()
             user_id = user.id if user else None
-
-            # Check if portfolio exists
             portfolio = (
                 db.query(Portfolio)
                 .filter(Portfolio.user_address == user_address)
                 .first()
             )
-
             if portfolio:
-                # Update existing portfolio
                 portfolio.name = name
-                if user_id and not portfolio.user_id:
+                if user_id and (not portfolio.user_id):
                     portfolio.user_id = user_id
             else:
-                # Create new portfolio
                 portfolio = Portfolio(
                     user_id=user_id, user_address=user_address, name=name
                 )
                 db.add(portfolio)
-                db.flush()  # Flush to get the ID
-
-            # Save allocations
+                db.flush()
             self.save_allocations(portfolio.id, allocations, db)
-
-            # Get updated portfolio with allocations
             result = self.get_portfolio_with_allocations(user_address, db)
-
             logger.info(
                 f"Saved portfolio with {len(allocations)} allocations for user {user_address}"
             )
@@ -611,5 +559,4 @@ class PortfolioRepository:
             raise DatabaseError(f"Failed to save portfolio with allocations: {str(e)}")
 
 
-# Singleton instance
 portfolio_repository = PortfolioRepository()

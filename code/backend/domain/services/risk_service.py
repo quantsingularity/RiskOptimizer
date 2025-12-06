@@ -1,6 +1,5 @@
 from decimal import Decimal, getcontext
 from typing import Any, Dict, List
-
 import numpy as np
 from riskoptimizer.core.exceptions import CalculationError, ValidationError
 from riskoptimizer.core.logging import get_logger
@@ -9,8 +8,6 @@ from riskoptimizer.services.quant_analysis import RiskMetrics
 from riskoptimizer.utils.cache_utils import memoize
 
 logger = get_logger(__name__)
-
-# Set precision for Decimal calculations globally for this module
 getcontext().prec = 28
 
 
@@ -25,7 +22,7 @@ class RiskService:
     and includes caching for performance optimization.
     """
 
-    def __init__(self):
+    def __init__(self) -> Any:
         """
         Initializes the RiskService with a Redis cache instance.
         """
@@ -42,7 +39,7 @@ class RiskService:
             ValidationError: If `returns` is not a list of numbers or has fewer than two elements.
         """
         if not isinstance(returns, list) or not all(
-            isinstance(r, (int, float)) for r in returns
+            (isinstance(r, (int, float)) for r in returns)
         ):
             raise ValidationError(
                 "Returns must be a list of numbers.", "returns", returns
@@ -64,14 +61,14 @@ class RiskService:
         Raises:
             ValidationError: If `confidence` is not a float between 0 and 1 (exclusive).
         """
-        if not isinstance(confidence, (int, float)) or not (0 < confidence < 1):
+        if not isinstance(confidence, (int, float)) or not 0 < confidence < 1:
             raise ValidationError(
                 "Confidence level must be a float between 0 and 1 (exclusive).",
                 "confidence",
                 confidence,
             )
 
-    @memoize(ttl=3600)  # Cache for 1 hour
+    @memoize(ttl=3600)
     def calculate_var(self, returns: List[float], confidence: float = 0.95) -> Decimal:
         """
         Calculates the Value at Risk (VaR) for a given set of returns.
@@ -92,9 +89,7 @@ class RiskService:
         """
         self._validate_returns(returns)
         self._validate_confidence(confidence)
-
         try:
-            # Generate a cache key based on returns and confidence level
             cache_key = f"var:{hash(tuple(returns))}:{confidence}"
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
@@ -102,13 +97,8 @@ class RiskService:
                     f"VaR cache hit for {len(returns)} returns at {confidence} confidence"
                 )
                 return Decimal(cached_result)
-
-            # Perform VaR calculation using the RiskMetrics utility
             var = RiskMetrics.calculate_var(returns, confidence)
-
-            # Cache the result for future use
             self.cache.set(cache_key, str(var), ttl=3600)
-
             logger.info(
                 f"Calculated VaR: {var} for {len(returns)} returns at {confidence} confidence"
             )
@@ -117,7 +107,7 @@ class RiskService:
             logger.error(f"Error calculating VaR: {str(e)}", exc_info=True)
             raise CalculationError(f"Failed to calculate VaR: {str(e)}", "var")
 
-    @memoize(ttl=3600)  # Cache for 1 hour
+    @memoize(ttl=3600)
     def calculate_cvar(self, returns: List[float], confidence: float = 0.95) -> Decimal:
         """
         Calculates the Conditional Value at Risk (CVaR) for a given set of returns.
@@ -138,9 +128,7 @@ class RiskService:
         """
         self._validate_returns(returns)
         self._validate_confidence(confidence)
-
         try:
-            # Generate a cache key based on returns and confidence level
             cache_key = f"cvar:{hash(tuple(returns))}:{confidence}"
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
@@ -148,13 +136,8 @@ class RiskService:
                     f"CVaR cache hit for {len(returns)} returns at {confidence} confidence"
                 )
                 return Decimal(cached_result)
-
-            # Perform CVaR calculation using the RiskMetrics utility
             cvar = RiskMetrics.calculate_cvar(returns, confidence)
-
-            # Cache the result for future use
             self.cache.set(cache_key, str(cvar), ttl=3600)
-
             logger.info(
                 f"Calculated CVaR: {cvar} for {len(returns)} returns at {confidence} confidence"
             )
@@ -163,7 +146,7 @@ class RiskService:
             logger.error(f"Error calculating CVaR: {str(e)}", exc_info=True)
             raise CalculationError(f"Failed to calculate CVaR: {str(e)}", "cvar")
 
-    @memoize(ttl=3600)  # Cache for 1 hour
+    @memoize(ttl=3600)
     def calculate_sharpe_ratio(
         self, returns: List[float], risk_free_rate: float = 0.0
     ) -> Decimal:
@@ -184,14 +167,11 @@ class RiskService:
             CalculationError: If the Sharpe Ratio calculation fails.
         """
         self._validate_returns(returns)
-
         if not isinstance(risk_free_rate, (int, float)):
             raise ValidationError(
                 "Risk-free rate must be a number", "risk_free_rate", risk_free_rate
             )
-
         try:
-            # Generate a cache key based on returns and risk-free rate
             cache_key = f"sharpe:{hash(tuple(returns))}:{risk_free_rate}"
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
@@ -199,13 +179,8 @@ class RiskService:
                     f"Sharpe ratio cache hit for {len(returns)} returns with {risk_free_rate} risk-free rate"
                 )
                 return Decimal(cached_result)
-
-            # Perform Sharpe Ratio calculation using the RiskMetrics utility
             sharpe_ratio = RiskMetrics.calculate_sharpe_ratio(returns, risk_free_rate)
-
-            # Cache the result for future use
             self.cache.set(cache_key, str(sharpe_ratio), ttl=3600)
-
             logger.info(
                 f"Calculated Sharpe ratio: {sharpe_ratio} for {len(returns)} returns"
             )
@@ -216,7 +191,7 @@ class RiskService:
                 f"Failed to calculate Sharpe ratio: {str(e)}", "sharpe_ratio"
             )
 
-    @memoize(ttl=3600)  # Cache for 1 hour
+    @memoize(ttl=3600)
     def calculate_max_drawdown(self, returns: List[float]) -> Decimal:
         """
         Calculates the Maximum Drawdown for a given set of returns.
@@ -234,21 +209,14 @@ class RiskService:
             CalculationError: If the Maximum Drawdown calculation fails.
         """
         self._validate_returns(returns)
-
         try:
-            # Generate a cache key based on returns
             cache_key = f"max_drawdown:{hash(tuple(returns))}"
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
                 logger.debug(f"Max drawdown cache hit for {len(returns)} returns")
                 return Decimal(cached_result)
-
-            # Perform Max Drawdown calculation using the RiskMetrics utility
             max_drawdown = RiskMetrics.calculate_max_drawdown(returns)
-
-            # Cache the result for future use
             self.cache.set(cache_key, str(max_drawdown), ttl=3600)
-
             logger.info(
                 f"Calculated max drawdown: {max_drawdown} for {len(returns)} returns"
             )
@@ -284,32 +252,24 @@ class RiskService:
         """
         self._validate_returns(returns)
         self._validate_confidence(confidence)
-
         if not isinstance(risk_free_rate, (int, float)):
             raise ValidationError(
                 "Risk-free rate must be a number", "risk_free_rate", risk_free_rate
             )
-
         try:
-            # Generate a cache key for the comprehensive risk metrics
             cache_key = (
                 f"risk_metrics:{hash(tuple(returns))}:{confidence}:{risk_free_rate}"
             )
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
                 logger.debug(f"Risk metrics cache hit for {len(returns)} returns")
-                # Convert Decimal strings back to Decimal objects from cached result
                 return {k: Decimal(v) for k, v in cached_result.items()}
-
-            # Calculate individual metrics using the respective methods
             mean_return = RiskMetrics.calculate_expected_return(returns)
             volatility = RiskMetrics.calculate_volatility(returns)
             var = self.calculate_var(returns, confidence)
             cvar = self.calculate_cvar(returns, confidence)
             sharpe_ratio = self.calculate_sharpe_ratio(returns, risk_free_rate)
             max_drawdown = self.calculate_max_drawdown(returns)
-
-            # Aggregate all calculated metrics into a dictionary
             metrics = {
                 "expected_return": mean_return,
                 "volatility": volatility,
@@ -318,14 +278,10 @@ class RiskService:
                 "sharpe_ratio": sharpe_ratio,
                 "max_drawdown": max_drawdown,
             }
-
-            # Cache the results (converting Decimal objects to strings for storage)
             self.cache.set(cache_key, {k: str(v) for k, v in metrics.items()}, ttl=3600)
-
             logger.info(f"Calculated risk metrics for {len(returns)} returns")
             return metrics
         except (ValidationError, CalculationError):
-            # Re-raise validation and calculation errors directly
             raise
         except Exception as e:
             logger.error(f"Error calculating risk metrics: {str(e)}", exc_info=True)
@@ -333,7 +289,7 @@ class RiskService:
                 f"Failed to calculate risk metrics: {str(e)}", "risk_metrics"
             )
 
-    @memoize(ttl=86400)  # Cache for 1 day
+    @memoize(ttl=86400)
     def calculate_efficient_frontier(
         self,
         returns: Dict[str, List[float]],
@@ -371,7 +327,6 @@ class RiskService:
             CalculationError: If the efficient frontier calculation fails (e.g., missing library).
         """
         try:
-            # Import PyPortfolioOpt components here to avoid circular imports and ensure it's available
             import pandas as pd
             from pypfopt import EfficientFrontier, expected_returns, risk_models
         except ImportError:
@@ -382,56 +337,45 @@ class RiskService:
             raise CalculationError(
                 "Required library PyPortfolioOpt not installed", "efficient_frontier"
             )
-
-        # Validate input parameters
         if not returns or not isinstance(returns, dict):
             raise ValidationError("Returns dictionary is required", "returns", returns)
-
         if len(returns) < 2:
             raise ValidationError(
                 "At least two assets are required to calculate an efficient frontier.",
                 "returns",
                 returns,
             )
-
         for asset, asset_returns in returns.items():
-            self._validate_returns(asset_returns)  # Validate each asset's returns list
-
-        if not isinstance(min_weight, (int, float)) or not (0 <= min_weight <= 1):
+            self._validate_returns(asset_returns)
+        if not isinstance(min_weight, (int, float)) or not 0 <= min_weight <= 1:
             raise ValidationError(
                 "Minimum weight must be a number between 0 and 1 (inclusive).",
                 "min_weight",
                 min_weight,
             )
-
-        if not isinstance(max_weight, (int, float)) or not (0 <= max_weight <= 1):
+        if not isinstance(max_weight, (int, float)) or not 0 <= max_weight <= 1:
             raise ValidationError(
                 "Maximum weight must be a number between 0 and 1 (inclusive).",
                 "max_weight",
                 max_weight,
             )
-
         if min_weight > max_weight:
             raise ValidationError(
                 "Minimum weight cannot be greater than maximum weight.",
                 "min_weight",
                 min_weight,
             )
-
         if not isinstance(points, int) or points < 2:
             raise ValidationError(
                 "Number of points for efficient frontier must be an integer of at least 2.",
                 "points",
                 points,
             )
-
         try:
-            # Generate a cache key for the efficient frontier calculation
-            cache_key = f"efficient_frontier:{hash(tuple((k, tuple(v)) for k, v in sorted(returns.items())))}:{min_weight}:{max_weight}:{risk_free_rate}:{points}"
+            cache_key = f"efficient_frontier:{hash(tuple(((k, tuple(v)) for k, v in sorted(returns.items()))))}:{min_weight}:{max_weight}:{risk_free_rate}:{points}"
             cached_result = self.cache.get(cache_key)
             if cached_result is not None:
                 logger.debug(f"Efficient frontier cache hit for {len(returns)} assets")
-                # Convert Decimal strings back to Decimal objects from cached result
                 for point in cached_result:
                     point["expected_return"] = Decimal(point["expected_return"])
                     point["volatility"] = Decimal(point["volatility"])
@@ -440,28 +384,16 @@ class RiskService:
                         k: Decimal(v) for k, v in point["weights"].items()
                     }
                 return cached_result
-
-            # Convert returns dictionary to a pandas DataFrame, which PyPortfolioOpt expects
             returns_df = pd.DataFrame(returns)
-
-            # Calculate expected returns (mu) and covariance matrix (S) from historical data
             mu = expected_returns.mean_historical_return(returns_df)
             S = risk_models.sample_cov(returns_df)
-
-            # Initialize EfficientFrontier object
             ef = EfficientFrontier(mu, S)
-
-            # Add weight constraints to the efficient frontier optimization
             ef.add_constraint(lambda w: w >= min_weight)
             ef.add_constraint(lambda w: w <= max_weight)
-
-            # List to store the calculated points on the efficient frontier
             frontier_points = []
-
-            # Calculate the minimum volatility portfolio
             ef.min_volatility()
-            min_vol_weights = ef.clean_weights()  # Clean weights to remove small values
-            min_vol_performance = ef.portfolio_performance()  # Get performance metrics
+            min_vol_weights = ef.clean_weights()
+            min_vol_performance = ef.portfolio_performance()
             frontier_points.append(
                 {
                     "type": "min_volatility",
@@ -474,13 +406,9 @@ class RiskService:
                     },
                 }
             )
-
-            # Re-initialize EfficientFrontier for max Sharpe calculation (to clear previous constraints)
             ef = EfficientFrontier(mu, S)
             ef.add_constraint(lambda w: w >= min_weight)
             ef.add_constraint(lambda w: w <= max_weight)
-
-            # Calculate the maximum Sharpe ratio portfolio
             ef.max_sharpe(risk_free_rate=risk_free_rate)
             max_sharpe_weights = ef.clean_weights()
             max_sharpe_performance = ef.portfolio_performance()
@@ -496,39 +424,15 @@ class RiskService:
                     },
                 }
             )
-
-            # Generate additional points along the efficient frontier
-            # This typically involves iterating through target returns or volatilities
-            # PyPortfolioOpt's `efficient_frontier` method can generate these points directly
-            # However, for fine-grained control or specific number of points, manual iteration might be needed.
-            # For simplicity, let's use a range of target volatilities or returns to generate points.
-
-            # Example of generating more points (simplified for illustration)
-            # This part might need more sophisticated logic depending on PyPortfolioOpt's exact API for generating a 'points' number of portfolios
-            # For now, let's assume we can get a set of discrete portfolios from ef.efficient_frontier()
-
-            # Re-initialize EfficientFrontier for general efficient frontier calculation
             ef = EfficientFrontier(mu, S)
             ef.add_constraint(lambda w: w >= min_weight)
             ef.add_constraint(lambda w: w <= max_weight)
-
-            # Get raw efficient frontier points (returns, volatilities, weights)
-            # This method might not directly give 'points' number of points, but rather a continuous curve
-            # We'll need to sample from it or use a different approach if exact 'points' is critical.
-            # For now, let's generate a set of discrete portfolios by iterating through target returns.
-
-            # Determine a range of target returns to iterate over
-            min_ret = min(p["expected_return"] for p in frontier_points)
-            max_ret = max(p["expected_return"] for p in frontier_points)
-
-            # Ensure min_ret and max_ret are not the same to avoid division by zero
+            min_ret = min((p["expected_return"] for p in frontier_points))
+            max_ret = max((p["expected_return"] for p in frontier_points))
             if min_ret == max_ret:
-                # If all returns are the same, we can't create a meaningful frontier
-                # Just return the min_vol and max_sharpe portfolios
                 logger.warning(
                     "Cannot generate diverse efficient frontier points: all assets have similar returns."
                 )
-                # Cache the result (converting Decimal objects to strings for storage)
                 self.cache.set(
                     cache_key,
                     [
@@ -549,11 +453,9 @@ class RiskService:
                     ttl=86400,
                 )
                 return frontier_points
-
             target_returns = np.linspace(
                 float(min_ret), float(max_ret), points
             ).tolist()
-
             for target_ret in target_returns:
                 try:
                     ef_point = EfficientFrontier(mu, S)
@@ -562,7 +464,6 @@ class RiskService:
                     ef_point.efficient_return(target_ret)
                     weights = ef_point.clean_weights()
                     performance = ef_point.portfolio_performance()
-
                     frontier_points.append(
                         {
                             "type": "efficient_portfolio",
@@ -580,8 +481,6 @@ class RiskService:
                         f"Could not find portfolio for target return {target_ret}: {e}"
                     )
                     continue
-
-            # Cache the result (converting Decimal objects to strings for storage)
             self.cache.set(
                 cache_key,
                 [
@@ -601,13 +500,11 @@ class RiskService:
                 ],
                 ttl=86400,
             )
-
             logger.info(
                 f"Efficient frontier calculated successfully with {len(frontier_points)} points"
             )
             return frontier_points
         except (ValidationError, CalculationError):
-            # Re-raise validation and calculation errors directly
             raise
         except Exception as e:
             logger.error(
@@ -619,5 +516,4 @@ class RiskService:
             )
 
 
-# Singleton instance
 risk_service = RiskService()

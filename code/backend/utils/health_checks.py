@@ -6,7 +6,6 @@ Provides comprehensive health checks for all application components.
 import time
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
-
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.infrastructure.database.session import get_db_session
@@ -31,7 +30,7 @@ class HealthCheck:
         check_func: Callable[[], Dict[str, Any]],
         timeout: float = 5.0,
         critical: bool = True,
-    ):
+    ) -> Any:
         """
         Initialize health check.
 
@@ -54,17 +53,10 @@ class HealthCheck:
             Health check result
         """
         start_time = time.time()
-
         try:
-            # Run the health check function
             result = self.check_func()
-
-            # Calculate duration
             duration = time.time() - start_time
-
-            # Determine status
             status = result.get("status", HealthStatus.HEALTHY.value)
-
             return {
                 "name": self.name,
                 "status": status,
@@ -78,7 +70,6 @@ class HealthCheck:
             logger.error(
                 f"Health check failed for {self.name}: {str(e)}", exc_info=True
             )
-
             return {
                 "name": self.name,
                 "status": HealthStatus.UNHEALTHY.value,
@@ -92,7 +83,7 @@ class HealthCheck:
 class HealthCheckManager:
     """Manager for all health checks."""
 
-    def __init__(self):
+    def __init__(self) -> Any:
         """Initialize health check manager."""
         self.checks: List[HealthCheck] = []
         self._register_default_checks()
@@ -109,7 +100,6 @@ class HealthCheckManager:
 
     def _register_default_checks(self) -> None:
         """Register default health checks."""
-        # Database health check
         self.register_check(
             HealthCheck(
                 name="database",
@@ -118,15 +108,11 @@ class HealthCheckManager:
                 critical=True,
             )
         )
-
-        # Redis health check
         self.register_check(
             HealthCheck(
                 name="redis", check_func=self._check_redis, timeout=3.0, critical=False
             )
         )
-
-        # Application health check
         self.register_check(
             HealthCheck(
                 name="application",
@@ -140,9 +126,7 @@ class HealthCheckManager:
         """Check database health."""
         try:
             with get_db_session() as session:
-                # Simple query to check database connectivity
                 result = session.execute("SELECT 1").scalar()
-
                 if result == 1:
                     return {
                         "status": HealthStatus.HEALTHY.value,
@@ -166,22 +150,14 @@ class HealthCheckManager:
     def _check_redis(self) -> Dict[str, Any]:
         """Check Redis health."""
         try:
-            # Test Redis connectivity
             is_healthy = redis_cache.health_check()
-
             if is_healthy:
-                # Test basic operations
                 test_key = "health_check_test"
                 test_value = "test_value"
-
-                # Set and get test
                 redis_cache.set(test_key, test_value, ttl=10)
                 retrieved_value = redis_cache.get(test_key)
-
                 if retrieved_value == test_value:
-                    # Clean up
                     redis_cache.delete(test_key)
-
                     return {
                         "status": HealthStatus.HEALTHY.value,
                         "details": {"connection": "ok", "operations": "ok"},
@@ -209,25 +185,18 @@ class HealthCheckManager:
     def _check_application(self) -> Dict[str, Any]:
         """Check application health."""
         try:
-            # Basic application health indicators
             import psutil
 
-            # Check memory usage
             memory = psutil.virtual_memory()
             memory_usage = memory.percent
-
-            # Check disk usage
             disk = psutil.disk_usage("/")
-            disk_usage = (disk.used / disk.total) * 100
-
-            # Determine status based on resource usage
+            disk_usage = disk.used / disk.total * 100
             if memory_usage > 90 or disk_usage > 90:
                 status = HealthStatus.UNHEALTHY.value
             elif memory_usage > 80 or disk_usage > 80:
                 status = HealthStatus.DEGRADED.value
             else:
                 status = HealthStatus.HEALTHY.value
-
             return {
                 "status": status,
                 "details": {
@@ -251,18 +220,11 @@ class HealthCheckManager:
         """
         start_time = time.time()
         results = []
-
-        # Run all checks
         for check in self.checks:
             result = check.run()
             results.append(result)
-
-        # Determine overall status
         overall_status = self._determine_overall_status(results)
-
-        # Calculate total duration
         total_duration = time.time() - start_time
-
         return {
             "status": overall_status,
             "timestamp": time.time(),
@@ -283,21 +245,15 @@ class HealthCheckManager:
         """
         critical_checks = [r for r in results if r.get("critical", True)]
         non_critical_checks = [r for r in results if not r.get("critical", True)]
-
-        # Check critical checks
         critical_unhealthy = any(
-            r["status"] == HealthStatus.UNHEALTHY.value for r in critical_checks
+            (r["status"] == HealthStatus.UNHEALTHY.value for r in critical_checks)
         )
         critical_degraded = any(
-            r["status"] == HealthStatus.DEGRADED.value for r in critical_checks
+            (r["status"] == HealthStatus.DEGRADED.value for r in critical_checks)
         )
-
-        # Check non-critical checks
         non_critical_unhealthy = any(
-            r["status"] == HealthStatus.UNHEALTHY.value for r in non_critical_checks
+            (r["status"] == HealthStatus.UNHEALTHY.value for r in non_critical_checks)
         )
-
-        # Determine overall status
         if critical_unhealthy:
             return HealthStatus.UNHEALTHY.value
         elif critical_degraded or non_critical_unhealthy:
@@ -325,14 +281,13 @@ class HealthCheckManager:
         unhealthy_checks = len(
             [r for r in results if r["status"] == HealthStatus.UNHEALTHY.value]
         )
-
         return {
             "total_checks": total_checks,
             "healthy": healthy_checks,
             "degraded": degraded_checks,
             "unhealthy": unhealthy_checks,
             "success_rate": (
-                (healthy_checks / total_checks) * 100 if total_checks > 0 else 0
+                healthy_checks / total_checks * 100 if total_checks > 0 else 0
             ),
         }
 
@@ -352,5 +307,4 @@ class HealthCheckManager:
         return None
 
 
-# Global health check manager instance
 health_manager = HealthCheckManager()

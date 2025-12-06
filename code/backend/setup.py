@@ -3,26 +3,22 @@ Setup script for RiskOptimizer Backend
 """
 
 import os
-
 from setuptools import find_packages, setup
 
 
-# Read the README file
-def read_readme():
+def read_readme() -> Any:
     with open("README.md", "r", encoding="utf-8") as fh:
         return fh.read()
 
 
-# Read requirements
-def read_requirements():
+def read_requirements() -> Any:
     with open("requirements.txt", "r", encoding="utf-8") as fh:
         return [
-            line.strip() for line in fh if line.strip() and not line.startswith("#")
+            line.strip() for line in fh if line.strip() and (not line.startswith("#"))
         ]
 
 
-# Read version
-def read_version():
+def read_version() -> Any:
     version_file = os.path.join(os.path.dirname(__file__), "__init__.py")
     with open(version_file, "r", encoding="utf-8") as fh:
         for line in fh:
@@ -89,12 +85,10 @@ setup(
         "console_scripts": [
             "riskoptimizer-server=app:main",
             "riskoptimizer-worker=tasks.celery_app:main",
-        ],
+        ]
     },
     include_package_data=True,
-    package_data={
-        "": ["*.md", "*.txt", "*.yml", "*.yaml", "*.json"],
-    },
+    package_data={"": ["*.md", "*.txt", "*.yml", "*.yaml", "*.json"]},
     zip_safe=False,
     keywords=[
         "finance",

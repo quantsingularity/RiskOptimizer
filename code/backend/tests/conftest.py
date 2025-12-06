@@ -5,16 +5,14 @@ Test configuration and fixtures for the RiskOptimizer test suite.
 import tempfile
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
-
 import numpy as np
 import pandas as pd
 import pytest
 
-# Test configuration
 pytest_plugins = []
 
 
-def pytest_configure(config):
+def pytest_configure(config: Any) -> Any:
     """Configure pytest with custom markers."""
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
@@ -24,45 +22,32 @@ def pytest_configure(config):
 
 
 @pytest.fixture(scope="session")
-def test_data_dir():
+def test_data_dir() -> Any:
     """Create a temporary directory for test data."""
     with tempfile.TemporaryDirectory() as temp_dir:
         yield temp_dir
 
 
 @pytest.fixture
-def sample_returns_data():
+def sample_returns_data() -> Any:
     """Generate sample returns data for testing."""
     np.random.seed(42)
-
-    # Generate 252 days of returns for 5 assets
     n_periods = 252
-
-    # Create realistic correlation structure
     correlation_matrix = np.array(
         [
-            [1.00, 0.70, 0.30, 0.50, 0.20],
-            [0.70, 1.00, 0.25, 0.45, 0.15],
-            [0.30, 0.25, 1.00, 0.35, 0.40],
-            [0.50, 0.45, 0.35, 1.00, 0.30],
-            [0.20, 0.15, 0.40, 0.30, 1.00],
+            [1.0, 0.7, 0.3, 0.5, 0.2],
+            [0.7, 1.0, 0.25, 0.45, 0.15],
+            [0.3, 0.25, 1.0, 0.35, 0.4],
+            [0.5, 0.45, 0.35, 1.0, 0.3],
+            [0.2, 0.15, 0.4, 0.3, 1.0],
         ]
     )
-
-    # Asset parameters (annualized)
-    annual_returns = np.array([0.08, 0.10, 0.06, 0.12, 0.05])
-    annual_volatilities = np.array([0.15, 0.20, 0.08, 0.25, 0.12])
-
-    # Convert to daily
+    annual_returns = np.array([0.08, 0.1, 0.06, 0.12, 0.05])
+    annual_volatilities = np.array([0.15, 0.2, 0.08, 0.25, 0.12])
     daily_returns = annual_returns / 252
     daily_volatilities = annual_volatilities / np.sqrt(252)
-
-    # Create covariance matrix
     cov_matrix = np.outer(daily_volatilities, daily_volatilities) * correlation_matrix
-
-    # Generate returns
     returns = np.random.multivariate_normal(daily_returns, cov_matrix, n_periods)
-
     return {
         "returns": returns,
         "asset_names": ["Stock_A", "Stock_B", "Bond_A", "REIT_A", "Commodity_A"],
@@ -74,12 +59,10 @@ def sample_returns_data():
 
 
 @pytest.fixture
-def sample_portfolio_data(sample_returns_data):
+def sample_portfolio_data(sample_returns_data: Any) -> Any:
     """Generate sample portfolio data for testing."""
     weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1])
-
     portfolio_returns = np.dot(sample_returns_data["returns"], weights)
-
     return {
         "weights": weights.tolist(),
         "asset_names": sample_returns_data["asset_names"],
@@ -98,12 +81,10 @@ def sample_portfolio_data(sample_returns_data):
 
 
 @pytest.fixture
-def sample_benchmark_data(sample_returns_data):
+def sample_benchmark_data(sample_returns_data: Any) -> Any:
     """Generate sample benchmark data for testing."""
-    # Create benchmark as market-cap weighted portfolio
     benchmark_weights = np.array([0.4, 0.3, 0.15, 0.1, 0.05])
     benchmark_returns = np.dot(sample_returns_data["returns"], benchmark_weights)
-
     return {
         "returns": benchmark_returns.tolist(),
         "name": "Market Benchmark",
@@ -112,13 +93,13 @@ def sample_benchmark_data(sample_returns_data):
 
 
 @pytest.fixture
-def sample_stress_scenarios():
+def sample_stress_scenarios() -> Any:
     """Generate sample stress test scenarios."""
     return [
         {
             "name": "Market Crash",
             "type": "market_crash",
-            "shock": -0.30,
+            "shock": -0.3,
             "description": "30% market decline",
         },
         {
@@ -143,7 +124,7 @@ def sample_stress_scenarios():
 
 
 @pytest.fixture
-def mock_celery_task():
+def mock_celery_task() -> Any:
     """Mock Celery task for testing."""
     mock_task = MagicMock()
     mock_task.request.id = "test-task-id-12345"
@@ -153,7 +134,7 @@ def mock_celery_task():
 
 
 @pytest.fixture
-def mock_redis_client():
+def mock_redis_client() -> Any:
     """Mock Redis client for testing."""
     mock_redis = MagicMock()
     mock_redis.ping.return_value = True
@@ -167,7 +148,7 @@ def mock_redis_client():
 
 
 @pytest.fixture
-def mock_task_result_manager():
+def mock_task_result_manager() -> Any:
     """Mock task result manager for testing."""
     with patch("tasks.celery_app.task_result_manager") as mock_manager:
         mock_manager.store_task_progress.return_value = None
@@ -178,7 +159,7 @@ def mock_task_result_manager():
 
 
 @pytest.fixture
-def optimization_test_cases():
+def optimization_test_cases() -> Any:
     """Generate test cases for portfolio optimization."""
     return [
         {
@@ -216,7 +197,7 @@ def optimization_test_cases():
 
 
 @pytest.fixture
-def monte_carlo_test_cases():
+def monte_carlo_test_cases() -> Any:
     """Generate test cases for Monte Carlo simulation."""
     return [
         {
@@ -256,25 +237,19 @@ def monte_carlo_test_cases():
 
 
 @pytest.fixture
-def performance_analysis_test_data():
+def performance_analysis_test_data() -> Any:
     """Generate test data for performance analysis."""
     np.random.seed(42)
-
-    # Generate 2 years of daily returns
-    n_periods = 504  # ~2 years
-
-    # Portfolio returns with some alpha and beta
+    n_periods = 504
     market_returns = np.random.normal(0.0008, 0.015, n_periods)
-    alpha = 0.0002  # 5% annual alpha
+    alpha = 0.0002
     beta = 1.2
     idiosyncratic_vol = 0.008
-
     portfolio_returns = (
         alpha
         + beta * market_returns
         + np.random.normal(0, idiosyncratic_vol, n_periods)
     )
-
     return {
         "portfolio_returns": portfolio_returns.tolist(),
         "benchmark_returns": market_returns.tolist(),
@@ -285,7 +260,7 @@ def performance_analysis_test_data():
 
 
 @pytest.fixture
-def report_generation_test_data(sample_portfolio_data):
+def report_generation_test_data(sample_portfolio_data: Any) -> Any:
     """Generate test data for report generation."""
     return {
         "portfolio_data": sample_portfolio_data,
@@ -314,7 +289,7 @@ def report_generation_test_data(sample_portfolio_data):
 
 
 @pytest.fixture
-def task_monitoring_test_data():
+def task_monitoring_test_data() -> Any:
     """Generate test data for task monitoring."""
     return {
         "active_tasks": [
@@ -354,95 +329,68 @@ def task_monitoring_test_data():
     }
 
 
-# Utility functions for tests
-def assert_portfolio_weights_valid(weights, tolerance=1e-6):
+def assert_portfolio_weights_valid(weights: Any, tolerance: Any = 1e-06) -> Any:
     """Assert that portfolio weights are valid."""
     if isinstance(weights, dict):
         weights = list(weights.values())
-
-    # Weights should sum to 1
     assert (
         abs(sum(weights) - 1.0) < tolerance
     ), f"Weights sum to {sum(weights)}, not 1.0"
-
-    # Weights should be non-negative
-    assert all(w >= 0 for w in weights), "Some weights are negative"
+    assert all((w >= 0 for w in weights)), "Some weights are negative"
 
 
-def assert_risk_metrics_reasonable(risk_metrics):
+def assert_risk_metrics_reasonable(risk_metrics: Any) -> Any:
     """Assert that risk metrics are reasonable."""
-    # VaR should be negative (representing losses)
     if "var_95" in risk_metrics:
         assert risk_metrics["var_95"] < 0, "VaR 95% should be negative"
-
     if "var_99" in risk_metrics:
         assert risk_metrics["var_99"] < 0, "VaR 99% should be negative"
-
-        # VaR 99% should be more extreme than VaR 95%
         if "var_95" in risk_metrics:
             assert (
                 risk_metrics["var_99"] <= risk_metrics["var_95"]
             ), "VaR 99% should be more extreme than VaR 95%"
-
-    # CVaR should be more extreme than VaR
     if "cvar_95" in risk_metrics and "var_95" in risk_metrics:
         assert (
             risk_metrics["cvar_95"] <= risk_metrics["var_95"]
         ), "CVaR 95% should be more extreme than VaR 95%"
-
     if "cvar_99" in risk_metrics and "var_99" in risk_metrics:
         assert (
             risk_metrics["cvar_99"] <= risk_metrics["var_99"]
         ), "CVaR 99% should be more extreme than VaR 99%"
 
 
-def assert_performance_metrics_reasonable(performance_metrics):
+def assert_performance_metrics_reasonable(performance_metrics: Any) -> Any:
     """Assert that performance metrics are reasonable."""
-    # Returns should be reasonable (between -100% and 1000%)
     if "total_return" in performance_metrics:
         assert (
             -1 <= performance_metrics["total_return"] <= 10
         ), "Total return outside reasonable range"
-
     if "annualized_return" in performance_metrics:
         assert (
             -1 <= performance_metrics["annualized_return"] <= 2
         ), "Annualized return outside reasonable range"
-
-    # Volatility should be positive and reasonable
     if "volatility" in performance_metrics:
         assert (
             0 <= performance_metrics["volatility"] <= 2
         ), "Volatility outside reasonable range"
-
-    # Sharpe ratio should be reasonable
     if "sharpe_ratio" in performance_metrics:
         assert (
             -5 <= performance_metrics["sharpe_ratio"] <= 5
         ), "Sharpe ratio outside reasonable range"
-
-    # Max drawdown should be negative or zero
     if "max_drawdown" in performance_metrics:
         assert (
             performance_metrics["max_drawdown"] <= 0
         ), "Max drawdown should be negative or zero"
 
 
-def create_test_portfolio(n_assets=5, total_value=1000000):
+def create_test_portfolio(n_assets: Any = 5, total_value: Any = 1000000) -> Any:
     """Create a test portfolio with specified number of assets."""
     np.random.seed(42)
-
-    # Generate random weights that sum to 1
     weights = np.random.dirichlet(np.ones(n_assets))
-
-    # Create asset names
     asset_names = [f"Asset_{i}" for i in range(n_assets)]
-
-    # Calculate holdings
     holdings = {
         name: weight * total_value for name, weight in zip(asset_names, weights)
     }
-
     return {
         "weights": weights.tolist(),
         "asset_names": asset_names,
@@ -451,35 +399,23 @@ def create_test_portfolio(n_assets=5, total_value=1000000):
     }
 
 
-def create_test_returns(n_periods=252, n_assets=5, seed=42):
+def create_test_returns(n_periods: Any = 252, n_assets: Any = 5, seed: Any = 42) -> Any:
     """Create test returns data with realistic characteristics."""
     np.random.seed(seed)
-
-    # Generate returns with some correlation structure
-    mean_returns = np.random.uniform(0.0005, 0.0015, n_assets)  # Daily returns
-    volatilities = np.random.uniform(0.01, 0.03, n_assets)  # Daily volatilities
-
-    # Create correlation matrix
+    mean_returns = np.random.uniform(0.0005, 0.0015, n_assets)
+    volatilities = np.random.uniform(0.01, 0.03, n_assets)
     correlation = np.random.uniform(0.1, 0.7, (n_assets, n_assets))
     correlation = (correlation + correlation.T) / 2
     np.fill_diagonal(correlation, 1.0)
-
-    # Ensure positive semi-definite
     eigenvals, eigenvecs = np.linalg.eigh(correlation)
     eigenvals = np.maximum(eigenvals, 0.01)
     correlation = eigenvecs @ np.diag(eigenvals) @ eigenvecs.T
-
-    # Create covariance matrix
     cov_matrix = np.outer(volatilities, volatilities) * correlation
-
-    # Generate returns
     returns = np.random.multivariate_normal(mean_returns, cov_matrix, n_periods)
-
     return returns
 
 
-# Test data validation functions
-def validate_monte_carlo_result(result):
+def validate_monte_carlo_result(result: Any) -> Any:
     """Validate Monte Carlo simulation result structure."""
     required_keys = [
         "simulation_parameters",
@@ -489,8 +425,6 @@ def validate_monte_carlo_result(result):
     ]
     for key in required_keys:
         assert key in result, f"Missing key: {key}"
-
-    # Validate risk metrics
     risk_metrics = result["risk_metrics"]
     required_risk_metrics = [
         "var_95",
@@ -501,11 +435,10 @@ def validate_monte_carlo_result(result):
     ]
     for metric in required_risk_metrics:
         assert metric in risk_metrics, f"Missing risk metric: {metric}"
-
     assert_risk_metrics_reasonable(risk_metrics)
 
 
-def validate_optimization_result(result):
+def validate_optimization_result(result: Any) -> Any:
     """Validate portfolio optimization result structure."""
     required_keys = [
         "optimization_method",
@@ -515,27 +448,19 @@ def validate_optimization_result(result):
     ]
     for key in required_keys:
         assert key in result, f"Missing key: {key}"
-
-    # Validate weights
     assert_portfolio_weights_valid(result["weights"])
-
-    # Validate portfolio metrics
     metrics = result["portfolio_metrics"]
     required_metrics = ["expected_return", "volatility", "sharpe_ratio"]
     for metric in required_metrics:
         assert metric in metrics, f"Missing portfolio metric: {metric}"
 
 
-def validate_performance_analysis_result(result):
+def validate_performance_analysis_result(result: Any) -> Any:
     """Validate performance analysis result structure."""
     required_keys = ["performance_summary", "benchmark_comparison", "risk_metrics"]
     for key in required_keys:
         assert key in result, f"Missing key: {key}"
-
-    # Validate performance metrics
     assert_performance_metrics_reasonable(result["performance_summary"])
-
-    # Validate benchmark comparison
     benchmark_metrics = result["benchmark_comparison"]
     required_benchmark_metrics = [
         "beta",

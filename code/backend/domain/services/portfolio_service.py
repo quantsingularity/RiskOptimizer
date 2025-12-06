@@ -1,6 +1,5 @@
 from decimal import Decimal, getcontext
 from typing import Any, Dict, List
-
 from riskoptimizer.core.exceptions import NotFoundError, ValidationError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.audit_service import audit_service
@@ -15,8 +14,6 @@ from riskoptimizer.infrastructure.database.session import get_db_session
 from riskoptimizer.utils.cache_utils import cache_invalidate, cache_result
 
 logger = get_logger(__name__)
-
-# Set precision for Decimal calculations globally for this module
 getcontext().prec = 28
 
 
@@ -29,7 +26,7 @@ class PortfolioService:
     persistence, Redis for caching, and the audit service for logging financial actions.
     """
 
-    def __init__(self):
+    def __init__(self) -> Any:
         """
         Initializes the PortfolioService with necessary repositories and services.
         """
@@ -38,7 +35,7 @@ class PortfolioService:
         self.cache = redis_cache
         self.audit_service = audit_service
 
-    @cache_result("portfolio", ttl=300)  # Cache for 5 minutes
+    @cache_result("portfolio", ttl=300)
     def get_portfolio_by_address(self, user_address: str) -> Dict[str, Any]:
         """
         Retrieves a user's portfolio and its allocations by their wallet address.
@@ -53,18 +50,14 @@ class PortfolioService:
             ValidationError: If the user address is invalid.
             NotFoundError: If no portfolio is found for the given address.
         """
-        # Validate input user address
         if not user_address or not isinstance(user_address, str):
             raise ValidationError(
                 "User address is required", "user_address", user_address
             )
-
-        # Check if the portfolio data is available in cache
         cache_key = f"portfolio:{user_address}"
         cached_data = self.cache.get(cache_key)
         if cached_data:
             logger.debug(f"Portfolio cache hit for address {user_address}")
-            # Convert Decimal strings back to Decimal objects from cached data
             if "total_value" in cached_data:
                 cached_data["total_value"] = Decimal(cached_data["total_value"])
             if "allocations" in cached_data:
@@ -75,15 +68,11 @@ class PortfolioService:
                     if alloc["current_price"] is not None:
                         alloc["current_price"] = Decimal(alloc["current_price"])
             return cached_data
-
-        # If not in cache, retrieve from the database
         with get_db_session() as session:
             try:
                 portfolio_data = self.portfolio_repo.get_portfolio_with_allocations(
                     user_address, session
                 )
-
-                # Cache the retrieved result (convert Decimals to strings for JSON serialization)
                 serializable_portfolio_data = portfolio_data.copy()
                 if "total_value" in serializable_portfolio_data:
                     serializable_portfolio_data["total_value"] = str(
@@ -97,16 +86,14 @@ class PortfolioService:
                         }
                         for alloc in serializable_portfolio_data["allocations"]
                     ]
-
                 self.cache.set(cache_key, serializable_portfolio_data, ttl=300)
-
                 logger.info(f"Retrieved portfolio for address {user_address}")
                 return portfolio_data
             except NotFoundError:
                 logger.warning(f"Portfolio not found for address {user_address}")
-                raise  # Re-raise NotFoundError to be handled by the controller
+                raise
 
-    @cache_invalidate("portfolio")  # Invalidate cache related to portfolios upon saving
+    @cache_invalidate("portfolio")
     def save_portfolio(
         self,
         user_address: str,
@@ -131,24 +118,17 @@ class PortfolioService:
         Raises:
             ValidationError: If input data (user_address, allocations, name) is invalid.
         """
-        # Validate input data for the portfolio
         self._validate_portfolio_input(user_address, allocations, name)
-
-        # Normalize allocations to ensure they sum to 100% and convert to Decimal for precision
         normalized_allocations = self._normalize_allocations(allocations)
         decimal_allocations = {
             k: Decimal(str(v)) for k, v in normalized_allocations.items()
         }
-
         with get_db_session() as session:
-            # Save the portfolio and its allocations to the database
             portfolio_data = self.portfolio_repo.save_portfolio_with_allocations(
                 user_address, decimal_allocations, name, session
             )
-
-            # Log the action for auditing purposes
             user = self.user_repo.get_by_wallet_address(user_address, session)
-            user_id = user.id if user else None  # Get user ID if user exists
+            user_id = user.id if user else None
             self.audit_service.log_action(
                 user_id=user_id,
                 action_type="PORTFOLIO_SAVED",
@@ -160,7 +140,6 @@ class PortfolioService:
                     "allocations": {k: str(v) for k, v in decimal_allocations.items()},
                 },
             )
-
             logger.info(
                 f"Saved portfolio for address {user_address} with {len(decimal_allocations)} assets"
             )
@@ -189,36 +168,27 @@ class PortfolioService:
             ValidationError: If input data (user_id, user_address, name) is invalid.
             NotFoundError: If the specified user does not exist.
         """
-        # Validate input parameters
         if not user_id or not isinstance(user_id, int):
             raise ValidationError(
                 "User ID is required and must be an integer.", "user_id", user_id
             )
-
         if not user_address or not isinstance(user_address, str):
             raise ValidationError(
                 "User address is required and must be a string.",
                 "user_address",
                 user_address,
             )
-
         if not name or not isinstance(name, str):
             raise ValidationError(
                 "Portfolio name is required and must be a string.", "name", name
             )
-
         with get_db_session() as session:
-            # Check if the user exists in the database
             user = self.user_repo.get_by_id(user_id, session)
             if not user:
                 raise NotFoundError(f"User {user_id} not found", "user", str(user_id))
-
-            # Create the portfolio record in the database
             portfolio = self.portfolio_repo.create(
                 user_id, user_address, name, description, session
             )
-
-            # Prepare response, ensuring Decimal types are converted to string for JSON serialization
             portfolio_data = {
                 "id": portfolio.id,
                 "user_id": portfolio.user_id,
@@ -233,8 +203,6 @@ class PortfolioService:
                 "created_at": portfolio.created_at.isoformat(),
                 "updated_at": portfolio.updated_at.isoformat(),
             }
-
-            # Log the portfolio creation action for auditing
             self.audit_service.log_action(
                 user_id=user_id,
                 action_type="PORTFOLIO_CREATED",
@@ -246,7 +214,6 @@ class PortfolioService:
                     "description": description,
                 },
             )
-
             logger.info(f"Created portfolio {portfolio.id} for user {user_id}")
             return portfolio_data
 
@@ -267,22 +234,18 @@ class PortfolioService:
             ValidationError: If input data (portfolio_id or update data) is invalid.
             NotFoundError: If the portfolio with the given ID is not found.
         """
-        # Validate input parameters
         if not portfolio_id or not isinstance(portfolio_id, int):
             raise ValidationError(
                 "Portfolio ID is required and must be an integer.",
                 "portfolio_id",
                 portfolio_id,
             )
-
-        if not data or not isinstance(data, dict) or not data:
+        if not data or not isinstance(data, dict) or (not data):
             raise ValidationError(
                 "Update data is required and must be a non-empty dictionary.",
                 "data",
                 data,
             )
-
-        # Define allowed fields for update and process the input data
         allowed_fields = {"name", "description", "total_value"}
         processed_data = {}
         for key, value in data.items():
@@ -290,7 +253,6 @@ class PortfolioService:
                 raise ValidationError(f"Invalid field for update: {key}", "data", data)
             if key == "total_value":
                 try:
-                    # Convert total_value to Decimal for precise financial calculations
                     processed_data[key] = Decimal(str(value))
                 except Exception:
                     raise ValidationError(
@@ -298,9 +260,7 @@ class PortfolioService:
                     )
             else:
                 processed_data[key] = value
-
         with get_db_session() as session:
-            # Retrieve the old portfolio data for audit logging before updating
             old_portfolio = self.portfolio_repo.get_by_id(portfolio_id, session)
             if not old_portfolio:
                 raise NotFoundError(
@@ -308,18 +268,12 @@ class PortfolioService:
                     "portfolio",
                     str(portfolio_id),
                 )
-
-            # Update the portfolio in the database
             portfolio = self.portfolio_repo.update(
                 portfolio_id, processed_data, session
             )
-
-            # Invalidate the cache for this specific portfolio if its user address is known
             if portfolio and portfolio.user_address:
                 cache_key = f"portfolio:{portfolio.user_address}"
                 self.cache.delete(cache_key)
-
-            # Prepare response, ensuring Decimal types are converted to string for JSON serialization
             portfolio_data = {
                 "id": portfolio.id,
                 "user_id": portfolio.user_id,
@@ -334,8 +288,6 @@ class PortfolioService:
                 "created_at": portfolio.created_at.isoformat(),
                 "updated_at": portfolio.updated_at.isoformat(),
             }
-
-            # Log the portfolio update action for auditing
             self.audit_service.log_action(
                 user_id=portfolio.user_id,
                 action_type="PORTFOLIO_UPDATED",
@@ -350,7 +302,6 @@ class PortfolioService:
                     "new_data": {k: str(v) for k, v in processed_data.items()},
                 },
             )
-
             logger.info(f"Updated portfolio {portfolio_id}")
             return portfolio_data
 
@@ -367,29 +318,20 @@ class PortfolioService:
         Raises:
             ValidationError: If the portfolio ID is invalid.
         """
-        # Validate input portfolio ID
         if not portfolio_id or not isinstance(portfolio_id, int):
             raise ValidationError(
                 "Portfolio ID is required and must be an integer.",
                 "portfolio_id",
                 portfolio_id,
             )
-
         with get_db_session() as session:
-            # Get portfolio details before deletion for cache invalidation and audit logging
             portfolio = self.portfolio_repo.get_by_id(portfolio_id, session)
-
-            # Attempt to delete the portfolio from the database
             deleted = self.portfolio_repo.delete(portfolio_id, session)
-
-            # Invalidate the cache if the portfolio was successfully deleted and its user address is known
             if deleted and portfolio and portfolio.user_address:
                 cache_key = f"portfolio:{portfolio.user_address}"
                 self.cache.delete(cache_key)
-
             if deleted:
                 logger.info(f"Deleted portfolio {portfolio_id}")
-                # Log the portfolio deletion action for auditing
                 self.audit_service.log_action(
                     user_id=portfolio.user_id,
                     action_type="PORTFOLIO_DELETED",
@@ -403,7 +345,6 @@ class PortfolioService:
                 )
             else:
                 logger.warning(f"Portfolio {portfolio_id} not found for deletion")
-
             return deleted
 
     def get_user_portfolios(self, user_id: int) -> List[Dict[str, Any]]:
@@ -419,17 +360,12 @@ class PortfolioService:
         Raises:
             ValidationError: If the user ID is invalid.
         """
-        # Validate input user ID
         if not user_id or not isinstance(user_id, int):
             raise ValidationError(
                 "User ID is required and must be an integer.", "user_id", user_id
             )
-
         with get_db_session() as session:
-            # Retrieve portfolios for the user from the database
             portfolios = self.portfolio_repo.get_by_user_id(user_id, session)
-
-            # Prepare response, ensuring Decimal types are converted to string for JSON serialization
             portfolio_list = []
             for portfolio in portfolios:
                 portfolio_data = {
@@ -447,7 +383,6 @@ class PortfolioService:
                     "updated_at": portfolio.updated_at.isoformat(),
                 }
                 portfolio_list.append(portfolio_data)
-
             logger.info(
                 f"Retrieved {len(portfolio_list)} portfolios for user {user_id}"
             )
@@ -467,28 +402,22 @@ class PortfolioService:
         Raises:
             ValidationError: If any of the input parameters are invalid.
         """
-        # Validate user address
         if not user_address or not isinstance(user_address, str):
             raise ValidationError(
                 "User address is required and must be a string.",
                 "user_address",
                 user_address,
             )
-
-        # Validate allocations dictionary
         if not allocations or not isinstance(allocations, dict):
             raise ValidationError(
                 "Allocations are required and must be a dictionary.",
                 "allocations",
                 allocations,
             )
-
         if len(allocations) == 0:
             raise ValidationError(
                 "At least one allocation is required.", "allocations", allocations
             )
-
-        # Validate each allocation entry
         for asset, percentage in allocations.items():
             if not isinstance(asset, str) or not asset.strip():
                 raise ValidationError(
@@ -496,9 +425,7 @@ class PortfolioService:
                     "allocations",
                     allocations,
                 )
-
             try:
-                # Attempt to convert to Decimal to validate if it's a valid number
                 Decimal(str(percentage))
             except Exception:
                 raise ValidationError(
@@ -506,16 +433,13 @@ class PortfolioService:
                     "allocations",
                     allocations,
                 )
-
-            if not (0 <= percentage <= 100):
+            if not 0 <= percentage <= 100:
                 raise ValidationError(
                     f"Percentage for asset {asset} must be between 0 and 100.",
                     "allocations",
                     allocations,
                 )
-
-        # Validate portfolio name
-        if not name or not isinstance(name, str) or not name.strip():
+        if not name or not isinstance(name, str) or (not name.strip()):
             raise ValidationError(
                 "Portfolio name is required and must be a non-empty string.",
                 "name",
@@ -542,14 +466,11 @@ class PortfolioService:
                 "allocations",
                 allocations,
             )
-
-        # Normalize each allocation by dividing by the total percentage
         normalized = {
-            asset: (percentage / total_percentage) * 100
+            asset: percentage / total_percentage * 100
             for asset, percentage in allocations.items()
         }
         return normalized
 
 
-# Singleton instance of PortfolioService for application-wide use
 portfolio_service = PortfolioService()

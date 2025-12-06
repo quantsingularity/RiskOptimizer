@@ -1,15 +1,10 @@
 import os
-
 import numpy as np
 import pandas as pd
 from arch import arch_model
-
 from core.logging import get_logger
 
 logger = get_logger(__name__)
-
-# --- Configuration and Data Loading ---
-
 DATA_DIR = "data"
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "BTC-USD", "ETH-USD"]
 
@@ -18,13 +13,10 @@ def load_data(tickers: list, data_dir: str = DATA_DIR) -> pd.DataFrame:
     """Loads historical 'Close' price data for a list of tickers."""
     all_data = {}
     for ticker in tickers:
-        # Replace '-' with '_' for file name consistency
         file_name = f"{ticker.replace('-', '_')}_historical.csv"
         file_path = os.path.join(data_dir, file_name)
-
         if os.path.exists(file_path):
             df = pd.read_csv(file_path, index_col=0, parse_dates=True)
-            # Use 'Close' price for risk analysis
             all_data[ticker] = df["Close"]
         else:
             logger.info(f"Warning: Data file not found for {ticker} at {file_path}")
@@ -32,15 +24,9 @@ def load_data(tickers: list, data_dir: str = DATA_DIR) -> pd.DataFrame:
         raise FileNotFoundError(
             "No data files were loaded. Run data_ingestion.py first."
         )
-
-    # Combine all series into a single DataFrame, forward-filling missing values
     data = pd.DataFrame(all_data).ffill().dropna()
-    # Calculate daily log returns
     returns = np.log(data / data.shift(1)).dropna()
     return returns
-
-
-# --- Core Risk Analysis Functions ---
 
 
 def calculate_correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
@@ -63,9 +49,8 @@ def historical_var(
     :return: Series of VaR values for each asset.
     """
     logger.info(
-        f"\n--- Historical VaR ({confidence_level*100:.0f}%, {horizon}-day) ---"
+        f"\n--- Historical VaR ({confidence_level * 100:.0f}%, {horizon}-day) ---"
     )
-    # Calculate the percentile corresponding to the VaR
     alpha = 1 - confidence_level
     var_values = returns.quantile(alpha) * np.sqrt(horizon)
     logger.info(var_values)
@@ -88,22 +73,18 @@ def monte_carlo_var(
     :return: Series of VaR values for each asset.
     """
     logger.info(
-        f"\n--- Monte Carlo VaR ({confidence_level*100:.0f}%, {horizon}-day) ---"
+        f"\n--- Monte Carlo VaR ({confidence_level * 100:.0f}%, {horizon}-day) ---"
     )
     mu = returns.mean()
     sigma = returns.std()
     alpha = 1 - confidence_level
-
     var_values = {}
     for ticker in returns.columns:
-        # Simulate returns for the horizon
         simulated_returns = np.random.normal(
             mu[ticker] * horizon, sigma[ticker] * np.sqrt(horizon), n_simulations
         )
-        # Calculate VaR as the alpha-percentile of the simulated returns
         var = np.percentile(simulated_returns, alpha * 100)
         var_values[ticker] = var
-
     var_series = pd.Series(var_values)
     logger.info(var_series)
     return var_series
@@ -120,20 +101,12 @@ def garch_volatility_forecast(returns: pd.DataFrame, horizon: int = 5) -> pd.Ser
     logger.info(f"\n--- GARCH(1,1) Volatility Forecast ({horizon}-day) ---")
     forecasts = {}
     for ticker in returns.columns:
-        # Use the mean-adjusted returns (subtract the mean)
         am = arch_model(returns[ticker] * 100, vol="Garch", p=1, q=1, rescale=False)
         res = am.fit(disp="off")
-
-        # Forecast the conditional variance
         forecast = res.forecast(horizon=horizon)
-        # The forecast is for variance, take the square root for volatility
-        # We use the last step of the forecast for the horizon volatility
         volatility_forecast = np.sqrt(forecast.variance.iloc[-1].sum()) / 100
-
-        # Annualize the volatility (assuming 252 trading days)
         annualized_vol = volatility_forecast * np.sqrt(252)
         forecasts[ticker] = annualized_vol
-
     forecast_series = pd.Series(forecasts)
     logger.info(forecast_series)
     return forecast_series
@@ -150,35 +123,21 @@ def stress_test(returns: pd.DataFrame, scenario_multiplier: float = 3.0) -> pd.S
     logger.info(
         f"\n--- Stress Test (Extreme Shock: {scenario_multiplier}x Std Dev) ---"
     )
-    # Calculate the shock as a multiple of the standard deviation
     shock = returns.std() * scenario_multiplier
-
-    # The simulated loss is the negative of the shock
     simulated_loss = -shock
     logger.info(simulated_loss)
     return simulated_loss
 
 
-def run_risk_analysis():
+def run_risk_analysis() -> Any:
     """Main function to run all risk analysis components."""
     try:
         returns = load_data(TICKERS)
-
-        # 1. Correlation Matrix
         calculate_correlation_matrix(returns)
-
-        # 2. Historical VaR (99%, 1-day)
         historical_var(returns, confidence_level=0.99, horizon=1)
-
-        # 3. Monte Carlo VaR (95%, 5-day)
         monte_carlo_var(returns, confidence_level=0.95, horizon=5)
-
-        # 4. GARCH Volatility Forecast (5-day)
         garch_volatility_forecast(returns, horizon=5)
-
-        # 5. Stress Test
         stress_test(returns, scenario_multiplier=4.0)
-
     except FileNotFoundError as e:
         logger.info(f"Error: {e}")
         logger.info(

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional, Tuple
-
 import bcrypt
 import jwt
 from riskoptimizer.core.config import config
@@ -25,7 +24,7 @@ class AuthService:
     to prevent brute-force attacks.
     """
 
-    def __init__(self):
+    def __init__(self) -> Any:
         """
         Initialize authentication service with configurations and dependencies.
         """
@@ -54,13 +53,8 @@ class AuthService:
         """
         if not password or not isinstance(password, str):
             raise ValidationError("Password is required", "password")
-
-        # Password complexity is handled by validate_password in auth_schema.py
-
-        # Generate a salt and hash the password using bcrypt
         salt = bcrypt.gensalt(rounds=self.password_rounds)
         hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
-
         return hashed.decode("utf-8")
 
     def verify_password(self, password: str, hashed_password: str) -> bool:
@@ -75,7 +69,6 @@ class AuthService:
             True if the password matches the hash, False otherwise.
         """
         try:
-            # Compare the plain text password with the hashed password
             return bcrypt.checkpw(
                 password.encode("utf-8"), hashed_password.encode("utf-8")
             )
@@ -97,8 +90,6 @@ class AuthService:
             and the expiration time of the access token.
         """
         now = datetime.utcnow()
-
-        # Payload for the access token
         access_payload = {
             "user_id": user_id,
             "email": email,
@@ -107,10 +98,7 @@ class AuthService:
             "iat": now,
             "exp": now + timedelta(seconds=self.access_token_expires),
         }
-        # Encode the access token
         access_token = jwt.encode(access_payload, self.secret_key, algorithm="HS256")
-
-        # Payload for the refresh token
         refresh_payload = {
             "user_id": user_id,
             "email": email,
@@ -118,9 +106,7 @@ class AuthService:
             "iat": now,
             "exp": now + timedelta(seconds=self.refresh_token_expires),
         }
-        # Encode the refresh token
         refresh_token = jwt.encode(refresh_payload, self.secret_key, algorithm="HS256")
-
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
@@ -144,23 +130,15 @@ class AuthService:
                                  or if the token type does not match the expected type.
         """
         try:
-            # Check if token is blacklisted before decoding
             if self.is_token_blacklisted(token):
                 raise AuthenticationError("Token has been revoked")
-
-            # Decode the token using the secret key and specified algorithm
             payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
-
-            # Verify the token type matches the expected type
             if payload.get("type") != token_type:
                 raise AuthenticationError(f"Invalid token type: expected {token_type}")
-
             return payload
         except jwt.ExpiredSignatureError:
-            # Handle expired token error
             raise AuthenticationError("Token has expired")
         except jwt.InvalidTokenError as e:
-            # Handle general invalid token errors
             raise AuthenticationError(f"Invalid token: {str(e)}")
 
     def refresh_access_token(self, refresh_token: str) -> Dict[str, str]:
@@ -176,19 +154,12 @@ class AuthService:
         Raises:
             AuthenticationError: If the refresh token is invalid or the user is not found/inactive.
         """
-        # Verify the provided refresh token
         payload = self.verify_token(refresh_token, "refresh")
-
-        # Retrieve user information from the database using the user ID from the refresh token payload
         with get_db_session() as session:
             user = self.user_repo.get_by_id(payload["user_id"], session)
             if not user or not user.is_active:
                 raise AuthenticationError("User not found or inactive")
-
-            # Generate a new set of tokens (only access token is returned here)
             tokens = self.generate_tokens(user.id, user.email, user.role)
-
-            # Return only the new access token and its details
             return {
                 "access_token": tokens["access_token"],
                 "token_type": "Bearer",
@@ -204,7 +175,6 @@ class AuthService:
             token: The JWT token string to blacklist.
         """
         try:
-            # Decode the token without verifying expiration to get its original expiration time
             payload = jwt.decode(
                 token,
                 self.secret_key,
@@ -212,17 +182,12 @@ class AuthService:
                 options={"verify_exp": False},
             )
             exp = payload.get("exp")
-
             if exp:
-                # Calculate the time-to-live (TTL) for the blacklist entry in seconds
                 exp_datetime = datetime.utcfromtimestamp(exp)
                 ttl = int((exp_datetime - datetime.utcnow()).total_seconds())
-
                 if ttl > 0:
-                    # Add the token to the Redis blacklist with its remaining TTL
                     cache_key = f"blacklist:{token}"
                     self.cache.set(cache_key, True, ttl=ttl)
-
                     logger.info(f"Token blacklisted for {ttl} seconds")
         except Exception as e:
             logger.error(f"Error blacklisting token: {str(e)}", exc_info=True)
@@ -267,7 +232,6 @@ class AuthService:
         key = self._get_login_attempt_key(email)
         attempts = self.cache.incr(key)
         if attempts == 1:
-            # Set expiry only on the first attempt to ensure the lockout time starts from the first failed attempt
             self.cache.expire(key, self.lockout_time)
         logger.warning(f"Failed login attempt for {email}. Attempts: {attempts}")
 
@@ -321,16 +285,11 @@ class AuthService:
             AuthenticationError: If authentication fails due to incorrect credentials,
                                  inactive account, or account lockout.
         """
-        # Validate input parameters
         if not email or not isinstance(email, str):
             raise ValidationError("Email is required", "email")
-
         if not password or not isinstance(password, str):
             raise ValidationError("Password is required", "password")
-
-        # Check if the account is locked before proceeding with authentication
         if self._is_account_locked(email):
-            # Log the attempt to access a locked account for auditing purposes
             self.audit_service.log_action(
                 user_id=None,
                 action_type="LOGIN_ATTEMPT_LOCKED",
@@ -339,16 +298,13 @@ class AuthService:
                     "email": email,
                     "ip_address": request.remote_addr if request else "N/A",
                 },
-            )  # Add IP address from request context if available
+            )
             raise AuthenticationError(
                 f"Account locked. Please try again in {self.lockout_time // 60} minutes."
             )
-
         with get_db_session() as session:
-            # Retrieve the user from the database by email
             user = self.user_repo.get_by_email(email, session)
             if not user:
-                # Record failed attempt and log for auditing if user not found
                 self._record_failed_login_attempt(email)
                 self.audit_service.log_action(
                     user_id=None,
@@ -359,12 +315,9 @@ class AuthService:
                         "reason": "Invalid credentials",
                         "ip_address": request.remote_addr if request else "N/A",
                     },
-                )  # Add IP address
+                )
                 raise AuthenticationError("Invalid email or password")
-
-            # Check if the user account is active
             if not user.is_active:
-                # Record failed attempt and log for auditing if account is inactive
                 self._record_failed_login_attempt(email)
                 self.audit_service.log_action(
                     user_id=user.id,
@@ -375,12 +328,9 @@ class AuthService:
                         "reason": "Account inactive",
                         "ip_address": request.remote_addr if request else "N/A",
                     },
-                )  # Add IP address
+                )
                 raise AuthenticationError("User account is inactive")
-
-            # Verify the provided password against the stored hashed password
             if not self.verify_password(password, user.hashed_password):
-                # Record failed attempt and log for auditing if password verification fails
                 self._record_failed_login_attempt(email)
                 self.audit_service.log_action(
                     user_id=user.id,
@@ -391,10 +341,8 @@ class AuthService:
                         "reason": "Invalid credentials",
                         "ip_address": request.remote_addr if request else "N/A",
                     },
-                )  # Add IP address
+                )
                 raise AuthenticationError("Invalid email or password")
-
-            # If authentication is successful, reset login attempts and log success
             self._reset_login_attempts(email)
             self.audit_service.log_action(
                 user_id=user.id,
@@ -404,12 +352,8 @@ class AuthService:
                     "email": email,
                     "ip_address": request.remote_addr if request else "N/A",
                 },
-            )  # Add IP address
-
-            # Generate new access and refresh tokens for the authenticated user
+            )
             tokens = self.generate_tokens(user.id, user.email, user.role)
-
-            # Prepare user data to be returned in the response
             user_data = {
                 "id": user.id,
                 "email": user.email,
@@ -420,9 +364,8 @@ class AuthService:
                 "created_at": user.created_at.isoformat(),
                 "updated_at": user.updated_at.isoformat(),
             }
-
             logger.info(f"User authenticated successfully: {email}")
-            return user_data, tokens
+            return (user_data, tokens)
 
     def register_user(
         self,
@@ -447,21 +390,14 @@ class AuthService:
             ValidationError: If any input is invalid.
             ConflictError: If a user with the provided email, username, or wallet address already exists.
         """
-        # Validate input parameters
         if not email or not isinstance(email, str):
             raise ValidationError("Email is required", "email")
-
         if not username or not isinstance(username, str):
             raise ValidationError("Username is required", "username")
-
         if not password or not isinstance(password, str):
             raise ValidationError("Password is required", "password")
-
-        # Hash the user's password before storing it
         hashed_password = self.hash_password(password)
-
         with get_db_session() as session:
-            # Create the user record in the database
             user = self.user_repo.create(
                 email=email,
                 username=username,
@@ -469,11 +405,7 @@ class AuthService:
                 wallet_address=wallet_address,
                 session=session,
             )
-
-            # Generate JWT tokens for the newly registered user
             tokens = self.generate_tokens(user.id, user.email, user.role)
-
-            # Prepare user data to be returned in the response
             user_data = {
                 "id": user.id,
                 "email": user.email,
@@ -484,9 +416,7 @@ class AuthService:
                 "created_at": user.created_at.isoformat(),
                 "updated_at": user.updated_at.isoformat(),
             }
-
             logger.info(f"User registered successfully: {email}")
-            # Log the user registration action for auditing
             self.audit_service.log_action(
                 user_id=user.id,
                 action_type="USER_REGISTERED",
@@ -497,8 +427,8 @@ class AuthService:
                     "username": username,
                     "ip_address": request.remote_addr if request else "N/A",
                 },
-            )  # Add IP address
-            return user_data, tokens
+            )
+            return (user_data, tokens)
 
     def logout_user(self, access_token: str, refresh_token: str) -> None:
         """
@@ -508,20 +438,14 @@ class AuthService:
             access_token: The user's current access token.
             refresh_token: The user's current refresh token.
         """
-        # Blacklist both the access and refresh tokens to invalidate them immediately
         self.blacklist_token(access_token)
         self.blacklist_token(refresh_token)
-
-        # Log the logout action for auditing. User ID can be extracted from token payload if needed.
-        # For simplicity, we'll log with None user_id here, assuming it's handled by middleware or token verification
         self.audit_service.log_action(
             user_id=None,
             action_type="USER_LOGOUT",
             details={"access_token_prefix": access_token[:10]},
-        )  # Log a prefix of the token
-
+        )
         logger.info("User logged out successfully")
 
 
-# Singleton instance of AuthService for application-wide use
 auth_service = AuthService()

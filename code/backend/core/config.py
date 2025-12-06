@@ -1,10 +1,8 @@
 import os
 from dataclasses import dataclass
 from typing import Optional
-
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
 
@@ -53,13 +51,13 @@ class SecurityConfig:
 
     secret_key: str
     jwt_secret_key: str
-    jwt_access_token_expires: int = 3600  # 1 hour
-    jwt_refresh_token_expires: int = 2592000  # 30 days
+    jwt_access_token_expires: int = 3600
+    jwt_refresh_token_expires: int = 2592000
     password_hash_rounds: int = 12
     rate_limit_per_minute: int = 60
-    max_login_attempts: int = 5  # Max failed login attempts before lockout
-    lockout_time: int = 300  # Account lockout time in seconds (5 minutes)
-    data_encryption_key: str  # Key for application-level data encryption
+    max_login_attempts: int = 5
+    lockout_time: int = 300
+    data_encryption_key: str
 
 
 @dataclass
@@ -70,7 +68,7 @@ class BlockchainConfig:
     portfolio_tracker_address: str
     risk_management_address: str
     gas_limit: int = 500000
-    gas_price: int = 20000000000  # 20 gwei
+    gas_price: int = 20000000000
 
 
 @dataclass
@@ -85,7 +83,7 @@ class CeleryConfig:
     timezone: str = "UTC"
     enable_utc: bool = True
 
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         if self.accept_content is None:
             self.accept_content = ["json"]
 
@@ -98,9 +96,9 @@ class APIConfig:
     port: int = 5000
     debug: bool = False
     cors_origins: list = None
-    max_content_length: int = 16 * 1024 * 1024  # 16MB
+    max_content_length: int = 16 * 1024 * 1024
 
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         if self.cors_origins is None:
             self.cors_origins = ["*"]
 
@@ -108,7 +106,7 @@ class APIConfig:
 class Config:
     """Main configuration class that aggregates all configuration settings."""
 
-    def __init__(self):
+    def __init__(self) -> Any:
         self.database = self._load_database_config()
         self.redis = self._load_redis_config()
         self.security = self._load_security_config()
@@ -150,22 +148,17 @@ class Config:
         secret_key = os.getenv("SECRET_KEY")
         if not secret_key:
             raise ValueError("SECRET_KEY environment variable is required")
-
         jwt_secret_key = os.getenv("JWT_SECRET_KEY")
         if not jwt_secret_key:
             raise ValueError("JWT_SECRET_KEY environment variable is required")
-
         data_encryption_key = os.getenv("DATA_ENCRYPTION_KEY")
         if not data_encryption_key:
-            # Generate a key if not provided (for development/testing only)
-            # In production, this should be securely generated and managed externally
             from cryptography.fernet import Fernet
 
             data_encryption_key = Fernet.generate_key().decode()
             logger.warning(
                 "DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production."
             )
-
         return SecurityConfig(
             secret_key=secret_key,
             jwt_secret_key=jwt_secret_key,
@@ -199,7 +192,6 @@ class Config:
         """Load Celery configuration from environment variables."""
         broker_url = os.getenv("CELERY_BROKER_URL", self.redis.url)
         result_backend = os.getenv("CELERY_RESULT_BACKEND", self.redis.url)
-
         return CeleryConfig(
             broker_url=broker_url,
             result_backend=result_backend,
@@ -227,26 +219,20 @@ class Config:
         model_path = os.getenv("MODEL_PATH")
         if model_path:
             return model_path
-
-        # Default path relative to the project root
         current_dir = os.path.dirname(os.path.abspath(__file__))
         project_root = os.path.dirname(os.path.dirname(current_dir))
         return os.path.join(project_root, "code", "ai_models", "optimization_model.pkl")
 
     def validate(self) -> None:
         """Validate configuration settings."""
-        # Validate required environment variables
         required_vars = ["SECRET_KEY", "JWT_SECRET_KEY", "DATA_ENCRYPTION_KEY"]
         missing_vars = [var for var in required_vars if not os.getenv(var)]
         if missing_vars:
             raise ValueError(
-                f"Missing required environment variables: {", ".join(missing_vars)}"
+                f"Missing required environment variables: {', '.join(missing_vars)}"
             )
-
-        # Validate model path exists
         if not os.path.exists(self.model_path):
             raise ValueError(f"Model file not found at: {self.model_path}")
 
 
-# Global configuration instance
 config = Config()

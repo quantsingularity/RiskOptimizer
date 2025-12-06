@@ -6,7 +6,6 @@ Provides utilities for query optimization, connection pooling, and database moni
 import time
 from contextlib import contextmanager
 from typing import Any, Dict, Generator, List
-
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy import event, text
@@ -20,7 +19,7 @@ logger = get_logger(__name__)
 class QueryPerformanceMonitor:
     """Monitor and log slow database queries."""
 
-    def __init__(self, slow_query_threshold: float = 1.0):
+    def __init__(self, slow_query_threshold: float = 1.0) -> Any:
         """
         Initialize query performance monitor.
 
@@ -51,8 +50,6 @@ class QueryPerformanceMonitor:
                     "threshold": self.slow_query_threshold,
                 },
             )
-
-            # Update query statistics
             query_hash = hash(query)
             if query_hash not in self.query_stats:
                 self.query_stats[query_hash] = {
@@ -62,7 +59,6 @@ class QueryPerformanceMonitor:
                     "max_time": 0,
                     "min_time": float("inf"),
                 }
-
             stats = self.query_stats[query_hash]
             stats["count"] += 1
             stats["total_time"] += duration
@@ -93,28 +89,35 @@ class QueryPerformanceMonitor:
                     "total_time": stats["total_time"],
                 }
             )
-
-        # Sort by total time descending
         stats_list.sort(key=lambda x: x["total_time"], reverse=True)
         return stats_list
 
 
-# Global query monitor instance
 query_monitor = QueryPerformanceMonitor()
 
 
 @event.listens_for(Engine, "before_cursor_execute")
 def receive_before_cursor_execute(
-    conn, cursor, statement, parameters, context, executemany
-):
+    conn: Any,
+    cursor: Any,
+    statement: Any,
+    parameters: Any,
+    context: Any,
+    executemany: Any,
+) -> Any:
     """Record query start time."""
     context._query_start_time = time.time()
 
 
 @event.listens_for(Engine, "after_cursor_execute")
 def receive_after_cursor_execute(
-    conn, cursor, statement, parameters, context, executemany
-):
+    conn: Any,
+    cursor: Any,
+    statement: Any,
+    parameters: Any,
+    context: Any,
+    executemany: Any,
+) -> Any:
     """Log query execution time."""
     if hasattr(context, "_query_start_time"):
         duration = time.time() - context._query_start_time
@@ -137,28 +140,18 @@ class DatabaseOptimizer:
             Dictionary with table statistics
         """
         try:
-            # Get table row count
             count_query = text(f"SELECT COUNT(*) FROM {table_name}")
             row_count = session.execute(count_query).scalar()
-
-            # Get table size (PostgreSQL specific)
             size_query = text(
                 f"SELECT pg_size_pretty(pg_total_relation_size('{table_name}'))"
             )
             table_size = session.execute(size_query).scalar()
-
-            # Get index information (PostgreSQL specific)
             index_query = text(
-                """
-                SELECT indexname, indexdef
-                FROM pg_indexes
-                WHERE tablename = :table_name
-            """
+                "\n                SELECT indexname, indexdef\n                FROM pg_indexes\n                WHERE tablename = :table_name\n            "
             )
             indexes = session.execute(
                 index_query, {"table_name": table_name}
             ).fetchall()
-
             return {
                 "table_name": table_name,
                 "row_count": row_count,
@@ -182,9 +175,7 @@ class DatabaseOptimizer:
             List of suggested index creation statements
         """
         suggestions = []
-
         try:
-            # This is a simplified example - in practice, you'd analyze query logs
             if table_name == "portfolios":
                 suggestions.extend(
                     [
@@ -208,12 +199,10 @@ class DatabaseOptimizer:
                         f"CREATE INDEX IF NOT EXISTS idx_{table_name}_wallet_address ON {table_name} (wallet_address);",
                     ]
                 )
-
         except Exception as e:
             logger.error(
                 f"Error suggesting indexes for {table_name}: {str(e)}", exc_info=True
             )
-
         return suggestions
 
     @staticmethod
@@ -230,7 +219,6 @@ class DatabaseOptimizer:
         """
         suggestions = DatabaseOptimizer.suggest_indexes(session, table_name)
         results = {"created": [], "failed": []}
-
         for index_sql in suggestions:
             try:
                 session.execute(text(index_sql))
@@ -241,7 +229,6 @@ class DatabaseOptimizer:
                 session.rollback()
                 results["failed"].append({"sql": index_sql, "error": str(e)})
                 logger.error(f"Failed to create index: {index_sql}, Error: {str(e)}")
-
         return results
 
 
@@ -258,13 +245,10 @@ def optimized_session(read_only: bool = False) -> Generator[Session, None, None]
     """
     with get_db_session() as session:
         try:
-            # Set session-level optimizations
             if read_only:
-                # For read-only operations, we can set transaction isolation level
                 session.execute(
                     text("SET TRANSACTION ISOLATION LEVEL READ COMMITTED READ ONLY")
                 )
-
             yield session
         except Exception as e:
             logger.error(f"Error in optimized session: {str(e)}", exc_info=True)
@@ -287,7 +271,6 @@ class ConnectionPoolMonitor:
         """
         try:
             pool = engine.pool
-
             if isinstance(pool, QueuePool):
                 return {
                     "pool_type": "QueuePool",
@@ -317,33 +300,23 @@ def optimize_database_performance() -> Dict[str, Any]:
         Dictionary with optimization results
     """
     results = {"tables_analyzed": [], "indexes_created": [], "errors": []}
-
     try:
         with get_db_session() as session:
-            # List of tables to optimize
             tables = ["users", "portfolios", "portfolio_allocations"]
-
             for table in tables:
                 try:
-                    # Analyze table
                     stats = DatabaseOptimizer.analyze_table_stats(session, table)
                     results["tables_analyzed"].append(stats)
-
-                    # Create indexes
                     index_results = DatabaseOptimizer.create_indexes(session, table)
                     results["indexes_created"].extend(index_results["created"])
-
                     if index_results["failed"]:
                         results["errors"].extend(index_results["failed"])
-
                 except Exception as e:
                     error_msg = f"Error optimizing table {table}: {str(e)}"
                     logger.error(error_msg, exc_info=True)
                     results["errors"].append(error_msg)
-
     except Exception as e:
         error_msg = f"Error in database optimization: {str(e)}"
         logger.error(error_msg, exc_info=True)
         results["errors"].append(error_msg)
-
     return results

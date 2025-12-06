@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
-
 from riskoptimizer.core.exceptions import DatabaseError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.models import AuditLog
@@ -15,7 +14,7 @@ class AuditService:
     Service for logging audit trails of financial transactions and key actions.
     """
 
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Optional[Session] = None) -> Any:
         """
         Initialize AuditService with an optional SQLAlchemy session.
         """
@@ -61,7 +60,7 @@ class AuditService:
                 timestamp=datetime.utcnow(),
             )
             db.add(audit_log)
-            db.flush()  # Use flush instead of commit if this is part of a larger transaction
+            db.flush()
             logger.info(
                 f"Audit log recorded: Action={action_type}, User={user_id}, Entity={entity_type}:{entity_id}"
             )
@@ -72,5 +71,4 @@ class AuditService:
             raise DatabaseError(f"Failed to log audit action: {e}")
 
 
-# Singleton instance
 audit_service = AuditService()
