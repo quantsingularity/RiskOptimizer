@@ -2,6 +2,10 @@ import os
 
 from web3 import Web3
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # --- Configuration and Mock Data ---
 
 # Mock Ganache/local Ethereum node URL
@@ -44,13 +48,13 @@ def get_web3_instance():
         w3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 
         if w3.is_connected():
-            print(f"Successfully connected to Ethereum node at {GANACHE_URL}")
+            logger.info(f"Successfully connected to Ethereum node at {GANACHE_URL}")
             return w3
         else:
-            print(f"Failed to connect to Ethereum node at {GANACHE_URL}")
+            logger.info(f"Failed to connect to Ethereum node at {GANACHE_URL}")
             return None
     except Exception as e:
-        print(f"Connection error: {e}")
+        logger.info(f"Connection error: {e}")
         return None
 
 
@@ -67,7 +71,7 @@ def record_trade_on_blockchain(
     Records a trade or rebalancing event on the mock blockchain ledger.
     """
     if not w3:
-        print("Cannot record transaction: Web3 connection failed.")
+        logger.info("Cannot record transaction: Web3 connection failed.")
         return
 
     # Convert float to integer for Solidity (e.g., using 18 decimal places)
@@ -83,13 +87,12 @@ def record_trade_on_blockchain(
     try:
         sender_account = w3.eth.accounts[0]
     except IndexError:
-        print(
+        logger.info(
             "Error: No accounts found. Ensure your local node (e.g., Ganache) is running."
         )
         return
 
-    print(f"\nRecording transaction from {sender_account}...")
-
+    logger.info(f"\nRecording transaction from {sender_account}...")
     # Build the transaction
     tx = contract.functions.recordTransaction(
         user_address, tx_type, ticker, quantity_wei, price_wei, notes
@@ -103,17 +106,15 @@ def record_trade_on_blockchain(
 
     # Mock sending and waiting for transaction receipt
     # In a real scenario, this would be signed and sent. Here we just print the mock call.
-    print(f"Mock Transaction Built (would be sent to the network):")
-    print(
+    logger.info(f"Mock Transaction Built (would be sent to the network):")
+    logger.info(
         f"  Function: recordTransaction('{user_address}', '{tx_type}', '{ticker}', {quantity_wei}, {price_wei}, '{notes}')"
     )
-
     # Mock successful transaction hash
     mock_tx_hash = "0x" + os.urandom(32).hex()
-    print(f"  Mock Transaction Hash: {mock_tx_hash}")
-
+    logger.info(f"  Mock Transaction Hash: {mock_tx_hash}")
     # Mock confirmation
-    print("Transaction successfully recorded on the mock blockchain.")
+    logger.info("Transaction successfully recorded on the mock blockchain.")
 
 
 def get_ledger_count(w3: Web3):
@@ -126,18 +127,19 @@ def get_ledger_count(w3: Web3):
     # Mock call to a view function
     try:
         count = contract.functions.getTransactionCount().call()
-        print(f"Total transactions on the mock ledger: {count}")
+        logger.info(f"Total transactions on the mock ledger: {count}")
         return count
     except Exception as e:
-        print(f"Mock call failed (ensure mock contract is deployed): {e}")
+        logger.info(f"Mock call failed (ensure mock contract is deployed): {e}")
         # Return a mock count if the call fails
         return 3  # Mocking 3 existing transactions
 
 
 def run_blockchain_integration():
     """Main function to run the blockchain integration components."""
-    print("Starting Blockchain Integration Service (Mocking local node connection)...")
-
+    logger.info(
+        "Starting Blockchain Integration Service (Mocking local node connection)..."
+    )
     w3 = get_web3_instance()
 
     # Mock User ID (Decentralized Identity Placeholder)
@@ -159,9 +161,8 @@ def run_blockchain_integration():
     )
 
     # 3. Check new count (mocked)
-    print(f"\nMock ledger count after recording: {initial_count + 1}")
-
-    print("\nBlockchain Integration Service finished.")
+    logger.info(f"\nMock ledger count after recording: {initial_count + 1}")
+    logger.info("\nBlockchain Integration Service finished.")
 
 
 if __name__ == "__main__":

@@ -22,6 +22,10 @@ sys.path.append(
 )
 from ai_models.optimization_model import AdvancedPortfolioOptimizer
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Default model path
 MODEL_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -50,13 +54,15 @@ class AIOptimizationService:
             # Check if model file exists
             if os.path.exists(self.model_path):
                 self.optimizer = AdvancedPortfolioOptimizer.load_model(self.model_path)
-                print(f"Loaded optimization model from {self.model_path}")
+                logger.info(f"Loaded optimization model from {self.model_path}")
             else:
                 # Create a new model if file doesn't exist
-                print(f"Model file not found at {self.model_path}. Creating new model.")
+                logger.info(
+                    f"Model file not found at {self.model_path}. Creating new model."
+                )
                 self.optimizer = AdvancedPortfolioOptimizer()
         except Exception as e:
-            print(f"Error loading model: {e}")
+            logger.info(f"Error loading model: {e}")
             # Fallback to new model
             self.optimizer = AdvancedPortfolioOptimizer()
 
@@ -250,7 +256,7 @@ class AIOptimizationService:
 
                 return True
             except Exception as e:
-                print(f"Error training model: {e}")
+                logger.info(f"Error training model: {e}")
                 return False
 
         return True  # Model already trained

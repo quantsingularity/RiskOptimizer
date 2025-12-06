@@ -22,6 +22,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -1045,9 +1049,8 @@ if __name__ == "__main__":
 
     # Predict VaR
     var_pred = ml_model.predict_var(returns, confidence=0.95)
-    print(f"ML VaR prediction shape: {var_pred.shape}")
-    print(f"Average predicted VaR: {var_pred.mean():.4f}")
-
+    logger.info(f"ML VaR prediction shape: {var_pred.shape}")
+    logger.info(f"Average predicted VaR: {var_pred.mean():.4f}")
     # Create copula model
     copula_model = CopulaMLRiskModel(copula_type="gaussian")
     copula_model.fit(returns)
@@ -1057,20 +1060,17 @@ if __name__ == "__main__":
 
     # Calculate VaR
     var = copula_model.calculate_var(weights, confidence=0.95)
-    print(f"Copula VaR (95%): {var:.4f}")
-
+    logger.info(f"Copula VaR (95%): {var:.4f}")
     # Calculate ES
     es = copula_model.calculate_es(weights, confidence=0.95)
-    print(f"Copula ES (95%): {es:.4f}")
-
+    logger.info(f"Copula ES (95%): {es:.4f}")
     # Create hybrid model
     hybrid_model = HybridRiskModel(traditional_weight=0.7)
     hybrid_model.fit(returns)
 
     # Calculate hybrid VaR
     hybrid_var = hybrid_model.calculate_var(returns, weights, confidence=0.95)
-    print(f"Hybrid VaR (95%): {hybrid_var:.4f}")
-
+    logger.info(f"Hybrid VaR (95%): {hybrid_var:.4f}")
     # Calculate hybrid ES
     hybrid_es = hybrid_model.calculate_es(returns, weights, confidence=0.95)
-    print(f"Hybrid ES (95%): {hybrid_es:.4f}")
+    logger.info(f"Hybrid ES (95%): {hybrid_es:.4f}")

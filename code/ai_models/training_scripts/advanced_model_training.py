@@ -21,6 +21,10 @@ from sklearn.metrics import mean_squared_error, r2_score
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from optimization_model import AdvancedPortfolioOptimizer
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 def load_sample_data():
     """
@@ -80,8 +84,7 @@ def train_and_evaluate_model(data, risk_tolerance=5):
     Returns:
         Trained model and evaluation metrics
     """
-    print("Training advanced portfolio optimization model...")
-
+    logger.info("Training advanced portfolio optimization model...")
     # Create optimizer instance
     optimizer = AdvancedPortfolioOptimizer(risk_tolerance=risk_tolerance)
 
@@ -100,32 +103,28 @@ def train_and_evaluate_model(data, risk_tolerance=5):
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
 
-    print(f"Model evaluation metrics:")
-    print(f"Mean Squared Error: {mse:.6f}")
-    print(f"R² Score: {r2:.4f}")
-
+    logger.info(f"Model evaluation metrics:")
+    logger.info(f"Mean Squared Error: {mse:.6f}")
+    logger.info(f"R² Score: {r2:.4f}")
     # Test portfolio optimization
     weights, metrics = optimizer.optimize_portfolio(test_data)
 
-    print("\nOptimal portfolio weights:")
+    logger.info("\nOptimal portfolio weights:")
     for asset, weight in weights.items():
-        print(f"  {asset}: {weight:.4f}")
-
-    print("\nPortfolio performance metrics:")
-    print(f"  Expected Return: {metrics['expected_return']:.4f}")
-    print(f"  Volatility: {metrics['volatility']:.4f}")
-    print(f"  Sharpe Ratio: {metrics['sharpe_ratio']:.4f}")
-
+        logger.info(f"  {asset}: {weight:.4f}")
+    logger.info("\nPortfolio performance metrics:")
+    logger.info(f"  Expected Return: {metrics['expected_return']:.4f}")
+    logger.info(f"  Volatility: {metrics['volatility']:.4f}")
+    logger.info(f"  Sharpe Ratio: {metrics['sharpe_ratio']:.4f}")
     # Run Monte Carlo simulation
-    print("\nRunning Monte Carlo simulation...")
+    logger.info("\nRunning Monte Carlo simulation...")
     simulation, risk_metrics = optimizer.monte_carlo_simulation(test_data, weights)
 
-    print("Risk assessment metrics:")
-    print(f"  Expected Final Value: ${risk_metrics['expected_final_value']:.2f}")
-    print(f"  95% Value at Risk: ${risk_metrics['var_95']:.2f}")
-    print(f"  99% Value at Risk: ${risk_metrics['var_99']:.2f}")
-    print(f"  Average Max Drawdown: {risk_metrics['max_drawdown']:.4f}")
-
+    logger.info("Risk assessment metrics:")
+    logger.info(f"  Expected Final Value: ${risk_metrics['expected_final_value']:.2f}")
+    logger.info(f"  95% Value at Risk: ${risk_metrics['var_95']:.2f}")
+    logger.info(f"  99% Value at Risk: ${risk_metrics['var_99']:.2f}")
+    logger.info(f"  Average Max Drawdown: {risk_metrics['max_drawdown']:.4f}")
     return optimizer, {
         "prediction_metrics": {"mse": mse, "r2": r2},
         "portfolio_metrics": metrics,
@@ -214,17 +213,15 @@ def save_model_visualization(data, optimizer, output_dir):
     plt.ylabel("Portfolio Value ($)")
     plt.savefig(os.path.join(output_dir, "monte_carlo_simulation.png"))
 
-    print(f"Visualizations saved to {output_dir}")
+    logger.info(f"Visualizations saved to {output_dir}")
 
 
 def main():
     """Main function to train and save the model"""
-    print("Starting advanced model training for RiskOptimizer...")
-
+    logger.info("Starting advanced model training for RiskOptimizer...")
     # Load data
     data = load_sample_data()
-    print(f"Loaded data with {len(data)} rows and {len(data.columns)} columns")
-
+    logger.info(f"Loaded data with {len(data)} rows and {len(data.columns)} columns")
     # Train and evaluate model
     optimizer, metrics = train_and_evaluate_model(data)
 
@@ -237,8 +234,8 @@ def main():
     vis_dir = os.path.join(model_dir, "visualizations")
     save_model_visualization(data, optimizer, vis_dir)
 
-    print(f"\nTraining complete. Model saved to {model_path}")
-    print(
+    logger.info(f"\nTraining complete. Model saved to {model_path}")
+    logger.info(
         "Run this model in production by importing AdvancedPortfolioOptimizer and loading the saved model."
     )
 

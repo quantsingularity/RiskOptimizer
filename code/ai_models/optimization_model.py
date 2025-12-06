@@ -19,6 +19,10 @@ from scipy.optimize import minimize
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class AdvancedPortfolioOptimizer:
     """Advanced portfolio optimization using multiple AI techniques"""
@@ -298,7 +302,7 @@ class AdvancedPortfolioOptimizer:
             filepath,
         )
 
-        print(f"Model saved to {filepath}")
+        logger.info(f"Model saved to {filepath}")
 
     @classmethod
     def load_model(cls, filepath):

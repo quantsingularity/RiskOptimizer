@@ -18,6 +18,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -612,23 +616,20 @@ if __name__ == "__main__":
     var_95 = evt_model.calculate_var(0.95, method="evt")
     es_95 = evt_model.calculate_es(0.95, method="evt")
 
-    print(f"EVT VaR (95%): {var_95:.4f}")
-    print(f"EVT ES (95%): {es_95:.4f}")
-
+    logger.info(f"EVT VaR (95%): {var_95:.4f}")
+    logger.info(f"EVT ES (95%): {es_95:.4f}")
     # Compare with historical and normal methods
     var_hist = evt_model.calculate_var(0.95, method="historical")
     var_norm = evt_model.calculate_var(0.95, method="normal")
 
-    print(f"Historical VaR (95%): {var_hist:.4f}")
-    print(f"Normal VaR (95%): {var_norm:.4f}")
-
+    logger.info(f"Historical VaR (95%): {var_hist:.4f}")
+    logger.info(f"Normal VaR (95%): {var_norm:.4f}")
     # Generate extreme scenarios
     scenarios = evt_model.generate_scenarios(n_scenarios=1000, method="evt")
 
-    print(f"Mean scenario: {np.mean(scenarios):.4f}")
-    print(f"Min scenario: {np.min(scenarios):.4f}")
-    print(f"Max scenario: {np.max(scenarios):.4f}")
-
+    logger.info(f"Mean scenario: {np.mean(scenarios):.4f}")
+    logger.info(f"Min scenario: {np.min(scenarios):.4f}")
+    logger.info(f"Max scenario: {np.max(scenarios):.4f}")
     # Plot tail distribution
     fig = evt_model.plot_tail_distribution()
     plt.tight_layout()

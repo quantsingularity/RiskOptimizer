@@ -24,6 +24,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -1186,4 +1190,4 @@ if __name__ == "__main__":
         },
     )
 
-    print("Report generated: risk_report.html")
+    logger.info("Report generated: risk_report.html")

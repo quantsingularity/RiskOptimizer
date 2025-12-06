@@ -2,6 +2,10 @@ import psycopg2
 from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 from psycopg2.extras import RealDictCursor
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class Database:
     def __init__(self):
@@ -25,7 +29,7 @@ class Database:
 
             return True
         except (Exception, psycopg2.DatabaseError) as error:
-            print(f"Error connecting to PostgreSQL database: {error}")
+            logger.info(f"Error connecting to PostgreSQL database: {error}")
             return False
 
     def disconnect(self):
@@ -53,7 +57,7 @@ class Database:
             self.connection.commit()
             return True
         except (Exception, psycopg2.DatabaseError) as error:
-            print(f"Error executing query: {error}")
+            logger.info(f"Error executing query: {error}")
             if self.connection:
                 self.connection.rollback()
             return None
@@ -107,7 +111,7 @@ class Database:
             self.connection.commit()
             return True
         except (Exception, psycopg2.DatabaseError) as error:
-            print(f"Error saving portfolio: {error}")
+            logger.info(f"Error saving portfolio: {error}")
             if self.connection:
                 self.connection.rollback()
             return False

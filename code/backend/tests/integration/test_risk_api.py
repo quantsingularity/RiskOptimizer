@@ -2,6 +2,10 @@ import unittest
 
 import requests
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Assuming the backend is running on localhost:8000
 BASE_URL = "http://localhost:8000/api/v1"
 
@@ -43,7 +47,9 @@ class TestRiskAPI(unittest.TestCase):
             f"{BASE_URL}/auth/register", json=register_data
         )
         if register_response.status_code == 409:  # User already exists
-            print(f"User {self.test_user_email} already exists, proceeding to login.")
+            logger.info(
+                f"User {self.test_user_email} already exists, proceeding to login."
+            )
         elif register_response.status_code != 201:
             self.fail(
                 f"Failed to register user: {register_response.status_code} - {register_response.text}"

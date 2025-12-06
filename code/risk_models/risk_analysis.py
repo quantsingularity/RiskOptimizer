@@ -4,6 +4,10 @@ import numpy as np
 import pandas as pd
 from arch import arch_model
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # --- Configuration and Data Loading ---
 
 DATA_DIR = "data"
@@ -23,8 +27,7 @@ def load_data(tickers: list, data_dir: str = DATA_DIR) -> pd.DataFrame:
             # Use 'Close' price for risk analysis
             all_data[ticker] = df["Close"]
         else:
-            print(f"Warning: Data file not found for {ticker} at {file_path}")
-
+            logger.info(f"Warning: Data file not found for {ticker} at {file_path}")
     if not all_data:
         raise FileNotFoundError(
             "No data files were loaded. Run data_ingestion.py first."
@@ -42,9 +45,9 @@ def load_data(tickers: list, data_dir: str = DATA_DIR) -> pd.DataFrame:
 
 def calculate_correlation_matrix(returns: pd.DataFrame) -> pd.DataFrame:
     """Computes the correlation matrix of asset returns."""
-    print("\n--- Correlation Matrix ---")
+    logger.info("\n--- Correlation Matrix ---")
     corr_matrix = returns.corr()
-    print(corr_matrix)
+    logger.info(corr_matrix)
     return corr_matrix
 
 
@@ -59,11 +62,13 @@ def historical_var(
     :param horizon: The time horizon in days (e.g., 1 for 1-day VaR).
     :return: Series of VaR values for each asset.
     """
-    print(f"\n--- Historical VaR ({confidence_level*100:.0f}%, {horizon}-day) ---")
+    logger.info(
+        f"\n--- Historical VaR ({confidence_level*100:.0f}%, {horizon}-day) ---"
+    )
     # Calculate the percentile corresponding to the VaR
     alpha = 1 - confidence_level
     var_values = returns.quantile(alpha) * np.sqrt(horizon)
-    print(var_values)
+    logger.info(var_values)
     return var_values
 
 
@@ -82,8 +87,9 @@ def monte_carlo_var(
     :param n_simulations: Number of Monte Carlo paths to simulate.
     :return: Series of VaR values for each asset.
     """
-    print(f"\n--- Monte Carlo VaR ({confidence_level*100:.0f}%, {horizon}-day) ---")
-
+    logger.info(
+        f"\n--- Monte Carlo VaR ({confidence_level*100:.0f}%, {horizon}-day) ---"
+    )
     mu = returns.mean()
     sigma = returns.std()
     alpha = 1 - confidence_level
@@ -99,7 +105,7 @@ def monte_carlo_var(
         var_values[ticker] = var
 
     var_series = pd.Series(var_values)
-    print(var_series)
+    logger.info(var_series)
     return var_series
 
 
@@ -111,7 +117,7 @@ def garch_volatility_forecast(returns: pd.DataFrame, horizon: int = 5) -> pd.Ser
     :param horizon: The number of days to forecast volatility.
     :return: Series of annualized volatility forecasts.
     """
-    print(f"\n--- GARCH(1,1) Volatility Forecast ({horizon}-day) ---")
+    logger.info(f"\n--- GARCH(1,1) Volatility Forecast ({horizon}-day) ---")
     forecasts = {}
     for ticker in returns.columns:
         # Use the mean-adjusted returns (subtract the mean)
@@ -129,7 +135,7 @@ def garch_volatility_forecast(returns: pd.DataFrame, horizon: int = 5) -> pd.Ser
         forecasts[ticker] = annualized_vol
 
     forecast_series = pd.Series(forecasts)
-    print(forecast_series)
+    logger.info(forecast_series)
     return forecast_series
 
 
@@ -141,14 +147,15 @@ def stress_test(returns: pd.DataFrame, scenario_multiplier: float = 3.0) -> pd.S
     :param scenario_multiplier: Multiplier for the standard deviation to define the shock.
     :return: Series of simulated loss for each asset.
     """
-    print(f"\n--- Stress Test (Extreme Shock: {scenario_multiplier}x Std Dev) ---")
-
+    logger.info(
+        f"\n--- Stress Test (Extreme Shock: {scenario_multiplier}x Std Dev) ---"
+    )
     # Calculate the shock as a multiple of the standard deviation
     shock = returns.std() * scenario_multiplier
 
     # The simulated loss is the negative of the shock
     simulated_loss = -shock
-    print(simulated_loss)
+    logger.info(simulated_loss)
     return simulated_loss
 
 
@@ -173,12 +180,12 @@ def run_risk_analysis():
         stress_test(returns, scenario_multiplier=4.0)
 
     except FileNotFoundError as e:
-        print(f"Error: {e}")
-        print(
+        logger.info(f"Error: {e}")
+        logger.info(
             "Please ensure the data ingestion script (data_ingestion.py) has been run successfully."
         )
     except Exception as e:
-        print(f"An unexpected error occurred during risk analysis: {e}")
+        logger.info(f"An unexpected error occurred during risk analysis: {e}")
 
 
 if __name__ == "__main__":

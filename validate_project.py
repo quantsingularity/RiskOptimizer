@@ -13,7 +13,7 @@ import sys
 
 def run_command(command, cwd=None):
     """Run a shell command and return the result"""
-    print(f"Running: {command}")
+    logger.info(f"Running: {command}")
     try:
         result = subprocess.run(
             command,
@@ -24,16 +24,16 @@ def run_command(command, cwd=None):
             stderr=subprocess.PIPE,
             text=True,
         )
-        print(f"Success: {result.stdout}")
+        logger.info(f"Success: {result.stdout}")
         return True, result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Error: {e.stderr}")
+        logger.info(f"Error: {e.stderr}")
         return False, e.stderr
 
 
 def run_backend_tests(project_root):
     """Run backend tests"""
-    print("\n=== Running Backend Tests ===\n")
+    logger.info("\n=== Running Backend Tests ===\n")
     backend_dir = os.path.join(project_root, "code", "backend")
 
     # Check if pytest is installed
@@ -53,7 +53,7 @@ def run_backend_tests(project_root):
 
 def run_ai_model_tests(project_root):
     """Run AI model tests"""
-    print("\n=== Running AI Model Tests ===\n")
+    logger.info("\n=== Running AI Model Tests ===\n")
     ai_models_dir = os.path.join(project_root, "code", "ai_models")
 
     # Install required packages
@@ -78,7 +78,7 @@ def run_ai_model_tests(project_root):
 
 def run_blockchain_tests(project_root):
     """Run blockchain tests"""
-    print("\n=== Running Blockchain Tests ===\n")
+    logger.info("\n=== Running Blockchain Tests ===\n")
     blockchain_dir = os.path.join(project_root, "code", "blockchain")
 
     # Check if contracts compile
@@ -92,22 +92,24 @@ def run_blockchain_tests(project_root):
 
 def validate_integration(project_root):
     """Validate integration between components"""
-    print("\n=== Validating Integration ===\n")
-
+    logger.info("\n=== Validating Integration ===\n")
     # Check if backend can import AI models
     backend_dir = os.path.join(project_root, "code", "backend")
     test_script = """
 import sys
 import os
+
+from core.logging import get_logger
+logger = get_logger(__name__)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
     from ai_models.optimization_model import AdvancedPortfolioOptimizer
-    print("Successfully imported AI models")
+    logger.info("Successfully imported AI models")
     optimizer = AdvancedPortfolioOptimizer()
-    print("Successfully created optimizer instance")
+    logger.info("Successfully created optimizer instance")
     exit(0)
 except Exception as e:
-    print(f"Error: {e}")
+    logger.info(f"Error: {e}")
     exit(1)
 """
 
@@ -136,8 +138,7 @@ def main():
 
     project_root = args.project_root
 
-    print(f"Validating RiskOptimizer project at: {project_root}")
-
+    logger.info(f"Validating RiskOptimizer project at: {project_root}")
     # Run tests
     backend_success = run_backend_tests(project_root)
     ai_success = run_ai_model_tests(project_root)
@@ -145,18 +146,17 @@ def main():
     integration_success = validate_integration(project_root)
 
     # Print summary
-    print("\n=== Test Summary ===\n")
-    print(f"Backend Tests: {'PASSED' if backend_success else 'FAILED'}")
-    print(f"AI Model Tests: {'PASSED' if ai_success else 'FAILED'}")
-    print(f"Blockchain Tests: {'PASSED' if blockchain_success else 'FAILED'}")
-    print(f"Integration Tests: {'PASSED' if integration_success else 'FAILED'}")
-
+    logger.info("\n=== Test Summary ===\n")
+    logger.info(f"Backend Tests: {'PASSED' if backend_success else 'FAILED'}")
+    logger.info(f"AI Model Tests: {'PASSED' if ai_success else 'FAILED'}")
+    logger.info(f"Blockchain Tests: {'PASSED' if blockchain_success else 'FAILED'}")
+    logger.info(f"Integration Tests: {'PASSED' if integration_success else 'FAILED'}")
     # Overall result
     if backend_success and ai_success and blockchain_success and integration_success:
-        print("\nAll tests PASSED! Project is ready for packaging.")
+        logger.info("\nAll tests PASSED! Project is ready for packaging.")
         return 0
     else:
-        print("\nSome tests FAILED. Please fix issues before packaging.")
+        logger.info("\nSome tests FAILED. Please fix issues before packaging.")
         return 1
 
 

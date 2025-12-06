@@ -20,6 +20,10 @@ from web3 import HTTPProvider, Web3
 from web3.gas_strategies.time_based import medium_gas_price_strategy
 from web3.middleware import geth_poa_middleware
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 load_dotenv()
 
 # Contract ABIs
@@ -304,7 +308,7 @@ class BlockchainService:
                 "network": self.network_config["name"],
             }
         except Exception as e:
-            print(f"Error getting portfolio from blockchain: {e}")
+            logger.info(f"Error getting portfolio from blockchain: {e}")
             return None
 
     def update_portfolio(self, address, assets, allocations_pct):
@@ -365,7 +369,7 @@ class BlockchainService:
                 "explorer_url": f"{self.network_config['explorer']}/tx/{tx_hash.hex()}",
             }
         except Exception as e:
-            print(f"Error updating portfolio on blockchain: {e}")
+            logger.info(f"Error updating portfolio on blockchain: {e}")
             return None
 
     def calculate_volatility(self, lookback_days=30):
@@ -384,7 +388,7 @@ class BlockchainService:
             ).call()
             return volatility
         except Exception as e:
-            print(f"Error calculating volatility on blockchain: {e}")
+            logger.info(f"Error calculating volatility on blockchain: {e}")
             return None
 
     def get_transaction_history(self, address, limit=10):
@@ -435,7 +439,7 @@ class BlockchainService:
 
             return transactions
         except Exception as e:
-            print(f"Error getting transaction history: {e}")
+            logger.info(f"Error getting transaction history: {e}")
             return []
 
     def get_gas_estimate(self, assets, allocations_pct):
@@ -462,7 +466,7 @@ class BlockchainService:
 
             return gas_estimate
         except Exception as e:
-            print(f"Error estimating gas: {e}")
+            logger.info(f"Error estimating gas: {e}")
             return None
 
     def switch_network(self, network):
@@ -504,7 +508,7 @@ class BlockchainService:
 
             return self.is_connected()
         except Exception as e:
-            print(f"Error switching network: {e}")
+            logger.info(f"Error switching network: {e}")
             return False
 
     def get_supported_networks(self):

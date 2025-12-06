@@ -31,6 +31,10 @@ from risk_engine.parallel_risk_engine import ParallelRiskEngine
 from risk_models.extreme_value_theory import ExtremeValueRisk
 from risk_models.ml_risk_models import CopulaMLRiskModel, MLRiskModel
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TestExtremeValueTheory(unittest.TestCase):
     """Test cases for Extreme Value Theory risk models"""
@@ -1087,10 +1091,9 @@ if __name__ == "__main__":
     result = run_tests()
 
     # Print summary
-    print(f"\nTest Summary:")
-    print(f"  Ran {result.testsRun} tests")
-    print(f"  Failures: {len(result.failures)}")
-    print(f"  Errors: {len(result.errors)}")
-
+    logger.info(f"\nTest Summary:")
+    logger.info(f"  Ran {result.testsRun} tests")
+    logger.info(f"  Failures: {len(result.failures)}")
+    logger.info(f"  Errors: {len(result.errors)}")
     # Exit with appropriate status code
     sys.exit(len(result.failures) + len(result.errors))

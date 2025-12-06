@@ -30,6 +30,10 @@ from risk_engine.parallel_risk_engine import ParallelRiskEngine
 from risk_models.extreme_value_theory import ExtremeValueRisk
 from risk_models.ml_risk_models import CopulaMLRiskModel, MLRiskModel
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TestExtremeValueTheory(unittest.TestCase):
     """Test cases for Extreme Value Theory module"""
@@ -872,7 +876,7 @@ if __name__ == "__main__":
     unittest.main(verbosity=2)
 
     # Print test summary
-    print("Test Summary:")
-    print(f"  Ran {unittest.TestResult().testsRun} tests")
-    print(f"  Failures: {len(unittest.TestResult().failures)}")
-    print(f"  Errors: {len(unittest.TestResult().errors)}")
+    logger.info("Test Summary:")
+    logger.info(f"  Ran {unittest.TestResult().testsRun} tests")
+    logger.info(f"  Failures: {len(unittest.TestResult().failures)}")
+    logger.info(f"  Errors: {len(unittest.TestResult().errors)}")

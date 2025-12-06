@@ -2,6 +2,10 @@ import unittest
 
 import requests
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Assuming the backend is running on localhost:8000
 BASE_URL = "http://localhost:8000/api/v1"
 
@@ -48,7 +52,7 @@ class TestAuthAPI(unittest.TestCase):
                 #     print(f"Cleaned up user {self.test_user_email}")
                 pass  # For now, we'll just register and let subsequent tests handle conflicts
         except Exception as e:
-            print(f"Error during test user cleanup: {e}")
+            logger.info(f"Error during test user cleanup: {e}")
 
     def test_1_register_user(self):
         # Test user registration

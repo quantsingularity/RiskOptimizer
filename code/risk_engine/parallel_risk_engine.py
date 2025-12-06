@@ -22,6 +22,10 @@ import psutil
 from joblib import Parallel, delayed
 from scipy import stats
 
+from core.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -1277,34 +1281,35 @@ if __name__ == "__main__":
         confidence_levels=[0.95, 0.99],
     )
 
-    print("Batch Risk Calculation Results:")
+    logger.info("Batch Risk Calculation Results:")
     for model, metrics in result["risk_metrics"].items():
-        print(f"  {model}:")
+        logger.info(f"  {model}:")
         for metric, value in metrics.items():
-            print(f"    {metric}: {value:.6f}")
-
+            logger.info(f"    {metric}: {value:.6f}")
     # Run portfolio optimization
     result = engine.parallel_portfolio_optimization(
         returns, risk_model="markowitz", n_portfolios=1000
     )
 
-    print("\nPortfolio Optimization Results:")
-    print(f"  Max Sharpe Ratio: {result['max_sharpe_portfolio']['sharpe_ratio']:.4f}")
-    print(f"  Min Volatility: {result['min_volatility_portfolio']['volatility']:.4f}")
-
+    logger.info("\nPortfolio Optimization Results:")
+    logger.info(
+        f"  Max Sharpe Ratio: {result['max_sharpe_portfolio']['sharpe_ratio']:.4f}"
+    )
+    logger.info(
+        f"  Min Volatility: {result['min_volatility_portfolio']['volatility']:.4f}"
+    )
     # Run risk decomposition
     result = engine.parallel_risk_decomposition(
         returns, weights, risk_measure="volatility"
     )
 
-    print("\nRisk Decomposition Results:")
+    logger.info("\nRisk Decomposition Results:")
     for contribution in result["contributions"]:
-        print(
+        logger.info(
             f"  {contribution['asset']}: {contribution['percentage_contribution']:.2%}"
         )
-
     # Get system info
     info = engine.system_info()
-    print(
+    logger.info(
         f"\nSystem Info: {info['cpu_count']} CPUs, {info['backend']} backend, {info['n_jobs']} jobs"
     )
