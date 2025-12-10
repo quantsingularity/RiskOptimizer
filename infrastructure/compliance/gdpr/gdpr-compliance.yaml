@@ -2,45 +2,40 @@
 
 ## Data Protection Impact Assessment (DPIA) Template
 
-### Project Information
-- **Project Name**: RiskOptimizer Financial Platform
-- **Data Controller**: RiskOptimizer Ltd.
-- **Data Protection Officer**: dpo@riskoptimizer.com
-- **Assessment Date**: $(date +%Y-%m-%d)
-- **Review Date**: $(date -d "+1 year" +%Y-%m-%d)
+project_information:
+  project_name: RiskOptimizer Financial Platform
+  data_controller: RiskOptimizer Ltd.
+  data_protection_officer: dpo@riskoptimizer.com
+  assessment_date: $(date +%Y-%m-%d)
+  review_date: $(date -d "+1 year" +%Y-%m-%d)
 
-### Data Processing Description
+data_processing_description:
+  personal_data_categories:
+    customer_data:
+      - Names, addresses, contact information
+      - Financial information (account numbers, transaction history)
+      - Identification documents
+      - Risk assessment data
+    employee_data:
+      - Personnel records
+      - Access logs and system usage
+      - Performance data
+    third_party_data:
+      - Vendor contact information
+      - service_provider_data
+  processing_purposes:
+    - Financial risk assessment and management
+    - Customer onboarding and KYC compliance
+    - Transaction monitoring and fraud detection
+    - Regulatory reporting and compliance
+    - System security and audit logging
+  legal_basis_for_processing:
+    - legitimate_interest: Risk management and fraud prevention
+    - contract: Customer service delivery
+    - legal_obligation: Regulatory compliance (AML, KYC)
+    - consent: Marketing communications (where applicable)
 
-#### Personal Data Categories
-1. **Customer Data**
-   - Names, addresses, contact information
-   - Financial information (account numbers, transaction history)
-   - Identification documents
-   - Risk assessment data
-
-2. **Employee Data**
-   - Personnel records
-   - Access logs and system usage
-   - Performance data
-
-3. **Third-Party Data**
-   - Vendor contact information
-   - Service provider data
-
-#### Processing Purposes
-- Financial risk assessment and management
-- Customer onboarding and KYC compliance
-- Transaction monitoring and fraud detection
-- Regulatory reporting and compliance
-- System security and audit logging
-
-#### Legal Basis for Processing
-- **Legitimate Interest**: Risk management and fraud prevention
-- **Contract**: Customer service delivery
-- **Legal Obligation**: Regulatory compliance (AML, KYC)
-- **Consent**: Marketing communications (where applicable)
-
-### Data Subject Rights Implementation
+data_subject_rights_implementation:
 
 #### Right to Information (Articles 13-14)
 ```yaml

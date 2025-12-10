@@ -5,399 +5,380 @@
 ### Requirement 1: Install and maintain a firewall configuration
 
 #### Firewall Standards
-```yaml
+
 firewall_requirements:
-  network_segmentation:
-    cardholder_data_environment:
-      - isolated_network_segment
-      - dedicated_vlans
-      - strict_access_controls
+    network_segmentation:
+        cardholder_data_environment:
+            - isolated_network_segment
+            - dedicated_vlans
+            - strict_access_controls
 
-  firewall_rules:
-    default_policy: "deny_all"
-    explicit_allow_rules: true
-    regular_review: "quarterly"
-    change_management: true
+    firewall_rules:
+        default_policy: 'deny_all'
+        explicit_allow_rules: true
+        regular_review: 'quarterly'
+        change_management: true
 
-  documentation:
-    network_diagrams: true
-    firewall_configurations: true
-    rule_justifications: true
-```
+    documentation:
+        network_diagrams: true
+        firewall_configurations: true
+        rule_justifications: true
 
 #### Network Architecture
-```yaml
-network_design:
-  dmz_configuration:
-    web_servers: "dmz_segment"
-    application_servers: "internal_segment"
-    database_servers: "secure_segment"
 
-  access_controls:
-    inbound_traffic: "restricted"
-    outbound_traffic: "controlled"
-    inter_segment_traffic: "minimal"
-```
+network_design:
+    dmz_configuration:
+        web_servers: 'dmz_segment'
+        application_servers: 'internal_segment'
+        database_servers: 'secure_segment'
+
+    access_controls:
+        inbound_traffic: 'restricted'
+        outbound_traffic: 'controlled'
+        inter_segment_traffic: 'minimal'
 
 ### Requirement 2: Do not use vendor-supplied defaults
 
 #### System Hardening
-```yaml
+
 hardening_standards:
-  default_passwords:
-    change_required: true
-    complexity_requirements: true
-    unique_per_system: true
+    default_passwords:
+        change_required: true
+        complexity_requirements: true
+        unique_per_system: true
 
-  unnecessary_services:
-    disable_unused: true
-    regular_audit: true
-    documentation: true
+    unnecessary_services:
+        disable_unused: true
+        regular_audit: true
+        documentation: true
 
-  security_parameters:
-    encryption_enabled: true
-    secure_protocols_only: true
-    strong_authentication: true
-```
+    security_parameters:
+        encryption_enabled: true
+        secure_protocols_only: true
+        strong_authentication: true
 
 #### Configuration Management
-```yaml
-configuration_standards:
-  baseline_configurations:
-    operating_systems: true
-    databases: true
-    applications: true
-    network_devices: true
 
-  change_control:
-    approval_process: true
-    testing_required: true
-    rollback_procedures: true
-    documentation: true
-```
+configuration_standards:
+    baseline_configurations:
+        operating_systems: true
+        databases: true
+        applications: true
+        network_devices: true
+
+    change_control:
+        approval_process: true
+        testing_required: true
+        rollback_procedures: true
+        documentation: true
 
 ### Requirement 3: Protect stored cardholder data
 
 #### Data Protection
-```yaml
+
 data_protection:
-  encryption_requirements:
-    algorithm: "AES-256"
-    key_management: "hsm_based"
-    data_at_rest: true
-    data_in_transit: true
+    encryption_requirements:
+        algorithm: 'AES-256'
+        key_management: 'hsm_based'
+        data_at_rest: true
+        data_in_transit: true
 
-  data_retention:
-    minimize_storage: true
-    retention_policy: "business_justification_only"
-    secure_deletion: true
-    regular_purging: true
+    data_retention:
+        minimize_storage: true
+        retention_policy: 'business_justification_only'
+        secure_deletion: true
+        regular_purging: true
 
-  data_masking:
-    pan_masking: "show_last_4_digits"
-    test_environments: "no_real_data"
-    development_environments: "synthetic_data"
-```
+    data_masking:
+        pan_masking: 'show_last_4_digits'
+        test_environments: 'no_real_data'
+        development_environments: 'synthetic_data'
 
 #### Key Management
-```yaml
+
 key_management:
-  key_generation:
-    strong_cryptography: true
-    secure_random_generation: true
-    dual_control: true
+    key_generation:
+        strong_cryptography: true
+        secure_random_generation: true
+        dual_control: true
 
-  key_distribution:
-    secure_channels: true
-    authentication_required: true
-    integrity_protection: true
+    key_distribution:
+        secure_channels: true
+        authentication_required: true
+        integrity_protection: true
 
-  key_storage:
-    hardware_security_modules: true
-    encrypted_storage: true
-    access_controls: true
+    key_storage:
+        hardware_security_modules: true
+        encrypted_storage: true
+        access_controls: true
 
-  key_rotation:
-    regular_rotation: "annually"
-    compromise_rotation: "immediate"
-    automated_process: true
-```
+    key_rotation:
+        regular_rotation: 'annually'
+        compromise_rotation: 'immediate'
+        automated_process: true
 
 ### Requirement 4: Encrypt transmission of cardholder data
 
 #### Transmission Security
-```yaml
+
 transmission_security:
-  encryption_protocols:
-    tls_version: "1.3_minimum"
-    cipher_suites: "strong_only"
-    certificate_validation: true
+    encryption_protocols:
+        tls_version: '1.3_minimum'
+        cipher_suites: 'strong_only'
+        certificate_validation: true
 
-  wireless_security:
-    wpa3_encryption: true
-    strong_authentication: true
-    regular_key_rotation: true
+    wireless_security:
+        wpa3_encryption: true
+        strong_authentication: true
+        regular_key_rotation: true
 
-  messaging_security:
-    end_to_end_encryption: true
-    digital_signatures: true
-    secure_protocols: true
-```
+    messaging_security:
+        end_to_end_encryption: true
+        digital_signatures: true
+        secure_protocols: true
 
 ### Requirement 5: Protect all systems against malware
 
 #### Malware Protection
-```yaml
+
 malware_protection:
-  antivirus_software:
-    enterprise_grade: true
-    real_time_protection: true
-    regular_updates: true
-    centralized_management: true
+    antivirus_software:
+        enterprise_grade: true
+        real_time_protection: true
+        regular_updates: true
+        centralized_management: true
 
-  system_monitoring:
-    behavioral_analysis: true
-    anomaly_detection: true
-    threat_intelligence: true
-    automated_response: true
+    system_monitoring:
+        behavioral_analysis: true
+        anomaly_detection: true
+        threat_intelligence: true
+        automated_response: true
 
-  email_security:
-    spam_filtering: true
-    attachment_scanning: true
-    url_filtering: true
-    sandboxing: true
-```
+    email_security:
+        spam_filtering: true
+        attachment_scanning: true
+        url_filtering: true
+        sandboxing: true
 
 ### Requirement 6: Develop and maintain secure systems
 
 #### Secure Development
-```yaml
+
 secure_development:
-  sdlc_integration:
-    security_requirements: true
-    threat_modeling: true
-    secure_coding_standards: true
-    security_testing: true
+    sdlc_integration:
+        security_requirements: true
+        threat_modeling: true
+        secure_coding_standards: true
+        security_testing: true
 
-  vulnerability_management:
-    regular_scanning: true
-    patch_management: true
-    risk_assessment: true
-    remediation_tracking: true
+    vulnerability_management:
+        regular_scanning: true
+        patch_management: true
+        risk_assessment: true
+        remediation_tracking: true
 
-  code_review:
-    manual_review: true
-    automated_scanning: true
-    security_focused: true
-    documentation: true
-```
+    code_review:
+        manual_review: true
+        automated_scanning: true
+        security_focused: true
+        documentation: true
 
 #### Change Management
-```yaml
-change_management:
-  development_environments:
-    separated_from_production: true
-    test_data_protection: true
-    access_controls: true
 
-  deployment_process:
-    approval_required: true
-    testing_mandatory: true
-    rollback_procedures: true
-    documentation: true
-```
+change_management:
+    development_environments:
+        separated_from_production: true
+        test_data_protection: true
+        access_controls: true
+
+    deployment_process:
+        approval_required: true
+        testing_mandatory: true
+        rollback_procedures: true
+        documentation: true
 
 ### Requirement 7: Restrict access by business need-to-know
 
 #### Access Control
-```yaml
+
 access_control:
-  role_based_access:
-    principle_of_least_privilege: true
-    job_function_based: true
-    regular_review: true
-    approval_process: true
+    role_based_access:
+        principle_of_least_privilege: true
+        job_function_based: true
+        regular_review: true
+        approval_process: true
 
-  user_management:
-    unique_user_ids: true
-    strong_authentication: true
-    account_lifecycle: true
-    privileged_access_management: true
+    user_management:
+        unique_user_ids: true
+        strong_authentication: true
+        account_lifecycle: true
+        privileged_access_management: true
 
-  system_access:
-    need_to_know_basis: true
-    business_justification: true
-    time_limited_access: true
-    monitoring_required: true
-```
+    system_access:
+        need_to_know_basis: true
+        business_justification: true
+        time_limited_access: true
+        monitoring_required: true
 
 ### Requirement 8: Identify and authenticate access
 
 #### Authentication Requirements
-```yaml
+
 authentication:
-  user_identification:
-    unique_user_ids: true
-    no_shared_accounts: true
-    service_account_management: true
+    user_identification:
+        unique_user_ids: true
+        no_shared_accounts: true
+        service_account_management: true
 
-  authentication_factors:
-    multi_factor_authentication: true
-    strong_passwords: true
-    biometric_options: true
-    token_based: true
+    authentication_factors:
+        multi_factor_authentication: true
+        strong_passwords: true
+        biometric_options: true
+        token_based: true
 
-  session_management:
-    session_timeouts: true
-    re_authentication: true
-    secure_session_handling: true
-```
+    session_management:
+        session_timeouts: true
+        re_authentication: true
+        secure_session_handling: true
 
 ### Requirement 9: Restrict physical access
 
 #### Physical Security
-```yaml
+
 physical_security:
-  facility_access:
-    badge_access_system: true
-    visitor_management: true
-    escort_requirements: true
-    access_logging: true
+    facility_access:
+        badge_access_system: true
+        visitor_management: true
+        escort_requirements: true
+        access_logging: true
 
-  media_handling:
-    secure_storage: true
-    destruction_procedures: true
-    transport_security: true
-    inventory_management: true
+    media_handling:
+        secure_storage: true
+        destruction_procedures: true
+        transport_security: true
+        inventory_management: true
 
-  device_controls:
-    asset_inventory: true
-    secure_disposal: true
-    maintenance_procedures: true
-    remote_access_controls: true
-```
+    device_controls:
+        asset_inventory: true
+        secure_disposal: true
+        maintenance_procedures: true
+        remote_access_controls: true
 
 ### Requirement 10: Track and monitor all access
 
 #### Logging and Monitoring
-```yaml
+
 logging_requirements:
-  audit_logging:
-    user_access: true
-    administrative_actions: true
-    system_events: true
-    security_events: true
+    audit_logging:
+        user_access: true
+        administrative_actions: true
+        system_events: true
+        security_events: true
 
-  log_management:
-    centralized_logging: true
-    log_integrity: true
-    retention_policy: "1_year_minimum"
-    secure_storage: true
+    log_management:
+        centralized_logging: true
+        log_integrity: true
+        retention_policy: '1_year_minimum'
+        secure_storage: true
 
-  monitoring:
-    real_time_monitoring: true
-    automated_alerting: true
-    incident_response: true
-    regular_review: true
-```
+    monitoring:
+        real_time_monitoring: true
+        automated_alerting: true
+        incident_response: true
+        regular_review: true
 
 #### Log Analysis
-```yaml
-log_analysis:
-  automated_analysis:
-    anomaly_detection: true
-    pattern_recognition: true
-    correlation_rules: true
-    machine_learning: true
 
-  manual_review:
-    daily_review: true
-    weekly_analysis: true
-    monthly_reports: true
-    quarterly_assessments: true
-```
+log_analysis:
+    automated_analysis:
+        anomaly_detection: true
+        pattern_recognition: true
+        correlation_rules: true
+        machine_learning: true
+
+    manual_review:
+        daily_review: true
+        weekly_analysis: true
+        monthly_reports: true
+        quarterly_assessments: true
 
 ### Requirement 11: Regularly test security systems
 
 #### Security Testing
-```yaml
+
 security_testing:
-  vulnerability_scanning:
-    internal_scanning: "quarterly"
-    external_scanning: "quarterly"
-    authenticated_scanning: true
-    remediation_tracking: true
+    vulnerability_scanning:
+        internal_scanning: 'quarterly'
+        external_scanning: 'quarterly'
+        authenticated_scanning: true
+        remediation_tracking: true
 
-  penetration_testing:
-    annual_testing: true
-    qualified_assessors: true
-    comprehensive_scope: true
-    remediation_required: true
+    penetration_testing:
+        annual_testing: true
+        qualified_assessors: true
+        comprehensive_scope: true
+        remediation_required: true
 
-  intrusion_detection:
-    network_ids: true
-    host_ids: true
-    file_integrity_monitoring: true
-    change_detection: true
-```
+    intrusion_detection:
+        network_ids: true
+        host_ids: true
+        file_integrity_monitoring: true
+        change_detection: true
 
 ### Requirement 12: Maintain a policy that addresses information security
 
 #### Security Policies
-```yaml
+
 security_policies:
-  information_security_policy:
-    board_approval: true
-    annual_review: true
-    staff_acknowledgment: true
-    regular_updates: true
+    information_security_policy:
+        board_approval: true
+        annual_review: true
+        staff_acknowledgment: true
+        regular_updates: true
 
-  operational_procedures:
-    incident_response: true
-    business_continuity: true
-    risk_management: true
-    vendor_management: true
+    operational_procedures:
+        incident_response: true
+        business_continuity: true
+        risk_management: true
+        vendor_management: true
 
-  security_awareness:
-    training_program: true
-    regular_updates: true
-    role_specific_training: true
-    effectiveness_measurement: true
-```
+    security_awareness:
+        training_program: true
+        regular_updates: true
+        role_specific_training: true
+        effectiveness_measurement: true
 
 ## Compliance Monitoring
 
 ### Automated Compliance Checks
-```yaml
-compliance_automation:
-  continuous_monitoring:
-    configuration_compliance: true
-    policy_violations: true
-    security_controls: true
-    audit_requirements: true
 
-  reporting:
-    compliance_dashboard: true
-    automated_reports: true
-    exception_tracking: true
-    remediation_status: true
-```
+compliance_automation:
+    continuous_monitoring:
+        configuration_compliance: true
+        policy_violations: true
+        security_controls: true
+        audit_requirements: true
+
+    reporting:
+        compliance_dashboard: true
+        automated_reports: true
+        exception_tracking: true
+        remediation_status: true
 
 ### Assessment Schedule
-```yaml
+
 assessment_schedule:
-  self_assessments:
-    frequency: "quarterly"
-    scope: "full_requirements"
-    documentation: true
+    self_assessments:
+        frequency: 'quarterly'
+        scope: 'full_requirements'
+        documentation: true
 
-  external_assessments:
-    qsa_assessment: "annually"
-    penetration_testing: "annually"
-    vulnerability_scanning: "quarterly"
+    external_assessments:
+        qsa_assessment: 'annually'
+        penetration_testing: 'annually'
+        vulnerability_scanning: 'quarterly'
 
-  compliance_validation:
-    aoc_generation: true
-    roc_documentation: true
-    attestation_submission: true
-```
+    compliance_validation:
+        aoc_generation: true
+        roc_documentation: true
+        attestation_submission: true
