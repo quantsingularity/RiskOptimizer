@@ -1,300 +1,269 @@
 # GDPR Compliance Configuration for RiskOptimizer
 
-## Data Protection Impact Assessment (DPIA) Template
+# Data Protection Impact Assessment (DPIA) Template
 
 project_information:
-  project_name: RiskOptimizer Financial Platform
-  data_controller: RiskOptimizer Ltd.
-  data_protection_officer: dpo@riskoptimizer.com
-  assessment_date: $(date +%Y-%m-%d)
-  review_date: $(date -d "+1 year" +%Y-%m-%d)
+    project_name: RiskOptimizer Financial Platform
+    data_controller: RiskOptimizer Ltd.
+    data_protection_officer: dpo@riskoptimizer.com
+    assessment_date: $(date +%Y-%m-%d)
+    review_date: $(date -d "+1 year" +%Y-%m-%d)
 
 data_processing_description:
-  personal_data_categories:
-    customer_data:
-      - Names, addresses, contact information
-      - Financial information (account numbers, transaction history)
-      - Identification documents
-      - Risk assessment data
-    employee_data:
-      - Personnel records
-      - Access logs and system usage
-      - Performance data
-    third_party_data:
-      - Vendor contact information
-      - service_provider_data
-  processing_purposes:
-    - Financial risk assessment and management
-    - Customer onboarding and KYC compliance
-    - Transaction monitoring and fraud detection
-    - Regulatory reporting and compliance
-    - System security and audit logging
-  legal_basis_for_processing:
-    - legitimate_interest: Risk management and fraud prevention
-    - contract: Customer service delivery
-    - legal_obligation: Regulatory compliance (AML, KYC)
-    - consent: Marketing communications (where applicable)
+    personal_data_categories:
+        customer_data:
+            - Names, addresses, contact information
+            - Financial information (account numbers, transaction history)
+            - Identification documents
+            - Risk assessment data
+        employee_data:
+            - Personnel records
+            - Access logs and system usage
+            - Performance data
+        third_party_data:
+            - Vendor contact information
+            - service_provider_data
+    processing_purposes:
+        - Financial risk assessment and management
+        - Customer onboarding and KYC compliance
+        - Transaction monitoring and fraud detection
+        - Regulatory reporting and compliance
+        - System security and audit logging
+    legal_basis_for_processing:
+        - legitimate_interest: Risk management and fraud prevention
+        - contract: Customer service delivery
+        - legal_obligation: Regulatory compliance (AML, KYC)
+        - consent: Marketing communications (where applicable)
 
 data_subject_rights_implementation:
+    # Right to Information (Articles 13-14)
+    transparency_measures:
+        privacy_notice:
+            location: 'https://riskoptimizer.com/privacy'
+            languages: ['en', 'de', 'fr', 'es']
+            last_updated: '2024-01-01'
 
-#### Right to Information (Articles 13-14)
-```yaml
-transparency_measures:
-  privacy_notice:
-    location: "https://riskoptimizer.com/privacy"
-    languages: ["en", "de", "fr", "es"]
-    last_updated: "2024-01-01"
+        data_collection_notice:
+            display_method: 'prominent_banner'
+            consent_mechanism: 'explicit_opt_in'
+            withdrawal_method: 'self_service_portal'
 
-  data_collection_notice:
-    display_method: "prominent_banner"
-    consent_mechanism: "explicit_opt_in"
-    withdrawal_method: "self_service_portal"
-```
+    # Right of Access (Article 15)
+    access_request_process:
+        request_method: ['email', 'web_portal', 'postal']
+        verification_required: true
+        response_timeframe: '30_days'
+        format_options: ['pdf', 'json', 'csv']
 
-#### Right of Access (Article 15)
-```yaml
-access_request_process:
-  request_method: ["email", "web_portal", "postal"]
-  verification_required: true
-  response_timeframe: "30_days"
-  format_options: ["pdf", "json", "csv"]
+        automated_tools:
+            enabled: true
+            self_service_portal: 'https://portal.riskoptimizer.com/data-access'
+            api_endpoint: '/api/v1/gdpr/access'
 
-  automated_tools:
-    enabled: true
-    self_service_portal: "https://portal.riskoptimizer.com/data-access"
-    api_endpoint: "/api/v1/gdpr/access"
-```
+    # Right to Rectification (Article 16)
+    rectification_process:
+        request_channels: ['web_portal', 'email', 'phone']
+        verification_required: true
+        processing_time: '72_hours'
+        notification_to_recipients: true
 
-#### Right to Rectification (Article 16)
-```yaml
-rectification_process:
-  request_channels: ["web_portal", "email", "phone"]
-  verification_required: true
-  processing_time: "72_hours"
-  notification_to_recipients: true
+        automated_correction:
+            enabled: true
+            real_time_updates: true
+            audit_trail: true
 
-  automated_correction:
-    enabled: true
-    real_time_updates: true
-    audit_trail: true
-```
+    # Right to Erasure (Article 17)
+    erasure_process:
+        request_evaluation:
+            legal_review_required: true
+            retention_policy_check: true
+            legitimate_interest_assessment: true
 
-#### Right to Erasure (Article 17)
-```yaml
-erasure_process:
-  request_evaluation:
-    legal_review_required: true
-    retention_policy_check: true
-    legitimate_interest_assessment: true
+        deletion_methods:
+            soft_delete: false
+            hard_delete: true
+            cryptographic_erasure: true
 
-  deletion_methods:
-    soft_delete: false
-    hard_delete: true
-    cryptographic_erasure: true
+        exceptions:
+            regulatory_retention: true
+            legal_claims: true
+            public_interest: true
 
-  exceptions:
-    regulatory_retention: true
-    legal_claims: true
-    public_interest: true
-```
+    # Right to Data Portability (Article 20)
+    portability_implementation:
+        supported_formats: ['json', 'csv', 'xml']
+        structured_data_only: true
+        machine_readable: true
 
-#### Right to Data Portability (Article 20)
-```yaml
-portability_implementation:
-  supported_formats: ["json", "csv", "xml"]
-  structured_data_only: true
-  machine_readable: true
+        export_process:
+            automated: true
+            secure_download: true
+            encryption: 'AES-256'
+            expiry_time: '7_days'
 
-  export_process:
-    automated: true
-    secure_download: true
-    encryption: "AES-256"
-    expiry_time: "7_days"
-```
+# Privacy by Design Implementation
+privacy_by_design:
+    # Data Minimization
+    data_minimization:
+        collection_principles:
+            - collect_only_necessary
+            - purpose_limitation
+            - retention_limits
 
-### Privacy by Design Implementation
+        technical_measures:
+            - field_level_encryption
+            - data_masking
+            - pseudonymization
+            - anonymization
 
-#### Data Minimization
-```yaml
-data_minimization:
-  collection_principles:
-    - collect_only_necessary
-    - purpose_limitation
-    - retention_limits
+        organizational_measures:
+            - data_classification
+            - access_controls
+            - regular_reviews
 
-  technical_measures:
-    - field_level_encryption
-    - data_masking
-    - pseudonymization
-    - anonymization
+    # Data Protection by Default
+    default_settings:
+        privacy_settings:
+            data_sharing: 'opt_in'
+            marketing: 'opt_in'
+            analytics: 'anonymized'
+            cookies: 'essential_only'
 
-  organizational_measures:
-    - data_classification
-    - access_controls
-    - regular_reviews
-```
+        security_defaults:
+            encryption: 'enabled'
+            access_logging: 'enabled'
+            data_retention: 'minimum_required'
 
-#### Data Protection by Default
-```yaml
-default_settings:
-  privacy_settings:
-    data_sharing: "opt_in"
-    marketing: "opt_in"
-    analytics: "anonymized"
-    cookies: "essential_only"
+# Breach Notification Procedures
+breach_notification:
+    # Detection and Assessment
+    breach_detection:
+        monitoring_systems:
+            - siem_alerts
+            - anomaly_detection
+            - access_monitoring
+            - data_loss_prevention
 
-  security_defaults:
-    encryption: "enabled"
-    access_logging: "enabled"
-    data_retention: "minimum_required"
-```
+        assessment_criteria:
+            - data_categories_affected
+            - number_of_individuals
+            - severity_of_consequences
+            - likelihood_of_harm
 
-### Breach Notification Procedures
+    # Notification Timeline
+    notification_process:
+        internal_notification:
+            dpo_notification: 'immediate'
+            management_escalation: '1_hour'
+            legal_review: '4_hours'
 
-#### Detection and Assessment
-```yaml
-breach_detection:
-  monitoring_systems:
-    - siem_alerts
-    - anomaly_detection
-    - access_monitoring
-    - data_loss_prevention
+        regulatory_notification:
+            supervisory_authority: '72_hours'
+            documentation_required: true
+            follow_up_reports: true
 
-  assessment_criteria:
-    - data_categories_affected
-    - number_of_individuals
-    - severity_of_consequences
-    - likelihood_of_harm
-```
+        individual_notification:
+            high_risk_threshold: true
+            communication_method: ['email', 'postal', 'website']
+            clear_language_required: true
 
-#### Notification Timeline
-```yaml
-notification_process:
-  internal_notification:
-    dpo_notification: "immediate"
-    management_escalation: "1_hour"
-    legal_review: "4_hours"
+# Data Retention and Deletion
+data_retention:
+    # Retention Schedules
+    retention_policies:
+        customer_data:
+            active_customers: 'duration_of_relationship'
+            inactive_customers: '7_years'
+            marketing_data: '2_years'
 
-  regulatory_notification:
-    supervisory_authority: "72_hours"
-    documentation_required: true
-    follow_up_reports: true
+        employee_data:
+            current_employees: 'duration_of_employment'
+            former_employees: '7_years'
+            recruitment_data: '6_months'
 
-  individual_notification:
-    high_risk_threshold: true
-    communication_method: ["email", "postal", "website"]
-    clear_language_required: true
-```
+        system_logs:
+            security_logs: '2_years'
+            access_logs: '1_year'
+            application_logs: '6_months'
 
-### Data Retention and Deletion
+    # Automated Deletion
+    deletion_automation:
+        scheduled_deletion:
+            frequency: 'daily'
+            review_process: true
+            approval_required: false
 
-#### Retention Schedules
-```yaml
-retention_policies:
-  customer_data:
-    active_customers: "duration_of_relationship"
-    inactive_customers: "7_years"
-    marketing_data: "2_years"
+        deletion_verification:
+            confirmation_required: true
+            audit_trail: true
+            certificate_generation: true
 
-  employee_data:
-    current_employees: "duration_of_employment"
-    former_employees: "7_years"
-    recruitment_data: "6_months"
+# Third-Party Data Processing
+third_party_processing:
+    # Processor Agreements
+    processor_requirements:
+        contractual_obligations:
+            - data_processing_agreement
+            - security_requirements
+            - breach_notification
+            - audit_rights
 
-  system_logs:
-    security_logs: "2_years"
-    access_logs: "1_year"
-    application_logs: "6_months"
-```
+        due_diligence:
+            - security_assessment
+            - compliance_verification
+            - regular_reviews
+            - performance_monitoring
 
-#### Automated Deletion
-```yaml
-deletion_automation:
-  scheduled_deletion:
-    frequency: "daily"
-    review_process: true
-    approval_required: false
+    # International Transfers
+    transfer_mechanisms:
+        adequacy_decisions:
+            - uk_adequacy
+            - swiss_adequacy
 
-  deletion_verification:
-    confirmation_required: true
-    audit_trail: true
-    certificate_generation: true
-```
+        appropriate_safeguards:
+            - standard_contractual_clauses
+            - binding_corporate_rules
+            - certification_schemes
 
-### Third-Party Data Processing
+        transfer_impact_assessment:
+            required: true
+            documentation: true
+            regular_review: true
 
-#### Processor Agreements
-```yaml
-processor_requirements:
-  contractual_obligations:
-    - data_processing_agreement
-    - security_requirements
-    - breach_notification
-    - audit_rights
+# Monitoring and Compliance
+monitoring_compliance:
+    # Regular Assessments
+    compliance_monitoring:
+        internal_audits:
+            frequency: 'quarterly'
+            scope: 'full_gdpr_compliance'
+            documentation: true
 
-  due_diligence:
-    - security_assessment
-    - compliance_verification
-    - regular_reviews
-    - performance_monitoring
-```
+        external_audits:
+            frequency: 'annually'
+            independent_assessor: true
+            certification_sought: true
 
-#### International Transfers
-```yaml
-transfer_mechanisms:
-  adequacy_decisions:
-    - uk_adequacy
-    - swiss_adequacy
+        continuous_monitoring:
+            - privacy_dashboard
+            - compliance_metrics
+            - incident_tracking
+            - training_completion
 
-  appropriate_safeguards:
-    - standard_contractual_clauses
-    - binding_corporate_rules
-    - certification_schemes
+    # Staff Training
+    training_program:
+        mandatory_training:
+            - gdpr_fundamentals
+            - data_handling_procedures
+            - incident_response
+            - privacy_by_design
 
-  transfer_impact_assessment:
-    required: true
-    documentation: true
-    regular_review: true
-```
+        role_specific_training:
+            - developers: 'privacy_engineering'
+            - support: 'data_subject_rights'
+            - management: 'accountability_principle'
 
-### Monitoring and Compliance
-
-#### Regular Assessments
-```yaml
-compliance_monitoring:
-  internal_audits:
-    frequency: "quarterly"
-    scope: "full_gdpr_compliance"
-    documentation: true
-
-  external_audits:
-    frequency: "annually"
-    independent_assessor: true
-    certification_sought: true
-
-  continuous_monitoring:
-    - privacy_dashboard
-    - compliance_metrics
-    - incident_tracking
-    - training_completion
-```
-
-#### Staff Training
-```yaml
-training_program:
-  mandatory_training:
-    - gdpr_fundamentals
-    - data_handling_procedures
-    - incident_response
-    - privacy_by_design
-
-  role_specific_training:
-    - developers: "privacy_engineering"
-    - support: "data_subject_rights"
-    - management: "accountability_principle"
-
-  training_schedule:
-    initial_training: "onboarding"
-    refresher_training: "annually"
-    update_training: "as_needed"
-```
+        training_schedule:
+            initial_training: 'onboarding'
+            refresher_training: 'annually'
+            update_training: 'as_needed'

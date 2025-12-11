@@ -7,9 +7,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: {{ .Values.database.servicePort }}
-    targetPort: {{ .Values.database.containerPort }}
-    protocol: TCP
-    name: mysql
+    - port: {{ .Values.database.servicePort }}
+      targetPort: {{ .Values.database.containerPort }}
+      protocol: TCP
+      name: mysql
   selector:
     app: {{ .Values.appName }}-database

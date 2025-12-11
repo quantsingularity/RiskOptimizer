@@ -15,34 +15,34 @@ spec:
         app: {{ .Values.appName }}-frontend
     spec:
       containers:
-      - name: {{ .Values.appName }}-frontend
-        image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
-        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.frontend.containerPort }}
-        resources:
-          limits:
-            cpu: {{ .Values.frontend.resources.limits.cpu }}
-            memory: {{ .Values.frontend.resources.limits.memory }}
-          requests:
-            cpu: {{ .Values.frontend.resources.requests.cpu }}
-            memory: {{ .Values.frontend.resources.requests.memory }}
-        env:
-        - name: REACT_APP_API_URL
-          value: {{ .Values.frontend.apiUrl }}
-        - name: REACT_APP_ENV
-          value: {{ .Values.environment }}
-        livenessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.frontend.containerPort }}
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.frontend.containerPort }}
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: {{ .Values.appName }}-frontend
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.containerPort }}
+          resources:
+            limits:
+              cpu: {{ .Values.frontend.resources.limits.cpu }}
+              memory: {{ .Values.frontend.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.frontend.resources.requests.cpu }}
+              memory: {{ .Values.frontend.resources.requests.memory }}
+          env:
+            - name: REACT_APP_API_URL
+              value: {{ .Values.frontend.apiUrl }}
+            - name: REACT_APP_ENV
+              value: {{ .Values.environment }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.frontend.containerPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.frontend.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecrets }}
+        - name: {{ .Values.imagePullSecrets }}

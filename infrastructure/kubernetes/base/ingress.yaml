@@ -8,24 +8,24 @@ metadata:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.issuer }}
 spec:
   tls:
-  - hosts:
-    - {{ .Values.ingress.host }}
-    secretName: {{ .Values.appName }}-tls
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.appName }}-tls
   rules:
-  - host: {{ .Values.ingress.host }}
-    http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.appName }}-backend
-            port:
-              number: {{ .Values.backend.servicePort }}
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.appName }}-frontend
-            port:
-              number: {{ .Values.frontend.servicePort }}
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.appName }}-backend
+                port:
+                  number: {{ .Values.backend.servicePort }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.appName }}-frontend
+                port:
+                  number: {{ .Values.frontend.servicePort }}
