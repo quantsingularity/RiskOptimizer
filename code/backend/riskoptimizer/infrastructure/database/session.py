@@ -9,7 +9,7 @@ from typing import Generator
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import DatabaseError
 from riskoptimizer.core.logging import get_logger
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -84,7 +84,7 @@ def check_db_connection() -> bool:
     try:
         # Execute a simple query to check connection
         with engine.connect() as connection:
-            connection.execute("SELECT 1")
+            connection.execute(text("SELECT 1"))
         logger.info("Database connection successful")
         return True
     except Exception as e:

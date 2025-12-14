@@ -42,7 +42,6 @@ TASK_QUEUES = {
 }
 
 # Export main components
-from .core.config import get_settings
 from .core.exceptions import RiskOptimizerException
 from .core.logging import get_logger
 
@@ -51,7 +50,6 @@ __all__ = [
     "__author__",
     "__email__",
     "__description__",
-    "get_settings",
     "RiskOptimizerException",
     "get_logger",
 ]

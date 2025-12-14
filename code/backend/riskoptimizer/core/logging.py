@@ -5,7 +5,13 @@ import traceback
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from riskoptimizer.core.config import config
+
+# Deferred config import to avoid circular dependency
+def _get_config():
+    """Get config with lazy loading to avoid circular import."""
+    from riskoptimizer.core.config import config
+
+    return config
 
 
 class SensitiveDataFilter(logging.Filter):
@@ -59,7 +65,7 @@ class JsonFormatter(logging.Formatter):
             "line": record.lineno,
             "process": record.process,
             "thread": record.thread,
-            "environment": config.environment,
+            "environment": _get_config().environment,
         }
 
         # Add extra fields if available
@@ -126,7 +132,8 @@ def get_logger(
         logger.setLevel(logging.INFO)
 
         # Set debug level in development
-        if config.environment == "development" and config.api.debug:
+        cfg = _get_config()
+        if cfg.environment == "development" and cfg.api.debug:
             logger.setLevel(logging.DEBUG)
 
         # Create console handler
@@ -152,7 +159,8 @@ def configure_logging() -> None:
         root_logger.removeHandler(handler)
 
     # Set log level based on environment
-    if config.environment == "development" and config.api.debug:
+    cfg = _get_config()
+    if cfg.environment == "development" and cfg.api.debug:
         root_logger.setLevel(logging.DEBUG)
     else:
         root_logger.setLevel(logging.INFO)

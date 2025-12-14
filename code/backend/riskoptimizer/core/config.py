@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +23,10 @@ class DatabaseConfig:
     @property
     def url(self) -> str:
         """Get database URL for SQLAlchemy."""
+        # Use SQLite for local development if DB_USE_SQLITE is set
+        if os.getenv("DB_USE_SQLITE", "true").lower() == "true":
+            db_path = os.getenv("SQLITE_DB_PATH", "riskoptimizer.db")
+            return f"sqlite:///{db_path}"
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
 
@@ -51,13 +55,13 @@ class SecurityConfig:
 
     secret_key: str
     jwt_secret_key: str
+    data_encryption_key: str
     jwt_access_token_expires: int = 3600
     jwt_refresh_token_expires: int = 2592000
     password_hash_rounds: int = 12
     rate_limit_per_minute: int = 60
     max_login_attempts: int = 5
     lockout_time: int = 300
-    data_encryption_key: str
 
 
 @dataclass
@@ -154,9 +158,10 @@ class Config:
         data_encryption_key = os.getenv("DATA_ENCRYPTION_KEY")
         if not data_encryption_key:
             from cryptography.fernet import Fernet
+            import logging
 
             data_encryption_key = Fernet.generate_key().decode()
-            logger.warning(
+            logging.warning(
                 "DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production."
             )
         return SecurityConfig(
@@ -225,6 +230,8 @@ class Config:
 
     def validate(self) -> None:
         """Validate configuration settings."""
+        import logging
+
         required_vars = ["SECRET_KEY", "JWT_SECRET_KEY", "DATA_ENCRYPTION_KEY"]
         missing_vars = [var for var in required_vars if not os.getenv(var)]
         if missing_vars:
@@ -232,7 +239,11 @@ class Config:
                 f"Missing required environment variables: {', '.join(missing_vars)}"
             )
         if not os.path.exists(self.model_path):
-            raise ValueError(f"Model file not found at: {self.model_path}")
+            logging.warning(
+                f"Model file not found at: {self.model_path}. "
+                f"AI optimization features will be unavailable. "
+                f"To enable AI features, train and place a model file at this location."
+            )
 
 
 config = Config()

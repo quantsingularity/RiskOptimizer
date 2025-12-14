@@ -55,9 +55,9 @@ def rate_limit(requests_per_minute: int = None, burst: int = None) -> Callable:
         Decorated function
     """
     if requests_per_minute is None:
-        requests_per_minute = config.security.rate_limit_requests_per_minute
+        requests_per_minute = config.security.rate_limit_per_minute
     if burst is None:
-        burst = config.security.rate_limit_burst
+        burst = requests_per_minute * 2
 
     def decorator(func: Callable) -> Callable:
 

@@ -2,7 +2,6 @@
 Core package initialization
 """
 
-from .config import Settings, get_settings
 from .exceptions import (
     AuthenticationError,
     AuthorizationError,
@@ -13,11 +12,9 @@ from .exceptions import (
     TaskError,
     ValidationError,
 )
-from .logging import get_logger, setup_logging
+from .logging import get_logger
 
 __all__ = [
-    "get_settings",
-    "Settings",
     "RiskOptimizerException",
     "ValidationError",
     "AuthenticationError",
@@ -27,5 +24,4 @@ __all__ = [
     "RateLimitError",
     "TaskError",
     "get_logger",
-    "setup_logging",
 ]

@@ -206,3 +206,23 @@ class TaskResult(Base):
 
     # Relationships
     user = relationship("User")
+
+
+class AuditLog(Base):
+    """Audit log model for tracking user actions and system events."""
+
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    action = Column(String(100), nullable=False)  # e.g., 'login', 'create_portfolio'
+    resource_type = Column(String(50))  # e.g., 'portfolio', 'risk_assessment'
+    resource_id = Column(String(100))  # ID of the resource affected
+    ip_address = Column(String(45))  # IPv4 or IPv6
+    user_agent = Column(String(500))
+    details = Column(Text)  # JSON string with additional details
+    status = Column(String(20))  # e.g., 'success', 'failure'
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    # Relationships
+    user = relationship("User")
