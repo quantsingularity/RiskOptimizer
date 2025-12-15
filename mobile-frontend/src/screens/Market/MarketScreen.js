@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, ListItem, Icon, SearchBar, useTheme, Button, ButtonGroup } from '@rneui/themed'; // Import ButtonGroup
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 import { getWatchlist } from '../utils/watchlist'; // Import watchlist utility
 import _ from 'lodash';
 

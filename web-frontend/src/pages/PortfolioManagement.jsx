@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Grid,
@@ -6,7 +6,6 @@ import {
     CardContent,
     CardHeader,
     Typography,
-    Divider,
     Button,
     IconButton,
     Table,
@@ -16,19 +15,128 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Slider,
-    FormControl,
-    InputLabel,
-    Select,
+    Chip,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
     MenuItem,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { usePortfolio } from '../context/PortfolioContext';
+import { useAuth } from '../context/AuthContext';
+import { formatCurrency, formatPercentage } from '../utils/formatters';
 
 const PortfolioManagement = () => {
+    const { user } = useAuth();
+    const { portfolio, loading, error, fetchPortfolio, savePortfolio } = usePortfolio();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [currentAsset, setCurrentAsset] = useState(null);
+    const [formData, setFormData] = useState({
+        symbol: '',
+        name: '',
+        quantity: '',
+        purchasePrice: '',
+    });
+
+    useEffect(() => {
+        if (user?.address) {
+            fetchPortfolio(user.address);
+        }
+    }, [user, fetchPortfolio]);
+
+    const handleOpenDialog = (asset = null) => {
+        if (asset) {
+            setCurrentAsset(asset);
+            setFormData({
+                symbol: asset.symbol || '',
+                name: asset.name || '',
+                quantity: asset.quantity || '',
+                purchasePrice: asset.purchasePrice || '',
+            });
+        } else {
+            setCurrentAsset(null);
+            setFormData({
+                symbol: '',
+                name: '',
+                quantity: '',
+                purchasePrice: '',
+            });
+        }
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setCurrentAsset(null);
+    };
+
+    const handleInputChange = (field) => (event) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: event.target.value,
+        }));
+    };
+
+    const handleSaveAsset = () => {
+        // Save asset logic
+        const newAsset = {
+            id: currentAsset?.id || Date.now(),
+            ...formData,
+            quantity: parseFloat(formData.quantity),
+            purchasePrice: parseFloat(formData.purchasePrice),
+            currentPrice: parseFloat(formData.purchasePrice), // Mock current price
+        };
+
+        // Calculate total value
+        newAsset.totalValue = newAsset.quantity * newAsset.currentPrice;
+        newAsset.gain = (newAsset.currentPrice - newAsset.purchasePrice) * newAsset.quantity;
+        newAsset.gainPercent =
+            ((newAsset.currentPrice - newAsset.purchasePrice) / newAsset.purchasePrice) * 100;
+
+        // Update portfolio
+        const updatedAssets = currentAsset
+            ? portfolio.assets.map((a) => (a.id === currentAsset.id ? newAsset : a))
+            : [...(portfolio?.assets || []), newAsset];
+
+        savePortfolio({
+            ...portfolio,
+            assets: updatedAssets,
+        });
+
+        handleCloseDialog();
+    };
+
+    const handleDeleteAsset = (assetId) => {
+        const updatedAssets = portfolio.assets.filter((a) => a.id !== assetId);
+        savePortfolio({
+            ...portfolio,
+            assets: updatedAssets,
+        });
+    };
+
+    const calculateTotalValue = () => {
+        return portfolio?.assets?.reduce((sum, asset) => sum + (asset.totalValue || 0), 0) || 0;
+    };
+
+    const calculateTotalGain = () => {
+        return portfolio?.assets?.reduce((sum, asset) => sum + (asset.gain || 0), 0) || 0;
+    };
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <Box className="fade-in">
             <Box
@@ -39,342 +147,205 @@ const PortfolioManagement = () => {
                     mb: 3,
                 }}
             >
-                <Typography variant="h4" component="h1" gutterBottom>
+                <Typography variant="h4" component="h1">
                     Portfolio Management
                 </Typography>
-                <Button variant="contained" startIcon={<AddIcon />}>
-                    Add Asset
-                </Button>
+                <Box>
+                    <Button
+                        variant="outlined"
+                        startIcon={<RefreshIcon />}
+                        onClick={() => fetchPortfolio(user.address)}
+                        sx={{ mr: 2 }}
+                    >
+                        Refresh
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        Add Asset
+                    </Button>
+                </Box>
             </Box>
 
-            <Grid container spacing={3}>
-                {/* Current Portfolio */}
-                <Grid item xs={12}>
-                    <Card>
-                        <CardHeader
-                            title="Current Portfolio"
-                            action={
-                                <Box sx={{ display: 'flex' }}>
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        startIcon={<EditIcon />}
-                                        sx={{ mr: 1 }}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        size="small"
-                                        startIcon={<SaveIcon />}
-                                    >
-                                        Save
-                                    </Button>
-                                </Box>
-                            }
-                        />
-                        <Divider />
-                        <CardContent>
-                            <TableContainer
-                                component={Paper}
-                                sx={{ backgroundColor: 'background.paper' }}
-                            >
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Asset</TableCell>
-                                            <TableCell>Symbol</TableCell>
-                                            <TableCell>Allocation (%)</TableCell>
-                                            <TableCell>Current Value</TableCell>
-                                            <TableCell>Performance</TableCell>
-                                            <TableCell>Actions</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {[
-                                            {
-                                                name: 'Apple Inc.',
-                                                symbol: 'AAPL',
-                                                allocation: 15,
-                                                value: '$18,679.93',
-                                                performance: '+2.3%',
-                                            },
-                                            {
-                                                name: 'Microsoft Corp.',
-                                                symbol: 'MSFT',
-                                                allocation: 12,
-                                                value: '$14,943.95',
-                                                performance: '+1.7%',
-                                            },
-                                            {
-                                                name: 'Amazon.com Inc.',
-                                                symbol: 'AMZN',
-                                                allocation: 10,
-                                                value: '$12,453.29',
-                                                performance: '-0.8%',
-                                            },
-                                            {
-                                                name: 'Tesla Inc.',
-                                                symbol: 'TSLA',
-                                                allocation: 8,
-                                                value: '$9,962.63',
-                                                performance: '+3.5%',
-                                            },
-                                            {
-                                                name: 'Alphabet Inc.',
-                                                symbol: 'GOOGL',
-                                                allocation: 10,
-                                                value: '$12,453.29',
-                                                performance: '+0.5%',
-                                            },
-                                            {
-                                                name: 'Bitcoin',
-                                                symbol: 'BTC',
-                                                allocation: 5,
-                                                value: '$6,226.64',
-                                                performance: '+4.2%',
-                                            },
-                                            {
-                                                name: 'Ethereum',
-                                                symbol: 'ETH',
-                                                allocation: 5,
-                                                value: '$6,226.64',
-                                                performance: '+2.8%',
-                                            },
-                                            {
-                                                name: 'S&P 500 ETF',
-                                                symbol: 'SPY',
-                                                allocation: 20,
-                                                value: '$24,906.58',
-                                                performance: '+1.1%',
-                                            },
-                                            {
-                                                name: 'Gold ETF',
-                                                symbol: 'GLD',
-                                                allocation: 10,
-                                                value: '$12,453.29',
-                                                performance: '-0.3%',
-                                            },
-                                            {
-                                                name: 'Cash',
-                                                symbol: 'USD',
-                                                allocation: 5,
-                                                value: '$6,226.64',
-                                                performance: '0.0%',
-                                            },
-                                        ].map((asset, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{asset.name}</TableCell>
-                                                <TableCell>{asset.symbol}</TableCell>
-                                                <TableCell>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                        }}
-                                                    >
-                                                        <Slider
-                                                            value={asset.allocation}
-                                                            disabled
-                                                            sx={{
-                                                                width: '100px',
-                                                                mr: 2,
-                                                                color: asset.performance.startsWith(
-                                                                    '+',
-                                                                )
-                                                                    ? 'success.main'
-                                                                    : asset.performance.startsWith(
-                                                                            '-',
-                                                                        )
-                                                                      ? 'error.main'
-                                                                      : 'primary.main',
-                                                            }}
-                                                        />
-                                                        <Typography>{asset.allocation}%</Typography>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell>{asset.value}</TableCell>
-                                                <TableCell
-                                                    sx={{
-                                                        color: asset.performance.startsWith('+')
-                                                            ? 'success.main'
-                                                            : asset.performance.startsWith('-')
-                                                              ? 'error.main'
-                                                              : 'text.primary',
-                                                    }}
-                                                >
-                                                    {asset.performance}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <IconButton size="small" sx={{ mr: 1 }}>
-                                                        <EditIcon fontSize="small" />
-                                                    </IconButton>
-                                                    <IconButton size="small" color="error">
-                                                        <DeleteIcon fontSize="small" />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </CardContent>
-                    </Card>
-                </Grid>
+            {error && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                    {error}
+                </Alert>
+            )}
 
-                {/* Portfolio Rebalancing */}
-                <Grid item xs={12} md={6}>
+            {/* Portfolio Summary */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} md={4}>
                     <Card>
-                        <CardHeader
-                            title="Portfolio Rebalancing"
-                            action={
-                                <IconButton>
-                                    <MoreVertIcon />
-                                </IconButton>
-                            }
-                        />
-                        <Divider />
                         <CardContent>
-                            <Typography variant="body2" paragraph>
-                                Your portfolio is currently 8.5% away from your target allocation.
-                                We recommend rebalancing to maintain your risk profile.
+                            <Typography variant="subtitle2" color="text.secondary">
+                                Total Portfolio Value
                             </Typography>
-
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Rebalancing Strategy
-                                </Typography>
-                                <FormControl fullWidth size="small">
-                                    <Select defaultValue="threshold">
-                                        <MenuItem value="threshold">Threshold-based (5%)</MenuItem>
-                                        <MenuItem value="periodic">Periodic (Quarterly)</MenuItem>
-                                        <MenuItem value="calendar">Calendar-based</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Tax Optimization
-                                </Typography>
-                                <FormControl fullWidth size="small">
-                                    <Select defaultValue="minimize">
-                                        <MenuItem value="minimize">Minimize Tax Impact</MenuItem>
-                                        <MenuItem value="ignore">
-                                            Ignore Tax Considerations
-                                        </MenuItem>
-                                        <MenuItem value="harvest">Tax-Loss Harvesting</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-
-                            <Button variant="contained" fullWidth>
-                                Generate Rebalancing Plan
-                            </Button>
+                            <Typography variant="h4" sx={{ my: 1 }}>
+                                {formatCurrency(calculateTotalValue())}
+                            </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-
-                {/* Transaction History */}
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={4}>
                     <Card>
-                        <CardHeader
-                            title="Transaction History"
-                            action={
-                                <IconButton>
-                                    <MoreVertIcon />
-                                </IconButton>
-                            }
-                        />
-                        <Divider />
                         <CardContent>
-                            <TableContainer sx={{ maxHeight: 300 }}>
-                                <Table stickyHeader size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Date</TableCell>
-                                            <TableCell>Asset</TableCell>
-                                            <TableCell>Type</TableCell>
-                                            <TableCell>Amount</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {[
-                                            {
-                                                date: '2025-04-05',
-                                                asset: 'AAPL',
-                                                type: 'Buy',
-                                                amount: '$2,500.00',
-                                            },
-                                            {
-                                                date: '2025-04-01',
-                                                asset: 'TSLA',
-                                                type: 'Sell',
-                                                amount: '$1,800.00',
-                                            },
-                                            {
-                                                date: '2025-03-28',
-                                                asset: 'BTC',
-                                                type: 'Buy',
-                                                amount: '$1,000.00',
-                                            },
-                                            {
-                                                date: '2025-03-15',
-                                                asset: 'MSFT',
-                                                type: 'Buy',
-                                                amount: '$3,200.00',
-                                            },
-                                            {
-                                                date: '2025-03-10',
-                                                asset: 'GLD',
-                                                type: 'Sell',
-                                                amount: '$2,100.00',
-                                            },
-                                            {
-                                                date: '2025-03-01',
-                                                asset: 'SPY',
-                                                type: 'Buy',
-                                                amount: '$5,000.00',
-                                            },
-                                            {
-                                                date: '2025-02-22',
-                                                asset: 'AMZN',
-                                                type: 'Buy',
-                                                amount: '$2,800.00',
-                                            },
-                                            {
-                                                date: '2025-02-15',
-                                                asset: 'GOOGL',
-                                                type: 'Sell',
-                                                amount: '$1,500.00',
-                                            },
-                                        ].map((transaction, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{transaction.date}</TableCell>
-                                                <TableCell>{transaction.asset}</TableCell>
-                                                <TableCell
-                                                    sx={{
-                                                        color:
-                                                            transaction.type === 'Buy'
-                                                                ? 'success.main'
-                                                                : 'error.main',
-                                                    }}
-                                                >
-                                                    {transaction.type}
-                                                </TableCell>
-                                                <TableCell>{transaction.amount}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                                <Button variant="text">View All Transactions</Button>
-                            </Box>
+                            <Typography variant="subtitle2" color="text.secondary">
+                                Total Gain/Loss
+                            </Typography>
+                            <Typography
+                                variant="h4"
+                                sx={{ my: 1 }}
+                                color={calculateTotalGain() >= 0 ? 'success.main' : 'error.main'}
+                            >
+                                {formatCurrency(calculateTotalGain())}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="subtitle2" color="text.secondary">
+                                Number of Assets
+                            </Typography>
+                            <Typography variant="h4" sx={{ my: 1 }}>
+                                {portfolio?.assets?.length || 0}
+                            </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
+
+            {/* Assets Table */}
+            <Card>
+                <CardHeader title="Your Assets" />
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Asset</TableCell>
+                                <TableCell align="right">Quantity</TableCell>
+                                <TableCell align="right">Purchase Price</TableCell>
+                                <TableCell align="right">Current Price</TableCell>
+                                <TableCell align="right">Total Value</TableCell>
+                                <TableCell align="right">Gain/Loss</TableCell>
+                                <TableCell align="right">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {portfolio?.assets?.length > 0 ? (
+                                portfolio.assets.map((asset) => (
+                                    <TableRow key={asset.id}>
+                                        <TableCell>
+                                            <Box>
+                                                <Typography variant="body2" fontWeight={600}>
+                                                    {asset.symbol}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.secondary"
+                                                >
+                                                    {asset.name}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="right">{asset.quantity}</TableCell>
+                                        <TableCell align="right">
+                                            {formatCurrency(asset.purchasePrice)}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {formatCurrency(asset.currentPrice)}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {formatCurrency(asset.totalValue)}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Chip
+                                                label={`${formatPercentage(asset.gainPercent, 2, true)} (${formatCurrency(asset.gain)})`}
+                                                color={asset.gain >= 0 ? 'success' : 'error'}
+                                                size="small"
+                                            />
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => handleOpenDialog(asset)}
+                                            >
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                            <IconButton
+                                                size="small"
+                                                color="error"
+                                                onClick={() => handleDeleteAsset(asset.id)}
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center">
+                                        <Typography variant="body2" color="text.secondary">
+                                            No assets found. Click "Add Asset" to get started.
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Card>
+
+            {/* Add/Edit Asset Dialog */}
+            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+                <DialogTitle>{currentAsset ? 'Edit Asset' : 'Add New Asset'}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        fullWidth
+                        label="Symbol"
+                        value={formData.symbol}
+                        onChange={handleInputChange('symbol')}
+                        margin="normal"
+                        required
+                    />
+                    <TextField
+                        fullWidth
+                        label="Asset Name"
+                        value={formData.name}
+                        onChange={handleInputChange('name')}
+                        margin="normal"
+                        required
+                    />
+                    <TextField
+                        fullWidth
+                        label="Quantity"
+                        type="number"
+                        value={formData.quantity}
+                        onChange={handleInputChange('quantity')}
+                        margin="normal"
+                        required
+                    />
+                    <TextField
+                        fullWidth
+                        label="Purchase Price"
+                        type="number"
+                        value={formData.purchasePrice}
+                        onChange={handleInputChange('purchasePrice')}
+                        margin="normal"
+                        required
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button variant="contained" onClick={handleSaveAsset}>
+                        {currentAsset ? 'Save Changes' : 'Add Asset'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

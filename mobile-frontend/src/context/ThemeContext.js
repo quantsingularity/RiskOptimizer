@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { Appearance, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeProvider as RNEThemeProvider, createTheme } from '@rneui/themed';
@@ -12,7 +12,7 @@ export const ThemeContext = createContext({
     isDarkMode: false,
 });
 
-export const AppThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }) => {
     const systemColorScheme = useColorScheme(); // 'light' or 'dark'
     const [themePreference, setThemePreference] = useState('system'); // User's preference
 
@@ -88,3 +88,15 @@ export const AppThemeProvider = ({ children }) => {
         </ThemeContext.Provider>
     );
 };
+
+// Export hook to use the theme context
+export const useTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within ThemeProvider');
+    }
+    return context;
+};
+
+// Alias for backward compatibility
+export const AppThemeProvider = ThemeProvider;

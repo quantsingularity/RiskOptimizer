@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Card, Button, Slider, CheckBox, Input } from '@rneui/themed';
 import RNPickerSelect from 'react-native-picker-select'; // Need to install this
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 
 // Placeholder for Efficient Frontier Chart
 const EfficientFrontierChart = () => (

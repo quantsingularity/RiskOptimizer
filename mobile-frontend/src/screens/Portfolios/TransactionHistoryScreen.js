@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Card, ListItem, Icon } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 
 const TransactionHistoryScreen = ({ route, navigation }) => {
     const { portfolioId } = route.params;

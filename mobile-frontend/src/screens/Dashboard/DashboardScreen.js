@@ -8,8 +8,8 @@ import {
     RefreshControl,
 } from 'react-native';
 import { Card, Button, Icon, useTheme } from '@rneui/themed'; // Import useTheme
-import { useAuth } from '../context/AuthContext';
-import apiService from '../services/apiService';
+import { useAuth } from '../../context/AuthContext';
+import apiService from '../../services/apiService';
 import { useFocusEffect } from '@react-navigation/native';
 // Import chart component later
 // import PerformanceChart from '../components/dashboard/PerformanceChart';
@@ -141,6 +141,17 @@ const DashboardScreen = ({ navigation }) => {
             fontSize: 16,
             textAlign: 'center',
         },
+        changeContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 8,
+        },
+        changeText: {
+            fontSize: 18,
+            fontWeight: '600',
+            marginLeft: 4,
+        },
     });
 
     if (loading && !refreshing) {
@@ -184,7 +195,33 @@ const DashboardScreen = ({ navigation }) => {
                         maximumFractionDigits: 2,
                     }) || '0.00'}
                 </Text>
-                {/* TODO: Add overall change indicator here using theme colors */}
+                {dashboardData?.overallChange !== undefined && (
+                    <View style={styles.changeContainer}>
+                        <Icon
+                            name={dashboardData.overallChange >= 0 ? 'arrow-up' : 'arrow-down'}
+                            type="feather"
+                            size={16}
+                            color={
+                                dashboardData.overallChange >= 0
+                                    ? theme.colors.success
+                                    : theme.colors.error
+                            }
+                        />
+                        <Text
+                            style={[
+                                styles.changeText,
+                                {
+                                    color:
+                                        dashboardData.overallChange >= 0
+                                            ? theme.colors.success
+                                            : theme.colors.error,
+                                },
+                            ]}
+                        >
+                            {Math.abs(dashboardData.overallChange).toFixed(2)}%
+                        </Text>
+                    </View>
+                )}
             </Card>
 
             {/* Placeholder for Performance Chart */}

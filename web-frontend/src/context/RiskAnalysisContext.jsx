@@ -7,22 +7,21 @@ const RiskAnalysisContext = createContext();
 // Provider component
 export const RiskAnalysisProvider = ({ children }) => {
     const [riskMetrics, setRiskMetrics] = useState(null);
+    const [varData, setVarData] = useState(null);
+    const [stressTestResults, setStressTestResults] = useState(null);
+    const [correlationData, setCorrelationData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // Calculate Value at Risk
-    const calculateVaR = async (returns, confidence = 0.95) => {
+    const calculateVaR = async (params) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await apiService.calculateVaR(returns, confidence);
+            const response = await apiService.risk.calculateVaR(params);
             if (response.status === 'success') {
-                const updatedMetrics = {
-                    ...riskMetrics,
-                    valueAtRisk: response.value_at_risk,
-                };
-                setRiskMetrics(updatedMetrics);
-                return response;
+                setVarData(response.data);
+                return response.data;
             } else {
                 setError(response.message || 'Failed to calculate VaR');
                 return null;
@@ -37,34 +36,18 @@ export const RiskAnalysisProvider = ({ children }) => {
     };
 
     // Run stress test
-    const runStressTest = async (portfolioData, scenario) => {
+    const runStressTest = async (params) => {
         setLoading(true);
         setError(null);
         try {
-            // This would be connected to a real API endpoint in a production app
-            // For now, we'll simulate a response
-            const simulatedResponse = {
-                status: 'success',
-                stress_test_results: {
-                    scenario: scenario,
-                    estimated_loss: -32.8,
-                    impact_by_asset_class: {
-                        equities: -42.5,
-                        bonds: 5.2,
-                        crypto: -60.8,
-                        gold: 12.3,
-                    },
-                },
-            };
-
-            // Update risk metrics with stress test results
-            const updatedMetrics = {
-                ...riskMetrics,
-                stressTest: simulatedResponse.stress_test_results,
-            };
-            setRiskMetrics(updatedMetrics);
-
-            return simulatedResponse;
+            const response = await apiService.risk.stressTest(params);
+            if (response.status === 'success') {
+                setStressTestResults(response.data);
+                return response.data;
+            } else {
+                setError(response.message || 'Failed to run stress test');
+                return null;
+            }
         } catch (err) {
             setError(err.message || 'An error occurred while running stress test');
             console.error('Stress test error:', err);
@@ -74,13 +57,72 @@ export const RiskAnalysisProvider = ({ children }) => {
         }
     };
 
+    // Analyze correlation
+    const analyzeCorrelation = async (params) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await apiService.risk.correlationAnalysis(params);
+            if (response.status === 'success') {
+                setCorrelationData(response.data);
+                return response.data;
+            } else {
+                setError(response.message || 'Failed to analyze correlation');
+                return null;
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred while analyzing correlation');
+            console.error('Correlation analysis error:', err);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch risk metrics for a portfolio
+    const fetchRiskMetrics = async (portfolioId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await apiService.risk.getMetrics(portfolioId);
+            if (response.status === 'success') {
+                setRiskMetrics(response.data);
+                return response.data;
+            } else {
+                setError(response.message || 'Failed to fetch risk metrics');
+                return null;
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred while fetching risk metrics');
+            console.error('Risk metrics fetch error:', err);
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Clear all risk data
+    const clearRiskData = () => {
+        setRiskMetrics(null);
+        setVarData(null);
+        setStressTestResults(null);
+        setCorrelationData(null);
+        setError(null);
+    };
+
     // Context value
     const value = {
         riskMetrics,
+        varData,
+        stressTestResults,
+        correlationData,
         loading,
         error,
         calculateVaR,
         runStressTest,
+        analyzeCorrelation,
+        fetchRiskMetrics,
+        clearRiskData,
     };
 
     return <RiskAnalysisContext.Provider value={value}>{children}</RiskAnalysisContext.Provider>;

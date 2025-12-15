@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Input, Button, Text, Card } from '@rneui/themed';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 // Consider adding a date picker component
 
 const AddAssetScreen = ({ route, navigation }) => {

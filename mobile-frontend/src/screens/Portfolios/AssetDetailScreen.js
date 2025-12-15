@@ -11,7 +11,7 @@ import {
 } from 'react-native'; // Import TouchableOpacity
 import { Card, ButtonGroup, useTheme, Button, Icon } from '@rneui/themed'; // Import Icon
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 import { LineChart } from 'react-native-chart-kit';
 import {
     getWatchlist,

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { Card, Button, Icon, ListItem } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 
 const PortfolioListScreen = ({ navigation }) => {
     const [portfolios, setPortfolios] = useState([]);

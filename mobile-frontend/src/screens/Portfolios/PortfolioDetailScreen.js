@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Card, Button, Icon, ListItem, Divider, useTheme } from '@rneui/themed'; // Import useTheme
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 import { PieChart } from 'react-native-chart-kit'; // Import PieChart
 
 const screenWidth = Dimensions.get('window').width;

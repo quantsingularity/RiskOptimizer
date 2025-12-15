@@ -1,119 +1,33 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-// --- Data API Client (Simulated for Frontend Development) ---
-// In a real application, these calls would likely go through your backend,
-// which would then securely call the actual Data APIs (like YahooFinance).
-// This simulation helps develop the frontend without a live backend connection.
-const simulateDataApiCall = async (apiName, query) => {
-    console.log(`[Simulated Data API Call] ${apiName}`, query);
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+// --- Backend API Configuration ---
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api/v1';
+const API_TIMEOUT = process.env.API_TIMEOUT || 30000;
 
-    if (apiName === 'YahooFinance/get_stock_chart') {
-        const { symbol, interval, range } = query;
-        // Return mock data structure based on YahooFinance API docs
-        // In a real scenario, your backend would fetch and return this.
-        const generateMockData = (numPoints) => {
-            const timestamps = [];
-            const closes = [];
-            const opens = [];
-            const highs = [];
-            const lows = [];
-            const volumes = [];
-            const adjCloses = [];
-            let lastClose = Math.random() * 200 + 50;
-            const now = Date.now();
-            const timeStep = range === '1d' ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000; // 5 mins for 1d, 1 day otherwise
-
-            for (let i = 0; i < numPoints; i++) {
-                timestamps.push(Math.floor((now - (numPoints - 1 - i) * timeStep) / 1000));
-                const change = (Math.random() - 0.48) * (lastClose * 0.05);
-                const open = lastClose;
-                const close = Math.max(1, lastClose + change);
-                const high = Math.max(open, close) * (1 + Math.random() * 0.02);
-                const low = Math.min(open, close) * (1 - Math.random() * 0.02);
-                const volume = Math.floor(Math.random() * 1000000 + 50000);
-
-                opens.push(open);
-                closes.push(close);
-                highs.push(high);
-                lows.push(low);
-                volumes.push(volume);
-                adjCloses.push(close); // Simple mock, adjClose often same as close
-                lastClose = close;
-            }
-            return { timestamps, closes, opens, highs, lows, volumes, adjCloses };
-        };
-
-        let numPoints = 50;
-        if (range === '1d') numPoints = 78; // ~ 5min intervals for a trading day
-        if (range === '5d') numPoints = 5;
-        if (range === '1mo') numPoints = 22;
-        if (range === '6mo') numPoints = 126;
-        if (range === '1y') numPoints = 252;
-
-        const mock = generateMockData(numPoints);
-
-        return {
-            chart: {
-                result: [
-                    {
-                        meta: {
-                            currency: 'USD',
-                            symbol: symbol,
-                            exchangeName: 'NMS',
-                            instrumentType: 'EQUITY',
-                            regularMarketPrice: mock.closes[mock.closes.length - 1],
-                            chartPreviousClose: mock.opens[0],
-                            priceHint: 2,
-                            range: range,
-                            validRanges: ['1d', '5d', '1mo', '3mo', '6mo', '1y', 'ytd', 'max'],
-                        },
-                        timestamp: mock.timestamps,
-                        indicators: {
-                            quote: [
-                                {
-                                    open: mock.opens,
-                                    high: mock.highs,
-                                    low: mock.lows,
-                                    close: mock.closes,
-                                    volume: mock.volumes,
-                                },
-                            ],
-                            adjclose: [
-                                {
-                                    adjclose: mock.adjCloses,
-                                },
-                            ],
-                        },
-                    },
-                ],
-                error: null,
-            },
-        };
-    } else {
-        console.error(`[Simulated Data API Call] Unknown API: ${apiName}`);
-        throw new Error(`Simulated API ${apiName} not found`);
-    }
-};
-
-// --- Original Axios Instance for Backend API ---
 const backendApi = axios.create({
-    baseURL: 'http://localhost:5000/api', // Default to local dev backend
-    timeout: 30000,
+    baseURL: API_BASE_URL,
+    timeout: API_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
     },
 });
 
-// Set environment-specific base URL (Keep this if backend exists)
+// Token refresh interceptor variables
+let tokenRefreshInterceptor = null;
+
+// Set environment-specific base URL
 const setEnvironment = (env) => {
-    // ... (keep existing environment logic if needed)
+    const urls = {
+        development: 'http://localhost:5000/api/v1',
+        staging: 'https://staging-api.riskoptimizer.com/api/v1',
+        production: 'https://api.riskoptimizer.com/api/v1',
+    };
+    backendApi.defaults.baseURL = urls[env] || urls.development;
 };
 
-// Set auth header (Keep this)
+// Set auth header
 const setAuthHeader = (token) => {
     if (token) {
         backendApi.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -122,131 +36,324 @@ const setAuthHeader = (token) => {
     }
 };
 
-// --- API Service Functions ---
+// Setup token refresh interceptor
+const setupTokenRefreshInterceptor = (getAccessToken, refreshTokenCallback) => {
+    // Remove existing interceptor if any
+    if (tokenRefreshInterceptor !== null) {
+        backendApi.interceptors.response.eject(tokenRefreshInterceptor);
+    }
 
-// Authentication (Uses Backend)
+    tokenRefreshInterceptor = backendApi.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+            const originalRequest = error.config;
+
+            if (error.response?.status === 401 && !originalRequest._retry) {
+                originalRequest._retry = true;
+
+                try {
+                    const newAccessToken = await refreshTokenCallback();
+                    if (newAccessToken) {
+                        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                        return backendApi(originalRequest);
+                    }
+                } catch (refreshError) {
+                    return Promise.reject(refreshError);
+                }
+            }
+
+            return Promise.reject(error);
+        },
+    );
+};
+
+// Remove token refresh interceptor
+const removeTokenRefreshInterceptor = () => {
+    if (tokenRefreshInterceptor !== null) {
+        backendApi.interceptors.response.eject(tokenRefreshInterceptor);
+        tokenRefreshInterceptor = null;
+    }
+};
+
+// --- Authentication API ---
 const login = (email, password) => {
     return backendApi.post('/auth/login', { email, password });
 };
 
-// User Profile (Uses Backend)
+const register = (userData) => {
+    return backendApi.post('/auth/register', userData);
+};
+
+const refreshToken = (refreshToken) => {
+    return backendApi.post('/auth/refresh', { refresh_token: refreshToken });
+};
+
+const logout = () => {
+    return backendApi.post('/auth/logout');
+};
+
+// --- User Profile API ---
 const getUserProfile = () => {
     return backendApi.get('/users/profile');
 };
+
 const updateUserProfile = (profileData) => {
     return backendApi.put('/users/profile', profileData);
 };
 
-// Portfolios (Uses Backend)
+// --- Portfolios API ---
 const getPortfolios = () => {
     return backendApi.get('/portfolios');
 };
+
 const getPortfolioDetails = (portfolioId) => {
     return backendApi.get(`/portfolios/${portfolioId}`);
 };
+
 const createPortfolio = (portfolioData) => {
     return backendApi.post('/portfolios', portfolioData);
 };
+
+const updatePortfolio = (portfolioId, portfolioData) => {
+    return backendApi.put(`/portfolios/${portfolioId}`, portfolioData);
+};
+
+const deletePortfolio = (portfolioId) => {
+    return backendApi.delete(`/portfolios/${portfolioId}`);
+};
+
 const addAssetToPortfolio = (portfolioId, assetData) => {
     return backendApi.post(`/portfolios/${portfolioId}/assets`, assetData);
 };
 
-// Optimization (Uses Backend)
-const getOptimizationRecommendations = (optimizationParams) => {
-    return backendApi.post('/optimization/recommendations', optimizationParams);
+const updateAsset = (portfolioId, assetId, assetData) => {
+    return backendApi.put(`/portfolios/${portfolioId}/assets/${assetId}`, assetData);
 };
 
-// Risk Analysis (Uses Backend)
+const deleteAsset = (portfolioId, assetId) => {
+    return backendApi.delete(`/portfolios/${portfolioId}/assets/${assetId}`);
+};
+
+// --- Optimization API ---
+const getOptimizationRecommendations = (optimizationParams) => {
+    return backendApi.post('/risk/optimize', optimizationParams);
+};
+
+const getOptimizationHistory = (portfolioId) => {
+    return backendApi.get(`/risk/optimize/history/${portfolioId}`);
+};
+
+// --- Risk Analysis API ---
 const getRiskMetrics = (portfolioId) => {
     return backendApi.get(`/risk/metrics/${portfolioId}`);
 };
 
-// Blockchain (Uses Backend)
+const calculateVaR = (portfolioId, params) => {
+    return backendApi.post(`/risk/var/${portfolioId}`, params);
+};
+
+const performStressTest = (portfolioId, scenarios) => {
+    return backendApi.post(`/risk/stress-test/${portfolioId}`, scenarios);
+};
+
+// --- Blockchain API ---
 const getTransactionHistory = (portfolioId) => {
     return backendApi.get(`/blockchain/transactions/${portfolioId}`);
 };
+
 const verifyPortfolioIntegrity = (portfolioId) => {
     return backendApi.get(`/blockchain/verify/${portfolioId}`);
 };
 
-// Market Data (Simulated - Calls Data API via Backend in reality)
+// --- Market Data API (with simulation fallback) ---
 const getAssetPriceHistory = async (symbol, range = '1y', interval = '1d') => {
-    // In a real app, this would call your backend: return backendApi.get(`/market/history/${symbol}?range=${range}&interval=${interval}`);
-    // For frontend development, we simulate the call directly:
     try {
-        const response = await simulateDataApiCall('YahooFinance/get_stock_chart', {
-            symbol: symbol,
-            range: range,
-            interval: interval,
+        // Try to fetch from backend
+        const response = await backendApi.get(`/market/history/${symbol}`, {
+            params: { range, interval },
         });
-        // Simulate the structure your backend might return (e.g., just the data part)
-        if (response.chart && response.chart.result && response.chart.result.length > 0) {
-            // Add a 'data' wrapper to mimic potential backend structure if needed
-            return { data: response.chart.result[0] };
-        } else {
-            throw new Error('Invalid data structure from simulated API');
-        }
+        return response;
     } catch (error) {
-        console.error(`Error fetching simulated price history for ${symbol}:`, error);
-        Alert.alert('Error', `Could not load market data for ${symbol}. Using simulated data.`);
-        // Fallback to returning the raw error structure or a specific error format
-        // For robustness, might return a specific error object or re-throw
-        throw error; // Re-throw the error to be caught by the calling component
+        console.warn(`Backend market data unavailable for ${symbol}, using simulation`);
+        // Fallback to simulation
+        return simulateMarketData(symbol, range, interval);
     }
 };
 
-// Add other market data functions as needed (e.g., search, top movers)
 const searchAssets = async (query) => {
-    console.log(`[Simulated API Call] Search Assets: ${query}`);
+    try {
+        const response = await backendApi.get('/market/search', { params: { q: query } });
+        return response;
+    } catch (error) {
+        console.warn('Backend asset search unavailable, using simulation');
+        return simulateAssetSearch(query);
+    }
+};
+
+const getMarketOverview = async () => {
+    try {
+        return await backendApi.get('/market/overview');
+    } catch (error) {
+        console.warn('Backend market overview unavailable, using simulation');
+        return simulateMarketOverview();
+    }
+};
+
+// --- Simulation Functions (Fallback for development) ---
+const simulateMarketData = async (symbol, range, interval) => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const generateMockData = (numPoints) => {
+        const timestamps = [];
+        const closes = [];
+        const opens = [];
+        const highs = [];
+        const lows = [];
+        const volumes = [];
+        let lastClose = Math.random() * 200 + 50;
+        const now = Date.now();
+        const timeStep = range === '1d' ? 5 * 60 * 1000 : 24 * 60 * 60 * 1000;
+
+        for (let i = 0; i < numPoints; i++) {
+            timestamps.push(Math.floor((now - (numPoints - 1 - i) * timeStep) / 1000));
+            const change = (Math.random() - 0.48) * (lastClose * 0.05);
+            const open = lastClose;
+            const close = Math.max(1, lastClose + change);
+            const high = Math.max(open, close) * (1 + Math.random() * 0.02);
+            const low = Math.min(open, close) * (1 - Math.random() * 0.02);
+            const volume = Math.floor(Math.random() * 1000000 + 50000);
+
+            opens.push(open);
+            closes.push(close);
+            highs.push(high);
+            lows.push(low);
+            volumes.push(volume);
+            lastClose = close;
+        }
+        return { timestamps, closes, opens, highs, lows, volumes };
+    };
+
+    const numPoints = { '1d': 78, '5d': 5, '1mo': 22, '6mo': 126, '1y': 252 }[range] || 50;
+    const mock = generateMockData(numPoints);
+
+    return {
+        data: {
+            symbol,
+            timestamps: mock.timestamps,
+            prices: mock.closes,
+            opens: mock.opens,
+            highs: mock.highs,
+            lows: mock.lows,
+            volumes: mock.volumes,
+            regularMarketPrice: mock.closes[mock.closes.length - 1],
+            previousClose: mock.opens[0],
+        },
+    };
+};
+
+const simulateAssetSearch = async (query) => {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    // Mock search results
-    const mockResults = [
-        { symbol: 'AAPL', name: 'Apple Inc.' },
-        { symbol: 'MSFT', name: 'Microsoft Corporation' },
-        { symbol: 'GOOGL', name: 'Alphabet Inc. (Class A)' },
-        { symbol: 'AMZN', name: 'Amazon.com, Inc.' },
-        { symbol: 'TSLA', name: 'Tesla, Inc.' },
-        { symbol: 'NVDA', name: 'NVIDIA Corporation' },
-        { symbol: 'BTC-USD', name: 'Bitcoin USD' },
-        { symbol: 'ETH-USD', name: 'Ethereum USD' },
-    ].filter(
+    const mockAssets = [
+        { symbol: 'AAPL', name: 'Apple Inc.', type: 'stock' },
+        { symbol: 'MSFT', name: 'Microsoft Corporation', type: 'stock' },
+        { symbol: 'GOOGL', name: 'Alphabet Inc. (Class A)', type: 'stock' },
+        { symbol: 'AMZN', name: 'Amazon.com, Inc.', type: 'stock' },
+        { symbol: 'TSLA', name: 'Tesla, Inc.', type: 'stock' },
+        { symbol: 'NVDA', name: 'NVIDIA Corporation', type: 'stock' },
+        { symbol: 'BTC-USD', name: 'Bitcoin USD', type: 'crypto' },
+        { symbol: 'ETH-USD', name: 'Ethereum USD', type: 'crypto' },
+    ];
+
+    const results = mockAssets.filter(
         (asset) =>
             asset.symbol.toLowerCase().includes(query.toLowerCase()) ||
             asset.name.toLowerCase().includes(query.toLowerCase()),
     );
-    return { data: { assets: mockResults.slice(0, 10) } }; // Return max 10 results
+
+    return { data: { assets: results.slice(0, 10) } };
 };
 
-// Error handling interceptor (Keep for Backend API)
+const simulateMarketOverview = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return {
+        data: {
+            indices: [
+                { name: 'S&P 500', value: 4783.45, change: 0.85 },
+                { name: 'NASDAQ', value: 15043.2, change: 1.23 },
+                { name: 'DOW', value: 37305.16, change: 0.42 },
+            ],
+            topGainers: [
+                { symbol: 'NVDA', name: 'NVIDIA', change: 5.2 },
+                { symbol: 'TSLA', name: 'Tesla', change: 4.8 },
+            ],
+            topLosers: [
+                { symbol: 'META', name: 'Meta', change: -2.1 },
+                { symbol: 'NFLX', name: 'Netflix', change: -1.8 },
+            ],
+        },
+    };
+};
+
+// --- Error handling interceptor ---
 backendApi.interceptors.response.use(
     (response) => response,
     (error) => {
-        // ... (keep existing error handling logic)
-        console.error('Backend API Error:', error.response?.data || error.message);
+        const message = error.response?.data?.message || error.message || 'An error occurred';
+        console.error('API Error:', message, error.response?.data);
+
+        if (error.response?.status === 500) {
+            Alert.alert('Server Error', 'An unexpected error occurred. Please try again later.');
+        } else if (!error.response) {
+            Alert.alert(
+                'Network Error',
+                'Unable to connect to the server. Please check your connection.',
+            );
+        }
+
         return Promise.reject(error);
     },
 );
 
 export default {
+    // Configuration
     setEnvironment,
     setAuthHeader,
+    setupTokenRefreshInterceptor,
+    removeTokenRefreshInterceptor,
+
     // Auth
     login,
+    register,
+    refreshToken,
+    logout,
+
     // User
     getUserProfile,
     updateUserProfile,
+
     // Portfolios
     getPortfolios,
     getPortfolioDetails,
     createPortfolio,
+    updatePortfolio,
+    deletePortfolio,
     addAssetToPortfolio,
+    updateAsset,
+    deleteAsset,
+
     // Optimization & Risk
     getOptimizationRecommendations,
+    getOptimizationHistory,
     getRiskMetrics,
+    calculateVaR,
+    performStressTest,
+
     // Blockchain
     getTransactionHistory,
     verifyPortfolioIntegrity,
-    // Market Data (Using Simulation)
+
+    // Market Data
     getAssetPriceHistory,
     searchAssets,
+    getMarketOverview,
 };

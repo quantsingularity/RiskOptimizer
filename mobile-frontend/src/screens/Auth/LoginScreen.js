@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { Input, Button, Text, Card, useTheme } from '@rneui/themed'; // Import useTheme
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');

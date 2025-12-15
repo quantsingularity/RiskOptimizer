@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
@@ -8,17 +8,13 @@ import RiskAnalysis from './pages/RiskAnalysis';
 import Optimization from './pages/Optimization';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
-import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
+import { useAuth } from './context/AuthContext';
 
-function App() {
-    const { user, checkAuthState, loading } = useAuth();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // Check if user is already logged in
-        checkAuthState();
-    }, [checkAuthState]);
+// Protected Route wrapper component
+function ProtectedRoute({ children }) {
+    const { user, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
@@ -35,21 +31,62 @@ function App() {
         );
     }
 
+    if (!user) {
+        // Redirect to login but save the location they were trying to access
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
+}
+
+function App() {
+    const { checkAuthState, loading } = useAuth();
+
+    useEffect(() => {
+        // Check authentication state on mount
+        checkAuthState();
+    }, [checkAuthState]);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    bgcolor: 'background.default',
+                }}
+            >
+                <CircularProgress size={60} />
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
             <Routes>
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
 
-                {/* Protected routes */}
-                <Route path="/" element={<MainLayout />}>
+                {/* Protected routes with layout */}
+                <Route
+                    path="/"
+                    element={
+                        <ProtectedRoute>
+                            <MainLayout />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<Dashboard />} />
                     <Route path="portfolio" element={<PortfolioManagement />} />
                     <Route path="risk-analysis" element={<RiskAnalysis />} />
                     <Route path="optimization" element={<Optimization />} />
                     <Route path="settings" element={<Settings />} />
-                    <Route path="*" element={<NotFound />} />
                 </Route>
+
+                {/* 404 route */}
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </Box>
     );

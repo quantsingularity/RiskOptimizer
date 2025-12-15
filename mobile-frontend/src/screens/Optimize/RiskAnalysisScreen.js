@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Card, Divider } from '@rneui/themed';
 import { useFocusEffect } from '@react-navigation/native';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 // Import chart component later if needed for risk contribution visualization
 
 const RiskAnalysisScreen = ({ route, navigation }) => {
