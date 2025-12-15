@@ -1,0 +1,30 @@
+base/app-configmap.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/app-secrets.yaml
+  1:1       warning  missing document start "---"  (document-start)
+  7:81      error    line too long (110 > 80 characters)  (line-length)
+
+base/backend-deployment.yaml
+  1:1       warning  missing document start "---"  (document-start)
+  47:81     error    line too long (102 > 80 characters)  (line-length)
+
+base/backend-service.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/database-service.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/database-statefulset.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/frontend-deployment.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/frontend-service.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/ingress.yaml
+  1:1       warning  missing document start "---"  (document-start)
+
+base/redis-deployment.yaml

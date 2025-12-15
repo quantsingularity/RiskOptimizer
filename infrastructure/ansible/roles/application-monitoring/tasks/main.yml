@@ -1,0 +1,7 @@
+---
+# application-monitoring role - stub implementation
+# TODO: Implement full role functionality
+
+- name: application-monitoring placeholder
+  debug:
+      msg: 'Role application-monitoring requires full implementation'

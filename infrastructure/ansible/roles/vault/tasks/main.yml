@@ -1,0 +1,7 @@
+---
+# vault role - stub implementation
+# TODO: Implement full role functionality
+
+- name: vault placeholder
+  debug:
+      msg: 'Role vault requires full implementation'

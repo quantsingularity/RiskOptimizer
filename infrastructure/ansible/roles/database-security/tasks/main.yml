@@ -1,0 +1,7 @@
+---
+# database-security role - stub implementation
+# TODO: Implement full role functionality
+
+- name: database-security placeholder
+  debug:
+      msg: 'Role database-security requires full implementation'

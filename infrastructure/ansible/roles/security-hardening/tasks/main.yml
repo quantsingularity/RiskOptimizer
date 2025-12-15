@@ -1,0 +1,7 @@
+---
+# Tasks for security-hardening role
+# TODO: Implement security-hardening tasks
+
+- name: Placeholder task for security-hardening
+  debug:
+      msg: 'Role security-hardening is not yet fully implemented'

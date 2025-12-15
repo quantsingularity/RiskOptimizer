@@ -1,0 +1,7 @@
+---
+# web-security role - stub implementation
+# TODO: Implement full role functionality
+
+- name: web-security placeholder
+  debug:
+      msg: 'Role web-security requires full implementation'

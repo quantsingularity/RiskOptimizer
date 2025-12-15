@@ -1,0 +1,7 @@
+---
+# intrusion-detection role - stub implementation
+# TODO: Implement full role functionality
+
+- name: intrusion-detection placeholder
+  debug:
+      msg: 'Role intrusion-detection requires full implementation'

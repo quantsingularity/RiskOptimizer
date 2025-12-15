@@ -1,0 +1,12 @@
+WARNING  Project directory /.ansible cannot be used for caching as it is not writable.
+WARNING  Using unique temporary directory /tmp/.ansible-0aaa for caching.
+WARNING  Listing 1 violation(s) that are fatal
+
+# Rule Violation Summary
+
+  1 syntax-check profile:min tags:core,unskippable
+
+Failed: 1 failure(s), 0 warning(s) in 1 files processed of 2 encountered.
+syntax-check[specific]: the role 'security-hardening' was not found in /home/user/infrastructure_fixed/ansible/playbooks/roles:/home/user/infrastructure_fixed/ansible/.ansible/roles:/home/user/infrastructure_fixed/ansible/roles:/home/user/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/home/user/infrastructure_fixed/ansible/playbooks
+playbooks/main.yml:58:9
+

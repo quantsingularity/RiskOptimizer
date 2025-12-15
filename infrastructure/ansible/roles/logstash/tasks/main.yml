@@ -1,0 +1,7 @@
+---
+# logstash role - stub implementation
+# TODO: Implement full role functionality
+
+- name: logstash placeholder
+  debug:
+      msg: 'Role logstash requires full implementation'

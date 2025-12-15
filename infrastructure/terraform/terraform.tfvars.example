@@ -1,0 +1,39 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and fill in your values
+
+# AWS Configuration
+aws_region = "us-east-1"
+environment = "dev"
+
+# Network Configuration
+vpc_cidr = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+# Database Configuration  
+db_instance_class = "db.t3.medium"
+db_allocated_storage = 100
+db_engine_version = "14.10"
+
+# EKS Configuration
+cluster_version = "1.28"
+node_group_instance_types = ["t3.medium"]
+node_group_desired_size = 3
+node_group_min_size = 2
+node_group_max_size = 5
+
+# Vault Configuration
+vault_address = "https://vault.example.com:8200"
+vault_namespace = "riskoptimizer"
+
+# Compliance Level
+compliance_level = "high"
+
+# Tags
+default_tags = {
+  Organization = "YourOrg"
+  CostCenter   = "Engineering"
+  Owner        = "DevOps"
+}
+
+# IMPORTANT: DO NOT commit real credentials to version control
+# Sensitive values should be provided via environment variables or secure secret management

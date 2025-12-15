@@ -1,0 +1,34 @@
+# Ansible Inventory Example
+# Copy to inventory/hosts.yml and customize for your environment
+
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_python_interpreter: /usr/bin/python3
+    
+  children:
+    production:
+      hosts:
+        prod-web-01:
+          ansible_host: 10.0.1.10
+        prod-web-02:
+          ansible_host: 10.0.1.11
+        prod-db-01:
+          ansible_host: 10.0.2.10
+          
+    staging:
+      hosts:
+        staging-web-01:
+          ansible_host: 10.0.3.10
+        staging-db-01:
+          ansible_host: 10.0.3.20
+          
+    development:
+      hosts:
+        dev-web-01:
+          ansible_host: 10.0.4.10
+        dev-db-01:
+          ansible_host: 10.0.4.20
+
+# NOTE: Replace with actual IP addresses or hostnames
+# Sensitive connection details should use Ansible Vault

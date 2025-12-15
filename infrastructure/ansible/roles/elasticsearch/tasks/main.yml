@@ -1,0 +1,7 @@
+---
+# elasticsearch role - stub implementation
+# TODO: Implement full role functionality
+
+- name: elasticsearch placeholder
+  debug:
+      msg: 'Role elasticsearch requires full implementation'

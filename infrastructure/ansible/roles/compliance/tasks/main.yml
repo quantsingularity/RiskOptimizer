@@ -1,0 +1,7 @@
+---
+# Tasks for compliance role
+# TODO: Implement compliance tasks
+
+- name: Placeholder task for compliance
+  debug:
+      msg: 'Role compliance is not yet fully implemented'

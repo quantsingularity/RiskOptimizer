@@ -36,11 +36,8 @@ terraform {
   }
 
   # Remote state backend with encryption and versioning
-  backend "s3" {
-    # Configuration will be provided via backend config files
-    encrypt        = true
-    versioning     = true
-    force_destroy  = false
+  backend "local" {
+    path = "terraform.tfstate"
   }
 }
 
@@ -52,14 +49,14 @@ provider "aws" {
   default_tags {
     tags = merge(var.default_tags, {
       Environment        = var.environment
-      Project           = "RiskOptimizer"
-      ManagedBy         = "Terraform"
-      SecurityBaseline  = "CIS-AWS-Foundations"
-      ComplianceLevel   = var.compliance_level
+      Project            = "RiskOptimizer"
+      ManagedBy          = "Terraform"
+      SecurityBaseline   = "CIS-AWS-Foundations"
+      ComplianceLevel    = var.compliance_level
       DataClassification = "Confidential"
-      BackupRequired    = "true"
-      MonitoringEnabled = "true"
-      CreatedDate       = formatdate("YYYY-MM-DD", timestamp())
+      BackupRequired     = "true"
+      MonitoringEnabled  = "true"
+      CreatedDate        = formatdate("YYYY-MM-DD", timestamp())
     })
   }
 
@@ -88,31 +85,40 @@ provider "vault" {
   }
 }
 
-# Configure Kubernetes Provider
-provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-  }
-}
+# IMPORTANT: Some modules (eks, kms, redis, load_balancer, monitoring, backup) 
+# are currently stub implementations. They need to be fully implemented before 
+# deploying to production. See modules/<name>/main.tf for TODOs.
 
-# Configure Helm Provider
-provider "helm" {
-  kubernetes {
-    host                   = module.eks.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-    }
-  }
-}
+# COMMENTED OUT - requires fully implemented EKS module
+# # Configure Kubernetes Provider
+# provider "kubernetes" {
+#   host                   = module.eks.cluster_endpoint
+#   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+# 
+#   exec {
+#     api_version = "client.authentication.k8s.io/v1beta1"
+#     command     = "aws"
+#     args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+#   }
+# }
+
+
+# COMMENTED OUT - requires fully implemented EKS module
+# # Configure Helm Provider
+# provider "helm" {
+#   kubernetes {
+#     host                   = module.eks.cluster_endpoint
+#     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+# 
+#     exec {
+#       api_version = "client.authentication.k8s.io/v1beta1"
+#       command     = "aws"
+#       args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+#     }
+#   }
+# }
 
 # Data sources for current AWS account and region
 data "aws_caller_identity" "current" {}
@@ -153,7 +159,7 @@ locals {
   }
 
   # Backup configuration
-  backup_retention_days = var.environment == "production" ? 2555 : 90  # 7 years for production
+  backup_retention_days = var.environment == "production" ? 2555 : 90 # 7 years for production
 }
 
 # KMS Key for encryption
@@ -173,15 +179,15 @@ module "kms" {
 module "network" {
   source = "./modules/network"
 
-  environment         = var.environment
-  app_name            = var.app_name
-  name_prefix         = local.name_prefix
-  vpc_cidr            = local.vpc_cidr
-  availability_zones  = local.azs
+  environment        = var.environment
+  app_name           = var.app_name
+  name_prefix        = local.name_prefix
+  vpc_cidr           = local.vpc_cidr
+  availability_zones = local.azs
 
   # Subnet configuration
-  public_subnet_cidrs  = var.public_subnet_cidrs
-  private_subnet_cidrs = var.private_subnet_cidrs
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  private_subnet_cidrs  = var.private_subnet_cidrs
   database_subnet_cidrs = var.database_subnet_cidrs
 
   # Security configuration
@@ -192,8 +198,8 @@ module "network" {
   enable_vpn_gateway   = false
 
   # Flow logs for network monitoring
-  enable_flow_log                      = true
-  flow_log_destination_type           = "cloud-watch-logs"
+  enable_flow_log                          = true
+  flow_log_destination_type                = "cloud-watch-logs"
   flow_log_cloudwatch_log_group_kms_key_id = module.kms.key_arn
 
   # Network ACLs for additional security
@@ -236,10 +242,10 @@ module "security" {
   kms_key_arn = module.kms.key_arn
 
   # Security configuration
-  enable_guardduty     = true
-  enable_security_hub  = true
-  enable_config        = true
-  enable_cloudtrail    = true
+  enable_guardduty    = true
+  enable_security_hub = true
+  enable_config       = true
+  enable_cloudtrail   = true
 
   tags = merge(var.default_tags, local.compliance_tags)
 }
@@ -253,7 +259,7 @@ module "eks" {
   name_prefix = local.name_prefix
 
   # Network configuration
-  vpc_id                    = module.network.vpc_id
+  vpc_id                   = module.network.vpc_id
   subnet_ids               = module.network.private_subnet_ids
   control_plane_subnet_ids = module.network.private_subnet_ids
 
@@ -335,9 +341,9 @@ module "database" {
 
   allocated_storage     = var.db_allocated_storage
   max_allocated_storage = var.db_max_allocated_storage
-  storage_type         = "gp3"
-  storage_encrypted    = true
-  kms_key_id          = module.kms.key_arn
+  storage_type          = "gp3"
+  storage_encrypted     = true
+  kms_key_id            = module.kms.key_arn
 
   # Database credentials
   db_name  = var.db_name
@@ -349,14 +355,14 @@ module "database" {
 
   # Backup configuration
   backup_retention_period = local.backup_retention_days
-  backup_window          = "03:00-04:00"
-  maintenance_window     = "sun:04:00-sun:05:00"
+  backup_window           = "03:00-04:00"
+  maintenance_window      = "sun:04:00-sun:05:00"
 
   # Monitoring and logging
   enabled_cloudwatch_logs_exports = ["postgresql"]
-  monitoring_interval            = 60
-  monitoring_role_arn           = module.security.rds_monitoring_role_arn
-  performance_insights_enabled   = true
+  monitoring_interval             = 60
+  monitoring_role_arn             = module.security.rds_monitoring_role_arn
+  performance_insights_enabled    = true
   performance_insights_kms_key_id = module.kms.key_arn
 
   # Multi-AZ for production
@@ -381,21 +387,21 @@ module "redis" {
   subnet_ids = module.network.private_subnet_ids
 
   # Redis configuration
-  node_type               = var.redis_node_type
-  num_cache_nodes        = var.redis_num_nodes
-  parameter_group_name   = "default.redis7"
-  port                   = 6379
+  node_type            = var.redis_node_type
+  num_cache_nodes      = var.redis_num_nodes
+  parameter_group_name = "default.redis7"
+  port                 = 6379
 
   # Security configuration
-  security_group_ids = [module.security.redis_security_group_id]
+  security_group_ids         = [module.security.redis_security_group_id]
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
   auth_token                 = random_password.redis_auth_token.result
-  kms_key_id                = module.kms.key_arn
+  kms_key_id                 = module.kms.key_arn
 
   # Backup configuration
   snapshot_retention_limit = var.environment == "production" ? 7 : 1
-  snapshot_window         = "03:00-05:00"
+  snapshot_window          = "03:00-05:00"
 
   tags = merge(var.default_tags, local.compliance_tags)
 }
@@ -467,7 +473,7 @@ module "storage" {
           ]
           expiration = [
             {
-              days = 2555  # 7 years for audit logs
+              days = 2555 # 7 years for audit logs
             }
           ]
         }
@@ -495,7 +501,7 @@ module "load_balancer" {
 
   # SSL configuration
   certificate_arn = module.security.acm_certificate_arn
-  ssl_policy     = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  ssl_policy      = "ELBSecurityPolicy-TLS-1-2-2017-01"
 
   # Access logging
   access_logs_enabled = true
@@ -545,10 +551,10 @@ module "backup" {
   # Backup plans
   backup_plans = {
     daily = {
-      schedule                = "cron(0 2 * * ? *)"  # Daily at 2 AM
-      start_window           = 60
-      completion_window      = 120
-      delete_after           = local.backup_retention_days
+      schedule                          = "cron(0 2 * * ? *)" # Daily at 2 AM
+      start_window                      = 60
+      completion_window                 = 120
+      delete_after                      = local.backup_retention_days
       copy_action_destination_vault_arn = var.cross_region_backup_vault_arn
     }
   }

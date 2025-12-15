@@ -1,0 +1,7 @@
+---
+# application-security role - stub implementation
+# TODO: Implement full role functionality
+
+- name: application-security placeholder
+  debug:
+      msg: 'Role application-security requires full implementation'

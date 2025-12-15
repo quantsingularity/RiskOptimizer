@@ -1,0 +1,7 @@
+---
+# database-backup role - stub implementation
+# TODO: Implement full role functionality
+
+- name: database-backup placeholder
+  debug:
+      msg: 'Role database-backup requires full implementation'

@@ -1,0 +1,7 @@
+---
+# prometheus role - stub implementation
+# TODO: Implement full role functionality
+
+- name: prometheus placeholder
+  debug:
+      msg: 'Role prometheus requires full implementation'

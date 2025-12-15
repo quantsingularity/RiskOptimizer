@@ -1,0 +1,7 @@
+---
+# Tasks for monitoring-agent role
+# TODO: Implement monitoring-agent tasks
+
+- name: Placeholder task for monitoring-agent
+  debug:
+      msg: 'Role monitoring-agent is not yet fully implemented'

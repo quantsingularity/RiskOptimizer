@@ -1,0 +1,7 @@
+---
+# ssl-certificates role - stub implementation
+# TODO: Implement full role functionality
+
+- name: ssl-certificates placeholder
+  debug:
+      msg: 'Role ssl-certificates requires full implementation'

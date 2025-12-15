@@ -1,0 +1,7 @@
+---
+# Security baseline verification tasks
+# TODO: Implement comprehensive security checks
+
+- name: Verify security baseline placeholder
+  debug:
+      msg: 'Security baseline verification not yet implemented'

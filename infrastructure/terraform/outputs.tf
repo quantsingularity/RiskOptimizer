@@ -79,9 +79,9 @@ output "security_group_ids" {
 output "iam_role_arns" {
   description = "Map of IAM role ARNs"
   value = {
-    eks_cluster_role     = module.security.eks_cluster_role_arn
-    eks_node_group_role  = module.security.eks_node_group_role_arn
-    rds_monitoring_role  = module.security.rds_monitoring_role_arn
+    eks_cluster_role    = module.security.eks_cluster_role_arn
+    eks_node_group_role = module.security.eks_node_group_role_arn
+    rds_monitoring_role = module.security.rds_monitoring_role_arn
     backup_role         = module.security.backup_role_arn
   }
   sensitive = true
@@ -118,9 +118,9 @@ output "eks_node_groups" {
   description = "EKS node groups information"
   value = {
     for k, v in module.eks.node_groups : k => {
-      arn           = v.node_group_arn
-      status        = v.node_group_status
-      capacity_type = v.capacity_type
+      arn            = v.node_group_arn
+      status         = v.node_group_status
+      capacity_type  = v.capacity_type
       instance_types = v.instance_types
     }
   }
@@ -361,7 +361,7 @@ output "estimated_monthly_cost" {
     data_transfer   = "Variable based on usage"
     cloudwatch_logs = "Variable based on log volume"
     backup_storage  = "Variable based on backup size"
-    note           = "Costs are estimates and may vary based on actual usage"
+    note            = "Costs are estimates and may vary based on actual usage"
   }
 }
 
@@ -369,11 +369,11 @@ output "estimated_monthly_cost" {
 output "deployment_info" {
   description = "Deployment information"
   value = {
-    terraform_version = "~> 1.5.0"
-    aws_provider_version = "~> 5.0"
-    deployment_timestamp = timestamp()
+    terraform_version      = "~> 1.5.0"
+    aws_provider_version   = "~> 5.0"
+    deployment_timestamp   = timestamp()
     infrastructure_version = "1.0.0"
-    last_updated_by = "Terraform"
+    last_updated_by        = "Terraform"
   }
 }
 
@@ -403,12 +403,12 @@ output "health_check_endpoints" {
 output "disaster_recovery_info" {
   description = "Disaster recovery configuration"
   value = {
-    backup_vault_arn              = module.backup.backup_vault_arn
-    cross_region_replication      = var.enable_cross_region_replication
-    dr_region                     = var.dr_region
-    rto_target                    = "4 hours"
-    rpo_target                    = "1 hour"
-    backup_retention_days         = local.backup_retention_days
+    backup_vault_arn         = module.backup.backup_vault_arn
+    cross_region_replication = var.enable_cross_region_replication
+    dr_region                = var.dr_region
+    rto_target               = "4 hours"
+    rpo_target               = "1 hour"
+    backup_retention_days    = local.backup_retention_days
   }
 }
 
@@ -416,14 +416,14 @@ output "disaster_recovery_info" {
 output "security_baseline" {
   description = "Security baseline configuration"
   value = {
-    encryption_at_rest    = "Enabled for all supported services"
-    encryption_in_transit = "TLS 1.2+ enforced"
-    network_segmentation  = "Multi-tier architecture with security groups"
-    access_control        = "IAM roles with least privilege"
-    monitoring            = "CloudTrail, GuardDuty, Security Hub enabled"
+    encryption_at_rest     = "Enabled for all supported services"
+    encryption_in_transit  = "TLS 1.2+ enforced"
+    network_segmentation   = "Multi-tier architecture with security groups"
+    access_control         = "IAM roles with least privilege"
+    monitoring             = "CloudTrail, GuardDuty, Security Hub enabled"
     vulnerability_scanning = "Automated scanning enabled"
-    patch_management      = "Automated patching configured"
-    backup_strategy       = "Automated daily backups with cross-region replication"
+    patch_management       = "Automated patching configured"
+    backup_strategy        = "Automated daily backups with cross-region replication"
   }
 }
 

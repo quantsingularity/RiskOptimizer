@@ -1,0 +1,7 @@
+---
+# grafana role - stub implementation
+# TODO: Implement full role functionality
+
+- name: grafana placeholder
+  debug:
+      msg: 'Role grafana requires full implementation'

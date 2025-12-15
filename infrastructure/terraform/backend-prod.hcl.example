@@ -1,0 +1,8 @@
+# Production Backend Configuration
+# Usage: terraform init -backend-config=backend-prod.hcl
+
+bucket         = "riskoptimizer-tfstate-prod"
+key            = "infrastructure/terraform.tfstate"
+region         = "us-east-1"
+encrypt        = true
+dynamodb_table = "riskoptimizer-tfstate-lock"

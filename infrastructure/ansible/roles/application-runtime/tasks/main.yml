@@ -1,0 +1,7 @@
+---
+# application-runtime role - stub implementation
+# TODO: Implement full role functionality
+
+- name: application-runtime placeholder
+  debug:
+      msg: 'Role application-runtime requires full implementation'
