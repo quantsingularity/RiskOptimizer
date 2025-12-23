@@ -146,7 +146,7 @@ def memoize(ttl: int = 3600) -> Callable:
 class CacheManager:
     """Manager for cache operations and strategies."""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """Initialize cache manager."""
         self.cache = redis_cache
 

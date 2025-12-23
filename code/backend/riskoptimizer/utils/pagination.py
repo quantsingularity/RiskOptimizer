@@ -16,7 +16,7 @@ T = TypeVar("T")
 class PaginatedResult(Generic[T]):
     """Generic paginated result container."""
 
-    def __init__(self, items: List[T], page: int, per_page: int, total: int) -> Any:
+    def __init__(self, items: List[T], page: int, per_page: int, total: int) -> None:
         """
         Initialize paginated result.
 

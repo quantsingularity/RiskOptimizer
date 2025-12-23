@@ -3,7 +3,7 @@ Performance monitoring controller for exposing performance metrics.
 Provides endpoints for monitoring API performance and system health.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from flask import Blueprint, Response, jsonify
 from riskoptimizer.api.middleware.auth_middleware import admin_required
@@ -24,7 +24,7 @@ monitoring_bp = Blueprint("monitoring", __name__, url_prefix="/api/v1/monitoring
 
 
 def create_success_response(
-    data: Any, message: str = None, meta: Dict[str, Any] = None
+    data: Any, message: Optional[str] = None, meta: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Create standardized success response.

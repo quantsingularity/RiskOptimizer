@@ -3,7 +3,7 @@ Portfolio controller for handling portfolio-related API endpoints.
 Implements RESTful API design with proper error handling.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from flask import Blueprint, Response, jsonify, request
 from riskoptimizer.api.middleware.auth_middleware import jwt_required, optional_jwt
@@ -27,7 +27,7 @@ portfolio_bp = Blueprint("portfolio", __name__, url_prefix="/api/v1/portfolios")
 
 
 def create_success_response(
-    data: Any, message: str = None, meta: Dict[str, Any] = None
+    data: Any, message: Optional[str] = None, meta: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Create standardized success response.

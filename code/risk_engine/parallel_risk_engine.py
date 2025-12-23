@@ -35,7 +35,7 @@ class ParallelRiskEngine:
 
     def __init__(
         self, n_jobs: Any = None, backend: Any = "multiprocessing", verbose: Any = 0
-    ) -> Any:
+    ) -> None:
         """
         Initialize Parallel Risk Engine
 

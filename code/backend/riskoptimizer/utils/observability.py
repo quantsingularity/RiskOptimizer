@@ -25,7 +25,7 @@ class CorrelationIdFilter:
 class StructuredLogger:
     """Structured logger with correlation ID support."""
 
-    def __init__(self, name: str) -> Any:
+    def __init__(self, name: str) -> None:
         """
         Initialize structured logger.
 
@@ -34,7 +34,7 @@ class StructuredLogger:
         """
         self.logger = get_logger(name)
         correlation_filter = CorrelationIdFilter()
-        self.logger.addFilter(correlation_filter)
+        self.logger.logger.addFilter(correlation_filter)
 
     def _create_log_entry(self, level: str, message: str, **kwargs) -> Dict[str, Any]:
         """
@@ -181,7 +181,7 @@ def log_request_end(
     )
 
 
-def log_error(error: Exception, context: str = None, **kwargs) -> None:
+def log_error(error: Exception, context: Optional[str] = None, **kwargs) -> None:
     """
     Log error with context.
 

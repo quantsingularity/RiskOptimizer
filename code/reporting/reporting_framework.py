@@ -42,7 +42,7 @@ class ReportTemplate:
         description: Any = "",
         author: Any = "",
         version: Any = "1.0",
-    ) -> Any:
+    ) -> None:
         """
         Initialize report template
 
@@ -214,7 +214,7 @@ class ReportTemplate:
 class ReportGenerator:
     """Report generator for risk reports"""
 
-    def __init__(self, template: Any) -> Any:
+    def __init__(self, template: Any) -> None:
         """
         Initialize report generator
 
@@ -503,7 +503,7 @@ class ReportGenerator:
 class ReportScheduler:
     """Scheduler for automated report generation"""
 
-    def __init__(self, storage_dir: Any = None) -> Any:
+    def __init__(self, storage_dir: Any = None) -> None:
         """
         Initialize report scheduler
 
@@ -727,7 +727,7 @@ class ReportScheduler:
 class ReportArchive:
     """Archive for report versioning and comparison"""
 
-    def __init__(self, archive_dir: Any = None) -> Any:
+    def __init__(self, archive_dir: Any = None) -> None:
         """
         Initialize report archive
 

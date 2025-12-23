@@ -1,5 +1,5 @@
 import traceback
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import werkzeug.exceptions as werkzeug_exceptions
 from flask import Flask, Response, current_app, g, jsonify, request
@@ -61,7 +61,9 @@ def register_error_handlers(app: Flask) -> None:
     """
 
     @app.errorhandler(RiskOptimizerException)
-    def handle_risk_optimizer_exception(error: RiskOptimizerException) -> Response:
+    def handle_risk_optimizer_exception(
+        error: RiskOptimizerException,
+    ) -> Union[Response, tuple[Response, int]]:
         """
         Handle custom RiskOptimizer exceptions.
         Logs the error and returns a standardized JSON response.
@@ -97,7 +99,9 @@ def register_error_handlers(app: Flask) -> None:
         return jsonify(response), status_code
 
     @app.errorhandler(werkzeug_exceptions.HTTPException)
-    def handle_http_exception(error: werkzeug_exceptions.HTTPException) -> Response:
+    def handle_http_exception(
+        error: werkzeug_exceptions.HTTPException,
+    ) -> Union[Response, tuple[Response, int]]:
         """
         Handle Werkzeug HTTP exceptions (e.g., 404, 405).
         Logs the error and returns a standardized JSON response.
@@ -114,7 +118,9 @@ def register_error_handlers(app: Flask) -> None:
         return jsonify(response), error.code
 
     @app.errorhandler(Exception)
-    def handle_generic_exception(error: Exception) -> Response:
+    def handle_generic_exception(
+        error: Exception,
+    ) -> Union[Response, tuple[Response, int]]:
         """
         Handle generic, unhandled exceptions.
         Logs the critical error and returns a generic internal server error response.
@@ -132,7 +138,9 @@ def register_error_handlers(app: Flask) -> None:
 
     # Specific HTTP error handlers for better logging context
     @app.errorhandler(404)
-    def handle_not_found(error: werkzeug_exceptions.NotFound) -> Response:
+    def handle_not_found(
+        error: werkzeug_exceptions.NotFound,
+    ) -> Union[Response, tuple[Response, int]]:
         logger.warning(
             f"Not Found: {request.path}",
             extra={"path": request.path, "method": request.method},
@@ -143,7 +151,7 @@ def register_error_handlers(app: Flask) -> None:
     @app.errorhandler(405)
     def handle_method_not_allowed(
         error: werkzeug_exceptions.MethodNotAllowed,
-    ) -> Response:
+    ) -> Union[Response, tuple[Response, int]]:
         logger.warning(
             f"Method Not Allowed: {request.method} {request.path}",
             extra={"path": request.path, "method": request.method},
@@ -152,7 +160,9 @@ def register_error_handlers(app: Flask) -> None:
         return jsonify(response), 405
 
     @app.errorhandler(500)
-    def handle_server_error(error: werkzeug_exceptions.InternalServerError) -> Response:
+    def handle_server_error(
+        error: werkzeug_exceptions.InternalServerError,
+    ) -> Union[Response, tuple[Response, int]]:
         logger.critical(
             f"Internal Server Error: {str(error)}",
             exc_info=True,
@@ -203,7 +213,7 @@ def error_handling_middleware(app: Flask) -> None:
         )
 
     @app.after_request
-    def after_request(response: Response) -> Response:
+    def after_request(response: Response) -> Union[Response, tuple[Response, int]]:
         """
         Log after request and add security headers.
         """

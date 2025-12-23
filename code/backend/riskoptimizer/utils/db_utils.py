@@ -5,7 +5,7 @@ Provides utilities for query optimization, connection pooling, and database moni
 
 import time
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, List
+from typing import Any, Dict, Generator, List, Optional
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy import event, text
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 class QueryPerformanceMonitor:
     """Monitor and log slow database queries."""
 
-    def __init__(self, slow_query_threshold: float = 1.0) -> Any:
+    def __init__(self, slow_query_threshold: float = 1.0) -> None:
         """
         Initialize query performance monitor.
 
@@ -30,7 +30,7 @@ class QueryPerformanceMonitor:
         self.query_stats = {}
 
     def log_slow_query(
-        self, query: str, duration: float, params: Dict[str, Any] = None
+        self, query: str, duration: float, params: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         Log slow queries for analysis.

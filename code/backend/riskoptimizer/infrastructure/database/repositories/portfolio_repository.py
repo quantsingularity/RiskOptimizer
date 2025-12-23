@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 class PortfolioRepository:
     """Repository for portfolio-related database operations."""
 
-    def __init__(self, session: Optional[Session] = None) -> Any:
+    def __init__(self, session: Optional[Session] = None) -> None:
         """
         Initialize repository with optional session.
 
@@ -144,7 +144,7 @@ class PortfolioRepository:
         user_id: int,
         user_address: str,
         name: str = "Default Portfolio",
-        description: str = None,
+        description: Optional[str] = None,
         session: Optional[Session] = None,
     ) -> Portfolio:
         """

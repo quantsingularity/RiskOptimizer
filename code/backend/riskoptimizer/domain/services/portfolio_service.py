@@ -1,5 +1,5 @@
 from decimal import Decimal, getcontext
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from riskoptimizer.core.exceptions import NotFoundError, ValidationError
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.audit_service import audit_service
@@ -26,7 +26,7 @@ class PortfolioService:
     persistence, Redis for caching, and the audit service for logging financial actions.
     """
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """
         Initializes the PortfolioService with necessary repositories and services.
         """
@@ -150,7 +150,7 @@ class PortfolioService:
         user_id: int,
         user_address: str,
         name: str = "Default Portfolio",
-        description: str = None,
+        description: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Creates a new portfolio for a specified user.

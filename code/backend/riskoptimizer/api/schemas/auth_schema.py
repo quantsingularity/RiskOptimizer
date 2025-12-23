@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from riskoptimizer.core.exceptions import ValidationError
 
@@ -116,7 +116,7 @@ def validate_username(username: Any) -> str:
     return username
 
 
-def validate_wallet_address(wallet_address: Any) -> str:
+def validate_wallet_address(wallet_address: Any) -> Optional[str]:
     """
     Validate wallet address.
 

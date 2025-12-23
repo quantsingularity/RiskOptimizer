@@ -32,7 +32,7 @@ DEFAULT_MODEL_PATH = os.path.join(MODEL_DIR, "trained_model.joblib")
 class AIOptimizationService:
     """Service for AI-driven portfolio optimization"""
 
-    def __init__(self, model_path: Any = None) -> Any:
+    def __init__(self, model_path: Any = None) -> None:
         """
         Initialize the optimization service
 

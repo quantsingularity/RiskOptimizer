@@ -2,6 +2,7 @@ import json
 import logging
 import sys
 import traceback
+from collections.abc import MutableMapping
 from datetime import datetime
 from typing import Any, Dict, Optional
 
@@ -74,9 +75,10 @@ class JsonFormatter(logging.Formatter):
 
         # Add exception info if available
         if record.exc_info:
+            exc_type, exc_value, exc_tb = record.exc_info
             log_data["exception"] = {
-                "type": record.exc_info[0].__name__,
-                "message": str(record.exc_info[1]),
+                "type": exc_type.__name__ if exc_type else "Unknown",
+                "message": str(exc_value),
                 "traceback": traceback.format_exception(*record.exc_info),
             }
 
@@ -97,7 +99,9 @@ class ContextAdapter(logging.LoggerAdapter):
     This ensures that context (like request_id, user_id) is always available.
     """
 
-    def process(self, msg: str, kwargs: Dict[str, Any]) -> tuple:
+    def process(
+        self, msg: str, kwargs: MutableMapping[str, Any]
+    ) -> tuple[str, MutableMapping[str, Any]]:
         """
         Process log record by adding context.
         """

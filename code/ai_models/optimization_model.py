@@ -25,7 +25,7 @@ logger = get_logger(__name__)
 class AdvancedPortfolioOptimizer:
     """Advanced portfolio optimization using multiple AI techniques"""
 
-    def __init__(self, risk_tolerance: Any = 5) -> Any:
+    def __init__(self, risk_tolerance: Any = 5) -> None:
         """
         Initialize the optimizer with risk tolerance level
 

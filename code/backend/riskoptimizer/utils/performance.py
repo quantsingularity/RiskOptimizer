@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 class PerformanceMetrics:
     """Collect and store performance metrics."""
 
-    def __init__(self, max_samples: int = 1000) -> Any:
+    def __init__(self, max_samples: int = 1000) -> None:
         """
         Initialize performance metrics collector.
 
@@ -176,7 +176,7 @@ def monitor_performance(func: Callable) -> Callable:
 class CachePerformanceMonitor:
     """Monitor cache performance metrics."""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """
         Initialize cache performance monitor.
         """

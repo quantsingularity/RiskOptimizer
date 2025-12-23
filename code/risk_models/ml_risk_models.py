@@ -33,7 +33,7 @@ warnings.filterwarnings("ignore")
 class MLRiskModel:
     """Machine Learning Risk Model for VaR and ES prediction"""
 
-    def __init__(self, model_type: Any = "gbm", quantile: Any = 0.05) -> Any:
+    def __init__(self, model_type: Any = "gbm", quantile: Any = 0.05) -> None:
         """
         Initialize ML Risk Model
 
@@ -336,7 +336,7 @@ class MLRiskModel:
 class CopulaMLRiskModel:
     """Copula-based ML Risk Model for portfolio risk estimation"""
 
-    def __init__(self, copula_type: Any = "gaussian", n_scenarios: Any = 10000) -> Any:
+    def __init__(self, copula_type: Any = "gaussian", n_scenarios: Any = 10000) -> None:
         """
         Initialize Copula ML Risk Model
 
@@ -622,7 +622,7 @@ class HybridRiskModel:
 
     def __init__(
         self, traditional_weight: Any = 0.5, ml_model_type: Any = "gbm"
-    ) -> Any:
+    ) -> None:
         """
         Initialize Hybrid Risk Model
 

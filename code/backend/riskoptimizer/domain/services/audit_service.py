@@ -14,7 +14,7 @@ class AuditService:
     Service for logging audit trails of financial transactions and key actions.
     """
 
-    def __init__(self, session: Optional[Session] = None) -> Any:
+    def __init__(self, session: Optional[Session] = None) -> None:
         """
         Initialize AuditService with an optional SQLAlchemy session.
         """

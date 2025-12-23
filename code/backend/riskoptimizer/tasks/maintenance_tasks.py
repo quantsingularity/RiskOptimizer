@@ -7,6 +7,7 @@ import gc
 import json
 import logging
 from datetime import datetime
+from typing import Any
 import psutil
 import redis
 from tasks.celery_app import celery_app
@@ -41,7 +42,9 @@ def cleanup_expired_tasks(self) -> Any:
                             redis_client.delete(key)
                             expired_count += 1
             except Exception as e:
-                logger.warning(f"Error processing task key {key}: {str(e)}")
+                logger.warning(
+                    f"Error processing task key {key.decode() if isinstance(key, bytes) else key}: {str(e)}"
+                )
         for key in progress_keys:
             ttl = redis_client.ttl(key)
             if ttl == -1:

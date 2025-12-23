@@ -22,7 +22,7 @@ class UserRepository:
     and integrates with an audit service for logging database actions.
     """
 
-    def __init__(self, session: Optional[Session] = None) -> Any:
+    def __init__(self, session: Optional[Session] = None) -> None:
         """
         Initializes the UserRepository.
 

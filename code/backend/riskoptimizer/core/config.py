@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -82,12 +82,12 @@ class CeleryConfig:
     broker_url: str
     result_backend: str
     task_serializer: str = "json"
-    accept_content: list = None
+    accept_content: Optional[list] = None
     result_serializer: str = "json"
     timezone: str = "UTC"
     enable_utc: bool = True
 
-    def __post_init__(self) -> Any:
+    def __post_init__(self) -> None:
         if self.accept_content is None:
             self.accept_content = ["json"]
 
@@ -99,10 +99,10 @@ class APIConfig:
     host: str = "0.0.0.0"
     port: int = 5000
     debug: bool = False
-    cors_origins: list = None
+    cors_origins: Optional[list] = None
     max_content_length: int = 16 * 1024 * 1024
 
-    def __post_init__(self) -> Any:
+    def __post_init__(self) -> None:
         if self.cors_origins is None:
             self.cors_origins = ["*"]
 
@@ -110,7 +110,7 @@ class APIConfig:
 class Config:
     """Main configuration class that aggregates all configuration settings."""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         self.database = self._load_database_config()
         self.redis = self._load_redis_config()
         self.security = self._load_security_config()

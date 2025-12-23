@@ -3,7 +3,7 @@ Authentication controller for handling user authentication API endpoints.
 Implements user registration, login, token refresh, and logout.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from flask import Blueprint, Response, jsonify, request
 from riskoptimizer.api.schemas.auth_schema import (
@@ -26,7 +26,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 
 def create_success_response(
-    data: Any, message: str = None, meta: Dict[str, Any] = None
+    data: Any, message: Optional[str] = None, meta: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Create standardized success response.

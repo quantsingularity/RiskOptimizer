@@ -29,7 +29,7 @@ warnings.filterwarnings("ignore")
 class ExtremeValueRisk:
     """Extreme Value Theory Risk Model"""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """Initialize Extreme Value Risk Model"""
         self.data = None
         self.pot_params = None

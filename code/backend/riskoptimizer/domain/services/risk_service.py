@@ -22,7 +22,7 @@ class RiskService:
     and includes caching for performance optimization.
     """
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """
         Initializes the RiskService with a Redis cache instance.
         """

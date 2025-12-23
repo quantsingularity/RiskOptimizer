@@ -5,6 +5,7 @@ Handles asynchronous task processing for heavy computations.
 
 import os
 import redis
+from typing import Any
 from celery import Celery
 from celery.schedules import crontab
 from kombu import Queue
@@ -109,7 +110,7 @@ def get_worker_stats() -> Any:
 class TaskResultManager:
     """Manages task results and provides utilities for task monitoring."""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         self.redis_client = redis_client
 
     def store_task_progress(self, task_id: Any, progress_data: Any) -> Any:

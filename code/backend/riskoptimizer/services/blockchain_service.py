@@ -74,7 +74,7 @@ NETWORKS = {
 class BlockchainService:
     """Service for blockchain integration and smart contract interaction"""
 
-    def __init__(self, network: Any = "ethereum") -> Any:
+    def __init__(self, network: Any = "ethereum") -> None:
         """
         Initialize the blockchain service
 

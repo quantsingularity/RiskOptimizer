@@ -5,7 +5,7 @@ Implements rate limiting to prevent abuse of the API.
 
 import time
 from functools import wraps
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 from flask import Response, g, jsonify, request
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import RateLimitError, RiskOptimizerException
@@ -43,7 +43,9 @@ def get_rate_limit_key(endpoint: str) -> str:
     return f"rate_limit:{endpoint}:{user_id}:{client_ip}"
 
 
-def rate_limit(requests_per_minute: int = None, burst: int = None) -> Callable:
+def rate_limit(
+    requests_per_minute: Optional[int] = None, burst: Optional[int] = None
+) -> Callable:
     """
     Decorator to apply rate limiting to API endpoints.
 

@@ -24,7 +24,7 @@ class AuthService:
     to prevent brute-force attacks.
     """
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """
         Initialize authentication service with configurations and dependencies.
         """

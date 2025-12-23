@@ -1,9 +1,8 @@
 import secrets
 from functools import wraps
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 from flask import Response, current_app, g, jsonify, request
 from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import RiskOptimizerException, SecurityError
 from riskoptimizer.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -32,7 +31,7 @@ def generate_csrf_token() -> str:
     return secrets.token_urlsafe(32)
 
 
-def csrf_protect(exempt_methods: List[str] = None) -> Callable:
+def csrf_protect(exempt_methods: Optional[List[str]] = None) -> Callable:
     """
     Decorator to apply CSRF protection to API endpoints.
 

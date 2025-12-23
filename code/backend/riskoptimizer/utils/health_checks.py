@@ -30,7 +30,7 @@ class HealthCheck:
         check_func: Callable[[], Dict[str, Any]],
         timeout: float = 5.0,
         critical: bool = True,
-    ) -> Any:
+    ) -> None:
         """
         Initialize health check.
 
@@ -83,7 +83,7 @@ class HealthCheck:
 class HealthCheckManager:
     """Manager for all health checks."""
 
-    def __init__(self) -> Any:
+    def __init__(self) -> None:
         """Initialize health check manager."""
         self.checks: List[HealthCheck] = []
         self._register_default_checks()

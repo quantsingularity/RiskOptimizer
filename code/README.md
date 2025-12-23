@@ -71,16 +71,3 @@ The `backend` directory is the central hub, containing a detailed structure for 
 | **services/**         | External integrations/complex logic. | `ai_optimization.py`, `blockchain_service.py`, `quant_analysis.py`.                       |
 | **tasks/**            | Asynchronous task processing.        | `celery_app.py`, `maintenance_tasks.py`, `risk_tasks.py`.                                 |
 | **utils/**            | General utility functions.           | `cache_utils.py`, `health_checks.py`, `performance.py`.                                   |
-
-## 6. Web Frontend Structure Deep Dive
-
-The `web-frontend` directory provides the user interface for interacting with the RiskOptimizer platform.
-
-| Frontend Sub-Directory | Primary Function                                 | Examples                                                              |
-| :--------------------- | :----------------------------------------------- | :-------------------------------------------------------------------- |
-| **src/components/**    | Reusable UI elements.                            | `PortfolioDashboard.js`, `RiskAnalytics.js`, `AssetAllocation.jsx`.   |
-| **src/pages/**         | Application views/routes.                        | `Dashboard.jsx`, `Optimization.jsx`, `RiskAnalysis.jsx`, `Login.jsx`. |
-| **src/context/**       | State management using React Context.            | `AuthContext.jsx`, `PortfolioContext.jsx`, `RiskAnalysisContext.jsx`. |
-| **src/services/**      | API communication and external service wrappers. | `apiService.js`.                                                      |
-| **src/hooks/**         | Custom React hooks for logic reuse.              | `useDashboardData.js`, `usePortfolioManagement.js`.                   |
-| **tests/**             | Unit and integration tests for the UI.           | `Dashboard.test.jsx`, `AuthContext.test.jsx`, `Sidebar.test.jsx`.     |
