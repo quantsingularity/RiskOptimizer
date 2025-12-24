@@ -153,7 +153,13 @@ def get_pagination_links(
         Dictionary with pagination links
     """
     pages = (total + per_page - 1) // per_page if per_page > 0 else 0
-    links = {"self": None, "first": None, "prev": None, "next": None, "last": None}
+    links: Dict[str, Optional[str]] = {
+        "self": None,
+        "first": None,
+        "prev": None,
+        "next": None,
+        "last": None,
+    }
     if pages > 0:
         links["self"] = url_for(
             endpoint, page=page, per_page=per_page, **kwargs, _external=True
@@ -221,7 +227,11 @@ def create_paginated_response(
             paginated.page,
             paginated.per_page,
             paginated.total,
-            **{k: v for k, v in request.args.items() if k not in ["page", "per_page"]},
+            **{
+                k: v
+                for k, v in dict(request.args).items()
+                if k not in ["page", "per_page"]
+            },
         )
         response["meta"]["links"] = links
     return response

@@ -40,14 +40,14 @@ def create_error_response(error: Exception) -> Dict[str, Any]:
         }
         # Add traceback in development mode for HTTP exceptions as well
         if current_app.debug:
-            response_data["error"]["details"]["traceback"] = traceback.format_exc()
+            response_data["error"]["details"]["traceback"] = [traceback.format_exc()]
     else:
         # Handle generic exceptions
         response_data["error"]["message"] = str(error) or "An unexpected error occurred"
 
         # Add traceback in development mode
         if current_app.debug:
-            response_data["error"]["details"]["traceback"] = traceback.format_exc()
+            response_data["error"]["details"]["traceback"] = [traceback.format_exc()]
 
     return response_data
 
@@ -90,7 +90,7 @@ def register_error_handlers(app: Flask) -> None:
             f"{error.__class__.__name__}: {str(error)}",
             exc_info=True,
             extra={
-                "error_code": error.code,
+                "error_code": error.error_code,
                 "error_message": error.message,
                 "error_details": error.details,
             },
@@ -115,7 +115,7 @@ def register_error_handlers(app: Flask) -> None:
             },
         )
         response = create_error_response(error)
-        return jsonify(response), error.code
+        return jsonify(response), error.code or 500
 
     @app.errorhandler(Exception)
     def handle_generic_exception(

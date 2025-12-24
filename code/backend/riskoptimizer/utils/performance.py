@@ -19,16 +19,13 @@ class PerformanceMetrics:
     """Collect and store performance metrics."""
 
     def __init__(self, max_samples: int = 1000) -> None:
-        """
-        Initialize performance metrics collector.
-
-        Args:
-            max_samples: Maximum number of samples to keep in memory
-        """
+        """Initialize performance metrics collector."""
         self.max_samples = max_samples
-        self.response_times = defaultdict(lambda: deque(maxlen=max_samples))
-        self.request_counts = defaultdict(int)
-        self.error_counts = defaultdict(int)
+        self.response_times: Dict[str, deque] = defaultdict(
+            lambda: deque(maxlen=max_samples)
+        )
+        self.request_counts: Dict[str, int] = defaultdict(int)
+        self.error_counts: Dict[str, int] = defaultdict(int)
         self.start_time = time.time()
 
     def record_request(

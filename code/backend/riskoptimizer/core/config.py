@@ -111,13 +111,13 @@ class Config:
     """Main configuration class that aggregates all configuration settings."""
 
     def __init__(self) -> None:
+        self.environment = os.getenv("ENVIRONMENT", "development")
         self.database = self._load_database_config()
         self.redis = self._load_redis_config()
         self.security = self._load_security_config()
         self.blockchain = self._load_blockchain_config()
         self.celery = self._load_celery_config()
         self.api = self._load_api_config()
-        self.environment = os.getenv("ENVIRONMENT", "development")
         self.model_path = self._get_model_path()
 
     def _load_database_config(self) -> DatabaseConfig:
@@ -149,17 +149,33 @@ class Config:
 
     def _load_security_config(self) -> SecurityConfig:
         """Load security configuration from environment variables."""
+        import logging
+        from cryptography.fernet import Fernet
+
         secret_key = os.getenv("SECRET_KEY")
         if not secret_key:
-            raise ValueError("SECRET_KEY environment variable is required")
+            secret_key = "dev-secret-key-change-in-production"
+            if self.environment == "production":
+                raise ValueError(
+                    "SECRET_KEY environment variable is required in production"
+                )
+            logging.warning(
+                "Using default SECRET_KEY. This is NOT recommended for production."
+            )
+
         jwt_secret_key = os.getenv("JWT_SECRET_KEY")
         if not jwt_secret_key:
-            raise ValueError("JWT_SECRET_KEY environment variable is required")
+            jwt_secret_key = "dev-jwt-secret-key-change-in-production"
+            if self.environment == "production":
+                raise ValueError(
+                    "JWT_SECRET_KEY environment variable is required in production"
+                )
+            logging.warning(
+                "Using default JWT_SECRET_KEY. This is NOT recommended for production."
+            )
+
         data_encryption_key = os.getenv("DATA_ENCRYPTION_KEY")
         if not data_encryption_key:
-            from cryptography.fernet import Fernet
-            import logging
-
             data_encryption_key = Fernet.generate_key().decode()
             logging.warning(
                 "DATA_ENCRYPTION_KEY not found. A new key has been generated. This is NOT recommended for production."

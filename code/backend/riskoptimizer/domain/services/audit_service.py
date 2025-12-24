@@ -21,10 +21,11 @@ class AuditService:
         self._session = session
 
     def _get_session(self, session: Optional[Session] = None) -> Session:
-        """
-        Get the SQLAlchemy session to use for database operations.
-        """
-        return session or self._session
+        """Get the SQLAlchemy session to use for database operations."""
+        result_session = session or self._session
+        if result_session is None:
+            raise DatabaseError("No session available")
+        return result_session
 
     def log_action(
         self,

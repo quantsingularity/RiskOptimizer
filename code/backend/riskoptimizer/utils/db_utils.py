@@ -20,14 +20,9 @@ class QueryPerformanceMonitor:
     """Monitor and log slow database queries."""
 
     def __init__(self, slow_query_threshold: float = 1.0) -> None:
-        """
-        Initialize query performance monitor.
-
-        Args:
-            slow_query_threshold: Threshold in seconds for slow query logging
-        """
+        """Initialize query performance monitor."""
         self.slow_query_threshold = slow_query_threshold
-        self.query_stats = {}
+        self.query_stats: Dict[int, Dict[str, Any]] = {}
 
     def log_slow_query(
         self, query: str, duration: float, params: Optional[Dict[str, Any]] = None
@@ -218,7 +213,7 @@ class DatabaseOptimizer:
             Dictionary with creation results
         """
         suggestions = DatabaseOptimizer.suggest_indexes(session, table_name)
-        results = {"created": [], "failed": []}
+        results: Dict[str, List[Any]] = {"created": [], "failed": []}
         for index_sql in suggestions:
             try:
                 session.execute(text(index_sql))
@@ -278,7 +273,6 @@ class ConnectionPoolMonitor:
                     "checked_in": pool.checkedin(),
                     "checked_out": pool.checkedout(),
                     "overflow": pool.overflow(),
-                    "invalid": pool.invalid(),
                 }
             else:
                 return {
@@ -299,7 +293,11 @@ def optimize_database_performance() -> Dict[str, Any]:
     Returns:
         Dictionary with optimization results
     """
-    results = {"tables_analyzed": [], "indexes_created": [], "errors": []}
+    results: Dict[str, List[Any]] = {
+        "tables_analyzed": [],
+        "indexes_created": [],
+        "errors": [],
+    }
     try:
         with get_db_session() as session:
             tables = ["users", "portfolios", "portfolio_allocations"]

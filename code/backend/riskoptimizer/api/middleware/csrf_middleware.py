@@ -3,6 +3,7 @@ from functools import wraps
 from typing import Any, Callable, Dict, List, Optional
 from flask import Response, current_app, g, jsonify, request
 from riskoptimizer.core.config import config
+from riskoptimizer.core.exceptions import RiskOptimizerException, SecurityError
 from riskoptimizer.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -58,7 +59,7 @@ def csrf_protect(exempt_methods: Optional[List[str]] = None) -> Callable:
                 logger.warning(
                     f"CSRF token validation failed for {request.endpoint}. Provided: {csrf_token}, Expected: {session_token}"
                 )
-                error = SecurityError("CSRF token validation failed", "CSRF_ERROR")
+                error = SecurityError("CSRF token validation failed")
                 response = jsonify(create_error_response(error))
                 return (response, 403)
             return func(*args, **kwargs)

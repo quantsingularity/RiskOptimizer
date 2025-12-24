@@ -6,6 +6,7 @@ Provides comprehensive health checks for all application components.
 import time
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
+from sqlalchemy import text
 from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.infrastructure.database.session import get_db_session
@@ -126,7 +127,7 @@ class HealthCheckManager:
         """Check database health."""
         try:
             with get_db_session() as session:
-                result = session.execute("SELECT 1").scalar()
+                result = session.execute(text("SELECT 1")).scalar()
                 if result == 1:
                     return {
                         "status": HealthStatus.HEALTHY.value,

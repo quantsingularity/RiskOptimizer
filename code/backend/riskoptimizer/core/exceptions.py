@@ -121,7 +121,7 @@ class ExternalServiceError(RiskOptimizerException):
         if service:
             details["service"] = service
         if status_code is not None:
-            details["status_code"] = status_code
+            details["status_code"] = str(status_code)
         super().__init__(message, "EXTERNAL_SERVICE_ERROR", details)
 
 
@@ -133,13 +133,23 @@ class RateLimitError(RiskOptimizerException):
         message: str = "Rate limit exceeded",
         limit: Optional[int] = None,
         window: Optional[int] = None,
+        reset_time: Optional[int] = None,
     ) -> None:
-        details = {}
+        details: Dict[str, Any] = {}
         if limit:
             details["limit"] = limit
         if window:
             details["window"] = window
+        if reset_time is not None:
+            details["reset_time"] = reset_time
         super().__init__(message, "RATE_LIMIT_ERROR", details)
+
+
+class SecurityError(RiskOptimizerException):
+    """Raised when security validations fail."""
+
+    def __init__(self, message: str = "Security error") -> None:
+        super().__init__(message, "SECURITY_ERROR")
 
 
 class ModelError(RiskOptimizerException):
