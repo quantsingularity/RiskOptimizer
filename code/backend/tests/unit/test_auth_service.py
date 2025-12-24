@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 import bcrypt
 import jwt
+from typing import Any
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import (
     AuthenticationError,

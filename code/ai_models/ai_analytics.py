@@ -2,6 +2,7 @@ import logging
 import os
 import warnings
 import nltk
+from typing import Any
 import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from prophet import Prophet

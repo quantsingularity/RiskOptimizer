@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
+from typing import Any
 from tasks.celery_app import TaskValidationError
 from tasks.risk_tasks import (
     calculate_portfolio_metrics,

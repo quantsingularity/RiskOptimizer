@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from typing import Any
 from arch import arch_model
 from core.logging import get_logger
 

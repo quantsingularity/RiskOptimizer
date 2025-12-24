@@ -6,6 +6,7 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
+from typing import Any
 from tasks.celery_app import TaskValidationError
 from tasks.portfolio_tasks import (
     _calculate_tracking_error,

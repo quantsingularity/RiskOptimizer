@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 from db.database import Database
+from typing import Any
 
 
 class MockDatabaseError(BaseException):

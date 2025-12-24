@@ -17,6 +17,7 @@ import unittest
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from typing import Any
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from frontend.dashboard.dashboard_framework import ChartComponent, Dashboard

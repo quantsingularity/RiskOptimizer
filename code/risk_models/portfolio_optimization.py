@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from typing import Any
 from pypfopt import expected_returns, risk_models
 from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
 from pypfopt.efficient_frontier import EfficientFrontier

@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime
+from typing import Any
 from decimal import Decimal, getcontext
 from unittest.mock import MagicMock
 from riskoptimizer.core.exceptions import NotFoundError, ValidationError

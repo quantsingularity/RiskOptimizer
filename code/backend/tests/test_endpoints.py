@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 import pandas as pd
+from typing import Any
 
 
 def test_index(client: Any) -> Any:

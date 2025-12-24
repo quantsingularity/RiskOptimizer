@@ -1,4 +1,5 @@
 import unittest
+from typing import Any
 from decimal import Decimal, getcontext
 from unittest.mock import MagicMock, patch
 from riskoptimizer.core.exceptions import CalculationError, ValidationError

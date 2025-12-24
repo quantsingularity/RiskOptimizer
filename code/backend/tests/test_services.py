@@ -2,6 +2,7 @@ import math
 from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
+from typing import Any
 from services.quant_analysis import RiskMetrics
 
 
