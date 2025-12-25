@@ -17,9 +17,9 @@ import numpy as np
 import pandas as pd
 from typing import Any
 from scipy import stats
-from core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )

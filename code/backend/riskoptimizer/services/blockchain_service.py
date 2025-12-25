@@ -17,8 +17,8 @@ from eth_account import Account
 from typing import Any
 from web3 import HTTPProvider, Web3
 from web3.gas_strategies.time_based import medium_gas_price_strategy
-from web3.middleware import geth_poa_middleware
-from core.logging import get_logger
+from web3.middleware import ExtraDataToPOAMiddleware
+from riskoptimizer.core.logging import get_logger
 
 logger = get_logger(__name__)
 load_dotenv()
@@ -85,7 +85,7 @@ class BlockchainService:
         self.network = network
         self.network_config = NETWORKS.get(network, NETWORKS["ethereum"])
         self.w3 = Web3(HTTPProvider(self.network_config["rpc_url"]))
-        self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
         self.w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
         self.portfolio_tracker = self.w3.eth.contract(
             address=Web3.to_checksum_address(DEFAULT_PORTFOLIO_TRACKER_ADDRESS),
@@ -292,7 +292,7 @@ class BlockchainService:
             self.network = network
             self.network_config = NETWORKS[network]
             self.w3 = Web3(HTTPProvider(self.network_config["rpc_url"]))
-            self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+            self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
             self.w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
             self.portfolio_tracker = self.w3.eth.contract(
                 address=Web3.to_checksum_address(DEFAULT_PORTFOLIO_TRACKER_ADDRESS),

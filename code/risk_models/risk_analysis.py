@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 from typing import Any
 from arch import arch_model
-from core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 DATA_DIR = "data"
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "BTC-USD", "ETH-USD"]
 

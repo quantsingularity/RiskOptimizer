@@ -13,7 +13,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
-from tasks.celery_app import (
+from riskoptimizer.tasks.celery_app import (
     TaskValidationError,
     celery_app,
     task_result_manager,

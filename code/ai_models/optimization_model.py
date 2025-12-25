@@ -18,9 +18,9 @@ from typing import Any
 from scipy.optimize import minimize
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
-from core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AdvancedPortfolioOptimizer:

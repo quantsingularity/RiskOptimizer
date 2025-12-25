@@ -17,18 +17,18 @@ celery_app = Celery(
     broker=REDIS_URL,
     backend=CELERY_RESULT_BACKEND,
     include=[
-        "tasks.risk_tasks",
-        "tasks.portfolio_tasks",
-        "tasks.report_tasks",
-        "tasks.maintenance_tasks",
+        "riskoptimizer.tasks.risk_tasks",
+        "riskoptimizer.tasks.portfolio_tasks",
+        "riskoptimizer.tasks.report_tasks",
+        "riskoptimizer.tasks.maintenance_tasks",
     ],
 )
 celery_app.conf.update(
     task_routes={
-        "tasks.risk_tasks.*": {"queue": "risk_calculations"},
-        "tasks.portfolio_tasks.*": {"queue": "portfolio_operations"},
-        "tasks.report_tasks.*": {"queue": "report_generation"},
-        "tasks.maintenance_tasks.*": {"queue": "maintenance"},
+        "riskoptimizer.tasks.risk_tasks.*": {"queue": "risk_calculations"},
+        "riskoptimizer.tasks.portfolio_tasks.*": {"queue": "portfolio_operations"},
+        "riskoptimizer.tasks.report_tasks.*": {"queue": "report_generation"},
+        "riskoptimizer.tasks.maintenance_tasks.*": {"queue": "maintenance"},
     },
     task_default_queue="default",
     task_queues=(
@@ -53,19 +53,19 @@ celery_app.conf.update(
     task_max_retries=3,
     beat_schedule={
         "cleanup-expired-tasks": {
-            "task": "tasks.maintenance_tasks.cleanup_expired_tasks",
+            "task": "riskoptimizer.tasks.maintenance_tasks.cleanup_expired_tasks",
             "schedule": crontab(minute=0, hour=2),
         },
         "update-market-data": {
-            "task": "tasks.maintenance_tasks.update_market_data",
+            "task": "riskoptimizer.tasks.maintenance_tasks.update_market_data",
             "schedule": crontab(minute=0, hour="*/6"),
         },
         "generate-daily-reports": {
-            "task": "tasks.report_tasks.generate_daily_reports",
+            "task": "riskoptimizer.tasks.report_tasks.generate_daily_reports",
             "schedule": crontab(minute=0, hour=8),
         },
         "cache-warmup": {
-            "task": "tasks.maintenance_tasks.cache_warmup",
+            "task": "riskoptimizer.tasks.maintenance_tasks.cache_warmup",
             "schedule": crontab(minute=0, hour=6),
         },
     },
@@ -137,6 +137,7 @@ class TaskResultManager:
 
     def cleanup_expired_task_data(self) -> Any:
         """Clean up expired task data."""
+        # Implementation placeholder - scans for expired task keys
 
 
 task_result_manager = TaskResultManager()

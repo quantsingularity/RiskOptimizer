@@ -1,9 +1,9 @@
 import os
 from web3 import Web3
 from typing import Any
-from core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 GANACHE_URL = "http://127.0.0.1:8545"
 MOCK_CONTRACT_ADDRESS = "0x9fE46736679d2D9a65F0992F2272E2fA8C57Bf70"
 MOCK_ABI = [

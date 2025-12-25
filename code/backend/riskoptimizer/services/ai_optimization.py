@@ -20,7 +20,7 @@ sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
 from ai_models.optimization_model import AdvancedPortfolioOptimizer
-from core.logging import get_logger
+from riskoptimizer.core.logging import get_logger
 
 logger = get_logger(__name__)
 MODEL_DIR = os.path.join(

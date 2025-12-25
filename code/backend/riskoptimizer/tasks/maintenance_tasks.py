@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Any
 import psutil
 import redis
-from tasks.celery_app import celery_app
+from riskoptimizer.tasks.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 
@@ -209,7 +209,7 @@ def system_health_check(self) -> Any:
             }
             health_status["overall_status"] = "degraded"
         try:
-            from tasks.celery_app import celery_app
+            from riskoptimizer.tasks.celery_app import celery_app
 
             inspect = celery_app.control.inspect()
             active_workers = inspect.active()
