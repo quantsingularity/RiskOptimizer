@@ -9,6 +9,7 @@ import logging
 from datetime import datetime
 from typing import Any
 import psutil
+import os
 import redis
 from riskoptimizer.tasks.celery_app import celery_app
 
@@ -191,7 +192,7 @@ def system_health_check(self) -> Any:
         try:
             cpu_percent = psutil.cpu_percent(interval=1)
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage("/")
+            disk = psutil.disk_usage(os.path.abspath(os.sep))
             health_status["components"]["system_resources"] = {
                 "status": "healthy",
                 "cpu_percent": cpu_percent,

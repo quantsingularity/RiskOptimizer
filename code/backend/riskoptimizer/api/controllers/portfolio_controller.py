@@ -252,7 +252,7 @@ def create_portfolio() -> Response:
         )
 
         logger.info(
-            f"Portfolio created successfully for user: {validated_data["user_id"]}"
+            f"Portfolio created successfully for user: {validated_data['user_id']}"
         )
         return jsonify(response), 201
 
@@ -360,7 +360,7 @@ def save_portfolio() -> Response:
         )
 
         logger.info(
-            f"Portfolio saved successfully for address: {validated_data["user_address"]}"
+            f"Portfolio saved successfully for address: {validated_data['user_address']}"
         )
         return jsonify(response), 200  # Changed to 200 as it's an update/save operation
 

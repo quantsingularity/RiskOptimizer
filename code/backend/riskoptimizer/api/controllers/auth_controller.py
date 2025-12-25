@@ -169,7 +169,7 @@ def register() -> Response:
             message="User registered successfully",
         )
 
-        logger.info(f"User registered successfully: {validated_data["email"]}")
+        logger.info(f"User registered successfully: {validated_data['email']}")
         return jsonify(response), 201
 
     except ValidationError as e:
@@ -287,7 +287,7 @@ def login() -> Response:
             message="User authenticated successfully",
         )
 
-        logger.info(f"User authenticated successfully: {validated_data["email"]}")
+        logger.info(f"User authenticated successfully: {validated_data['email']}")
         return jsonify(response), 200
 
     except ValidationError as e:

@@ -4,6 +4,7 @@ Provides comprehensive health checks for all application components.
 """
 
 import time
+import os
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 from sqlalchemy import text
@@ -190,7 +191,7 @@ class HealthCheckManager:
 
             memory = psutil.virtual_memory()
             memory_usage = memory.percent
-            disk = psutil.disk_usage("/")
+            disk = psutil.disk_usage(os.path.abspath(os.sep))
             disk_usage = disk.used / disk.total * 100
             if memory_usage > 90 or disk_usage > 90:
                 status = HealthStatus.UNHEALTHY.value

@@ -4,6 +4,7 @@ Provides utilities for monitoring response times, throughput, and resource usage
 """
 
 import time
+import os
 from collections import defaultdict, deque
 from functools import wraps
 from typing import Any, Callable, Dict, List
@@ -108,7 +109,7 @@ class PerformanceMetrics:
         try:
             cpu_percent = psutil.cpu_percent(interval=1)
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage("/")
+            disk = psutil.disk_usage(os.path.abspath(os.sep))
             uptime = time.time() - self.start_time
             return {
                 "cpu_percent": cpu_percent,
