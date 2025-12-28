@@ -1,7 +1,7 @@
 """
 Advanced Portfolio Optimization Models for RiskOptimizer
 
-This module provides enhanced AI-driven portfolio optimization models that extend
+This module provides AI-driven portfolio optimization models that extend
 beyond traditional mean-variance optimization to include:
 1. Machine learning-based return prediction
 2. Risk factor modeling

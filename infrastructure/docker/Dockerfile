@@ -1,4 +1,4 @@
-# Enhanced Dockerfile for RiskOptimizer with Security Best Practices
+# Dockerfile for RiskOptimizer with Security Best Practices
 # Multi-stage build for security and efficiency
 
 # Build stage

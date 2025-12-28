@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Enhanced Deployment Script for RiskOptimizer Infrastructure
+# Deployment Script for RiskOptimizer Infrastructure
 # This script implements security best practices and compliance requirements
 
 set -euo pipefail

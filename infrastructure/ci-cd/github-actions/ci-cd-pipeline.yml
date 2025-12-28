@@ -1,4 +1,4 @@
-# Enhanced GitHub Actions Workflow for RiskOptimizer
+# GitHub Actions Workflow for RiskOptimizer
 # This workflow implements security best practices and compliance requirements
 
 name: RiskOptimizer CI/CD Pipeline
