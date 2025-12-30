@@ -1,47 +1,151 @@
 # RiskOptimizer Documentation
 
-## Overview
+**Version:** 1.0.0  
+**Last Updated:** December 2025
 
-Welcome to the documentation for the AI-Powered Portfolio Optimization Tool (RiskOptimizer). This documentation provides comprehensive information about the system architecture, setup instructions, user guides, API references, and development guidelines.
+## Welcome to RiskOptimizer
+
+RiskOptimizer is an advanced AI-powered portfolio risk management platform that combines traditional financial models with cutting-edge artificial intelligence and blockchain technology. This platform helps investors optimize their investment strategies, manage risk effectively, and make data-driven decisions.
+
+## Quick Navigation
+
+| Section             | Description                                 | Link                                     |
+| ------------------- | ------------------------------------------- | ---------------------------------------- |
+| **Installation**    | Get started with RiskOptimizer installation | [INSTALLATION.md](INSTALLATION.md)       |
+| **Usage Guide**     | Learn how to use the platform               | [USAGE.md](USAGE.md)                     |
+| **API Reference**   | Complete API documentation                  | [API.md](API.md)                         |
+| **CLI Reference**   | Command-line interface guide                | [CLI.md](CLI.md)                         |
+| **Configuration**   | Configure the platform                      | [CONFIGURATION.md](CONFIGURATION.md)     |
+| **Feature Matrix**  | Overview of all features                    | [FEATURE_MATRIX.md](FEATURE_MATRIX.md)   |
+| **Architecture**    | System architecture and design              | [ARCHITECTURE.md](ARCHITECTURE.md)       |
+| **Examples**        | Working examples and tutorials              | [examples/](examples/)                   |
+| **Contributing**    | Contribution guidelines                     | [CONTRIBUTING.md](CONTRIBUTING.md)       |
+| **Troubleshooting** | Common issues and solutions                 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
+
+## Quick Start
+
+Get RiskOptimizer running in 3 steps:
+
+### 1. Clone and Setup
+
+```bash
+git clone https://github.com/abrar2030/RiskOptimizer.git
+cd RiskOptimizer
+./scripts/setup_environment.sh
+```
+
+### 2. Install Dependencies
+
+```bash
+# Backend
+cd code/backend
+pip install -r requirements.txt
+
+# Frontend
+cd ../..
+cd web-frontend
+npm install
+```
+
+### 3. Start the Application
+
+```bash
+# Use the convenience script
+./scripts/run_riskoptimizer.sh
+
+# Or start components individually
+# Backend: cd code/backend && python app.py
+# Frontend: cd web-frontend && npm start
+```
+
+The API will be available at `http://localhost:5000` and the web interface at `http://localhost:3000`.
+
+## What's New in v1.0.0
+
+- ✨ Enhanced performance monitoring with Prometheus metrics
+- 🔐 Advanced JWT-based authentication with refresh tokens
+- 📊 Real-time risk calculations with Redis caching
+- 🤖 AI-powered portfolio optimization models
+- ⛓️ Blockchain integration for transparent portfolio tracking
+- 📈 Advanced risk metrics (VaR, CVaR, Sharpe Ratio, Max Drawdown)
+- 🎯 Efficient frontier calculation for optimal portfolios
+- 📱 Responsive web dashboard and mobile app support
+
+## Key Features at a Glance
+
+### Risk Analysis
+
+Calculate Value at Risk (VaR), Conditional VaR, stress testing, correlation analysis, and volatility forecasting using GARCH models.
+
+### Portfolio Optimization
+
+Implement Modern Portfolio Theory, multi-objective optimization, automated rebalancing, and tax-efficient strategies.
+
+### AI-Powered Predictions
+
+Leverage machine learning for market trend prediction, anomaly detection, sentiment analysis, and personalized recommendations.
+
+### Blockchain Integration
+
+Transparent transaction records, smart contract automation, decentralized identity, and tokenized asset support.
+
+## System Requirements
+
+| Component      | Minimum | Recommended |
+| -------------- | ------- | ----------- |
+| **Python**     | 3.8+    | 3.10+       |
+| **Node.js**    | 14+     | 18+         |
+| **PostgreSQL** | 12+     | 14+         |
+| **Redis**      | 5+      | 7+          |
+| **RAM**        | 4GB     | 8GB+        |
+| **Storage**    | 10GB    | 20GB+       |
+
+## Technology Stack
+
+**Backend:** Python (Flask), PostgreSQL, Redis, Celery  
+**Frontend:** React, TypeScript, D3.js, Recharts  
+**AI/ML:** TensorFlow, PyTorch, scikit-learn  
+**Blockchain:** Ethereum, Solidity, Web3.py  
+**Infrastructure:** Docker, Kubernetes, GitHub Actions
 
 ## Documentation Structure
 
-- **Architecture Documentation**: Detailed system architecture, component interactions, and design decisions
-- **Setup Instructions**: Step-by-step guides for setting up development, staging, and production environments
-- **User Guides**: Instructions for end-users on how to use the application effectively
-- **API Documentation**: Comprehensive API references for backend services and blockchain integration
-- **Development Guidelines**: Guidelines and best practices for developers contributing to the project
+```
+docs/
+├── README.md                    # This file
+├── INSTALLATION.md              # Installation guide
+├── USAGE.md                     # Usage guide
+├── API.md                       # API reference
+├── CLI.md                       # CLI reference
+├── CONFIGURATION.md             # Configuration guide
+├── FEATURE_MATRIX.md            # Feature overview
+├── ARCHITECTURE.md              # Architecture details
+├── CHANGELOG.md                 # Version history
+├── MIGRATIONS.md                # Migration guide
+├── CONTRIBUTING.md              # Contribution guide
+├── TROUBLESHOOTING.md           # Issue resolution
+├── TODO_UNCERTAINTIES.md        # Items needing clarification
+├── DELIVERABLE_CHECKLIST.md     # Documentation checklist
+├── api/                         # API-specific docs
+├── examples/                    # Code examples
+│   ├── BASIC_USAGE.md
+│   ├── ADVANCED_FEATURES.md
+│   └── AI_OPTIMIZATION.md
+└── diagnostics/                 # Test and diagnostic output
+```
 
-## Quick Links
+## Support and Community
 
-- [Architecture Overview](architecture/architecture_overview.md)
-- [Installation Guide](setup/installation_guide.md)
-- [User Guide](user_guides/user_guide.md)
-- [API Reference](api/api_reference.md)
-- [Development Guide](development/development_guide.md)
+- **Issues:** [GitHub Issues](https://github.com/abrar2030/RiskOptimizer/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/abrar2030/RiskOptimizer/discussions)
+- **License:** MIT License - see [LICENSE](../LICENSE)
 
-## Project Components
+## Next Steps
 
-The RiskOptimizer project consists of the following main components:
+1. **New Users:** Start with [INSTALLATION.md](INSTALLATION.md)
+2. **Developers:** Read [CONTRIBUTING.md](CONTRIBUTING.md) and [ARCHITECTURE.md](ARCHITECTURE.md)
+3. **API Integration:** Check [API.md](API.md) and [examples/](examples/)
+4. **Configuration:** See [CONFIGURATION.md](CONFIGURATION.md) for environment setup
+5. **Troubleshooting:** Visit [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common issues
 
-1. **Frontend**: React.js-based user interface with D3.js visualizations
-2. **Backend**: Flask/FastAPI-based backend services
-3. **AI Models**: Machine learning models for portfolio optimization
-4. **Blockchain Integration**: Smart contracts for transaction tracking and transparency
-5. **Infrastructure**: Kubernetes, Terraform, and Ansible configurations for deployment
-
-## Getting Started
-
-For new users and developers, we recommend starting with the following documentation:
-
-1. [System Architecture Overview](architecture/architecture_overview.md)
-2. [Installation Guide](setup/installation_guide.md)
-3. [User Guide](user_guides/user_guide.md)
-
-## Contributing
-
-Please refer to the [Development Guide](development/development_guide.md) for information on how to contribute to the project.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file in the project root for details.
+---
