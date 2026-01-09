@@ -1,8 +1,5 @@
 # RiskOptimizer Documentation
 
-**Version:** 1.0.0  
-**Last Updated:** December 2025
-
 ## Welcome to RiskOptimizer
 
 RiskOptimizer is an advanced AI-powered portfolio risk management platform that combines traditional financial models with cutting-edge artificial intelligence and blockchain technology. This platform helps investors optimize their investment strategies, manage risk effectively, and make data-driven decisions.
@@ -41,9 +38,14 @@ cd RiskOptimizer
 cd code/backend
 pip install -r requirements.txt
 
-# Frontend
+# web-frontend
 cd ../..
 cd web-frontend
+npm install
+
+# mobile-frontend
+cd ../..
+cd mobile-frontend
 npm install
 ```
 
@@ -60,9 +62,9 @@ npm install
 
 The API will be available at `http://localhost:5000` and the web interface at `http://localhost:3000`.
 
-## What's New in v1.0.0
+## Features
 
-- ✨ Enhanced performance monitoring with Prometheus metrics
+- ✨ Performance monitoring with Prometheus metrics
 - 🔐 Advanced JWT-based authentication with refresh tokens
 - 📊 Real-time risk calculations with Redis caching
 - 🤖 AI-powered portfolio optimization models
@@ -120,25 +122,14 @@ docs/
 ├── CONFIGURATION.md             # Configuration guide
 ├── FEATURE_MATRIX.md            # Feature overview
 ├── ARCHITECTURE.md              # Architecture details
-├── CHANGELOG.md                 # Version history
-├── MIGRATIONS.md                # Migration guide
 ├── CONTRIBUTING.md              # Contribution guide
 ├── TROUBLESHOOTING.md           # Issue resolution
-├── TODO_UNCERTAINTIES.md        # Items needing clarification
-├── DELIVERABLE_CHECKLIST.md     # Documentation checklist
 ├── api/                         # API-specific docs
 ├── examples/                    # Code examples
 │   ├── BASIC_USAGE.md
 │   ├── ADVANCED_FEATURES.md
 │   └── AI_OPTIMIZATION.md
-└── diagnostics/                 # Test and diagnostic output
 ```
-
-## Support and Community
-
-- **Issues:** [GitHub Issues](https://github.com/abrar2030/RiskOptimizer/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/abrar2030/RiskOptimizer/discussions)
-- **License:** MIT License - see [LICENSE](../LICENSE)
 
 ## Next Steps
 
