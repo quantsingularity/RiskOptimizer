@@ -30,7 +30,7 @@ Thank you for considering contributing to RiskOptimizer! This document provides 
 2. **Clone your fork**
 
 ```bash
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 ```
 

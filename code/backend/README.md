@@ -61,7 +61,7 @@ The platform offers a comprehensive suite of financial and technical features:
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/abrar2030/RiskOptimizer.git
+    git clone https://github.com/quantsingularity/RiskOptimizer.git
     cd RiskOptimizer/code/backend
     ```
 

@@ -26,7 +26,7 @@ Get RiskOptimizer running in 3 steps:
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 ./scripts/setup_environment.sh
 ```

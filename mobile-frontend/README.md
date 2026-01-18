@@ -272,7 +272,7 @@ The app uses React Native Elements with custom theme configuration. Theme can be
 
 ### Getting Help
 
-- Check the main project repository: [github.com/abrar2030/RiskOptimizer](https://github.com/abrar2030/RiskOptimizer)
+- Check the main project repository: [github.com/quantsingularity/RiskOptimizer](https://github.com/quantsingularity/RiskOptimizer)
 - Review Expo documentation: [docs.expo.dev](https://docs.expo.dev)
 - React Native Elements docs: [reactnativeelements.com](https://reactnativeelements.com)
 

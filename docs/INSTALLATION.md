@@ -44,7 +44,7 @@ The automated setup script handles all dependencies and configuration:
 
 ```bash
 # Clone the repository
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 
 # Run the setup script
@@ -66,7 +66,7 @@ For more control over the installation process:
 #### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 ```
 
@@ -122,7 +122,7 @@ Use Docker for containerized deployment:
 
 ```bash
 # Clone repository
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 
 # Start all services
@@ -346,7 +346,7 @@ cd code/backend && celery -A riskoptimizer.tasks.celery_app worker --loglevel=in
 
 ```bash
 # Clone repository
-git clone https://github.com/abrar2030/RiskOptimizer.git
+git clone https://github.com/quantsingularity/RiskOptimizer.git
 cd RiskOptimizer
 
 # Review docker-compose.yml

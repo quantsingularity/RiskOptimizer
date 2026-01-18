@@ -487,7 +487,7 @@ find . -type d -name __pycache__ -exec rm -r {} +
 
 If issues persist:
 
-1. **Check GitHub Issues:** https://github.com/abrar2030/RiskOptimizer/issues
+1. **Check GitHub Issues:** https://github.com/quantsingularity/RiskOptimizer/issues
 2. **Search documentation:** Use Ctrl+F in docs
 3. **Enable debug logging:**
 
