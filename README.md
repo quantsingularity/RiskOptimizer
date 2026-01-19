@@ -241,35 +241,6 @@ cd code/frontend
 npm start
 ```
 
-## Example Use Cases
-
-### 1. Individual Investors
-
-| Use Case                   | Benefit                                                                           |
-| :------------------------- | :-------------------------------------------------------------------------------- |
-| **Risk/Return Analysis**   | Analyze portfolio's risk and return metrics                                       |
-| **Portfolio Optimization** | Optimize allocation across assets based on personal preferences and market trends |
-| **AI Recommendations**     | Receive AI-powered recommendations for portfolio adjustments                      |
-| **Performance Tracking**   | Track investment performance with transparent blockchain records                  |
-
-### 2. Financial Advisors
-
-| Use Case                       | Benefit                                                             |
-| :----------------------------- | :------------------------------------------------------------------ |
-| **Client Recommendations**     | Provide clients with data-driven portfolio recommendations          |
-| **Large Portfolio Management** | Use real-time risk metrics to manage large-scale portfolios         |
-| **Reporting**                  | Generate comprehensive risk reports for client presentations        |
-| **Automated Rebalancing**      | Implement automated rebalancing strategies based on risk parameters |
-
-### 3. Institutional Investors
-
-| Use Case                  | Benefit                                                   |
-| :------------------------ | :-------------------------------------------------------- |
-| **Regulatory Compliance** | Conduct advanced stress testing for regulatory compliance |
-| **Risk Management**       | Implement sophisticated risk management protocols         |
-| **Market Volatility**     | Analyze cross-asset correlations during market volatility |
-| **Complex Optimization**  | Optimize large portfolios with multiple constraints       |
-
 ## Testing
 
 The project maintains comprehensive test coverage across all components to ensure reliability and accuracy.
