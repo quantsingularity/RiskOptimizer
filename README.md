@@ -33,6 +33,24 @@ RiskOptimizer is an advanced portfolio risk management platform that leverages a
 
 RiskOptimizer is a comprehensive platform designed to help investors make data-driven decisions by providing advanced risk analysis, portfolio optimization, and predictive analytics. The platform combines traditional financial models with cutting-edge AI and blockchain technology to deliver accurate, transparent, and secure investment insights.
 
+## Project Structure
+
+The project is organized into several main components:
+
+```
+RiskOptimizer/
+├── code/                   # Core backend logic, services, and shared utilities
+├── docs/                   # Project documentation
+├── infrastructure/         # DevOps, deployment, and infra-related code
+├── mobile-frontend/        # Mobile application
+├── web-frontend/           # Web dashboard
+├── scripts/                # Automation, setup, and utility scripts
+├── LICENSE                 # License information
+├── README.md               # Project overview and instructions
+├── eslint.config.js        # ESLint configuration
+└── package.json            # Node.js project metadata and dependencies
+```
+
 ## Key Features
 
 ### Risk Analysis
