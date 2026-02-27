@@ -3,36 +3,36 @@
 @tailwind utilities;
 
 :root {
-    --primary-color: #61dafb;
-    --secondary-color: #2e3b4e;
-    --background-color: #121212;
-    --paper-color: #1e2a38;
-    --text-primary: #f8f9fa;
-    --text-secondary: #adb5bd;
-    --success-color: #4caf50;
-    --warning-color: #ffc107;
-    --error-color: #f44336;
+  --primary-color: #61dafb;
+  --secondary-color: #2e3b4e;
+  --background-color: #121212;
+  --paper-color: #1e2a38;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --success-color: #4caf50;
+  --warning-color: #ffc107;
+  --error-color: #f44336;
 }
 
 body {
-    margin: 0;
-    font-family:
-        'Inter',
-        -apple-system,
-        BlinkMacSystemFont,
-        'Segoe UI',
-        'Roboto',
-        'Oxygen',
-        'Ubuntu',
-        'Cantarell',
-        'Fira Sans',
-        'Droid Sans',
-        'Helvetica Neue',
-        sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--background-color);
-    color: var(--text-primary);
+  margin: 0;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-primary);
 }
 
 h1,
@@ -41,59 +41,61 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
 }
 
 code,
 pre {
-    font-family: 'Roboto Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family:
+    "Roboto Mono", source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--paper-color);
+  background: var(--paper-color);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 4px;
+  background: var(--secondary-color);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+  background: var(--primary-color);
 }
 
 /* Animation classes */
 .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .slide-up {
-    animation: slideUp 0.5s ease-in-out;
+  animation: slideUp 0.5s ease-in-out;
 }
 
 @keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

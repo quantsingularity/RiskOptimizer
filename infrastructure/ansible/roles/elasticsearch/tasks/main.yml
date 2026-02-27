@@ -4,4 +4,4 @@
 
 - name: elasticsearch placeholder
   debug:
-      msg: 'Role elasticsearch requires full implementation'
+    msg: "Role elasticsearch requires full implementation"

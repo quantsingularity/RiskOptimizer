@@ -4,4 +4,4 @@
 
 - name: web-security placeholder
   debug:
-      msg: 'Role web-security requires full implementation'
+    msg: "Role web-security requires full implementation"

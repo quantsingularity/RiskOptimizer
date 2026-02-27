@@ -4,4 +4,4 @@
 
 - name: Placeholder task for security-hardening
   debug:
-      msg: 'Role security-hardening is not yet fully implemented'
+    msg: "Role security-hardening is not yet fully implemented"

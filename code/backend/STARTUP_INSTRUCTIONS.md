@@ -88,10 +88,10 @@ curl http://127.0.0.1:5000/health
 
 ```json
 {
-    "cache": true,
-    "database": true,
-    "status": "ok",
-    "version": "1.0.0"
+  "cache": true,
+  "database": true,
+  "status": "ok",
+  "version": "1.0.0"
 }
 ```
 
@@ -105,9 +105,9 @@ curl http://127.0.0.1:5000/
 
 ```json
 {
-    "documentation": "/apidocs/",
-    "name": "RiskOptimizer API",
-    "version": "1.0.0"
+  "documentation": "/apidocs/",
+  "name": "RiskOptimizer API",
+  "version": "1.0.0"
 }
 ```
 
@@ -124,11 +124,11 @@ To use PostgreSQL instead:
 
 1. Set `DB_USE_SQLITE=false` in `.env`
 2. Configure PostgreSQL connection parameters:
-    - `DB_HOST`
-    - `DB_PORT`
-    - `DB_NAME`
-    - `DB_USER`
-    - `DB_PASSWORD`
+   - `DB_HOST`
+   - `DB_PORT`
+   - `DB_NAME`
+   - `DB_USER`
+   - `DB_PASSWORD`
 
 ### Redis/Caching
 
@@ -138,10 +138,10 @@ To use Redis:
 
 1. Install and start Redis locally or use a remote Redis instance
 2. Configure Redis connection in `.env`:
-    - `REDIS_HOST`
-    - `REDIS_PORT`
-    - `REDIS_DB`
-    - `REDIS_PASSWORD` (if authentication is enabled)
+   - `REDIS_HOST`
+   - `REDIS_PORT`
+   - `REDIS_DB`
+   - `REDIS_PASSWORD` (if authentication is enabled)
 
 ### AI Models
 

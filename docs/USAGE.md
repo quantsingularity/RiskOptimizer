@@ -83,12 +83,12 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "message": "User registered successfully",
-    "data": {
-        "user_id": 1,
-        "email": "user@example.com"
-    }
+  "status": "success",
+  "message": "User registered successfully",
+  "data": {
+    "user_id": 1,
+    "email": "user@example.com"
+  }
 }
 ```
 
@@ -107,12 +107,12 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-        "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-        "expires_in": 3600
-    }
+  "status": "success",
+  "data": {
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "expires_in": 3600
+  }
 }
 ```
 
@@ -136,12 +136,12 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "var": -0.0234,
-        "confidence": 0.95,
-        "interpretation": "At 95% confidence, the maximum expected loss is 2.34%"
-    }
+  "status": "success",
+  "data": {
+    "var": -0.0234,
+    "confidence": 0.95,
+    "interpretation": "At 95% confidence, the maximum expected loss is 2.34%"
+  }
 }
 ```
 
@@ -161,12 +161,12 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "cvar": -0.0267,
-        "confidence": 0.95,
-        "interpretation": "Expected loss given that loss exceeds VaR is 2.67%"
-    }
+  "status": "success",
+  "data": {
+    "cvar": -0.0267,
+    "confidence": 0.95,
+    "interpretation": "Expected loss given that loss exceeds VaR is 2.67%"
+  }
 }
 ```
 
@@ -186,12 +186,12 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "sharpe_ratio": 1.25,
-        "annualized_return": 0.08,
-        "annualized_volatility": 0.048
-    }
+  "status": "success",
+  "data": {
+    "sharpe_ratio": 1.25,
+    "annualized_return": 0.08,
+    "annualized_volatility": 0.048
+  }
 }
 ```
 
@@ -210,13 +210,13 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "max_drawdown": -0.089,
-        "peak_date": "2024-01-15",
-        "trough_date": "2024-02-20",
-        "recovery_date": "2024-03-10"
-    }
+  "status": "success",
+  "data": {
+    "max_drawdown": -0.089,
+    "peak_date": "2024-01-15",
+    "trough_date": "2024-02-20",
+    "recovery_date": "2024-03-10"
+  }
 }
 ```
 
@@ -268,18 +268,18 @@ Response:
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "optimal_weights": {
-            "AAPL": 0.25,
-            "MSFT": 0.35,
-            "GOOGL": 0.15,
-            "AMZN": 0.25
-        },
-        "expected_return": 0.12,
-        "expected_volatility": 0.18,
-        "sharpe_ratio": 1.67
-    }
+  "status": "success",
+  "data": {
+    "optimal_weights": {
+      "AAPL": 0.25,
+      "MSFT": 0.35,
+      "GOOGL": 0.15,
+      "AMZN": 0.25
+    },
+    "expected_return": 0.12,
+    "expected_volatility": 0.18,
+    "sharpe_ratio": 1.67
+  }
 }
 ```
 

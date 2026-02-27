@@ -4,4 +4,4 @@
 
 - name: application-runtime placeholder
   debug:
-      msg: 'Role application-runtime requires full implementation'
+    msg: "Role application-runtime requires full implementation"

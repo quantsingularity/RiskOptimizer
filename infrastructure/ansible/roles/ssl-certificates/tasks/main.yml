@@ -4,4 +4,4 @@
 
 - name: ssl-certificates placeholder
   debug:
-      msg: 'Role ssl-certificates requires full implementation'
+    msg: "Role ssl-certificates requires full implementation"

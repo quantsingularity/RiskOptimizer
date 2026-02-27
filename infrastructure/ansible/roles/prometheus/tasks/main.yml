@@ -4,4 +4,4 @@
 
 - name: prometheus placeholder
   debug:
-      msg: 'Role prometheus requires full implementation'
+    msg: "Role prometheus requires full implementation"

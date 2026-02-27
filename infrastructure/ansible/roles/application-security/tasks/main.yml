@@ -4,4 +4,4 @@
 
 - name: application-security placeholder
   debug:
-      msg: 'Role application-security requires full implementation'
+    msg: "Role application-security requires full implementation"

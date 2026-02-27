@@ -4,4 +4,4 @@
 
 - name: vault placeholder
   debug:
-      msg: 'Role vault requires full implementation'
+    msg: "Role vault requires full implementation"

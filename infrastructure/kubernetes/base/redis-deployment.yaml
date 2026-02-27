@@ -1,50 +1,50 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: riskoptimizer-redis
-    labels:
-        app: riskoptimizer-redis
+  name: riskoptimizer-redis
+  labels:
+    app: riskoptimizer-redis
 spec:
-    replicas: 1
-    selector:
-        matchLabels:
-            app: riskoptimizer-redis
-    template:
-        metadata:
-            labels:
-                app: riskoptimizer-redis
-        spec:
-            containers:
-                - name: riskoptimizer-redis
-                  image: redis:6.2
-                  imagePullPolicy: IfNotPresent
-                  ports:
-                      - containerPort: 6379
-                  resources:
-                      limits:
-                          cpu: 300m
-                          memory: 512Mi
-                      requests:
-                          cpu: 100m
-                          memory: 256Mi
-                  livenessProbe:
-                      exec:
-                          command:
-                              - redis-cli
-                              - ping
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                  readinessProbe:
-                      exec:
-                          command:
-                              - redis-cli
-                              - ping
-                      initialDelaySeconds: 5
-                      periodSeconds: 5
-                  volumeMounts:
-                      - name: riskoptimizer-redis-data
-                        mountPath: /data
-            volumes:
-                - name: riskoptimizer-redis-data
-                  persistentVolumeClaim:
-                      claimName: riskoptimizer-redis-pvc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: riskoptimizer-redis
+  template:
+    metadata:
+      labels:
+        app: riskoptimizer-redis
+    spec:
+      containers:
+        - name: riskoptimizer-redis
+          image: redis:6.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: 300m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: riskoptimizer-redis-data
+              mountPath: /data
+      volumes:
+        - name: riskoptimizer-redis-data
+          persistentVolumeClaim:
+            claimName: riskoptimizer-redis-pvc

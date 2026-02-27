@@ -4,4 +4,4 @@
 
 - name: kibana placeholder
   debug:
-      msg: 'Role kibana requires full implementation'
+    msg: "Role kibana requires full implementation"

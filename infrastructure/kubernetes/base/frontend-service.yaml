@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: riskoptimizer-frontend
-    labels:
-        app: riskoptimizer-frontend
+  name: riskoptimizer-frontend
+  labels:
+    app: riskoptimizer-frontend
 spec:
-    type: ClusterIP
-    ports:
-        - port: 80
-          targetPort: 80
-          protocol: TCP
-          name: http
-    selector:
-        app: riskoptimizer-frontend
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: riskoptimizer-frontend

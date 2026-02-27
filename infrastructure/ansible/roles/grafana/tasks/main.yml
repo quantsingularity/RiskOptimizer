@@ -4,4 +4,4 @@
 
 - name: grafana placeholder
   debug:
-      msg: 'Role grafana requires full implementation'
+    msg: "Role grafana requires full implementation"

@@ -157,7 +157,7 @@ dead_letter_queue.flush_interval: 5000
 # ------------ Metrics Settings --------------
 #
 # Bind address for the metrics REST endpoint
-http.host: '0.0.0.0'
+http.host: "0.0.0.0"
 
 # Bind port for the metrics REST endpoint, this option also accept a range
 # (9600-9700) and logstash will pick up the first available ports.
@@ -191,9 +191,13 @@ pipeline.separate_logs: true
 # https://www.elastic.co/guide/en/logstash/current/monitoring-logstash.html
 xpack.monitoring.enabled: true
 xpack.monitoring.elasticsearch.username: logstash_system
-xpack.monitoring.elasticsearch.password: '${LOGSTASH_SYSTEM_PASSWORD}'
+xpack.monitoring.elasticsearch.password: "${LOGSTASH_SYSTEM_PASSWORD}"
 xpack.monitoring.elasticsearch.hosts:
-    ['https://elasticsearch-1:9200', 'https://elasticsearch-2:9200', 'https://elasticsearch-3:9200']
+  [
+    "https://elasticsearch-1:9200",
+    "https://elasticsearch-2:9200",
+    "https://elasticsearch-3:9200",
+  ]
 xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/certs/ca.crt
 xpack.monitoring.elasticsearch.ssl.verification_mode: certificate
 
@@ -201,11 +205,15 @@ xpack.monitoring.elasticsearch.ssl.verification_mode: certificate
 # https://www.elastic.co/guide/en/logstash/current/logstash-centralized-pipeline-management.html
 xpack.management.enabled: true
 xpack.management.pipeline.id:
-    ['riskoptimizer-main', 'riskoptimizer-security', 'riskoptimizer-audit']
+  ["riskoptimizer-main", "riskoptimizer-security", "riskoptimizer-audit"]
 xpack.management.elasticsearch.username: logstash_writer
-xpack.management.elasticsearch.password: '${LOGSTASH_WRITER_PASSWORD}'
+xpack.management.elasticsearch.password: "${LOGSTASH_WRITER_PASSWORD}"
 xpack.management.elasticsearch.hosts:
-    ['https://elasticsearch-1:9200', 'https://elasticsearch-2:9200', 'https://elasticsearch-3:9200']
+  [
+    "https://elasticsearch-1:9200",
+    "https://elasticsearch-2:9200",
+    "https://elasticsearch-3:9200",
+  ]
 xpack.management.elasticsearch.ssl.certificate_authority: /etc/logstash/certs/ca.crt
 xpack.management.elasticsearch.ssl.verification_mode: certificate
 
@@ -214,9 +222,9 @@ xpack.management.elasticsearch.ssl.verification_mode: certificate
 # Enable encryption in transit
 api.ssl.enabled: true
 api.ssl.keystore.path: /etc/logstash/certs/logstash.p12
-api.ssl.keystore.password: '${LOGSTASH_KEYSTORE_PASSWORD}'
+api.ssl.keystore.password: "${LOGSTASH_KEYSTORE_PASSWORD}"
 api.ssl.truststore.path: /etc/logstash/certs/logstash.p12
-api.ssl.truststore.password: '${LOGSTASH_TRUSTSTORE_PASSWORD}'
+api.ssl.truststore.password: "${LOGSTASH_TRUSTSTORE_PASSWORD}"
 
 # ------------ Performance Tuning --------------
 #
@@ -231,31 +239,31 @@ api.ssl.truststore.password: '${LOGSTASH_TRUSTSTORE_PASSWORD}'
 # ------------ Custom Settings for RiskOptimizer --------------
 #
 riskoptimizer:
-    # Environment
-    environment: production
+  # Environment
+  environment: production
 
-    # Data retention policies
-    retention:
-        application_logs: 90
-        security_logs: 730
-        audit_logs: 2555
-        performance_logs: 30
+  # Data retention policies
+  retention:
+    application_logs: 90
+    security_logs: 730
+    audit_logs: 2555
+    performance_logs: 30
 
-    # Compliance settings
-    compliance:
-        gdpr_enabled: true
-        pci_dss_enabled: true
-        sox_enabled: true
-        data_classification: true
+  # Compliance settings
+  compliance:
+    gdpr_enabled: true
+    pci_dss_enabled: true
+    sox_enabled: true
+    data_classification: true
 
-    # Security settings
-    security:
-        field_anonymization: true
-        pii_detection: true
-        sensitive_data_masking: true
+  # Security settings
+  security:
+    field_anonymization: true
+    pii_detection: true
+    sensitive_data_masking: true
 
-    # Performance settings
-    performance:
-        batch_processing: true
-        parallel_processing: true
-        memory_optimization: true
+  # Performance settings
+  performance:
+    batch_processing: true
+    parallel_processing: true
+    memory_optimization: true

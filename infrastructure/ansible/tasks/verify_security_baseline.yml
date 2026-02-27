@@ -4,4 +4,4 @@
 
 - name: Verify security baseline placeholder
   debug:
-      msg: 'Security baseline verification not yet implemented'
+    msg: "Security baseline verification not yet implemented"

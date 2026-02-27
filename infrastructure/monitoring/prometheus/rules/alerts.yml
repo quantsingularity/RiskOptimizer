@@ -1,284 +1,284 @@
 # Prometheus Alerting Rules for RiskOptimizer Infrastructure
 
 groups:
-    # Infrastructure Alerts
-    - name: infrastructure.rules
-      rules:
-          - alert: InstanceDown
-            expr: up == 0
-            for: 5m
-            labels:
-                severity: critical
-                category: infrastructure
-            annotations:
-                summary: 'Instance {{ $labels.instance }} down'
-                description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
-                runbook_url: 'https://runbooks.riskoptimizer.com/infrastructure/instance-down'
+  # Infrastructure Alerts
+  - name: infrastructure.rules
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+          runbook_url: "https://runbooks.riskoptimizer.com/infrastructure/instance-down"
 
-          - alert: HighCPUUsage
-            expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
-            for: 10m
-            labels:
-                severity: warning
-                category: infrastructure
-            annotations:
-                summary: 'High CPU usage on {{ $labels.instance }}'
-                description: 'CPU usage is above 80% for more than 10 minutes on {{ $labels.instance }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/infrastructure/high-cpu'
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 10 minutes on {{ $labels.instance }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/infrastructure/high-cpu"
 
-          - alert: HighMemoryUsage
-            expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
-            for: 10m
-            labels:
-                severity: warning
-                category: infrastructure
-            annotations:
-                summary: 'High memory usage on {{ $labels.instance }}'
-                description: 'Memory usage is above 85% for more than 10 minutes on {{ $labels.instance }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/infrastructure/high-memory'
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% for more than 10 minutes on {{ $labels.instance }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/infrastructure/high-memory"
 
-          - alert: DiskSpaceLow
-            expr: (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100 < 10
-            for: 5m
-            labels:
-                severity: critical
-                category: infrastructure
-            annotations:
-                summary: 'Low disk space on {{ $labels.instance }}'
-                description: 'Disk space is below 10% on {{ $labels.instance }} filesystem {{ $labels.mountpoint }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/infrastructure/low-disk-space'
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% on {{ $labels.instance }} filesystem {{ $labels.mountpoint }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/infrastructure/low-disk-space"
 
-    # Application Alerts
-    - name: application.rules
-      rules:
-          - alert: HighErrorRate
-            expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
-            for: 5m
-            labels:
-                severity: critical
-                category: application
-            annotations:
-                summary: 'High error rate in {{ $labels.service }}'
-                description: 'Error rate is above 5% for {{ $labels.service }} for more than 5 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/application/high-error-rate'
+  # Application Alerts
+  - name: application.rules
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: "High error rate in {{ $labels.service }}"
+          description: "Error rate is above 5% for {{ $labels.service }} for more than 5 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/application/high-error-rate"
 
-          - alert: HighResponseTime
-            expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
-            for: 10m
-            labels:
-                severity: warning
-                category: application
-            annotations:
-                summary: 'High response time in {{ $labels.service }}'
-                description: '95th percentile response time is above 2 seconds for {{ $labels.service }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/application/high-response-time'
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "High response time in {{ $labels.service }}"
+          description: "95th percentile response time is above 2 seconds for {{ $labels.service }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/application/high-response-time"
 
-          - alert: ApplicationDown
-            expr: up{job="riskoptimizer-app"} == 0
-            for: 2m
-            labels:
-                severity: critical
-                category: application
-            annotations:
-                summary: 'RiskOptimizer application is down'
-                description: 'RiskOptimizer application {{ $labels.instance }} has been down for more than 2 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/application/app-down'
+      - alert: ApplicationDown
+        expr: up{job="riskoptimizer-app"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: "RiskOptimizer application is down"
+          description: "RiskOptimizer application {{ $labels.instance }} has been down for more than 2 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/application/app-down"
 
-          - alert: DatabaseConnectionPoolExhausted
-            expr: db_connection_pool_active / db_connection_pool_max > 0.9
-            for: 5m
-            labels:
-                severity: critical
-                category: database
-            annotations:
-                summary: 'Database connection pool nearly exhausted'
-                description: 'Database connection pool usage is above 90% for {{ $labels.database }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/database/connection-pool'
+      - alert: DatabaseConnectionPoolExhausted
+        expr: db_connection_pool_active / db_connection_pool_max > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Database connection pool usage is above 90% for {{ $labels.database }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/database/connection-pool"
 
-    # Security Alerts
-    - name: security.rules
-      rules:
-          - alert: UnauthorizedAccess
-            expr: increase(http_requests_total{status="401"}[5m]) > 50
-            for: 1m
-            labels:
-                severity: critical
-                category: security
-            annotations:
-                summary: 'High number of unauthorized access attempts'
-                description: 'More than 50 unauthorized access attempts in the last 5 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/security/unauthorized-access'
+  # Security Alerts
+  - name: security.rules
+    rules:
+      - alert: UnauthorizedAccess
+        expr: increase(http_requests_total{status="401"}[5m]) > 50
+        for: 1m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "High number of unauthorized access attempts"
+          description: "More than 50 unauthorized access attempts in the last 5 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/security/unauthorized-access"
 
-          - alert: SuspiciousLoginActivity
-            expr: increase(login_attempts_total{result="failed"}[5m]) > 20
-            for: 1m
-            labels:
-                severity: warning
-                category: security
-            annotations:
-                summary: 'Suspicious login activity detected'
-                description: 'More than 20 failed login attempts in the last 5 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/security/suspicious-login'
+      - alert: SuspiciousLoginActivity
+        expr: increase(login_attempts_total{result="failed"}[5m]) > 20
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "Suspicious login activity detected"
+          description: "More than 20 failed login attempts in the last 5 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/security/suspicious-login"
 
-          - alert: VaultSealed
-            expr: vault_core_unsealed == 0
-            for: 1m
-            labels:
-                severity: critical
-                category: security
-            annotations:
-                summary: 'Vault is sealed'
-                description: 'HashiCorp Vault instance {{ $labels.instance }} is sealed'
-                runbook_url: 'https://runbooks.riskoptimizer.com/security/vault-sealed'
+      - alert: VaultSealed
+        expr: vault_core_unsealed == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Vault is sealed"
+          description: "HashiCorp Vault instance {{ $labels.instance }} is sealed"
+          runbook_url: "https://runbooks.riskoptimizer.com/security/vault-sealed"
 
-          - alert: CertificateExpiringSoon
-            expr: (cert_exporter_not_after - time()) / 86400 < 30
-            for: 1h
-            labels:
-                severity: warning
-                category: security
-            annotations:
-                summary: 'Certificate expiring soon'
-                description: 'Certificate {{ $labels.name }} will expire in less than 30 days'
-                runbook_url: 'https://runbooks.riskoptimizer.com/security/cert-expiry'
+      - alert: CertificateExpiringSoon
+        expr: (cert_exporter_not_after - time()) / 86400 < 30
+        for: 1h
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "Certificate expiring soon"
+          description: "Certificate {{ $labels.name }} will expire in less than 30 days"
+          runbook_url: "https://runbooks.riskoptimizer.com/security/cert-expiry"
 
-    # Financial Alerts
-    - name: financial.rules
-      rules:
-          - alert: TransactionProcessingDelay
-            expr: transaction_processing_duration_seconds > 30
-            for: 5m
-            labels:
-                severity: critical
-                category: financial
-            annotations:
-                summary: 'Transaction processing delay detected'
-                description: 'Transaction processing is taking more than 30 seconds'
-                runbook_url: 'https://runbooks.riskoptimizer.com/financial/transaction-delay'
+  # Financial Alerts
+  - name: financial.rules
+    rules:
+      - alert: TransactionProcessingDelay
+        expr: transaction_processing_duration_seconds > 30
+        for: 5m
+        labels:
+          severity: critical
+          category: financial
+        annotations:
+          summary: "Transaction processing delay detected"
+          description: "Transaction processing is taking more than 30 seconds"
+          runbook_url: "https://runbooks.riskoptimizer.com/financial/transaction-delay"
 
-          - alert: RiskCalculationFailure
-            expr: increase(risk_calculation_failures_total[5m]) > 5
-            for: 1m
-            labels:
-                severity: critical
-                category: financial
-            annotations:
-                summary: 'Risk calculation failures detected'
-                description: 'More than 5 risk calculation failures in the last 5 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/financial/risk-calc-failure'
+      - alert: RiskCalculationFailure
+        expr: increase(risk_calculation_failures_total[5m]) > 5
+        for: 1m
+        labels:
+          severity: critical
+          category: financial
+        annotations:
+          summary: "Risk calculation failures detected"
+          description: "More than 5 risk calculation failures in the last 5 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/financial/risk-calc-failure"
 
-          - alert: ComplianceViolation
-            expr: compliance_violations_total > 0
-            for: 1m
-            labels:
-                severity: critical
-                category: compliance
-            annotations:
-                summary: 'Compliance violation detected'
-                description: '{{ $value }} compliance violations detected'
-                runbook_url: 'https://runbooks.riskoptimizer.com/compliance/violation'
+      - alert: ComplianceViolation
+        expr: compliance_violations_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          category: compliance
+        annotations:
+          summary: "Compliance violation detected"
+          description: "{{ $value }} compliance violations detected"
+          runbook_url: "https://runbooks.riskoptimizer.com/compliance/violation"
 
-          - alert: AuditLogMissing
-            expr: increase(audit_log_entries_total[1h]) == 0
-            for: 1h
-            labels:
-                severity: critical
-                category: compliance
-            annotations:
-                summary: 'Audit log entries missing'
-                description: 'No audit log entries recorded in the last hour'
-                runbook_url: 'https://runbooks.riskoptimizer.com/compliance/audit-log-missing'
+      - alert: AuditLogMissing
+        expr: increase(audit_log_entries_total[1h]) == 0
+        for: 1h
+        labels:
+          severity: critical
+          category: compliance
+        annotations:
+          summary: "Audit log entries missing"
+          description: "No audit log entries recorded in the last hour"
+          runbook_url: "https://runbooks.riskoptimizer.com/compliance/audit-log-missing"
 
-    # Database Alerts
-    - name: database.rules
-      rules:
-          - alert: PostgreSQLDown
-            expr: pg_up == 0
-            for: 2m
-            labels:
-                severity: critical
-                category: database
-            annotations:
-                summary: 'PostgreSQL is down'
-                description: 'PostgreSQL instance {{ $labels.instance }} is down'
-                runbook_url: 'https://runbooks.riskoptimizer.com/database/postgresql-down'
+  # Database Alerts
+  - name: database.rules
+    rules:
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL instance {{ $labels.instance }} is down"
+          runbook_url: "https://runbooks.riskoptimizer.com/database/postgresql-down"
 
-          - alert: PostgreSQLHighConnections
-            expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
-            for: 5m
-            labels:
-                severity: warning
-                category: database
-            annotations:
-                summary: 'PostgreSQL high connection usage'
-                description: 'PostgreSQL connection usage is above 80% on {{ $labels.instance }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/database/high-connections'
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "PostgreSQL high connection usage"
+          description: "PostgreSQL connection usage is above 80% on {{ $labels.instance }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/database/high-connections"
 
-          - alert: PostgreSQLSlowQueries
-            expr: pg_stat_activity_max_tx_duration > 300
-            for: 5m
-            labels:
-                severity: warning
-                category: database
-            annotations:
-                summary: 'PostgreSQL slow queries detected'
-                description: 'Long running queries detected on {{ $labels.instance }}'
-                runbook_url: 'https://runbooks.riskoptimizer.com/database/slow-queries'
+      - alert: PostgreSQLSlowQueries
+        expr: pg_stat_activity_max_tx_duration > 300
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "PostgreSQL slow queries detected"
+          description: "Long running queries detected on {{ $labels.instance }}"
+          runbook_url: "https://runbooks.riskoptimizer.com/database/slow-queries"
 
-          - alert: RedisDown
-            expr: redis_up == 0
-            for: 2m
-            labels:
-                severity: critical
-                category: database
-            annotations:
-                summary: 'Redis is down'
-                description: 'Redis instance {{ $labels.instance }} is down'
-                runbook_url: 'https://runbooks.riskoptimizer.com/database/redis-down'
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "Redis is down"
+          description: "Redis instance {{ $labels.instance }} is down"
+          runbook_url: "https://runbooks.riskoptimizer.com/database/redis-down"
 
-    # Kubernetes Alerts
-    - name: kubernetes.rules
-      rules:
-          - alert: KubernetesPodCrashLooping
-            expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
-            for: 5m
-            labels:
-                severity: critical
-                category: kubernetes
-            annotations:
-                summary: 'Pod {{ $labels.pod }} is crash looping'
-                description: 'Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is crash looping'
-                runbook_url: 'https://runbooks.riskoptimizer.com/kubernetes/pod-crash-loop'
+  # Kubernetes Alerts
+  - name: kubernetes.rules
+    rules:
+      - alert: KubernetesPodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          category: kubernetes
+        annotations:
+          summary: "Pod {{ $labels.pod }} is crash looping"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is crash looping"
+          runbook_url: "https://runbooks.riskoptimizer.com/kubernetes/pod-crash-loop"
 
-          - alert: KubernetesPodNotReady
-            expr: kube_pod_status_ready{condition="false"} == 1
-            for: 10m
-            labels:
-                severity: warning
-                category: kubernetes
-            annotations:
-                summary: 'Pod {{ $labels.pod }} not ready'
-                description: 'Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for more than 10 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/kubernetes/pod-not-ready'
+      - alert: KubernetesPodNotReady
+        expr: kube_pod_status_ready{condition="false"} == 1
+        for: 10m
+        labels:
+          severity: warning
+          category: kubernetes
+        annotations:
+          summary: "Pod {{ $labels.pod }} not ready"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for more than 10 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/kubernetes/pod-not-ready"
 
-          - alert: KubernetesNodeNotReady
-            expr: kube_node_status_condition{condition="Ready",status="true"} == 0
-            for: 5m
-            labels:
-                severity: critical
-                category: kubernetes
-            annotations:
-                summary: 'Node {{ $labels.node }} not ready'
-                description: 'Node {{ $labels.node }} has been not ready for more than 5 minutes'
-                runbook_url: 'https://runbooks.riskoptimizer.com/kubernetes/node-not-ready'
+      - alert: KubernetesNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          category: kubernetes
+        annotations:
+          summary: "Node {{ $labels.node }} not ready"
+          description: "Node {{ $labels.node }} has been not ready for more than 5 minutes"
+          runbook_url: "https://runbooks.riskoptimizer.com/kubernetes/node-not-ready"
 
-          - alert: KubernetesDeploymentReplicasMismatch
-            expr: kube_deployment_spec_replicas != kube_deployment_status_replicas_available
-            for: 10m
-            labels:
-                severity: warning
-                category: kubernetes
-            annotations:
-                summary: 'Deployment {{ $labels.deployment }} replicas mismatch'
-                description: 'Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has mismatched replicas'
-                runbook_url: 'https://runbooks.riskoptimizer.com/kubernetes/deployment-replicas'
+      - alert: KubernetesDeploymentReplicasMismatch
+        expr: kube_deployment_spec_replicas != kube_deployment_status_replicas_available
+        for: 10m
+        labels:
+          severity: warning
+          category: kubernetes
+        annotations:
+          summary: "Deployment {{ $labels.deployment }} replicas mismatch"
+          description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has mismatched replicas"
+          runbook_url: "https://runbooks.riskoptimizer.com/kubernetes/deployment-replicas"

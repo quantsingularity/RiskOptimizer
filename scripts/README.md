@@ -163,13 +163,13 @@ Automates AI model training, evaluation, and deployment.
 
 1. Extract the zip file to your RiskOptimizer project root directory
 2. Make the scripts executable:
-    ```bash
-    chmod +x scripts/*.sh
-    ```
+   ```bash
+   chmod +x scripts/*.sh
+   ```
 3. Run the setup script to configure the environment:
-    ```bash
-    ./scripts/setup_dev_environment.sh
-    ```
+   ```bash
+   ./scripts/setup_dev_environment.sh
+   ```
 
 ## Best Practices
 

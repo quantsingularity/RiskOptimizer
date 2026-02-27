@@ -4,4 +4,4 @@
 
 - name: Placeholder task for compliance
   debug:
-      msg: 'Role compliance is not yet fully implemented'
+    msg: "Role compliance is not yet fully implemented"

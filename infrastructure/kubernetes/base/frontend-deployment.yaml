@@ -1,48 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: riskoptimizer-frontend
-    labels:
-        app: riskoptimizer-frontend
+  name: riskoptimizer-frontend
+  labels:
+    app: riskoptimizer-frontend
 spec:
-    replicas: 2
-    selector:
-        matchLabels:
-            app: riskoptimizer-frontend
-    template:
-        metadata:
-            labels:
-                app: riskoptimizer-frontend
-        spec:
-            containers:
-                - name: riskoptimizer-frontend
-                  image: registry.example.com/app/frontend:latest
-                  imagePullPolicy: Always
-                  ports:
-                      - containerPort: 80
-                  resources:
-                      limits:
-                          cpu: 300m
-                          memory: 256Mi
-                      requests:
-                          cpu: 100m
-                          memory: 128Mi
-                  env:
-                      - name: REACT_APP_API_URL
-                        value: /api
-                      - name: REACT_APP_ENV
-                        value: production
-                  livenessProbe:
-                      httpGet:
-                          path: /
-                          port: 80
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                  readinessProbe:
-                      httpGet:
-                          path: /
-                          port: 80
-                      initialDelaySeconds: 5
-                      periodSeconds: 5
-            imagePullSecrets:
-                - name: regcred
+  replicas: 2
+  selector:
+    matchLabels:
+      app: riskoptimizer-frontend
+  template:
+    metadata:
+      labels:
+        app: riskoptimizer-frontend
+    spec:
+      containers:
+        - name: riskoptimizer-frontend
+          image: registry.example.com/app/frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 300m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: REACT_APP_API_URL
+              value: /api
+            - name: REACT_APP_ENV
+              value: production
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: regcred

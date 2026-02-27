@@ -4,4 +4,4 @@
 
 - name: intrusion-detection placeholder
   debug:
-      msg: 'Role intrusion-detection requires full implementation'
+    msg: "Role intrusion-detection requires full implementation"

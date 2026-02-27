@@ -10,10 +10,10 @@ Complete API reference for RiskOptimizer v1.0.0.
 - [Error Handling](#error-handling)
 - [Rate Limiting](#rate-limiting)
 - [Endpoints](#endpoints)
-    - [Authentication](#authentication-endpoints)
-    - [Risk Calculations](#risk-calculation-endpoints)
-    - [Portfolio Management](#portfolio-management-endpoints)
-    - [Monitoring](#monitoring-endpoints)
+  - [Authentication](#authentication-endpoints)
+  - [Risk Calculations](#risk-calculation-endpoints)
+  - [Portfolio Management](#portfolio-management-endpoints)
+  - [Monitoring](#monitoring-endpoints)
 
 ## Base URL
 
@@ -48,10 +48,10 @@ Content-Type: application/json
 
 ```json
 {
-    "status": "success",
-    "message": "Optional success message",
-    "data": {},
-    "meta": {}
+  "status": "success",
+  "message": "Optional success message",
+  "data": {},
+  "meta": {}
 }
 ```
 
@@ -59,13 +59,13 @@ Content-Type: application/json
 
 ```json
 {
-    "status": "error",
-    "error": {
-        "code": "ERROR_CODE",
-        "message": "Human-readable error message",
-        "field": "field_name",
-        "details": {}
-    }
+  "status": "error",
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "field": "field_name",
+    "details": {}
+  }
 }
 ```
 
@@ -132,14 +132,14 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
 
 ```json
 {
-    "status": "success",
-    "message": "User registered successfully",
-    "data": {
-        "user_id": 1,
-        "email": "user@example.com",
-        "username": "john_doe",
-        "created_at": "2025-01-01T00:00:00Z"
-    }
+  "status": "success",
+  "message": "User registered successfully",
+  "data": {
+    "user_id": 1,
+    "email": "user@example.com",
+    "username": "john_doe",
+    "created_at": "2025-01-01T00:00:00Z"
+  }
 }
 ```
 
@@ -173,18 +173,18 @@ curl -X POST http://localhost:5000/api/v1/auth/login \
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-        "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-        "expires_in": 3600,
-        "token_type": "Bearer",
-        "user": {
-            "id": 1,
-            "email": "user@example.com",
-            "username": "john_doe"
-        }
+  "status": "success",
+  "data": {
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "expires_in": 3600,
+    "token_type": "Bearer",
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "username": "john_doe"
     }
+  }
 }
 ```
 
@@ -259,12 +259,12 @@ curl -X POST http://localhost:5000/api/v1/risk/var \
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "var": -0.0234,
-        "confidence": 0.95,
-        "interpretation": "At 95% confidence, max expected loss is 2.34%"
-    }
+  "status": "success",
+  "data": {
+    "var": -0.0234,
+    "confidence": 0.95,
+    "interpretation": "At 95% confidence, max expected loss is 2.34%"
+  }
 }
 ```
 
@@ -332,15 +332,15 @@ curl -X POST http://localhost:5000/api/v1/risk/var \
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "var": -0.0234,
-        "cvar": -0.0267,
-        "sharpe_ratio": 1.25,
-        "max_drawdown": -0.089,
-        "volatility": 0.048,
-        "mean_return": 0.015
-    }
+  "status": "success",
+  "data": {
+    "var": -0.0234,
+    "cvar": -0.0267,
+    "sharpe_ratio": 1.25,
+    "max_drawdown": -0.089,
+    "volatility": 0.048,
+    "mean_return": 0.015
+  }
 }
 ```
 
@@ -482,17 +482,17 @@ curl -X POST http://localhost:5000/api/v1/monitoring/optimize \
 
 ```json
 {
-    "status": "success",
-    "data": {
-        "optimal_weights": {
-            "AAPL": 0.35,
-            "MSFT": 0.4,
-            "GOOGL": 0.25
-        },
-        "expected_return": 0.15,
-        "expected_volatility": 0.2,
-        "sharpe_ratio": 1.65
-    }
+  "status": "success",
+  "data": {
+    "optimal_weights": {
+      "AAPL": 0.35,
+      "MSFT": 0.4,
+      "GOOGL": 0.25
+    },
+    "expected_return": 0.15,
+    "expected_volatility": 0.2,
+    "sharpe_ratio": 1.65
+  }
 }
 ```
 
@@ -516,11 +516,11 @@ curl http://localhost:5000/health
 
 ```json
 {
-    "status": "ok",
-    "version": "1.0.0",
-    "database": true,
-    "cache": true,
-    "timestamp": "2025-01-01T00:00:00Z"
+  "status": "ok",
+  "version": "1.0.0",
+  "database": true,
+  "cache": true,
+  "timestamp": "2025-01-01T00:00:00Z"
 }
 ```
 
@@ -563,32 +563,32 @@ print(f"VaR: {var_result['data']['var']}")
 ### JavaScript Example
 
 ```javascript
-const BASE_URL = 'http://localhost:5000/api/v1';
+const BASE_URL = "http://localhost:5000/api/v1";
 
 // Login
 const loginResponse = await fetch(`${BASE_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        email: 'user@example.com',
-        password: 'password',
-    }),
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    email: "user@example.com",
+    password: "password",
+  }),
 });
 const {
-    data: { access_token },
+  data: { access_token },
 } = await loginResponse.json();
 
 // Calculate VaR
 const varResponse = await fetch(`${BASE_URL}/risk/var`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${access_token}`,
-    },
-    body: JSON.stringify({
-        returns: [-0.02, 0.01, -0.015, 0.03],
-        confidence: 0.95,
-    }),
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${access_token}`,
+  },
+  body: JSON.stringify({
+    returns: [-0.02, 0.01, -0.015, 0.03],
+    confidence: 0.95,
+  }),
 });
 const varResult = await varResponse.json();
 console.log(`VaR: ${varResult.data.var}`);

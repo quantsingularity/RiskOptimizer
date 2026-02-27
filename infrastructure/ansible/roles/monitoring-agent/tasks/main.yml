@@ -4,4 +4,4 @@
 
 - name: Placeholder task for monitoring-agent
   debug:
-      msg: 'Role monitoring-agent is not yet fully implemented'
+    msg: "Role monitoring-agent is not yet fully implemented"

@@ -4,4 +4,4 @@
 
 - name: security-monitoring placeholder
   debug:
-      msg: 'Role security-monitoring requires full implementation'
+    msg: "Role security-monitoring requires full implementation"

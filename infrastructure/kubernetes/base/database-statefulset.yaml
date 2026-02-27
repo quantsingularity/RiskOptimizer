@@ -1,79 +1,79 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-    name: riskoptimizer-database
-    labels:
-        app: riskoptimizer-database
+  name: riskoptimizer-database
+  labels:
+    app: riskoptimizer-database
 spec:
-    serviceName: riskoptimizer-database
-    replicas: 1
-    selector:
-        matchLabels:
-            app: riskoptimizer-database
-    template:
-        metadata:
-            labels:
-                app: riskoptimizer-database
-        spec:
-            containers:
-                - name: riskoptimizer-database
-                  image: mysql:8.0
-                  imagePullPolicy: IfNotPresent
-                  ports:
-                      - containerPort: 3306
-                  resources:
-                      limits:
-                          cpu: 1000m
-                          memory: 1Gi
-                      requests:
-                          cpu: 500m
-                          memory: 512Mi
-                  env:
-                      - name: MYSQL_ROOT_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: riskoptimizer-secrets
-                                key: mysql-root-password
-                      - name: MYSQL_DATABASE
-                        value: riskoptimizerdb
-                      - name: MYSQL_USER
-                        value: appuser
-                      - name: MYSQL_PASSWORD
-                        valueFrom:
-                            secretKeyRef:
-                                name: riskoptimizer-secrets
-                                key: mysql-password
-                  volumeMounts:
-                      - name: riskoptimizer-database-data
-                        mountPath: /var/lib/mysql
-                  livenessProbe:
-                      exec:
-                          command:
-                              - mysqladmin
-                              - ping
-                              - -u
-                              - root
-                              - -p${MYSQL_ROOT_PASSWORD}
-                      initialDelaySeconds: 30
-                      periodSeconds: 10
-                  readinessProbe:
-                      exec:
-                          command:
-                              - mysql
-                              - -u
-                              - root
-                              - -p${MYSQL_ROOT_PASSWORD}
-                              - -e
-                              - SELECT 1
-                      initialDelaySeconds: 5
-                      periodSeconds: 5
-    volumeClaimTemplates:
-        - metadata:
-              name: riskoptimizer-database-data
-          spec:
-              accessModes:
-                  - ReadWriteOnce
-              storageClassName: standard
-              resources:
-                  requests:
-                      storage: 10Gi
+  serviceName: riskoptimizer-database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: riskoptimizer-database
+  template:
+    metadata:
+      labels:
+        app: riskoptimizer-database
+    spec:
+      containers:
+        - name: riskoptimizer-database
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              value: riskoptimizerdb
+            - name: MYSQL_USER
+              value: appuser
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: riskoptimizer-secrets
+                  key: mysql-password
+          volumeMounts:
+            - name: riskoptimizer-database-data
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -u
+                - root
+                - -p${MYSQL_ROOT_PASSWORD}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - mysql
+                - -u
+                - root
+                - -p${MYSQL_ROOT_PASSWORD}
+                - -e
+                - SELECT 1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: riskoptimizer-database-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 10Gi

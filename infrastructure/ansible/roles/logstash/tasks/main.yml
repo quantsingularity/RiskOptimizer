@@ -4,4 +4,4 @@
 
 - name: logstash placeholder
   debug:
-      msg: 'Role logstash requires full implementation'
+    msg: "Role logstash requires full implementation"

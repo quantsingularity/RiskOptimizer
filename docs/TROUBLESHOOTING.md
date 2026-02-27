@@ -497,10 +497,10 @@ DEBUG=true python app.py
 
 4. **Create minimal reproduction** and report issue
 5. **Include:**
-    - Error message
-    - Steps to reproduce
-    - Environment (OS, Python version, etc.)
-    - Relevant logs
+   - Error message
+   - Steps to reproduce
+   - Environment (OS, Python version, etc.)
+   - Relevant logs
 
 ## See Also
 

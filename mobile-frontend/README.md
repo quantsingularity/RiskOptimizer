@@ -40,34 +40,34 @@ This is a React Native mobile application built with Expo that provides a mobile
 
 1. **Clone and navigate to the mobile-frontend directory**
 
-    ```bash
-    cd mobile-frontend
-    ```
+   ```bash
+   cd mobile-frontend
+   ```
 
 2. **Install dependencies**
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 3. **Configure environment variables**
    Copy `.env.example` to `.env` and update with your backend URL:
 
-    ```bash
-    cp .env.example .env
-    ```
+   ```bash
+   cp .env.example .env
+   ```
 
-    Edit `.env`:
+   Edit `.env`:
 
-    ```
-    API_BASE_URL=http://localhost:5000/api/v1
-    ```
+   ```
+   API_BASE_URL=http://localhost:5000/api/v1
+   ```
 
-    For physical device testing, replace `localhost` with your computer's IP address:
+   For physical device testing, replace `localhost` with your computer's IP address:
 
-    ```
-    API_BASE_URL=http://192.168.1.XXX:5000/api/v1
-    ```
+   ```
+   API_BASE_URL=http://192.168.1.XXX:5000/api/v1
+   ```
 
 ## Running the Application
 
@@ -131,36 +131,36 @@ npm run test:coverage
 
 1. Navigate to the backend directory:
 
-    ```bash
-    cd ../backend
-    ```
+   ```bash
+   cd ../backend
+   ```
 
 2. Install backend dependencies (if not already done):
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 3. Configure backend environment variables:
 
-    ```bash
-    cp .env.example .env
-    # Edit .env with your database and configuration settings
-    ```
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database and configuration settings
+   ```
 
 4. Initialize the database:
 
-    ```bash
-    python -m riskoptimizer.infrastructure.database.init_db
-    ```
+   ```bash
+   python -m riskoptimizer.infrastructure.database.init_db
+   ```
 
 5. Start the backend server:
 
-    ```bash
-    python app.py
-    ```
+   ```bash
+   python app.py
+   ```
 
-    The backend should start on `http://localhost:5000`
+   The backend should start on `http://localhost:5000`
 
 ### Connect Mobile App to Backend
 

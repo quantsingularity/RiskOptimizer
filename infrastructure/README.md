@@ -56,10 +56,10 @@ infrastructure/
 ## Getting Started
 
 1. **Prerequisites**: Ensure you have the required tools installed:
-    - Terraform >= 1.0
-    - Ansible >= 2.9
-    - kubectl >= 1.20
-    - Docker >= 20.10
+   - Terraform >= 1.0
+   - Ansible >= 2.9
+   - kubectl >= 1.20
+   - Docker >= 20.10
 
 2. **Environment Setup**: Configure your environment variables and credentials
 3. **Infrastructure Provisioning**: Use Terraform to provision cloud resources

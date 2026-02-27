@@ -159,42 +159,42 @@ class RiskCalculator:
 
 ```javascript
 // Example: Good React component
-import React, { useState, useEffect } from 'react';
-import { calculateVaR } from '../services/apiService';
+import React, { useState, useEffect } from "react";
+import { calculateVaR } from "../services/apiService";
 
 /**
  * Portfolio risk display component.
  */
 export const RiskMetrics = ({ portfolioId }) => {
-    const [var95, setVar95] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [var95, setVar95] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchRisk = async () => {
-            setLoading(true);
-            try {
-                const result = await calculateVaR(portfolioId, 0.95);
-                setVar95(result.var);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchRisk = async () => {
+      setLoading(true);
+      try {
+        const result = await calculateVaR(portfolioId, 0.95);
+        setVar95(result.var);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchRisk();
-    }, [portfolioId]);
+    fetchRisk();
+  }, [portfolioId]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-    return (
-        <div>
-            <h3>Value at Risk (95%)</h3>
-            <p>{var95?.toFixed(4)}</p>
-        </div>
-    );
+  return (
+    <div>
+      <h3>Value at Risk (95%)</h3>
+      <p>{var95?.toFixed(4)}</p>
+    </div>
+  );
 };
 ```
 
@@ -237,32 +237,32 @@ class TestRiskService:
 
 ```javascript
 // __tests__/RiskMetrics.test.jsx
-import { render, screen, waitFor } from '@testing-library/react';
-import { RiskMetrics } from '../components/RiskMetrics';
-import * as apiService from '../services/apiService';
+import { render, screen, waitFor } from "@testing-library/react";
+import { RiskMetrics } from "../components/RiskMetrics";
+import * as apiService from "../services/apiService";
 
-jest.mock('../services/apiService');
+jest.mock("../services/apiService");
 
-describe('RiskMetrics', () => {
-    it('displays VaR value when loaded', async () => {
-        apiService.calculateVaR.mockResolvedValue({ var: -0.0234 });
+describe("RiskMetrics", () => {
+  it("displays VaR value when loaded", async () => {
+    apiService.calculateVaR.mockResolvedValue({ var: -0.0234 });
 
-        render(<RiskMetrics portfolioId={1} />);
+    render(<RiskMetrics portfolioId={1} />);
 
-        await waitFor(() => {
-            expect(screen.getByText(/-0.0234/)).toBeInTheDocument();
-        });
+    await waitFor(() => {
+      expect(screen.getByText(/-0.0234/)).toBeInTheDocument();
     });
+  });
 
-    it('displays error message on failure', async () => {
-        apiService.calculateVaR.mockRejectedValue(new Error('API Error'));
+  it("displays error message on failure", async () => {
+    apiService.calculateVaR.mockRejectedValue(new Error("API Error"));
 
-        render(<RiskMetrics portfolioId={1} />);
+    render(<RiskMetrics portfolioId={1} />);
 
-        await waitFor(() => {
-            expect(screen.getByText(/Error: API Error/)).toBeInTheDocument();
-        });
+    await waitFor(() => {
+      expect(screen.getByText(/Error: API Error/)).toBeInTheDocument();
     });
+  });
 });
 ```
 

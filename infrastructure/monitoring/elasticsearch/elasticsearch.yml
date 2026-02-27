@@ -44,7 +44,7 @@ path.logs: /var/log/elasticsearch
 
 # Path to snapshots:
 #
-path.repo: ['/var/lib/elasticsearch/snapshots']
+path.repo: ["/var/lib/elasticsearch/snapshots"]
 
 # ----------------------------------- Memory -----------------------------------
 #
@@ -73,16 +73,16 @@ transport.port: 9300
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
 discovery.seed_hosts:
-    - elasticsearch-master-1.riskoptimizer.com
-    - elasticsearch-master-2.riskoptimizer.com
-    - elasticsearch-master-3.riskoptimizer.com
+  - elasticsearch-master-1.riskoptimizer.com
+  - elasticsearch-master-2.riskoptimizer.com
+  - elasticsearch-master-3.riskoptimizer.com
 
 # Bootstrap the cluster using an initial set of master-eligible nodes:
 #
 cluster.initial_master_nodes:
-    - elasticsearch-master-1
-    - elasticsearch-master-2
-    - elasticsearch-master-3
+  - elasticsearch-master-1
+  - elasticsearch-master-2
+  - elasticsearch-master-3
 
 # ---------------------------------- Gateway -----------------------------------
 #
@@ -105,33 +105,33 @@ xpack.security.enabled: true
 
 # Enable encryption for HTTP API client connections
 xpack.security.http.ssl:
-    enabled: true
-    verification_mode: certificate
-    keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
-    truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  enabled: true
+  verification_mode: certificate
+  keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
 
 # Enable encryption and mutual authentication between cluster nodes
 xpack.security.transport.ssl:
-    enabled: true
-    verification_mode: certificate
-    client_authentication: required
-    keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
-    truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  enabled: true
+  verification_mode: certificate
+  client_authentication: required
+  keystore.path: /etc/elasticsearch/certs/elastic-certificates.p12
+  truststore.path: /etc/elasticsearch/certs/elastic-certificates.p12
 
 # Enable audit logging
 xpack.security.audit.enabled: true
 xpack.security.audit.logfile.events.include:
-    - access_denied
-    - access_granted
-    - anonymous_access_denied
-    - authentication_failed
-    - authentication_success
-    - change_password
-    - connection_denied
-    - connection_granted
-    - tampered_request
-    - run_as_denied
-    - run_as_granted
+  - access_denied
+  - access_granted
+  - anonymous_access_denied
+  - authentication_failed
+  - authentication_success
+  - change_password
+  - connection_denied
+  - connection_granted
+  - tampered_request
+  - run_as_denied
+  - run_as_granted
 
 # ---------------------------------- Monitoring --------------------------------
 #
@@ -185,27 +185,27 @@ search.allow_expensive_queries: false
 #
 # Thread pool settings for better performance
 thread_pool:
-    search:
-        size: 13
-        queue_size: 1000
-    search_throttled:
-        size: 1
-        queue_size: 100
-    get:
-        size: 13
-        queue_size: 1000
-    analyze:
-        size: 1
-        queue_size: 16
-    write:
-        size: 13
-        queue_size: 10000
-    index:
-        size: 13
-        queue_size: 200
-    bulk:
-        size: 13
-        queue_size: 200
+  search:
+    size: 13
+    queue_size: 1000
+  search_throttled:
+    size: 1
+    queue_size: 100
+  get:
+    size: 13
+    queue_size: 1000
+  analyze:
+    size: 1
+    queue_size: 16
+  write:
+    size: 13
+    queue_size: 10000
+  index:
+    size: 13
+    queue_size: 200
+  bulk:
+    size: 13
+    queue_size: 200
 
 # ---------------------------------- Circuit Breaker Settings ------------------
 #
@@ -230,55 +230,55 @@ cluster.routing.allocation.awareness.force.zone.values: zone-1,zone-2,zone-3
 # ---------------------------------- Index Templates ---------------------------
 #
 # Index template for RiskOptimizer logs
-index_patterns: ['riskoptimizer-*']
+index_patterns: ["riskoptimizer-*"]
 template:
-    settings:
-        number_of_shards: 3
-        number_of_replicas: 1
-        refresh_interval: '30s'
-        index.lifecycle.name: 'riskoptimizer-logs-policy'
-        index.lifecycle.rollover_alias: 'riskoptimizer-logs'
-    mappings:
+  settings:
+    number_of_shards: 3
+    number_of_replicas: 1
+    refresh_interval: "30s"
+    index.lifecycle.name: "riskoptimizer-logs-policy"
+    index.lifecycle.rollover_alias: "riskoptimizer-logs"
+  mappings:
+    properties:
+      "@timestamp":
+        type: date
+      level:
+        type: keyword
+      message:
+        type: text
+        analyzer: standard
+      service:
+        type: keyword
+      environment:
+        type: keyword
+      user_id:
+        type: keyword
+      session_id:
+        type: keyword
+      request_id:
+        type: keyword
+      ip_address:
+        type: ip
+      user_agent:
+        type: text
+        analyzer: standard
+      response_time:
+        type: long
+      status_code:
+        type: integer
+      method:
+        type: keyword
+      url:
+        type: keyword
+      error:
+        type: object
         properties:
-            '@timestamp':
-                type: date
-            level:
-                type: keyword
-            message:
-                type: text
-                analyzer: standard
-            service:
-                type: keyword
-            environment:
-                type: keyword
-            user_id:
-                type: keyword
-            session_id:
-                type: keyword
-            request_id:
-                type: keyword
-            ip_address:
-                type: ip
-            user_agent:
-                type: text
-                analyzer: standard
-            response_time:
-                type: long
-            status_code:
-                type: integer
-            method:
-                type: keyword
-            url:
-                type: keyword
-            error:
-                type: object
-                properties:
-                    type:
-                        type: keyword
-                    message:
-                        type: text
-                    stack_trace:
-                        type: text
+          type:
+            type: keyword
+          message:
+            type: text
+          stack_trace:
+            type: text
 
 # ---------------------------------- Ingest Pipelines --------------------------
 #
@@ -307,31 +307,31 @@ xpack.watcher.execution.default_throttle_period: 5m
 #
 # Repository settings for snapshots
 repositories:
-    s3_repository:
-        type: s3
-        settings:
-            bucket: riskoptimizer-elasticsearch-backups
-            region: us-west-2
-            base_path: snapshots
-            compress: true
-            server_side_encryption: true
+  s3_repository:
+    type: s3
+    settings:
+      bucket: riskoptimizer-elasticsearch-backups
+      region: us-west-2
+      base_path: snapshots
+      compress: true
+      server_side_encryption: true
 
 # ---------------------------------- Custom Settings ---------------------------
 #
 # Custom settings for RiskOptimizer
 riskoptimizer:
-    retention:
-        application_logs: 90d
-        security_logs: 2y
-        audit_logs: 7y
-        performance_logs: 30d
+  retention:
+    application_logs: 90d
+    security_logs: 2y
+    audit_logs: 7y
+    performance_logs: 30d
 
-    compliance:
-        gdpr_enabled: true
-        pci_dss_enabled: true
-        sox_enabled: true
+  compliance:
+    gdpr_enabled: true
+    pci_dss_enabled: true
+    sox_enabled: true
 
-    security:
-        field_level_security: true
-        document_level_security: true
-        audit_trail: true
+  security:
+    field_level_security: true
+    document_level_security: true
+    audit_trail: true

@@ -4,4 +4,4 @@
 
 - name: database-security placeholder
   debug:
-      msg: 'Role database-security requires full implementation'
+    msg: "Role database-security requires full implementation"
