@@ -1,4 +1,4 @@
-# Code Directory - RiskOptimizer Source Code
+# RiskOptimizer Code Directory
 
 ## Overview
 

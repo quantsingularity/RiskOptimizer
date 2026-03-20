@@ -6,7 +6,7 @@ This directory contains the comprehensive infrastructure configuration for the R
 
 ```
 infrastructure/
-├── README.md                    # This file
+├── README.md                   # This file
 ├── ansible/                    # Configuration management and automation
 ├── kubernetes/                 # Container orchestration configurations
 ├── terraform/                  # Infrastructure as Code (IaC)
