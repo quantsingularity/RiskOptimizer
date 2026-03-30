@@ -1,7 +1,6 @@
-import React from "react";
-import { Box, Typography, Button, Container } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import { Box, Button, Container, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
   const navigate = useNavigate();

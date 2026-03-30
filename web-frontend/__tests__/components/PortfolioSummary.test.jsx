@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/PortfolioSummary.test.jsx
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+
 // import PortfolioSummary from "../../src/components/dashboard/PortfolioSummary"; // Adjust path
 
 // Mock component for testing

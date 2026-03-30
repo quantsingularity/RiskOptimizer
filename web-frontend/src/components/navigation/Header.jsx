@@ -1,19 +1,18 @@
-import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Avatar,
-  Badge,
-  Box,
-  useTheme,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import MenuIcon from "@mui/icons-material/Menu";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 const Header = ({ onMenuClick }) => {
   const theme = useTheme();

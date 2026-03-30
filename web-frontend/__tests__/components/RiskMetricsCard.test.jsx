@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/RiskMetricsCard.test.jsx
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+
 // import RiskMetricsCard from "../../src/components/dashboard/RiskMetricsCard"; // Adjust path
 
 // Mock component for testing

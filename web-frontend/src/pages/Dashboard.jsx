@@ -1,27 +1,19 @@
-import React from "react";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import {
   Box,
-  Grid,
-  Paper,
-  Typography,
+  Button,
   Card,
   CardContent,
   CardHeader,
   Divider,
-  Button,
+  Grid,
   IconButton,
-  Tooltip,
+  Typography,
 } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import PortfolioSummary from "../components/dashboard/PortfolioSummary";
-import PerformanceChart from "../components/dashboard/PerformanceChart";
-import AssetAllocation from "../components/dashboard/AssetAllocation";
-import RiskMetricsCard from "../components/dashboard/RiskMetricsCard";
-import RecentTransactions from "../components/dashboard/RecentTransactions";
 
 const Dashboard = () => {
   return (

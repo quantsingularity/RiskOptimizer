@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { usePortfolio } from "../context/PortfolioContext";
 import { useRiskAnalysis } from "../context/RiskAnalysisContext";
-import { useAuth } from "../context/AuthContext";
 
 // Custom hook to integrate dashboard with backend data
 export const useDashboardData = () => {
@@ -31,7 +31,7 @@ export const useDashboardData = () => {
       setError(null);
 
       try {
-        if (user && user.address) {
+        if (user?.address) {
           // Fetch portfolio data
           await fetchPortfolio(user.address);
 

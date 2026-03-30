@@ -1,34 +1,32 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Divider,
-  Button,
-  IconButton,
-  Slider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Switch,
-  FormControlLabel,
-  Tooltip,
-} from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TuneIcon from "@mui/icons-material/Tune";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Slider,
+  Switch,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 
 const Optimization = () => {
   const [riskTolerance, setRiskTolerance] = useState(50);
 
-  const handleRiskToleranceChange = (event, newValue) => {
+  const handleRiskToleranceChange = (_event, newValue) => {
     setRiskTolerance(newValue);
   };
 

@@ -1,7 +1,6 @@
-import React from "react";
+import { ThemeProvider } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { ThemeProvider } from "@rneui/themed";
 import { AuthProvider } from "./src/context/AuthContext";
 import { ThemeProvider as CustomThemeProvider } from "./src/context/ThemeContext";
 import AppNavigator from "./src/navigation/AppNavigator";

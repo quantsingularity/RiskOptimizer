@@ -1,8 +1,7 @@
-import React from "react";
-import { render, waitFor, fireEvent } from "@testing-library/react-native";
 import { ThemeProvider } from "@rneui/themed";
-import DashboardScreen from "../../src/screens/Dashboard/DashboardScreen";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { AuthProvider } from "../../src/context/AuthContext";
+import DashboardScreen from "../../src/screens/Dashboard/DashboardScreen";
 import apiService from "../../src/services/apiService";
 import theme from "../../src/styles/theme";
 

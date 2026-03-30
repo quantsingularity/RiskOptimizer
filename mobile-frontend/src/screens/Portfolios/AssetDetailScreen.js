@@ -1,29 +1,22 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useLayoutEffect,
-} from "react"; // Import useLayoutEffect
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native"; // Import TouchableOpacity
-import { Card, ButtonGroup, useTheme, Button, Icon } from "@rneui/themed"; // Import Icon
 import { useFocusEffect } from "@react-navigation/native";
-import apiService from "../../services/apiService";
-import { LineChart } from "react-native-chart-kit";
+import { Button, ButtonGroup, Card, Icon, useTheme } from "@rneui/themed"; // Import Icon
+import { useCallback, useLayoutEffect, useMemo, useState } from "react"; // Import useLayoutEffect
 import {
-  getWatchlist,
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native"; // Import TouchableOpacity
+import { LineChart } from "react-native-chart-kit";
+import apiService from "../../services/apiService";
+import {
   addToWatchlist,
-  removeFromWatchlist,
   isInWatchlist,
+  removeFromWatchlist,
 } from "../utils/watchlist"; // Import watchlist functions
 
 const screenWidth = Dimensions.get("window").width;
@@ -118,7 +111,7 @@ const AssetDetailScreen = ({ route, navigation }) => {
         );
         const result = response.data;
 
-        if (!result || !result.timestamp || result.timestamp.length === 0) {
+        if (!result?.timestamp || result.timestamp.length === 0) {
           setError("No data available for this asset.");
           setAssetData(null);
           return;
@@ -162,7 +155,7 @@ const AssetDetailScreen = ({ route, navigation }) => {
 
         const maxLabels = 6;
         let simplifiedLabels = chartLabels;
-        let simplifiedData = chartDataset;
+        const simplifiedData = chartDataset;
         if (chartLabels.length > maxLabels) {
           const skipCount = Math.ceil(chartLabels.length / maxLabels);
           simplifiedLabels = chartLabels.filter(
@@ -201,7 +194,7 @@ const AssetDetailScreen = ({ route, navigation }) => {
             datasets: [
               {
                 data: simplifiedData,
-                color: (opacity = 1) =>
+                color: (_opacity = 1) =>
                   changePercent >= 0
                     ? theme.colors.success
                     : theme.colors.error,
@@ -237,7 +230,6 @@ const AssetDetailScreen = ({ route, navigation }) => {
       checkWatchlistStatus(); // Check status on focus
       fetchAssetDetails(selectedRange, selectedInterval);
     }, [
-      symbol,
       selectedRange,
       selectedInterval,
       fetchAssetDetails,
@@ -370,7 +362,7 @@ const AssetDetailScreen = ({ route, navigation }) => {
         theme.mode === "dark"
           ? `rgba(255, 255, 255, ${opacity})`
           : `rgba(0, 0, 0, ${opacity})`,
-      labelColor: (opacity = 1) => theme.colors.grey0,
+      labelColor: (_opacity = 1) => theme.colors.grey0,
       style: {
         borderRadius: 16,
       },

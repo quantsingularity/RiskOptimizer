@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/AssetAllocation.test.jsx
 
-import React from "react";
 import { render, screen } from "@testing-library/react";
+
 // import AssetAllocation from "../../src/components/dashboard/AssetAllocation"; // Adjust path
 // Mock charting library (e.g., Doughnut chart)
 // jest.mock("recharts", () => ({

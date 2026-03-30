@@ -1,7 +1,8 @@
 // code/web-frontend/__tests__/context/AuthContext.test.jsx
 
+import { act, render, screen, waitFor } from "@testing-library/react";
 import React, { useContext } from "react";
-import { render, screen, act, waitFor } from "@testing-library/react";
+
 // import userEvent from "@testing-library/user-event";
 // import { AuthProvider, AuthContext } from "../../src/context/AuthContext"; // Adjust path
 // import apiService from "../../src/services/apiService";

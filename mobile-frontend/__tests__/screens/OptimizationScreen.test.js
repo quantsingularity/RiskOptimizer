@@ -1,12 +1,12 @@
 // mobile-frontend/__tests__/screens/OptimizationScreen.test.js
 
-import React from "react";
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from "@testing-library/react-native";
+import React from "react";
 // import OptimizationScreen from "../../src/screens/Optimize/OptimizationScreen"; // Adjust path
 // import { PortfolioContext } from "../../src/context/PortfolioContext";
 // import apiService from "../../src/services/apiService";
@@ -20,13 +20,14 @@ import {
 
 // Mock Screen component for placeholder tests
 import {
-  View,
-  Text,
-  Button,
   ActivityIndicator,
-  StyleSheet,
+  Button,
   ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
+
 // Mock Picker from a library if used, e.g., @react-native-picker/picker
 const MockPicker = ({ selectedValue, onValueChange, children, testID }) => (
   <View testID={testID}>

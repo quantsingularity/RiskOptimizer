@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 const AssetAllocation = ({ allocation }) => {

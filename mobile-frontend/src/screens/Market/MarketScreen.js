@@ -1,31 +1,29 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
-import {
-  Card,
-  ListItem,
-  Icon,
-  SearchBar,
-  useTheme,
   Button,
   ButtonGroup,
+  ListItem,
+  SearchBar,
+  useTheme,
 } from "@rneui/themed"; // Import ButtonGroup
-import { useFocusEffect } from "@react-navigation/native";
+import _ from "lodash";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import apiService from "../../services/apiService";
 import { getWatchlist } from "../utils/watchlist"; // Import watchlist utility
-import _ from "lodash";
 
 const MarketScreen = ({ navigation }) => {
   const [marketData, setMarketData] = useState([]); // Holds the initial/default list
   const [searchResults, setSearchResults] = useState([]); // Holds search results
   const [watchlistData, setWatchlistData] = useState([]); // Holds watchlist asset data
-  const [watchlistSymbols, setWatchlistSymbols] = useState([]); // Holds watchlist symbols
+  const [_watchlistSymbols, setWatchlistSymbols] = useState([]); // Holds watchlist symbols
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
@@ -149,7 +147,7 @@ const MarketScreen = ({ navigation }) => {
         setIsSearching(false);
       }
     }, 300),
-    [fetchAssetDetails],
+    [],
   );
 
   useEffect(() => {

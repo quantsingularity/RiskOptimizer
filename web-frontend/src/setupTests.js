@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
-import { expect, afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
 
 // Cleanup after each test case
 afterEach(() => {
@@ -33,7 +33,6 @@ global.localStorage = localStorageMock;
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
   disconnect() {}
   observe() {}
   takeRecords() {

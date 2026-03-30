@@ -38,7 +38,10 @@ export const isValidEmail = (email) => {
  */
 export const isValidPercentage = (value) => {
   return (
-    typeof value === "number" && value >= 0 && value <= 100 && !isNaN(value)
+    typeof value === "number" &&
+    value >= 0 &&
+    value <= 100 &&
+    !Number.isNaN(value)
   );
 };
 
@@ -48,7 +51,7 @@ export const isValidPercentage = (value) => {
  * @returns {boolean} True if valid
  */
 export const isPositiveNumber = (value) => {
-  return typeof value === "number" && value > 0 && !isNaN(value);
+  return typeof value === "number" && value > 0 && !Number.isNaN(value);
 };
 
 /**
@@ -57,7 +60,7 @@ export const isPositiveNumber = (value) => {
  * @returns {boolean} True if valid
  */
 export const isNonNegativeNumber = (value) => {
-  return typeof value === "number" && value >= 0 && !isNaN(value);
+  return typeof value === "number" && value >= 0 && !Number.isNaN(value);
 };
 
 /**
@@ -111,14 +114,14 @@ export const validateDateRange = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (isNaN(start.getTime())) {
+  if (Number.isNaN(start.getTime())) {
     return {
       isValid: false,
       error: "Invalid start date",
     };
   }
 
-  if (isNaN(end.getTime())) {
+  if (Number.isNaN(end.getTime())) {
     return {
       isValid: false,
       error: "Invalid end date",

@@ -1,32 +1,30 @@
-import React from "react";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import DownloadIcon from "@mui/icons-material/Download";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
-  Grid,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Typography,
   Divider,
-  Button,
-  IconButton,
-  Tabs,
-  Tab,
-  TextField,
-  Slider,
   FormControl,
+  Grid,
+  IconButton,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import CalculateIcon from "@mui/icons-material/Calculate";
-import DownloadIcon from "@mui/icons-material/Download";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import React from "react";
 
 const RiskAnalysis = () => {
   const [tabValue, setTabValue] = React.useState(0);
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (_event, newValue) => {
     setTabValue(newValue);
   };
 

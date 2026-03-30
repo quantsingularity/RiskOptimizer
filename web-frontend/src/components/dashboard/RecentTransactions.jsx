@@ -1,7 +1,4 @@
-import React from "react";
 import {
-  Box,
-  Typography,
   Card,
   CardContent,
   Table,
@@ -10,6 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 
 const RecentTransactions = ({ transactions }) => {

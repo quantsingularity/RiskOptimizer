@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ButtonGroup, ListItem, useTheme, Icon, Button } from "@rneui/themed";
+import { Button, ButtonGroup, Icon, ListItem, useTheme } from "@rneui/themed";
+import { useContext, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { ThemeContext } from "../../context/ThemeContext"; // Adjust path as needed
 
 const SettingsScreen = ({ navigation }) => {

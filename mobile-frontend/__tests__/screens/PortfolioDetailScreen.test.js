@@ -1,12 +1,12 @@
 // mobile-frontend/__tests__/screens/PortfolioDetailScreen.test.js
 
-import React from "react";
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from "@testing-library/react-native";
+import React from "react";
 // import PortfolioDetailScreen from "../../src/screens/Portfolios/PortfolioDetailScreen"; // Adjust path
 // import { PortfolioContext } from "../../src/context/PortfolioContext";
 // import apiService from "../../src/services/apiService";
@@ -28,13 +28,13 @@ import {
 
 // Mock Screen component for placeholder tests
 import {
-  View,
-  Text,
-  FlatList,
-  Button,
   ActivityIndicator,
+  Button,
+  FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 const MockPortfolioDetailScreen = ({ route, navigation }) => {
@@ -82,7 +82,7 @@ const MockPortfolioDetailScreen = ({ route, navigation }) => {
       }
     };
     fetchData();
-  }, [portfolioId]);
+  }, [portfolioId, mockPortfolioData]);
 
   const renderAsset = ({ item }) => (
     <TouchableOpacity

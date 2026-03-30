@@ -1,7 +1,8 @@
 // code/web-frontend/__tests__/pages/Optimization.test.jsx
 
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
 // import userEvent from "@testing-library/user-event";
 // import Optimization from "../../src/pages/Optimization"; // Adjust path
 // import { PortfolioContext } from "../../src/context/PortfolioContext";

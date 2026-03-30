@@ -1,21 +1,20 @@
-import React from "react";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SettingsIcon from "@mui/icons-material/Settings";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import {
+  Box,
+  Divider,
   Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
-  Box,
   useTheme,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import SettingsIcon from "@mui/icons-material/Settings";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const drawerWidth = 240;
 
@@ -28,7 +27,7 @@ const menuItems = [
 ];
 
 const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
-  const theme = useTheme();
+  const _theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { Button, Card, CheckBox, Slider } from "@rneui/themed";
+import { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
   ActivityIndicator,
   Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { Card, Button, Slider, CheckBox, Input } from "@rneui/themed";
 import RNPickerSelect from "react-native-picker-select"; // Need to install this
 import apiService from "../../services/apiService";
 

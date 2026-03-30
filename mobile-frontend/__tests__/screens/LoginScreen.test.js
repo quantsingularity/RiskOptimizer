@@ -1,14 +1,12 @@
 // mobile-frontend/__tests__/screens/LoginScreen.test.js
 
-import React from "react";
 import {
-  render,
   fireEvent,
-  waitFor,
+  render,
   screen,
+  waitFor,
 } from "@testing-library/react-native";
 import LoginScreen from "../../src/screens/Auth/LoginScreen";
-import { AuthProvider, AuthContext } from "../../src/context/AuthContext";
 
 // Mock navigation
 const mockNavigate = jest.fn();

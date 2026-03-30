@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  Alert,
   Box,
-  Grid,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Typography,
-  Button,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
   IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
-  MenuItem,
-  Alert,
-  CircularProgress,
+  Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { usePortfolio } from "../context/PortfolioContext";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePortfolio } from "../context/PortfolioContext";
 import { formatCurrency, formatPercentage } from "../utils/formatters";
 
 const PortfolioManagement = () => {

@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-  Button,
-} from "react-native";
-import { Card, Divider } from "@rneui/themed";
 import { useFocusEffect } from "@react-navigation/native";
+import { Card } from "@rneui/themed";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Button,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import apiService from "../../services/apiService";
+
 // Import chart component later if needed for risk contribution visualization
 
 const RiskAnalysisScreen = ({ route, navigation }) => {
@@ -43,13 +44,13 @@ const RiskAnalysisScreen = ({ route, navigation }) => {
     useCallback(() => {
       setLoading(true);
       fetchRiskMetrics();
-    }, [portfolioId]),
+    }, [fetchRiskMetrics]),
   );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchRiskMetrics();
-  }, [portfolioId]);
+  }, [fetchRiskMetrics]);
 
   const renderMetric = (label, value, precision = 2) => {
     const displayValue =

@@ -1,10 +1,9 @@
 // mobile-frontend/__tests__/screens/MarketScreen.test.js
 
-import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react-native";
-import { View, Text } from "react-native";
-import MarketScreen from "../../project/mobile-frontend/src/screens/Market/MarketScreen"; // Adjust path
+import { act, render, screen, waitFor } from "@testing-library/react-native";
+import { Text, View } from "react-native";
 import { useMarketData } from "../../project/mobile-frontend/src/hooks/useMarketData"; // Assuming a hook exists
+import MarketScreen from "../../project/mobile-frontend/src/screens/Market/MarketScreen"; // Adjust path
 
 // --- Mocks Setup ---
 jest.mock("../../project/mobile-frontend/src/hooks/useMarketData");
@@ -137,7 +136,7 @@ describe("Market Screen", () => {
     const scrollView = screen.getByTestId("market-scrollview");
     const { refreshControl } = scrollView.props;
 
-    if (refreshControl && refreshControl.props.onRefresh) {
+    if (refreshControl?.props.onRefresh) {
       await act(async () => {
         refreshControl.props.onRefresh();
       });

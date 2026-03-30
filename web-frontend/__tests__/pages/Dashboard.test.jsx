@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { describe, expect, it } from "vitest";
 import Dashboard from "../../src/pages/Dashboard";
 
 const theme = createTheme();

@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { Card, Icon, ListItem } from "@rneui/themed";
+import { useCallback, useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
   ActivityIndicator,
-  RefreshControl,
-  Linking,
   Alert,
   Button,
+  FlatList,
+  Linking,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { Card, ListItem, Icon } from "@rneui/themed";
-import { useFocusEffect } from "@react-navigation/native";
 import apiService from "../../services/apiService";
 
 const TransactionHistoryScreen = ({ route, navigation }) => {
@@ -63,13 +63,13 @@ const TransactionHistoryScreen = ({ route, navigation }) => {
     useCallback(() => {
       setLoading(true);
       fetchHistory();
-    }, [portfolioId]),
+    }, [fetchHistory]),
   );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchHistory();
-  }, [portfolioId]);
+  }, [fetchHistory]);
 
   const openTxInExplorer = (txHash) => {
     // Basic example for Etherscan - adapt based on actual blockchain used

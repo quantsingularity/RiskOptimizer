@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { useEffect, useState } from "react";
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from "recharts";
 
 export default function RiskAnalytics() {
   const [riskData, setRiskData] = useState([]);

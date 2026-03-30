@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/Header.test.jsx
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+
 // import userEvent from "@testing-library/user-event";
 // import Header from "../../src/components/navigation/Header"; // Adjust path
 // import { AuthContext } from "../../src/context/AuthContext"; // If auth context is used

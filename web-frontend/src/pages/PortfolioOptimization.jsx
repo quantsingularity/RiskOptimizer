@@ -1,33 +1,33 @@
-import React, { useState } from "react";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
+  Alert,
   Box,
-  Grid,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Typography,
-  Divider,
-  Button,
-  IconButton,
-  TextField,
-  MenuItem,
-  Alert,
   CircularProgress,
+  Divider,
+  Grid,
+  IconButton,
   List,
   ListItem,
   ListItemText,
+  MenuItem,
+  TextField,
+  Typography,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import CalculateIcon from "@mui/icons-material/Calculate";
+import { useState } from "react";
 import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 
 // Dummy data for the Efficient Frontier chart
@@ -187,7 +187,7 @@ const PortfolioOptimization = () => {
                   />
                   <Tooltip
                     cursor={{ strokeDasharray: "3 3" }}
-                    formatter={(value, name, props) => [
+                    formatter={(value, name, _props) => [
                       `${(value * 100).toFixed(2)}%`,
                       name === "risk" ? "Risk" : "Return",
                     ]}

@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/Sidebar.test.jsx
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+
 // import { MemoryRouter } from "react-router-dom"; // Needed if using Link or NavLink
 // import Sidebar from "../../src/components/navigation/Sidebar"; // Adjust path
 

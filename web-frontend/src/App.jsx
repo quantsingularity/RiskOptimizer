@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import Optimization from "./pages/Optimization";
 import PortfolioManagement from "./pages/PortfolioManagement";
 import RiskAnalysis from "./pages/RiskAnalysis";
-import Optimization from "./pages/Optimization";
 import Settings from "./pages/Settings";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import { useAuth } from "./context/AuthContext";
 
 // Protected Route wrapper component
 function ProtectedRoute({ children }) {

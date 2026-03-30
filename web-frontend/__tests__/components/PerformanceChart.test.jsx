@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/PerformanceChart.test.jsx
 
-import React from "react";
 import { render, screen } from "@testing-library/react";
+
 // import PerformanceChart from "../../src/components/dashboard/PerformanceChart"; // Adjust path
 // Mock charting library used (e.g., Chart.js, Recharts)
 // jest.mock("recharts", () => ({

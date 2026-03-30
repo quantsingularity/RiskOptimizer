@@ -1,10 +1,9 @@
 // mobile-frontend/__tests__/screens/CreatePortfolioScreen.test.js
 
-import React from "react";
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from "@testing-library/react-native";
 import CreatePortfolioScreen from "../../src/screens/Portfolios/CreatePortfolioScreen";

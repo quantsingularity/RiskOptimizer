@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import SaveIcon from "@mui/icons-material/Save";
 import {
+  Alert,
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Typography,
-  TextField,
-  Button,
-  Switch,
-  FormControlLabel,
   Divider,
+  FormControlLabel,
   Grid,
-  Alert,
   Snackbar,
+  Switch,
+  TextField,
+  Typography,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const Settings = () => {

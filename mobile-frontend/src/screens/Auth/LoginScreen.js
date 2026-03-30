@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { Button, Card, Input, Text, useTheme } from "@rneui/themed"; // Import useTheme
+import { useState } from "react";
 import {
-  View,
-  StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from "react-native";
-import { Input, Button, Text, Card, useTheme } from "@rneui/themed"; // Import useTheme
 import { useAuth } from "../../context/AuthContext";
 
 const LoginScreen = () => {

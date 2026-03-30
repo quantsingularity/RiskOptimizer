@@ -1,21 +1,21 @@
-import React, {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createTheme, ThemeProvider as RNEThemeProvider } from "@rneui/themed";
+import {
   createContext,
-  useState,
-  useEffect,
   useCallback,
-  useMemo,
   useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from "react";
 import { Appearance, useColorScheme } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ThemeProvider as RNEThemeProvider, createTheme } from "@rneui/themed";
 import themeConfig from "../styles/theme"; // Import the base theme configuration
 
 const THEME_PREFERENCE_KEY = "@RiskOptimizer:themePreference"; // light | dark | system
 
 export const ThemeContext = createContext({
   themeMode: "system", // 'light', 'dark', or 'system'
-  setThemeMode: (mode) => {},
+  setThemeMode: (_mode) => {},
   isDarkMode: false,
 });
 

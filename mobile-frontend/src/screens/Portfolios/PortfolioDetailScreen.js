@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  ActivityIndicator,
-  RefreshControl,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { Card, Button, Icon, ListItem, Divider, useTheme } from "@rneui/themed"; // Import useTheme
 import { useFocusEffect } from "@react-navigation/native";
-import apiService from "../../services/apiService";
+import { Button, Card, Divider, Icon, ListItem, useTheme } from "@rneui/themed"; // Import useTheme
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { PieChart } from "react-native-chart-kit"; // Import PieChart
 
 const screenWidth = Dimensions.get("window").width;
@@ -250,7 +249,7 @@ const PortfolioDetailScreen = ({ route, navigation }) => {
   const chartConfig = useMemo(
     () => ({
       color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Default color, overridden by slice color
-      labelColor: (opacity = 1) => theme.colors.grey0,
+      labelColor: (_opacity = 1) => theme.colors.grey0,
     }),
     [theme],
   );

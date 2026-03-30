@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { useEffect, useState } from "react";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 export default function PortfolioDashboard() {
   const [portfolio, setPortfolio] = useState([]);
@@ -30,7 +30,7 @@ export default function PortfolioDashboard() {
         paddingAngle={5}
         dataKey="value"
       >
-        {portfolio.map((entry, index) => (
+        {portfolio.map((_entry, index) => (
           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
         ))}
       </Pie>

@@ -10,7 +10,7 @@
  * @returns {string} Formatted currency string
  */
 export const formatCurrency = (value, currency = "USD", decimals = 2) => {
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
     return "$0.00";
   }
 
@@ -30,7 +30,7 @@ export const formatCurrency = (value, currency = "USD", decimals = 2) => {
  * @returns {string} Formatted percentage string
  */
 export const formatPercentage = (value, decimals = 2, showSign = false) => {
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
     return "0.00%";
   }
 
@@ -46,7 +46,7 @@ export const formatPercentage = (value, decimals = 2, showSign = false) => {
  * @returns {string} Formatted number string
  */
 export const formatLargeNumber = (value, decimals = 1) => {
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
     return "0";
   }
 
@@ -74,7 +74,7 @@ export const formatDate = (date, format = "short") => {
 
   const dateObj = typeof date === "string" ? new Date(date) : date;
 
-  if (isNaN(dateObj.getTime())) {
+  if (Number.isNaN(dateObj.getTime())) {
     return "";
   }
 
@@ -94,8 +94,6 @@ export const formatDate = (date, format = "short") => {
         minute: "2-digit",
         second: "2-digit",
       }).format(dateObj);
-
-    case "short":
     default:
       return new Intl.DateTimeFormat("en-US", {
         year: "numeric",
@@ -126,7 +124,7 @@ export const formatAddress = (address, startChars = 6, endChars = 4) => {
  * @returns {object} Category name and color
  */
 export const formatRiskScore = (score) => {
-  if (score === null || score === undefined || isNaN(score)) {
+  if (score === null || score === undefined || Number.isNaN(score)) {
     return { category: "Unknown", color: "grey" };
   }
 
@@ -145,7 +143,7 @@ export const formatRiskScore = (score) => {
  * @returns {object} Interpretation and color
  */
 export const formatSharpeRatio = (sharpe) => {
-  if (sharpe === null || sharpe === undefined || isNaN(sharpe)) {
+  if (sharpe === null || sharpe === undefined || Number.isNaN(sharpe)) {
     return { interpretation: "Unknown", color: "grey" };
   }
 
@@ -166,7 +164,7 @@ export const formatSharpeRatio = (sharpe) => {
  * @returns {string} Basis points string (e.g., '25 bps')
  */
 export const formatBasisPoints = (decimal) => {
-  if (decimal === null || decimal === undefined || isNaN(decimal)) {
+  if (decimal === null || decimal === undefined || Number.isNaN(decimal)) {
     return "0 bps";
   }
 

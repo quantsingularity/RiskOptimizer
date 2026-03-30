@@ -1,12 +1,12 @@
 // mobile-frontend/__tests__/screens/PortfolioListScreen.test.js
 
-import React from "react";
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
 } from "@testing-library/react-native";
+import React from "react";
 // import PortfolioListScreen from "../../src/screens/Portfolios/PortfolioListScreen"; // Adjust path
 // import { PortfolioContext } from "../../src/context/PortfolioContext";
 
@@ -28,13 +28,13 @@ import {
 
 // Mock Screen component for placeholder tests
 import {
-  View,
-  Text,
-  FlatList,
-  Button,
   ActivityIndicator,
+  Button,
+  FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 const MockPortfolioListScreen = ({ navigation }) => {
@@ -55,14 +55,14 @@ const MockPortfolioListScreen = ({ navigation }) => {
         // Simulate API call or context loading
         await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate delay
         setPortfolios(mockPortfoliosData);
-      } catch (err) {
+      } catch (_err) {
         setError("Failed to load portfolios");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [mockPortfoliosData]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
-import { Input, Button, Text, Card } from "@rneui/themed";
+import { Button, Card, Input, Text } from "@rneui/themed";
+import { useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import apiService from "../../services/apiService";
 
 const CreatePortfolioScreen = ({ navigation }) => {
@@ -18,7 +18,7 @@ const CreatePortfolioScreen = ({ navigation }) => {
     setLoading(true);
     setError("");
     try {
-      const response = await apiService.createPortfolio({
+      const _response = await apiService.createPortfolio({
         name,
         description,
         currency,

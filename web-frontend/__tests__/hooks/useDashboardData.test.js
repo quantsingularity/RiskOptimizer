@@ -1,6 +1,7 @@
 // code/web-frontend/__tests__/hooks/useDashboardData.test.js
 
 import { renderHook, waitFor } from "@testing-library/react";
+
 // import { useDashboardData } from "../../src/hooks/useDashboardData"; // Adjust path
 // import apiService from "../../src/services/apiService";
 
@@ -41,7 +42,7 @@ const mockUseDashboardData = () => {
           riskMetrics: [{ title: "Sharpe Ratio", value: "1.5" }],
         };
         setData(mockResponse);
-      } catch (err) {
+      } catch (_err) {
         setError("Failed to fetch dashboard data");
       } finally {
         setLoading(false);

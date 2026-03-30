@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
-import { Input, Button, Text, Card } from "@rneui/themed";
+import { Button, Card, Input, Text } from "@rneui/themed";
+import { useState } from "react";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import apiService from "../../services/apiService";
+
 // Consider adding a date picker component
 
 const AddAssetScreen = ({ route, navigation }) => {
@@ -22,7 +23,7 @@ const AddAssetScreen = ({ route, navigation }) => {
     }
     const qty = parseFloat(quantity);
     const price = parseFloat(purchasePrice);
-    if (isNaN(qty) || qty <= 0 || isNaN(price) || price < 0) {
+    if (Number.isNaN(qty) || qty <= 0 || Number.isNaN(price) || price < 0) {
       setError("Please enter valid quantity and purchase price.");
       return;
     }

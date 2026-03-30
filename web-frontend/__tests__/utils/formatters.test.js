@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  formatCurrency,
-  formatPercentage,
-  formatLargeNumber,
-  formatDate,
   formatAddress,
+  formatBasisPoints,
+  formatCurrency,
+  formatDate,
+  formatDuration,
+  formatLargeNumber,
+  formatPercentage,
   formatRiskScore,
   formatSharpeRatio,
-  formatBasisPoints,
-  formatDuration,
 } from "../../src/utils/formatters";
 
 describe("Formatters", () => {

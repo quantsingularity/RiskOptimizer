@@ -1,23 +1,22 @@
-import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useAuth } from "../context/AuthContext";
 import { Icon } from "@rneui/themed";
+import { useAuth } from "../context/AuthContext";
 
 // Import Screens (create placeholder files first)
 import LoginScreen from "../screens/Auth/LoginScreen";
 import DashboardScreen from "../screens/Dashboard/DashboardScreen";
-import PortfolioListScreen from "../screens/Portfolios/PortfolioListScreen";
-import PortfolioDetailScreen from "../screens/Portfolios/PortfolioDetailScreen";
-import OptimizationScreen from "../screens/Optimize/OptimizationScreen";
 import MarketScreen from "../screens/Market/MarketScreen";
-import SettingsScreen from "../screens/Settings/SettingsScreen";
-import AddAssetScreen from "../screens/Portfolios/AddAssetScreen"; // Placeholder
-import CreatePortfolioScreen from "../screens/Portfolios/CreatePortfolioScreen"; // Placeholder
-import AssetDetailScreen from "../screens/Portfolios/AssetDetailScreen"; // Placeholder
+import OptimizationScreen from "../screens/Optimize/OptimizationScreen";
 import RiskAnalysisScreen from "../screens/Optimize/RiskAnalysisScreen";
+import AddAssetScreen from "../screens/Portfolios/AddAssetScreen"; // Placeholder
+import AssetDetailScreen from "../screens/Portfolios/AssetDetailScreen"; // Placeholder
+import CreatePortfolioScreen from "../screens/Portfolios/CreatePortfolioScreen"; // Placeholder
+import PortfolioDetailScreen from "../screens/Portfolios/PortfolioDetailScreen";
+import PortfolioListScreen from "../screens/Portfolios/PortfolioListScreen";
 import TransactionHistoryScreen from "../screens/Portfolios/TransactionHistoryScreen";
+import SettingsScreen from "../screens/Settings/SettingsScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -109,7 +108,7 @@ const AppTabs = () => (
       headerShown: false, // Headers are handled by individual stacks
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
-        let iconType = "material-community"; // Default type
+        const iconType = "material-community"; // Default type
 
         if (route.name === "Dashboard") {
           iconName = focused ? "view-dashboard" : "view-dashboard-outline";

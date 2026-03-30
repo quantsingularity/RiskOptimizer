@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
-import { Card, Button, Icon, ListItem } from "@rneui/themed";
 import { useFocusEffect } from "@react-navigation/native";
+import { Button, Icon, ListItem } from "@rneui/themed";
+import { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import apiService from "../../services/apiService";
 
 const PortfolioListScreen = ({ navigation }) => {
@@ -36,13 +36,13 @@ const PortfolioListScreen = ({ navigation }) => {
     useCallback(() => {
       setLoading(true);
       fetchPortfolios();
-    }, []),
+    }, [fetchPortfolios]),
   );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchPortfolios();
-  }, []);
+  }, [fetchPortfolios]);
 
   const renderItem = ({ item }) => (
     <ListItem

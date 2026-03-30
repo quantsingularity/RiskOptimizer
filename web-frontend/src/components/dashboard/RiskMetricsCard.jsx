@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 
 const RiskMetricsCard = ({ riskMetrics }) => {
   // Default values if risk metrics aren't provided

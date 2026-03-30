@@ -1,7 +1,7 @@
 // code/web-frontend/__tests__/components/RecentTransactions.test.jsx
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+
 // import RecentTransactions from "../../src/components/dashboard/RecentTransactions"; // Adjust path
 
 // Mock component for testing

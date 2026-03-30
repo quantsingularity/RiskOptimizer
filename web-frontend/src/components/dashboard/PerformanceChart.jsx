@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 
 const PerformanceChart = ({ performanceData }) => {

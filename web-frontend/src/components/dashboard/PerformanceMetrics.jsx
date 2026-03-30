@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Typography, Card, CardContent, Grid } from "@mui/material";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 
 const PerformanceMetrics = ({ metrics }) => {
   // Default values if metrics aren't provided

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
-import { useRiskAnalysis } from "../context/RiskAnalysisContext";
 
 // Custom hook to integrate portfolio management with backend data
 export const usePortfolioManagement = () => {

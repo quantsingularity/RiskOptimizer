@@ -1,24 +1,23 @@
-import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-} from "@mui/material";
 import {
   Home as HomeIcon,
   TrendingUp as OptimizeIcon,
   Analytics as RiskIcon,
   Settings as SettingsIcon,
 } from "@mui/icons-material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -52,7 +51,7 @@ const MainLayout = ({ children }) => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
           },

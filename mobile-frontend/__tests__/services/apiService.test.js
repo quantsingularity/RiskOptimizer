@@ -10,7 +10,7 @@
 // jest.mock("@react-native-async-storage/async-storage", () => require("@react-native-async-storage/async-storage/jest/async-storage-mock"));
 
 // Mock API Service object for placeholder tests
-const mockApiService = {
+const _mockApiService = {
   login: jest.fn(async (email, password) => {
     if (email === "test@example.com" && password === "password") {
       return { token: "fake_token", user: { id: 1, email } };
@@ -21,7 +21,7 @@ const mockApiService = {
     // Assume token is checked internally
     return { summary: {}, chart: [], allocation: [] };
   }),
-  runOptimization: jest.fn(async (portfolioId, params) => {
+  runOptimization: jest.fn(async (portfolioId, _params) => {
     // Assume token is checked internally
     if (portfolioId === "1") {
       return { success: true, results: { weights: {} } };
@@ -53,8 +53,8 @@ describe("Mobile API Service", () => {
 
   describe("login", () => {
     it("should send POST request to /api/auth/login with credentials", async () => {
-      const email = "test@example.com";
-      const password = "password123";
+      const _email = "test@example.com";
+      const _password = "password123";
       // const mockResponse = { token: "fake_token", user: { id: 1 } };
       // fetch.mockResolvedValueOnce({ ok: true, json: async () => mockResponse });
 
@@ -111,7 +111,7 @@ describe("Mobile API Service", () => {
   describe("createPortfolio", () => {
     it("should send POST request to /api/portfolios with data and token", async () => {
       // await AsyncStorage.setItem("token", "test_token");
-      const portfolioData = {
+      const _portfolioData = {
         name: "New Mobile Portfolio",
         description: "Details",
       };

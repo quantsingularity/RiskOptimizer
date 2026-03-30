@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
 import * as SecureStore from "expo-secure-store";
+import { createContext, useContext, useEffect, useState } from "react";
 import apiService from "../services/apiService"; // Assuming apiService is set up later
 
 const AuthContext = createContext();
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       apiService.removeTokenRefreshInterceptor();
     };
-  }, [authState.authenticated, authState.accessToken]);
+  }, [authState.authenticated, authState.accessToken, refreshTokens]);
 
   const value = {
     ...authState,

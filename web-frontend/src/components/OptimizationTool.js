@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Slider, Box, Typography } from "@material-ui/core";
+import { Box, Button, Slider, Typography } from "@material-ui/core";
+import { useState } from "react";
 
 export default function OptimizationTool() {
   const [riskTolerance, setRiskTolerance] = useState(5);
@@ -24,7 +24,7 @@ export default function OptimizationTool() {
       <Typography>Risk Tolerance Level</Typography>
       <Slider
         value={riskTolerance}
-        onChange={(e, v) => setRiskTolerance(v)}
+        onChange={(_e, v) => setRiskTolerance(v)}
         min={1}
         max={10}
         step={1}

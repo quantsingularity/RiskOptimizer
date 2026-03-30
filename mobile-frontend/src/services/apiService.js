@@ -37,7 +37,10 @@ const setAuthHeader = (token) => {
 };
 
 // Setup token refresh interceptor
-const setupTokenRefreshInterceptor = (getAccessToken, refreshTokenCallback) => {
+const setupTokenRefreshInterceptor = (
+  _getAccessToken,
+  refreshTokenCallback,
+) => {
   // Remove existing interceptor if any
   if (tokenRefreshInterceptor !== null) {
     backendApi.interceptors.response.eject(tokenRefreshInterceptor);
@@ -176,7 +179,7 @@ const getAssetPriceHistory = async (symbol, range = "1y", interval = "1d") => {
       params: { range, interval },
     });
     return response;
-  } catch (error) {
+  } catch (_error) {
     console.warn(
       `Backend market data unavailable for ${symbol}, using simulation`,
     );
@@ -191,7 +194,7 @@ const searchAssets = async (query) => {
       params: { q: query },
     });
     return response;
-  } catch (error) {
+  } catch (_error) {
     console.warn("Backend asset search unavailable, using simulation");
     return simulateAssetSearch(query);
   }
@@ -200,14 +203,14 @@ const searchAssets = async (query) => {
 const getMarketOverview = async () => {
   try {
     return await backendApi.get("/market/overview");
-  } catch (error) {
+  } catch (_error) {
     console.warn("Backend market overview unavailable, using simulation");
     return simulateMarketOverview();
   }
 };
 
 // --- Simulation Functions (Fallback for development) ---
-const simulateMarketData = async (symbol, range, interval) => {
+const simulateMarketData = async (symbol, range, _interval) => {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   const generateMockData = (numPoints) => {

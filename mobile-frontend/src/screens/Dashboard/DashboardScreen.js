@@ -1,16 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { Button, Card, Icon, useTheme } from "@rneui/themed"; // Import useTheme
+import { useCallback, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { Card, Button, Icon, useTheme } from "@rneui/themed"; // Import useTheme
 import { useAuth } from "../../context/AuthContext";
 import apiService from "../../services/apiService";
-import { useFocusEffect } from "@react-navigation/native";
+
 // Import chart component later
 // import PerformanceChart from '../components/dashboard/PerformanceChart';
 

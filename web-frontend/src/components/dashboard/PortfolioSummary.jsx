@@ -1,5 +1,4 @@
-import React from "react";
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 
 const PortfolioSummary = ({ portfolioData }) => {
   return (
