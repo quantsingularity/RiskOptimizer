@@ -9,10 +9,14 @@ from typing import Any, Callable, Dict, Optional
 from flask import Response, g, jsonify, request
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import RateLimitError, RiskOptimizerException
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 def create_error_response(error: RiskOptimizerException) -> Dict[str, Any]:

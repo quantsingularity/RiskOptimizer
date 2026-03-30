@@ -4,10 +4,15 @@ import uuid
 from contextvars import ContextVar
 from typing import Any, Dict, Optional
 from flask import g, has_request_context, request
-from riskoptimizer.core.logging import get_logger
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 correlation_id: ContextVar[Optional[str]] = ContextVar("correlation_id", default=None)
-logger = get_logger(__name__)
 
 
 class CorrelationIdFilter:

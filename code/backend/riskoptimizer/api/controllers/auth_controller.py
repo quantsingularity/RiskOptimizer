@@ -16,10 +16,14 @@ from riskoptimizer.core.exceptions import (
     RiskOptimizerException,
     ValidationError,
 )
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.auth_service import auth_service
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # Create blueprint
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")

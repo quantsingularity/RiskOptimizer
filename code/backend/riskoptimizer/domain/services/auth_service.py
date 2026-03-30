@@ -4,15 +4,19 @@ import bcrypt
 import jwt
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import AuthenticationError, ValidationError
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.infrastructure.database.repositories.user_repository import (
     user_repository,
 )
 from riskoptimizer.infrastructure.database.session import get_db_session
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class AuthService:

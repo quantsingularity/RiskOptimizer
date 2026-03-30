@@ -26,9 +26,13 @@ from reporting.reporting_framework import ReportGenerator, ReportTemplate
 from risk_engine.parallel_risk_engine import ParallelRiskEngine
 from risk_models.extreme_value_theory import ExtremeValueRisk
 from risk_models.ml_risk_models import CopulaMLRiskModel, MLRiskModel
-from core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class TestExtremeValueTheory(unittest.TestCase):

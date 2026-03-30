@@ -3,10 +3,14 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 from flask import g, jsonify, request
 from riskoptimizer.core.exceptions import AuthenticationError, AuthorizationError
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.auth_service import auth_service
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 def create_error_response(error: Exception) -> Dict[str, Any]:

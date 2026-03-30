@@ -4,9 +4,13 @@ from typing import Any, Dict, Union
 import werkzeug.exceptions as werkzeug_exceptions
 from flask import Flask, Response, current_app, g, jsonify, request
 from riskoptimizer.core.exceptions import RiskOptimizerException
-from riskoptimizer.core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 def create_error_response(error: Exception) -> Dict[str, Any]:

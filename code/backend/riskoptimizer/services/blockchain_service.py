@@ -18,9 +18,14 @@ from typing import Any
 from web3 import HTTPProvider, Web3
 from web3.gas_strategies.time_based import medium_gas_price_strategy
 from web3.middleware import ExtraDataToPOAMiddleware
-from riskoptimizer.core.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 PORTFOLIO_TRACKER_ABI = json.loads(
     '\n[\n    {\n      "anonymous": false,\n      "inputs": [\n        {\n          "indexed": true,\n          "internalType": "address",\n          "name": "owner",\n          "type": "address"\n        },\n        {\n          "indexed": false,\n          "internalType": "string",\n          "name": "asset",\n          "type": "string"\n        },\n        {\n          "indexed": false,\n          "internalType": "uint256",\n          "name": "newAllocation",\n          "type": "uint256"\n        }\n      ],\n      "name": "AssetRebalanced",\n      "type": "event"\n    },\n    {\n      "anonymous": false,\n      "inputs": [\n        {\n          "indexed": true,\n          "internalType": "address",\n          "name": "owner",\n          "type": "address"\n        }\n      ],\n      "name": "PortfolioUpdated",\n      "type": "event"\n    },\n    {\n      "inputs": [\n        {\n          "internalType": "address",\n          "name": "user",\n          "type": "address"\n        }\n      ],\n      "name": "getPortfolio",\n      "outputs": [\n        {\n          "internalType": "string[]",\n          "name": "",\n          "type": "string[]"\n        },\n        {\n          "internalType": "uint256[]",\n          "name": "",\n          "type": "uint256[]"\n        }\n      ],\n      "stateMutability": "view",\n      "type": "function"\n    },\n    {\n      "inputs": [\n        {\n          "internalType": "address",\n          "name": "",\n          "type": "address"\n        }\n      ],\n      "name": "portfolios",\n      "outputs": [\n        {\n          "internalType": "address",\n          "name": "owner",\n          "type": "address"\n        },\n        {\n          "internalType": "uint256",\n          "name": "timestamp",\n          "type": "uint256"\n        }\n      ],\n      "stateMutability": "view",\n      "type": "function"\n    },\n    {\n      "inputs": [\n        {\n          "internalType": "string[]",\n          "name": "_assets",\n          "type": "string[]"\n        },\n        {\n          "internalType": "uint256[]",\n          "name": "_allocations",\n          "type": "uint256[]"\n        }\n      ],\n      "name": "updatePortfolio",\n      "outputs": [],\n      "stateMutability": "nonpayable",\n      "type": "function"\n    }\n]\n'

@@ -6,14 +6,18 @@ Provides utilities for query optimization, connection pooling, and database moni
 import time
 from contextlib import contextmanager
 from typing import Any, Dict, Generator, List, Optional
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy import event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import QueuePool
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class QueryPerformanceMonitor:

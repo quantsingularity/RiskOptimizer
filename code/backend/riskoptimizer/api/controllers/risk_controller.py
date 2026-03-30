@@ -20,10 +20,14 @@ from riskoptimizer.core.exceptions import (
     RiskOptimizerException,
     ValidationError,
 )
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.risk_service import risk_service
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # Create blueprint
 risk_bp = Blueprint("risk", __name__, url_prefix="/api/v1/risk")

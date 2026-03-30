@@ -16,12 +16,16 @@ import numpy as np
 import pandas as pd
 from typing import Any
 from sklearn.metrics import mean_squared_error, r2_score
+from optimization_model import AdvancedPortfolioOptimizer
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from optimization_model import AdvancedPortfolioOptimizer
-from core.logging import get_logger
-
-logger = get_logger(__name__)
 
 
 def load_sample_data() -> Any:

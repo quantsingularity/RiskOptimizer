@@ -2,12 +2,18 @@ from decimal import Decimal, getcontext
 from typing import Any, Dict, List
 import numpy as np
 from riskoptimizer.core.exceptions import CalculationError, ValidationError
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.services.quant_analysis import RiskMetrics
 from riskoptimizer.utils.cache_utils import memoize
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
 getcontext().prec = 28
 
 

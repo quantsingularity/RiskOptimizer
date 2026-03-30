@@ -1,12 +1,16 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 from riskoptimizer.core.exceptions import DatabaseError
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.database.models import AuditLog
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class AuditService:

@@ -16,11 +16,15 @@ from riskoptimizer.core.exceptions import (
     RiskOptimizerException,
     ValidationError,
 )
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.domain.services.portfolio_service import portfolio_service
 from riskoptimizer.utils.pagination import create_paginated_response
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # Create blueprint
 portfolio_bp = Blueprint("portfolio", __name__, url_prefix="/api/v1/portfolios")

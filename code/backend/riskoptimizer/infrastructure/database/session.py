@@ -8,12 +8,16 @@ from typing import Generator
 
 from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import DatabaseError
-from riskoptimizer.core.logging import get_logger
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # Create SQLAlchemy engine with connection pooling
 engine = create_engine(

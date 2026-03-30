@@ -8,11 +8,15 @@ import os
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 from sqlalchemy import text
-from riskoptimizer.core.logging import get_logger
 from riskoptimizer.infrastructure.cache.redis_cache import redis_cache
 from riskoptimizer.infrastructure.database.session import get_db_session
+import logging
 
-logger = get_logger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 class HealthStatus(Enum):
