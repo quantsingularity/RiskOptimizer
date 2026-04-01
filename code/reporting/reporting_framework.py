@@ -529,7 +529,7 @@ class ReportScheduler:
             try:
                 with open(schedule_path, "r") as f:
                     return json.load(f)
-            except:
+            except Exception:
                 return {}
         else:
             return {}
@@ -546,7 +546,7 @@ class ReportScheduler:
             with open(schedule_path, "w") as f:
                 json.dump(self.schedules, f, indent=2)
             return True
-        except:
+        except Exception:
             return False
 
     def add_schedule(
@@ -663,7 +663,7 @@ class ReportScheduler:
             if schedule["data_provider"]:
                 try:
                     data = eval(schedule["data_provider"])()
-                except:
+                except Exception:
                     return {
                         "success": False,
                         "error": "Failed to get data from provider",
@@ -826,7 +826,7 @@ class ReportArchive:
                         timestamp = datetime.datetime.strptime(
                             timestamp_str, "%Y%m%d_%H%M%S"
                         )
-                    except:
+                    except Exception:
                         timestamp = datetime.datetime.fromtimestamp(
                             os.path.getmtime(file_path)
                         )
@@ -840,7 +840,7 @@ class ReportArchive:
                     try:
                         with open(metadata_path, "r") as f:
                             metadata = json.load(f)
-                    except:
+                    except Exception:
                         pass
                 reports.append(
                     {

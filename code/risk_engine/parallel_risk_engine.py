@@ -426,7 +426,7 @@ class ParallelRiskEngine:
                 es = -np.mean(returns_array[returns_array <= -var])
             elif model == "evt":
                 try:
-                    from services.extreme_value_theory import ExtremeValueRisk
+                    from risk_models.extreme_value_theory import ExtremeValueRisk
 
                     evt_model = ExtremeValueRisk()
                     evt_model.fit_pot(returns_array, threshold_quantile=0.1)
@@ -728,7 +728,7 @@ class ParallelRiskEngine:
                 var = -np.percentile(window_returns, 100 * (1 - confidence_level))
             elif model == "evt":
                 try:
-                    from services.extreme_value_theory import ExtremeValueRisk
+                    from risk_models.extreme_value_theory import ExtremeValueRisk
 
                     evt_model = ExtremeValueRisk()
                     evt_model.fit_pot(window_returns, threshold_quantile=0.1)
@@ -986,7 +986,7 @@ class ParallelRiskEngine:
         cpu_count = mp.cpu_count()
         try:
             cpu_percent = psutil.cpu_percent(interval=0.1)
-        except:
+        except Exception:
             cpu_percent = None
         try:
             memory = psutil.virtual_memory()
@@ -995,7 +995,7 @@ class ParallelRiskEngine:
                 "available": memory.available,
                 "percent": memory.percent,
             }
-        except:
+        except Exception:
             memory_info = None
         return {
             "cpu_count": cpu_count,

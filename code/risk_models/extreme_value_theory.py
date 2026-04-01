@@ -74,7 +74,7 @@ class ExtremeValueRisk:
                 logger.info(
                     f"GPD fit: shape={shape:.4f}, scale={scale:.4f}, threshold={self.threshold:.4f}"
                 )
-            except:
+            except Exception:
                 logger.warning("MLE fitting failed, using method of moments")
                 excess = exceedances - self.threshold
                 mean_excess = np.mean(excess)
@@ -116,7 +116,7 @@ class ExtremeValueRisk:
                 logger.info(
                     f"GEV fit: shape={shape:.4f}, loc={loc:.4f}, scale={scale:.4f}"
                 )
-            except:
+            except Exception:
                 logger.warning("GEV fitting failed, using normal approximation")
                 loc = np.mean(block_maxima)
                 scale = np.std(block_maxima)

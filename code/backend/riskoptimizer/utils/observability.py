@@ -38,9 +38,9 @@ class StructuredLogger:
         Args:
             name: Logger name
         """
-        self.logger = get_logger(name)
+        self.logger = logging.getLogger(name)
         correlation_filter = CorrelationIdFilter()
-        self.logger.logger.addFilter(correlation_filter)
+        self.logger.addFilter(correlation_filter)
 
     def _create_log_entry(self, level: str, message: str, **kwargs) -> Dict[str, Any]:
         """
@@ -59,7 +59,7 @@ class StructuredLogger:
             "level": level,
             "message": message,
             "correlation_id": correlation_id.get()
-            or getattr(g, "correlation_id", None),
+            or (getattr(g, "correlation_id", None) if has_request_context() else None),
             "service": "riskoptimizer",
         }
         if has_request_context():
@@ -269,6 +269,7 @@ def apply_correlation_middleware(app: Any) -> None:
             corr_id = generate_correlation_id()
         set_correlation_id(corr_id)
         g.request_id = str(uuid.uuid4())
+        g.start_time = time.time()
         log_request_start(
             request.method,
             request.path,
@@ -284,7 +285,7 @@ def apply_correlation_middleware(app: Any) -> None:
             response.headers["X-Correlation-ID"] = corr_id
         if hasattr(g, "request_id"):
             response.headers["X-Request-ID"] = g.request_id
-        response_time = getattr(g, "response_time", 0)
+        response_time = time.time() - getattr(g, "start_time", time.time())
         log_request_end(
             request.method,
             request.path,

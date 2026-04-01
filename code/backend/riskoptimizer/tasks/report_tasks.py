@@ -489,7 +489,7 @@ def _get_file_size(file_path: Any) -> Any:
         import os
 
         return os.path.getsize(file_path)
-    except:
+    except Exception:
         return 0
 
 
