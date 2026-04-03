@@ -19,6 +19,7 @@ import warnings
 from io import BytesIO
 from typing import Any
 
+import jinja2
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

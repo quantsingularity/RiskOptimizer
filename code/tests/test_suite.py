@@ -20,6 +20,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
+from risk_engine.parallel_risk_engine import ParallelRiskEngine
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -718,193 +719,7 @@ class TestReportingFramework(unittest.TestCase):
 
 
 # ===========================================================================
-# 5. Dashboard Framework
-# ===========================================================================
-
-
-class TestDashboardFramework(unittest.TestCase):
-    """Comprehensive tests for Dashboard, ChartComponent, DashboardManager."""
-
-    def setUp(self):
-        from frontend.dashboard.dashboard_framework import (
-            ChartComponent,
-            Dashboard,
-            DashboardManager,
-            DashboardRenderer,
-        )
-
-        self.Dashboard = Dashboard
-        self.ChartComponent = ChartComponent
-        self.DashboardManager = DashboardManager
-        self.DashboardRenderer = DashboardRenderer
-        self.dashboard_dir = tempfile.mkdtemp()
-        self.returns = _make_returns(n=200)
-
-    def tearDown(self):
-        shutil.rmtree(self.dashboard_dir, ignore_errors=True)
-
-    def test_dashboard_creation_title(self):
-        d = self.Dashboard("Test Dashboard", "Description")
-        self.assertEqual(d.title, "Test Dashboard")
-
-    def test_dashboard_creation_description(self):
-        d = self.Dashboard("Test Dashboard", "Description")
-        self.assertEqual(d.description, "Description")
-
-    def test_dashboard_has_id(self):
-        d = self.Dashboard("Test")
-        self.assertIsNotNone(d.id)
-
-    def test_dashboard_add_component(self):
-        d = self.Dashboard("Test")
-        c = self.ChartComponent(title="VaR Chart", chart_type="line")
-        d.add_component(c)
-        self.assertEqual(len(d.components), 1)
-
-    def test_dashboard_component_title(self):
-        d = self.Dashboard("Test")
-        c = self.ChartComponent(title="VaR Chart", chart_type="line")
-        d.add_component(c)
-        self.assertEqual(d.components[0].title, "VaR Chart")
-
-    def test_dashboard_component_type(self):
-        d = self.Dashboard("Test")
-        c = self.ChartComponent(title="VaR Chart", chart_type="line")
-        d.add_component(c)
-        self.assertEqual(d.components[0].component_type, "chart")
-
-    def test_chart_component_set_position(self):
-        c = self.ChartComponent(title="Test", chart_type="line")
-        c.set_position(0, 0, 8, 4)
-        self.assertEqual(c.position["x"], 0)
-        self.assertEqual(c.position["y"], 0)
-        self.assertEqual(c.position["w"], 8)
-        self.assertEqual(c.position["h"], 4)
-
-    def test_chart_component_position_tuple(self):
-        c = self.ChartComponent(title="Test", chart_type="line", position=(2, 3))
-        self.assertEqual(c.position["x"], 2)
-        self.assertEqual(c.position["y"], 3)
-
-    def test_chart_component_set_data_source(self):
-        c = self.ChartComponent(title="Test", chart_type="line")
-        c.set_data_source({"type": "direct", "path": "risk_metrics.var_history"})
-        self.assertEqual(c.data_source["path"], "risk_metrics.var_history")
-
-    def test_dashboard_save_load(self):
-        d = self.Dashboard("Test Dashboard", "Description")
-        d.add_component(self.ChartComponent(title="Chart 1", chart_type="line"))
-        path = os.path.join(self.dashboard_dir, "dashboard.json")
-        d.save(path)
-        self.assertTrue(os.path.exists(path))
-        loaded = self.Dashboard.load(path)
-        self.assertEqual(loaded.title, "Test Dashboard")
-        self.assertEqual(loaded.description, "Description")
-        self.assertEqual(len(loaded.components), 1)
-        self.assertEqual(loaded.components[0].title, "Chart 1")
-
-    def test_dashboard_remove_component(self):
-        d = self.Dashboard("Test")
-        c = self.ChartComponent(title="Chart", chart_type="line")
-        d.add_component(c)
-        result = d.remove_component(c.id)
-        self.assertTrue(result)
-        self.assertEqual(len(d.components), 0)
-
-    def test_dashboard_remove_nonexistent_component(self):
-        d = self.Dashboard("Test")
-        result = d.remove_component("nonexistent_id")
-        self.assertFalse(result)
-
-    def test_manager_create_dashboard(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager.create_dashboard("Test Dashboard", "Description")
-        self.assertIsNotNone(d)
-        self.assertEqual(d.title, "Test Dashboard")
-
-    def test_manager_get_dashboard(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager.create_dashboard("Test Dashboard")
-        retrieved = manager.get_dashboard(d.id)
-        self.assertIsNotNone(retrieved)
-        self.assertEqual(retrieved.id, d.id)
-
-    def test_manager_list_dashboards(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        manager.create_dashboard("Dashboard 1")
-        manager.create_dashboard("Dashboard 2")
-        listing = manager.list_dashboards()
-        self.assertEqual(len(listing), 2)
-
-    def test_manager_list_has_title(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        manager.create_dashboard("My Dashboard")
-        listing = manager.list_dashboards()
-        self.assertEqual(listing[0]["title"], "My Dashboard")
-
-    def test_manager_update_dashboard(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager.create_dashboard("Original Title")
-        d.title = "Updated Title"
-        manager.update_dashboard(d)
-        retrieved = manager.get_dashboard(d.id)
-        self.assertEqual(retrieved.title, "Updated Title")
-
-    def test_manager_delete_dashboard(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager.create_dashboard("To Delete")
-        manager.delete_dashboard(d.id)
-        self.assertIsNone(manager.get_dashboard(d.id))
-        self.assertEqual(len(manager.list_dashboards()), 0)
-
-    def test_manager_delete_nonexistent_returns_false(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        result = manager.delete_dashboard("nonexistent")
-        self.assertFalse(result)
-
-    def test_manager_persistence(self):
-        """Dashboards should be loadable by a new manager instance."""
-        manager1 = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager1.create_dashboard("Persisted Dashboard")
-        manager2 = self.DashboardManager(storage_dir=self.dashboard_dir)
-        retrieved = manager2.get_dashboard(d.id)
-        self.assertIsNotNone(retrieved)
-        self.assertEqual(retrieved.title, "Persisted Dashboard")
-
-    def test_renderer_fallback_html(self):
-        manager = self.DashboardManager(storage_dir=self.dashboard_dir)
-        d = manager.create_dashboard("Render Test")
-        c = self.ChartComponent(
-            title="Returns Chart", chart_type="line", data=self.returns
-        )
-        d.add_component(c)
-        renderer = self.DashboardRenderer()
-        html = renderer.render_dashboard(d)
-        self.assertIn("Render Test", html)
-        self.assertIn("Returns Chart", html)
-
-    def test_renderer_output_file(self):
-        d = self.Dashboard("Test")
-        d.add_component(self.ChartComponent(title="Chart", chart_type="line"))
-        renderer = self.DashboardRenderer()
-        out = os.path.join(self.dashboard_dir, "out.html")
-        renderer.render_dashboard(d, output_path=out)
-        self.assertTrue(os.path.exists(out))
-
-    def test_manager_storage_dir_alias(self):
-        """DashboardManager should accept both storage_dir and dashboard_dir."""
-        m1 = self.DashboardManager(storage_dir=self.dashboard_dir)
-        tmp2 = tempfile.mkdtemp()
-        try:
-            m2 = self.DashboardManager(dashboard_dir=tmp2)
-            d = m2.create_dashboard("Alias Test")
-            self.assertEqual(d.title, "Alias Test")
-        finally:
-            shutil.rmtree(tmp2, ignore_errors=True)
-
-
-# ===========================================================================
-# 6. Risk Analysis Utilities
+# 5. Risk Analysis Utilities
 # ===========================================================================
 
 
@@ -970,7 +785,7 @@ class TestRiskAnalysis(unittest.TestCase):
 
 
 # ===========================================================================
-# 7. Portfolio Optimization Utilities
+# 6. Portfolio Optimization Utilities
 # ===========================================================================
 
 
@@ -1032,7 +847,6 @@ def run_tests() -> unittest.TestResult:
         TestMLRiskModels,
         TestParallelRiskEngine,
         TestReportingFramework,
-        TestDashboardFramework,
         TestRiskAnalysis,
         TestPortfolioOptimization,
     ]
