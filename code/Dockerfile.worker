@@ -46,7 +46,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     SQLITE_DB_PATH=/app/data/riskoptimizer.db
 
 # Default: run the Celery worker
-CMD ["celery", "-A", "riskoptimizer.tasks.celery_app:celery_app", \
+CMD ["celery", "-A", "src.tasks.celery_app:celery_app", \
      "worker", \
      "--loglevel=info", \
      "--concurrency=4", \

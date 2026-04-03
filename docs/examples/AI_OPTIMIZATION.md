@@ -31,7 +31,7 @@ Train a neural network for portfolio optimization.
 Use trained AI models for portfolio allocation.
 
 ```python
-from riskoptimizer.services.ai_optimization import PortfolioOptimizer
+from src.services.ai_optimization import PortfolioOptimizer
 import numpy as np
 
 # Load AI optimizer

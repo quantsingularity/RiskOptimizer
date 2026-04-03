@@ -19,22 +19,22 @@ logger = logging.getLogger(__name__)
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
 celery_app = Celery(
-    "riskoptimizer",
+    "src",
     broker=REDIS_URL,
     backend=CELERY_RESULT_BACKEND,
     include=[
-        "riskoptimizer.tasks.risk_tasks",
-        "riskoptimizer.tasks.portfolio_tasks",
-        "riskoptimizer.tasks.report_tasks",
-        "riskoptimizer.tasks.maintenance_tasks",
+        "src.tasks.risk_tasks",
+        "src.tasks.portfolio_tasks",
+        "src.tasks.report_tasks",
+        "src.tasks.maintenance_tasks",
     ],
 )
 celery_app.conf.update(
     task_routes={
-        "riskoptimizer.tasks.risk_tasks.*": {"queue": "risk_calculations"},
-        "riskoptimizer.tasks.portfolio_tasks.*": {"queue": "portfolio_operations"},
-        "riskoptimizer.tasks.report_tasks.*": {"queue": "report_generation"},
-        "riskoptimizer.tasks.maintenance_tasks.*": {"queue": "maintenance"},
+        "src.tasks.risk_tasks.*": {"queue": "risk_calculations"},
+        "src.tasks.portfolio_tasks.*": {"queue": "portfolio_operations"},
+        "src.tasks.report_tasks.*": {"queue": "report_generation"},
+        "src.tasks.maintenance_tasks.*": {"queue": "maintenance"},
     },
     task_default_queue="default",
     task_queues=(
@@ -59,19 +59,19 @@ celery_app.conf.update(
     task_max_retries=3,
     beat_schedule={
         "cleanup-expired-tasks": {
-            "task": "riskoptimizer.tasks.maintenance_tasks.cleanup_expired_tasks",
+            "task": "src.tasks.maintenance_tasks.cleanup_expired_tasks",
             "schedule": crontab(minute=0, hour=2),
         },
         "update-market-data": {
-            "task": "riskoptimizer.tasks.maintenance_tasks.update_market_data",
+            "task": "src.tasks.maintenance_tasks.update_market_data",
             "schedule": crontab(minute=0, hour="*/6"),
         },
         "generate-daily-reports": {
-            "task": "riskoptimizer.tasks.report_tasks.generate_daily_reports",
+            "task": "src.tasks.report_tasks.generate_daily_reports",
             "schedule": crontab(minute=0, hour=8),
         },
         "cache-warmup": {
-            "task": "riskoptimizer.tasks.maintenance_tasks.cache_warmup",
+            "task": "src.tasks.maintenance_tasks.cache_warmup",
             "schedule": crontab(minute=0, hour=6),
         },
     },

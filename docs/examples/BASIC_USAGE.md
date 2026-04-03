@@ -7,7 +7,7 @@ Simple examples to get started with RiskOptimizer.
 Calculate Value at Risk for a portfolio.
 
 ```python
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 
 # Historical daily returns
 returns = [-0.02, 0.01, -0.015, 0.03, -0.01, 0.02, -0.005, 0.025, -0.008, 0.012]
@@ -73,7 +73,7 @@ print(f"Created portfolio ID: {portfolio['data']['id']}")
 ## Example 4: Calculate Multiple Risk Metrics
 
 ```python
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 
 returns = [0.02, -0.01, 0.015, -0.03, 0.025, -0.008, 0.012, -0.015, 0.018, -0.005]
 

@@ -114,7 +114,7 @@ Then create a Pull Request on GitHub.
 from typing import List, Optional
 
 import numpy as np
-from riskoptimizer.core.logging import get_logger
+from src.core.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -207,7 +207,7 @@ export const RiskMetrics = ({ portfolioId }) => {
 ```python
 # tests/test_risk_service.py
 import pytest
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 
 
 class TestRiskService:

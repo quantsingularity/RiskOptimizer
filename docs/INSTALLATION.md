@@ -297,7 +297,7 @@ pytest
 
 ```bash
 cd code/backend
-python -c "from riskoptimizer.infrastructure.database.session import init_db; init_db()"
+python -c "from src.infrastructure.database.session import init_db; init_db()"
 ```
 
 ### 2. Load Sample Data
@@ -326,7 +326,7 @@ cd code/backend && python app.py
 cd web-frontend && npm start
 
 # Terminal 3: Celery (optional)
-cd code/backend && celery -A riskoptimizer.tasks.celery_app worker --loglevel=info
+cd code/backend && celery -A src.tasks.celery_app worker --loglevel=info
 ```
 
 ### 4. Access the Application

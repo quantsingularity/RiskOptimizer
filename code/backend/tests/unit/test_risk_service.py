@@ -44,7 +44,7 @@ class TestRiskService(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.risk_service._validate_confidence(0)
 
-    @patch("riskoptimizer.services.quant_analysis.RiskMetrics.calculate_var")
+    @patch("src.services.quant_analysis.RiskMetrics.calculate_var")
     def test_calculate_var_success(self, mock_calculate_var: Any) -> Any:
         mock_calculate_var.return_value = Decimal("0.02")
         returns = [0.01, 0.02, 0.03]
@@ -55,7 +55,7 @@ class TestRiskService(unittest.TestCase):
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
-    @patch("riskoptimizer.services.quant_analysis.RiskMetrics.calculate_cvar")
+    @patch("src.services.quant_analysis.RiskMetrics.calculate_cvar")
     def test_calculate_cvar_success(self, mock_calculate_cvar: Any) -> Any:
         mock_calculate_cvar.return_value = Decimal("0.03")
         returns = [0.01, 0.02, 0.03]
@@ -66,7 +66,7 @@ class TestRiskService(unittest.TestCase):
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
-    @patch("riskoptimizer.services.quant_analysis.RiskMetrics.calculate_sharpe_ratio")
+    @patch("src.services.quant_analysis.RiskMetrics.calculate_sharpe_ratio")
     def test_calculate_sharpe_ratio_success(
         self, mock_calculate_sharpe_ratio: Any
     ) -> Any:
@@ -88,14 +88,10 @@ class TestRiskService(unittest.TestCase):
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
-    @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_var")
-    @patch("riskoptimizer.domain.services.risk_service.RiskService.calculate_cvar")
-    @patch(
-        "riskoptimizer.domain.services.risk_service.RiskService.calculate_sharpe_ratio"
-    )
-    @patch(
-        "riskoptimizer.domain.services.risk_service.RiskService.calculate_max_drawdown"
-    )
+    @patch("src.domain.services.risk_service.RiskService.calculate_var")
+    @patch("src.domain.services.risk_service.RiskService.calculate_cvar")
+    @patch("src.domain.services.risk_service.RiskService.calculate_sharpe_ratio")
+    @patch("src.domain.services.risk_service.RiskService.calculate_max_drawdown")
     def test_calculate_portfolio_risk_metrics_success(
         self,
         mock_max_drawdown: Any,
@@ -130,7 +126,7 @@ class TestRiskService(unittest.TestCase):
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
-    @patch("riskoptimizer.domain.services.risk_service.pd.DataFrame")
+    @patch("src.domain.services.risk_service.pd.DataFrame")
     @patch("pypfopt.expected_returns.mean_historical_return")
     @patch("pypfopt.risk_models.sample_cov")
     @patch("pypfopt.EfficientFrontier")

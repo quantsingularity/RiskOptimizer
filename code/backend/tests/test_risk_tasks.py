@@ -28,8 +28,8 @@ class TestMonteCarloSimulation:
             "historical_returns": np.random.normal(0.001, 0.02, (252, 3)).tolist(),
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_monte_carlo_simulation_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -60,8 +60,8 @@ class TestMonteCarloSimulation:
                 mock_self, self.portfolio_data, num_simulations=1000, time_horizon=0
             )
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_monte_carlo_risk_metrics(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -92,8 +92,8 @@ class TestVarCvarCalculation:
             "historical_returns": returns.tolist(),
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_var_cvar_calculation_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -135,8 +135,8 @@ class TestEfficientFrontierCalculation:
             "asset_names": ["Asset_A", "Asset_B", "Asset_C", "Asset_D"],
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_efficient_frontier_calculation_success(
         self, mock_task_manager: Any
     ) -> Any:
@@ -188,8 +188,8 @@ class TestStressTestPortfolio:
             {"type": "correlation_breakdown", "noise_level": 0.1},
         ]
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_stress_test_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -261,8 +261,8 @@ class TestRiskTasksIntegration:
             "asset_names": ["Stock_A", "Stock_B", "Stock_C"],
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_monte_carlo_with_realistic_data(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -279,8 +279,8 @@ class TestRiskTasksIntegration:
         assert risk_metrics["cvar_99"] <= risk_metrics["var_99"]
         assert 0 <= risk_metrics["probability_of_loss"] <= 1
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_efficient_frontier_with_realistic_data(
         self, mock_task_manager: Any
     ) -> Any:
@@ -322,8 +322,8 @@ class TestRiskTasksPerformance:
     """Performance tests for risk calculation tasks."""
 
     @pytest.mark.slow
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_monte_carlo_performance(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -345,8 +345,8 @@ class TestRiskTasksPerformance:
         assert "risk_metrics" in result
 
     @pytest.mark.slow
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
     def test_efficient_frontier_performance(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:

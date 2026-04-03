@@ -7,7 +7,7 @@ Advanced usage patterns and features.
 Optimize portfolio allocation using Modern Portfolio Theory.
 
 ```python
-from riskoptimizer.services.ai_optimization import PortfolioOptimizer
+from src.services.ai_optimization import PortfolioOptimizer
 import numpy as np
 
 # Initialize optimizer
@@ -198,7 +198,7 @@ print(f"Tail VaR (99.9%): {tail_var:.4f}")
 Use Celery for long-running calculations.
 
 ```python
-from riskoptimizer.tasks.maintenance_tasks import calculate_portfolio_metrics
+from src.tasks.maintenance_tasks import calculate_portfolio_metrics
 
 # Submit task to Celery
 task = calculate_portfolio_metrics.delay(

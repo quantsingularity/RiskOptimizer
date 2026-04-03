@@ -288,8 +288,8 @@ Response:
 ### Direct API Integration
 
 ```python
-from riskoptimizer.domain.services.risk_service import risk_service
-from riskoptimizer.services.quant_analysis import QuantAnalysis
+from src.domain.services.risk_service import risk_service
+from src.services.quant_analysis import QuantAnalysis
 
 # Calculate VaR
 returns = [-0.02, 0.01, -0.015, 0.03, -0.01, 0.02, -0.005]
@@ -311,7 +311,7 @@ print(f"Sharpe Ratio: {sharpe}")
 ### Portfolio Optimization
 
 ```python
-from riskoptimizer.services.ai_optimization import PortfolioOptimizer
+from src.services.ai_optimization import PortfolioOptimizer
 
 # Initialize optimizer
 optimizer = PortfolioOptimizer()
@@ -410,7 +410,7 @@ curl -X PUT http://localhost:5000/api/v1/portfolio/1 \
 
 ```python
 # Python script for scenario analysis
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 import numpy as np
 
 # Current portfolio returns
@@ -440,7 +440,7 @@ print(f"Bull VaR: {bull_var}")
 
 ```python
 """Calculate comprehensive risk metrics for a portfolio."""
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 
 # Historical returns for your portfolio
 returns = [-0.02, 0.01, -0.015, 0.03, -0.01, 0.02, -0.005, 0.025]
@@ -481,7 +481,7 @@ expected_returns = returns.mean() * 252  # Annualized
 cov_matrix = returns.cov() * 252
 
 # Use optimization service
-from riskoptimizer.services.ai_optimization import PortfolioOptimizer
+from src.services.ai_optimization import PortfolioOptimizer
 
 optimizer = PortfolioOptimizer()
 result = optimizer.optimize_portfolio(
@@ -526,7 +526,7 @@ print(f"Blockchain Portfolio: {portfolio}")
 
 ```python
 """Implement custom risk calculation."""
-from riskoptimizer.services.quant_analysis import RiskMetrics
+from src.services.quant_analysis import RiskMetrics
 import numpy as np
 
 class CustomRiskModel(RiskMetrics):
@@ -547,7 +547,7 @@ custom_risk = custom_model.calculate_custom_metric(returns, threshold=-0.01)
 
 ```python
 """Process multiple portfolios in batch."""
-from riskoptimizer.domain.services.risk_service import risk_service
+from src.domain.services.risk_service import risk_service
 from concurrent.futures import ThreadPoolExecutor
 
 def calculate_portfolio_risk(portfolio_id):

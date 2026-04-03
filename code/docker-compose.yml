@@ -174,7 +174,7 @@ services:
     command:
       - celery
       - -A
-      - riskoptimizer.tasks.celery_app:celery_app
+      - src.tasks.celery_app:celery_app
       - beat
       - --loglevel=info
       - --scheduler
@@ -202,7 +202,7 @@ services:
     command:
       - celery
       - -A
-      - riskoptimizer.tasks.celery_app:celery_app
+      - src.tasks.celery_app:celery_app
       - flower
       - --port=5555
       - --loglevel=info

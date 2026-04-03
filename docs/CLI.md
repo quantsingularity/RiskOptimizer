@@ -299,7 +299,7 @@ FLASK_DEBUG=1 python app.py
 cd code/backend
 
 # Initialize database
-python -c "from riskoptimizer.infrastructure.database.session import init_db; init_db()"
+python -c "from src.infrastructure.database.session import init_db; init_db()"
 
 # Run migrations (if using Alembic)
 alembic upgrade head
@@ -314,13 +314,13 @@ alembic downgrade -1
 cd code/backend
 
 # Start Celery worker
-celery -A riskoptimizer.tasks.celery_app worker --loglevel=info
+celery -A src.tasks.celery_app worker --loglevel=info
 
 # With multiple workers
-celery -A riskoptimizer.tasks.celery_app worker --loglevel=info --concurrency=4
+celery -A src.tasks.celery_app worker --loglevel=info --concurrency=4
 
 # Beat scheduler (for periodic tasks)
-celery -A riskoptimizer.tasks.celery_app beat --loglevel=info
+celery -A src.tasks.celery_app beat --loglevel=info
 ```
 
 ## Node.js CLI (Frontend)

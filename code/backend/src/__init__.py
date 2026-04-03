@@ -3,8 +3,6 @@ RiskOptimizer Backend Package
 """
 
 __version__ = "2.0.0"
-__author__ = "RiskOptimizer Team"
-__email__ = "team@riskoptimizer.com"
 __description__ = "Advanced Financial Risk Management and Portfolio Optimization System"
 
 # Package metadata

@@ -66,9 +66,7 @@ def test_session_commit_rollback() -> Any:
 
 def test_get_db_session_context_manager() -> Any:
     """Test that get_db_session yields a session and commits on clean exit."""
-    with patch(
-        "riskoptimizer.infrastructure.database.session.SessionLocal"
-    ) as mock_factory:
+    with patch("src.infrastructure.database.session.SessionLocal") as mock_factory:
         mock_session = MagicMock()
         mock_factory.return_value = mock_session
         from src.infrastructure.database.session import get_db_session
@@ -81,9 +79,7 @@ def test_get_db_session_context_manager() -> Any:
 
 def test_get_db_session_rolls_back_on_error() -> Any:
     """Test that get_db_session rolls back when an exception occurs."""
-    with patch(
-        "riskoptimizer.infrastructure.database.session.SessionLocal"
-    ) as mock_factory:
+    with patch("src.infrastructure.database.session.SessionLocal") as mock_factory:
         mock_session = MagicMock()
         mock_factory.return_value = mock_session
         from src.core.exceptions import DatabaseError
@@ -177,7 +173,7 @@ def test_allocation_model_columns() -> Any:
 
 def test_check_db_connection_success() -> Any:
     """Test check_db_connection returns True on healthy engine."""
-    with patch("riskoptimizer.infrastructure.database.session.engine") as mock_engine:
+    with patch("src.infrastructure.database.session.engine") as mock_engine:
         mock_conn = MagicMock()
         mock_engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
         mock_engine.connect.return_value.__exit__ = MagicMock(return_value=False)
@@ -190,7 +186,7 @@ def test_check_db_connection_success() -> Any:
 
 def test_check_db_connection_failure() -> Any:
     """Test check_db_connection returns False when engine raises."""
-    with patch("riskoptimizer.infrastructure.database.session.engine") as mock_engine:
+    with patch("src.infrastructure.database.session.engine") as mock_engine:
         mock_engine.connect.side_effect = Exception("Connection refused")
         from src.infrastructure.database.session import check_db_connection
 

@@ -199,8 +199,8 @@ class TestWorkflowIntegration:
             "asset_names": list(asset_params.keys()),
         }
 
-    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.risk_tasks.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     @patch("tasks.report_tasks.task_result_manager")
     def test_complete_risk_analysis_workflow(
         self,
@@ -254,7 +254,7 @@ class TestWorkflowIntegration:
             assert "return_impact" in scenario_result
             assert "volatility_impact" in scenario_result
 
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_portfolio_optimization_and_rebalancing_workflow(
         self, mock_task_manager: Any
     ) -> Any:

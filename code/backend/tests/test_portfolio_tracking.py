@@ -85,7 +85,7 @@ class TestPortfolioTracking:
         assert result["risk_metrics"]["value_at_risk_99"] > 0
         assert 0 <= result["risk_metrics"]["max_drawdown"] <= 1
 
-    @patch("riskoptimizer.services.blockchain_service.Web3")
+    @patch("src.services.blockchain_service.Web3")
     def test_blockchain_portfolio_retrieval(
         self, mock_web3: Any, sample_portfolio: Any
     ) -> Any:
@@ -107,7 +107,7 @@ class TestPortfolioTracking:
         for i, alloc in enumerate(result["allocations"]):
             assert abs(alloc - sample_portfolio["allocations"][i]) < 0.0001
 
-    @patch("riskoptimizer.services.blockchain_service.Web3")
+    @patch("src.services.blockchain_service.Web3")
     def test_blockchain_portfolio_update(
         self, mock_web3: Any, sample_portfolio: Any
     ) -> Any:
@@ -158,7 +158,7 @@ class TestPortfolioTracking:
             >= low_risk_result["performance_metrics"]["volatility"]
         )
 
-    @patch("riskoptimizer.services.blockchain_service.Web3")
+    @patch("src.services.blockchain_service.Web3")
     def test_multi_network_support(self, mock_web3: Any) -> Any:
         """Test blockchain service with multiple networks"""
         mock_web3.return_value.is_connected.return_value = True

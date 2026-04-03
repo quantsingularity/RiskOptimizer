@@ -152,7 +152,7 @@ def mock_redis_client() -> Any:
 @pytest.fixture
 def mock_task_result_manager() -> Any:
     """Mock task result manager for testing."""
-    with patch("riskoptimizer.tasks.celery_app.task_result_manager") as mock_manager:
+    with patch("src.tasks.celery_app.task_result_manager") as mock_manager:
         mock_manager.store_task_progress.return_value = None
         mock_manager.get_task_progress.return_value = {}
         mock_manager.store_task_metadata.return_value = None

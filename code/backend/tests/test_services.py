@@ -74,7 +74,7 @@ def test_efficient_frontier_delegates_correctly() -> Any:
     )
 
     with patch(
-        "riskoptimizer.services.quant_analysis.EfficientFrontier",
+        "src.services.quant_analysis.EfficientFrontier",
         mock_ef_instance.__class__,
     ) as mock_ef_cls:
         mock_ef_cls.return_value = mock_ef_instance

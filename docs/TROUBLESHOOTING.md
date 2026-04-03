@@ -125,7 +125,7 @@ sqlalchemy.exc.ProgrammingError: relation "users" does not exist
 
 ```bash
 cd code/backend
-python -c "from riskoptimizer.infrastructure.database.session import init_db; init_db()"
+python -c "from src.infrastructure.database.session import init_db; init_db()"
 ```
 
 ## API Issues
@@ -287,7 +287,7 @@ DB_USE_SQLITE=false
 **1. Reduce Celery workers:**
 
 ```bash
-celery -A riskoptimizer.tasks.celery_app worker --concurrency=2
+celery -A src.tasks.celery_app worker --concurrency=2
 ```
 
 **2. Limit request size:**
@@ -458,7 +458,7 @@ docker-compose logs -f backend
 ```bash
 # Print loaded config
 cd code/backend
-python -c "from riskoptimizer.core.config import config; print(config.database.url)"
+python -c "from src.core.config import config; print(config.database.url)"
 ```
 
 3. **Test API health:**

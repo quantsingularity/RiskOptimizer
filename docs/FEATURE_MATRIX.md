@@ -13,41 +13,41 @@ Comprehensive feature overview for RiskOptimizer v1.0.0.
 
 ## Core Features
 
-| Feature            | Short description                      | Module / File                                                   | CLI flag / API        | Example (path)          | Notes                          |
-| ------------------ | -------------------------------------- | --------------------------------------------------------------- | --------------------- | ----------------------- | ------------------------------ |
-| **REST API**       | Flask-based REST API with Swagger docs | `code/backend/app.py`                                           | API endpoints         | `/api/v1/*`             | JWT authentication             |
-| **Web Dashboard**  | React-based web interface              | `web-frontend/`                                                 | `npm start`           | `http://localhost:3000` | Responsive design              |
-| **Mobile App**     | React Native mobile app                | `mobile-frontend/`                                              | `npm run android/ios` | -                       | iOS & Android support          |
-| **Authentication** | JWT-based auth with refresh tokens     | `code/backend/riskoptimizer/api/controllers/auth_controller.py` | `/api/v1/auth/*`      | [USAGE.md](USAGE.md)    | Secure token management        |
-| **Database**       | SQLite/PostgreSQL support              | `code/backend/riskoptimizer/infrastructure/database/`           | ENV: `DB_USE_SQLITE`  | -                       | Connection pooling             |
-| **Caching**        | Redis-based caching layer              | `code/backend/riskoptimizer/infrastructure/cache/`              | ENV: `REDIS_HOST`     | -                       | Optional, improves performance |
+| Feature            | Short description                      | Module / File                                         | CLI flag / API        | Example (path)          | Notes                          |
+| ------------------ | -------------------------------------- | ----------------------------------------------------- | --------------------- | ----------------------- | ------------------------------ |
+| **REST API**       | Flask-based REST API with Swagger docs | `code/backend/app.py`                                 | API endpoints         | `/api/v1/*`             | JWT authentication             |
+| **Web Dashboard**  | React-based web interface              | `web-frontend/`                                       | `npm start`           | `http://localhost:3000` | Responsive design              |
+| **Mobile App**     | React Native mobile app                | `mobile-frontend/`                                    | `npm run android/ios` | -                       | iOS & Android support          |
+| **Authentication** | JWT-based auth with refresh tokens     | `code/backend/src/api/controllers/auth_controller.py` | `/api/v1/auth/*`      | [USAGE.md](USAGE.md)    | Secure token management        |
+| **Database**       | SQLite/PostgreSQL support              | `code/backend/src/infrastructure/database/`           | ENV: `DB_USE_SQLITE`  | -                       | Connection pooling             |
+| **Caching**        | Redis-based caching layer              | `code/backend/src/infrastructure/cache/`              | ENV: `REDIS_HOST`     | -                       | Optional, improves performance |
 
 ## Risk Analysis Features
 
-| Feature                 | Short description                       | Module / File                                                | CLI flag / API                    | Example (path)                                                 | Notes                            |
-| ----------------------- | --------------------------------------- | ------------------------------------------------------------ | --------------------------------- | -------------------------------------------------------------- | -------------------------------- |
-| **Value at Risk (VaR)** | Historical & parametric VaR calculation | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/var`                | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | 95%, 99% confidence levels       |
-| **Conditional VaR**     | Expected shortfall calculation          | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/cvar`               | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Also known as Expected Shortfall |
-| **Sharpe Ratio**        | Risk-adjusted return metric             | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/sharpe-ratio`       | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Configurable risk-free rate      |
-| **Maximum Drawdown**    | Peak-to-trough decline calculation      | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/max-drawdown`       | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Recovery period tracking         |
-| **Correlation Matrix**  | Asset correlation analysis              | `code/risk_models/risk_analysis.py`                          | Python lib                        | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Pandas-based calculation         |
-| **Monte Carlo VaR**     | Simulation-based VaR                    | `code/risk_models/risk_analysis.py`                          | Python lib                        | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | 10,000+ simulations              |
-| **GARCH Volatility**    | Time-series volatility forecasting      | `code/risk_models/risk_analysis.py`                          | Python lib                        | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | GARCH(1,1) model                 |
-| **Stress Testing**      | Extreme scenario analysis               | `code/risk_models/risk_analysis.py`                          | Python lib                        | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | Configurable shock multiplier    |
-| **Efficient Frontier**  | Optimal portfolio combinations          | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/efficient-frontier` | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | MPT-based optimization           |
-| **Risk Metrics Bundle** | Comprehensive risk dashboard            | `code/backend/riskoptimizer/domain/services/risk_service.py` | `/api/v1/risk/metrics`            | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | All metrics in one call          |
+| Feature                 | Short description                       | Module / File                                      | CLI flag / API                    | Example (path)                                                 | Notes                            |
+| ----------------------- | --------------------------------------- | -------------------------------------------------- | --------------------------------- | -------------------------------------------------------------- | -------------------------------- |
+| **Value at Risk (VaR)** | Historical & parametric VaR calculation | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/var`                | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | 95%, 99% confidence levels       |
+| **Conditional VaR**     | Expected shortfall calculation          | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/cvar`               | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Also known as Expected Shortfall |
+| **Sharpe Ratio**        | Risk-adjusted return metric             | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/sharpe-ratio`       | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Configurable risk-free rate      |
+| **Maximum Drawdown**    | Peak-to-trough decline calculation      | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/max-drawdown`       | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Recovery period tracking         |
+| **Correlation Matrix**  | Asset correlation analysis              | `code/risk_models/risk_analysis.py`                | Python lib                        | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | Pandas-based calculation         |
+| **Monte Carlo VaR**     | Simulation-based VaR                    | `code/risk_models/risk_analysis.py`                | Python lib                        | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | 10,000+ simulations              |
+| **GARCH Volatility**    | Time-series volatility forecasting      | `code/risk_models/risk_analysis.py`                | Python lib                        | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | GARCH(1,1) model                 |
+| **Stress Testing**      | Extreme scenario analysis               | `code/risk_models/risk_analysis.py`                | Python lib                        | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | Configurable shock multiplier    |
+| **Efficient Frontier**  | Optimal portfolio combinations          | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/efficient-frontier` | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | MPT-based optimization           |
+| **Risk Metrics Bundle** | Comprehensive risk dashboard            | `code/backend/src/domain/services/risk_service.py` | `/api/v1/risk/metrics`            | [examples/BASIC_USAGE.md](examples/BASIC_USAGE.md)             | All metrics in one call          |
 
 ## Portfolio Management Features
 
-| Feature                  | Short description           | Module / File                                                        | CLI flag / API                     | Example (path)                                                 | Notes                     |
-| ------------------------ | --------------------------- | -------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------------------------- | ------------------------- |
-| **Create Portfolio**     | Create and save portfolios  | `code/backend/riskoptimizer/api/controllers/portfolio_controller.py` | `/api/v1/portfolio`                | [USAGE.md](USAGE.md)                                           | Multi-asset support       |
-| **Update Portfolio**     | Modify existing portfolios  | `code/backend/riskoptimizer/api/controllers/portfolio_controller.py` | `/api/v1/portfolio/{id}`           | [USAGE.md](USAGE.md)                                           | Versioning support        |
-| **Delete Portfolio**     | Remove portfolios           | `code/backend/riskoptimizer/api/controllers/portfolio_controller.py` | `/api/v1/portfolio/{id}`           | [USAGE.md](USAGE.md)                                           | Soft delete               |
-| **List Portfolios**      | Get user portfolios         | `code/backend/riskoptimizer/api/controllers/portfolio_controller.py` | `/api/v1/portfolio/user/{id}`      | [USAGE.md](USAGE.md)                                           | Pagination support        |
-| **Blockchain Sync**      | Sync with blockchain ledger | `code/backend/riskoptimizer/api/controllers/portfolio_controller.py` | `/api/v1/portfolio/address/{addr}` | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | Web3 integration          |
-| **Asset Allocation**     | Visual allocation breakdown | `web-frontend/src/components/dashboard/AssetAllocation.jsx`          | Web UI                             | -                                                              | Interactive charts        |
-| **Performance Tracking** | Historical performance      | `web-frontend/src/components/dashboard/PerformanceChart.jsx`         | Web UI                             | -                                                              | Time-series visualization |
+| Feature                  | Short description           | Module / File                                                | CLI flag / API                     | Example (path)                                                 | Notes                     |
+| ------------------------ | --------------------------- | ------------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------- | ------------------------- |
+| **Create Portfolio**     | Create and save portfolios  | `code/backend/src/api/controllers/portfolio_controller.py`   | `/api/v1/portfolio`                | [USAGE.md](USAGE.md)                                           | Multi-asset support       |
+| **Update Portfolio**     | Modify existing portfolios  | `code/backend/src/api/controllers/portfolio_controller.py`   | `/api/v1/portfolio/{id}`           | [USAGE.md](USAGE.md)                                           | Versioning support        |
+| **Delete Portfolio**     | Remove portfolios           | `code/backend/src/api/controllers/portfolio_controller.py`   | `/api/v1/portfolio/{id}`           | [USAGE.md](USAGE.md)                                           | Soft delete               |
+| **List Portfolios**      | Get user portfolios         | `code/backend/src/api/controllers/portfolio_controller.py`   | `/api/v1/portfolio/user/{id}`      | [USAGE.md](USAGE.md)                                           | Pagination support        |
+| **Blockchain Sync**      | Sync with blockchain ledger | `code/backend/src/api/controllers/portfolio_controller.py`   | `/api/v1/portfolio/address/{addr}` | [examples/ADVANCED_FEATURES.md](examples/ADVANCED_FEATURES.md) | Web3 integration          |
+| **Asset Allocation**     | Visual allocation breakdown | `web-frontend/src/components/dashboard/AssetAllocation.jsx`  | Web UI                             | -                                                              | Interactive charts        |
+| **Performance Tracking** | Historical performance      | `web-frontend/src/components/dashboard/PerformanceChart.jsx` | Web UI                             | -                                                              | Time-series visualization |
 
 ## AI/ML Features
 
@@ -74,19 +74,19 @@ Comprehensive feature overview for RiskOptimizer v1.0.0.
 
 ## Infrastructure Features
 
-| Feature                    | Short description              | Module / File                                                        | CLI flag / API         | Example (path)                     | Notes                |
-| -------------------------- | ------------------------------ | -------------------------------------------------------------------- | ---------------------- | ---------------------------------- | -------------------- |
-| **Docker Support**         | Containerized deployment       | `docker-compose.yml`                                                 | `docker-compose up`    | [INSTALLATION.md](INSTALLATION.md) | All services         |
-| **Celery Tasks**           | Async task processing          | `code/backend/riskoptimizer/tasks/`                                  | `celery worker`        | [CLI.md](CLI.md)                   | Redis broker         |
-| **Health Checks**          | Service status monitoring      | `code/backend/app.py`                                                | `/health`              | [API.md](API.md)                   | DB & cache status    |
-| **Performance Monitoring** | Prometheus metrics             | `code/backend/riskoptimizer/utils/performance.py`                    | `/api/v1/monitoring/*` | [API.md](API.md)                   | Admin only           |
-| **Error Handling**         | Structured error responses     | `code/backend/riskoptimizer/api/middleware/error_middleware.py`      | All endpoints          | [API.md](API.md)                   | Standard format      |
-| **Rate Limiting**          | Request throttling             | `code/backend/riskoptimizer/api/middleware/rate_limit_middleware.py` | All API endpoints      | [API.md](API.md)                   | 60/min default       |
-| **Logging**                | Structured logging             | `code/backend/riskoptimizer/core/logging.py`                         | Application-wide       | -                                  | structlog-based      |
-| **CORS**                   | Cross-origin support           | `code/backend/app.py`                                                | API-wide               | -                                  | Configurable origins |
-| **API Documentation**      | Swagger/OpenAPI                | `code/backend/app.py`                                                | `/apidocs`             | http://localhost:5000/apidocs      | Interactive docs     |
-| **CI/CD Pipeline**         | Automated testing & deployment | `.github/workflows/`                                                 | GitHub Actions         | -                                  | Test, lint, deploy   |
-| **Pre-commit Hooks**       | Code quality gates             | `.pre-commit-config.yaml`                                            | Git hooks              | [CLI.md](CLI.md)                   | Formatting, linting  |
+| Feature                    | Short description              | Module / File                                              | CLI flag / API         | Example (path)                     | Notes                |
+| -------------------------- | ------------------------------ | ---------------------------------------------------------- | ---------------------- | ---------------------------------- | -------------------- |
+| **Docker Support**         | Containerized deployment       | `docker-compose.yml`                                       | `docker-compose up`    | [INSTALLATION.md](INSTALLATION.md) | All services         |
+| **Celery Tasks**           | Async task processing          | `code/backend/src/tasks/`                                  | `celery worker`        | [CLI.md](CLI.md)                   | Redis broker         |
+| **Health Checks**          | Service status monitoring      | `code/backend/app.py`                                      | `/health`              | [API.md](API.md)                   | DB & cache status    |
+| **Performance Monitoring** | Prometheus metrics             | `code/backend/src/utils/performance.py`                    | `/api/v1/monitoring/*` | [API.md](API.md)                   | Admin only           |
+| **Error Handling**         | Structured error responses     | `code/backend/src/api/middleware/error_middleware.py`      | All endpoints          | [API.md](API.md)                   | Standard format      |
+| **Rate Limiting**          | Request throttling             | `code/backend/src/api/middleware/rate_limit_middleware.py` | All API endpoints      | [API.md](API.md)                   | 60/min default       |
+| **Logging**                | Structured logging             | `code/backend/src/core/logging.py`                         | Application-wide       | -                                  | structlog-based      |
+| **CORS**                   | Cross-origin support           | `code/backend/app.py`                                      | API-wide               | -                                  | Configurable origins |
+| **API Documentation**      | Swagger/OpenAPI                | `code/backend/app.py`                                      | `/apidocs`             | http://localhost:5000/apidocs      | Interactive docs     |
+| **CI/CD Pipeline**         | Automated testing & deployment | `.github/workflows/`                                       | GitHub Actions         | -                                  | Test, lint, deploy   |
+| **Pre-commit Hooks**       | Code quality gates             | `.pre-commit-config.yaml`                                  | Git hooks              | [CLI.md](CLI.md)                   | Formatting, linting  |
 
 ## Testing Features
 

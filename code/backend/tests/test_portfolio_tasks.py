@@ -40,8 +40,8 @@ class TestPortfolioOptimization:
             "min_weight_per_asset": 0.05,
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_mean_variance_optimization_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -65,8 +65,8 @@ class TestPortfolioOptimization:
         assert "volatility" in metrics
         assert "sharpe_ratio" in metrics
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_risk_parity_optimization_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -83,8 +83,8 @@ class TestPortfolioOptimization:
         risk_contrib_std = np.std(risk_contrib)
         assert risk_contrib_std < 0.1
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_minimum_variance_optimization_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -132,8 +132,8 @@ class TestPortfolioRebalancing:
             "transaction_cost_rate": 0.001,
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_rebalancing_analysis_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -167,8 +167,8 @@ class TestPortfolioRebalancing:
             assert "transaction_amount" in transaction
             assert "transaction_type" in transaction
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_rebalancing_with_new_assets(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -206,8 +206,8 @@ class TestPortfolioPerformanceAnalysis:
         self.benchmark_data = {"returns": benchmark_returns.tolist()}
         self.analysis_period = {"start_date": "2023-01-01", "end_date": "2023-12-31"}
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_performance_analysis_success(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -254,8 +254,8 @@ class TestPortfolioPerformanceAnalysis:
         assert -1 <= perf_summary["max_drawdown"] <= 0
         assert benchmark_comp["beta"] > 0
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_performance_analysis_with_different_lengths(
         self, mock_task_manager: Any
     ) -> Any:
@@ -388,8 +388,8 @@ class TestPortfolioTasksIntegration:
             "asset_names": [f"Asset_{i}" for i in range(n_assets)],
         }
 
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_full_optimization_workflow(
         self, mock_task_manager: Any, mock_celery_manager: Any
     ) -> Any:
@@ -421,8 +421,8 @@ class TestPortfolioTasksPerformance:
     """Performance tests for portfolio management tasks."""
 
     @pytest.mark.slow
-    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
-    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    @patch("src.tasks.celery_app.task_result_manager")
+    @patch("src.tasks.portfolio_tasks.task_result_manager")
     def test_optimization_performance_large_universe(
         self, mock_task_manager: Any
     ) -> Any:
