@@ -18,8 +18,18 @@ from typing import Any
 from dotenv import load_dotenv
 from eth_account import Account
 from web3 import HTTPProvider, Web3
-from web3.gas_strategies.time_based import medium_gas_price_strategy
-from web3.middleware import ExtraDataToPOAMiddleware
+
+try:
+    from web3.middleware import ExtraDataToPOAMiddleware
+except ImportError:
+    try:
+        from web3.middleware.proof_of_authority import ExtraDataToPOAMiddleware
+    except ImportError:
+        ExtraDataToPOAMiddleware = None
+try:
+    from web3.gas_strategies.time_based import medium_gas_price_strategy
+except ImportError:
+    medium_gas_price_strategy = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -91,7 +101,11 @@ class BlockchainService:
         self.network = network
         self.network_config = NETWORKS.get(network, NETWORKS["ethereum"])
         self.w3 = Web3(HTTPProvider(self.network_config["rpc_url"]))
-        self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+        if ExtraDataToPOAMiddleware is not None:
+            try:
+                self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+            except Exception:
+                self.w3.middleware_onion.add(ExtraDataToPOAMiddleware)
         self.w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
         self.portfolio_tracker = self.w3.eth.contract(
             address=Web3.to_checksum_address(DEFAULT_PORTFOLIO_TRACKER_ADDRESS),
@@ -298,7 +312,11 @@ class BlockchainService:
             self.network = network
             self.network_config = NETWORKS[network]
             self.w3 = Web3(HTTPProvider(self.network_config["rpc_url"]))
-            self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+            if ExtraDataToPOAMiddleware is not None:
+                try:
+                    self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+                except Exception:
+                    self.w3.middleware_onion.add(ExtraDataToPOAMiddleware)
             self.w3.eth.set_gas_price_strategy(medium_gas_price_strategy)
             self.portfolio_tracker = self.w3.eth.contract(
                 address=Web3.to_checksum_address(DEFAULT_PORTFOLIO_TRACKER_ADDRESS),

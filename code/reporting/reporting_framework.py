@@ -19,13 +19,10 @@ import warnings
 from io import BytesIO
 from typing import Any
 
-import jinja2
-import markdown
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
@@ -322,7 +319,9 @@ class ReportGenerator:
             }
             if section["type"] == "text":
                 if "##" in section["content"] or "*" in section["content"]:
-                    processed_section["content"] = markdown.markdown(section["content"])
+                    processed_section["content"] = __import__("markdown").markdown(
+                        section["content"]
+                    )
             elif section["type"] == "chart":
                 if (
                     isinstance(section["content"], dict)
@@ -353,6 +352,10 @@ class ReportGenerator:
         return context
 
     def _render_html(self, template_str: Any, context: Any) -> Any:
+        try:
+            import jinja2
+        except ImportError:
+            jinja2 = None
         """
         Render HTML from template and context
 

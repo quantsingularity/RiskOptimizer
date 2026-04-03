@@ -6,8 +6,7 @@ from datetime import datetime
 from typing import Dict, List
 
 from fastapi import APIRouter, HTTPException
-from tasks import maintenance_tasks, portfolio_tasks, report_tasks, risk_tasks
-from tasks.celery_app import (
+from riskoptimizer.tasks.celery_app import (
     cancel_task,
     celery_app,
     get_active_tasks,
@@ -16,6 +15,7 @@ from tasks.celery_app import (
     get_worker_stats,
     task_result_manager,
 )
+from tasks import maintenance_tasks, portfolio_tasks, report_tasks, risk_tasks
 
 router = APIRouter(prefix="/api/v1/tasks", tags=["tasks"])
 

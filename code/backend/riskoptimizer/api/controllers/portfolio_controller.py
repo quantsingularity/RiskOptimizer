@@ -24,6 +24,21 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
+
+
+def _serialize(obj):
+    """Recursively convert Decimal and non-JSON-serializable types."""
+    from decimal import Decimal
+
+    if isinstance(obj, Decimal):
+        return str(obj)
+    if isinstance(obj, dict):
+        return {k: _serialize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_serialize(i) for i in obj]
+    return obj
+
+
 logger = logging.getLogger(__name__)
 
 # Create blueprint
@@ -124,7 +139,7 @@ def get_portfolio(user_address: str) -> Response:
 
         # Create success response
         response = create_success_response(
-            data=portfolio_data, message="Portfolio retrieved successfully"
+            data=_serialize(portfolio_data), message="Portfolio retrieved successfully"
         )
 
         logger.info(f"Portfolio retrieved successfully for address: {user_address}")
@@ -252,7 +267,7 @@ def create_portfolio() -> Response:
 
         # Create success response
         response = create_success_response(
-            data=portfolio_data, message="Portfolio created successfully"
+            data=_serialize(portfolio_data), message="Portfolio created successfully"
         )
 
         logger.info(
@@ -360,7 +375,7 @@ def save_portfolio() -> Response:
 
         # Create success response
         response = create_success_response(
-            data=portfolio_data, message="Portfolio saved successfully"
+            data=_serialize(portfolio_data), message="Portfolio saved successfully"
         )
 
         logger.info(
@@ -472,7 +487,7 @@ def update_portfolio(portfolio_id: int) -> Response:
 
         # Create success response
         response = create_success_response(
-            data=portfolio_data, message="Portfolio updated successfully"
+            data=_serialize(portfolio_data), message="Portfolio updated successfully"
         )
 
         logger.info(f"Portfolio updated successfully for ID: {portfolio_id}")

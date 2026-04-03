@@ -130,10 +130,10 @@ class TestRiskService(unittest.TestCase):
         self.risk_service.cache.get.assert_called_once()
         self.risk_service.cache.set.assert_called_once()
 
-    @patch("pypfopt.EfficientFrontier")
-    @patch("pypfopt.risk_models.sample_cov")
+    @patch("riskoptimizer.domain.services.risk_service.pd.DataFrame")
     @patch("pypfopt.expected_returns.mean_historical_return")
-    @patch("pandas.DataFrame")
+    @patch("pypfopt.risk_models.sample_cov")
+    @patch("pypfopt.EfficientFrontier")
     def test_calculate_efficient_frontier_success(
         self,
         mock_dataframe: Any,

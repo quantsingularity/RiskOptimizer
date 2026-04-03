@@ -1,238 +1,198 @@
+"""
+Database layer tests for RiskOptimizer.
+
+Tests the SQLAlchemy session management and model definitions
+using a transient in-memory SQLite database.
+"""
+
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-from db.database import Database
+import pytest
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 
-class MockDatabaseError(BaseException):
-    pass
-
-
-@patch("db.database.psycopg2")
-def test_database_connect_success(mock_psycopg2: Any) -> Any:
-    """Test successful database connection."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    db = Database()
-    assert db.connection is None
-    assert db.cursor is None
-    result = db.connect()
-    assert result is True
-    assert db.connection == mock_conn
-    assert db.cursor == mock_cursor
-    mock_psycopg2.connect.assert_called_once()
-    mock_conn.cursor.assert_called_once()
-
-
-@patch("db.database.psycopg2")
-def test_database_connect_failure(mock_psycopg2: Any) -> Any:
-    """Test database connection failure."""
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    mock_psycopg2.connect.side_effect = MockDatabaseError("Connection failed")
-    db = Database()
-    result = db.connect()
-    assert result is False
-    assert db.connection is None
-    assert db.cursor is None
-    mock_psycopg2.connect.assert_called_once()
-
-
-@patch("db.database.psycopg2")
-def test_database_disconnect(mock_psycopg2: Any) -> Any:
-    """Test disconnecting from the database."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    db = Database()
-    db.connect()
-    assert db.connection is not None
-    assert db.cursor is not None
-    db.disconnect()
-    assert db.connection is None
-    assert db.cursor is None
-    mock_cursor.close.assert_called_once()
-    mock_conn.close.assert_called_once()
-
-
-@patch("db.database.psycopg2")
-def test_execute_query_select_success(mock_psycopg2: Any) -> Any:
-    """Test executing a SELECT query successfully."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchall.return_value = [{"id": 1, "name": "test"}]
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    db = Database()
-    db.connect()
-    query = "SELECT * FROM users WHERE id = %s"
-    params = (1,)
-    result = db.execute_query(query, params)
-    assert result == [{"id": 1, "name": "test"}]
-    mock_cursor.execute.assert_called_once_with(query, params)
-    mock_cursor.fetchall.assert_called_once()
-    mock_conn.commit.assert_not_called()
-
-
-@patch("db.database.psycopg2")
-def test_execute_query_insert_success(mock_psycopg2: Any) -> Any:
-    """Test executing an INSERT query successfully."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    db = Database()
-    db.connect()
-    query = "INSERT INTO users (name) VALUES (%s)"
-    params = ("new_user",)
-    result = db.execute_query(query, params)
-    assert result is True
-    mock_cursor.execute.assert_called_once_with(query, params)
-    mock_cursor.fetchall.assert_not_called()
-    mock_conn.commit.assert_called_once()
-
-
-@patch("db.database.psycopg2")
-def test_execute_query_error(mock_psycopg2: Any) -> Any:
-    """Test handling of query execution error."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    mock_cursor.execute.side_effect = MockDatabaseError("Query failed")
-    db = Database()
-    db.connect()
-    query = "SELECT * FROM non_existent_table"
-    result = db.execute_query(query)
-    assert result is None
-    mock_cursor.execute.assert_called_once_with(query, None)
-    mock_conn.rollback.assert_called_once()
-    mock_conn.commit.assert_not_called()
-
-
-@patch.object(Database, "execute_query")
-def test_get_portfolio_success(mock_execute_query: Any) -> Any:
-    """Test get_portfolio successfully retrieves data."""
-    mock_address = "0x123"
-    mock_data = [
-        {
-            "id": 1,
-            "user_address": mock_address,
-            "created_at": None,
-            "asset_symbol": "ETH",
-            "percentage": 0.6,
-        },
-        {
-            "id": 1,
-            "user_address": mock_address,
-            "created_at": None,
-            "asset_symbol": "BTC",
-            "percentage": 0.4,
-        },
-    ]
-    mock_execute_query.return_value = mock_data
-    db = Database()
-    result = db.get_portfolio(mock_address)
-    assert result == mock_data
-    expected_query = "\n        SELECT p.id, p.user_address, p.created_at,\n               a.asset_symbol, a.percentage\n        FROM portfolios p\n        LEFT JOIN allocations a ON p.id = a.portfolio_id\n        WHERE p.user_address = %s\n        "
-    mock_execute_query.assert_called_once_with(expected_query, (mock_address,))
-
-
-@patch.object(Database, "execute_query")
-def test_get_portfolio_not_found(mock_execute_query: Any) -> Any:
-    """Test get_portfolio when user has no portfolio."""
-    mock_address = "0x456"
-    mock_execute_query.return_value = []
-    db = Database()
-    result = db.get_portfolio(mock_address)
-    assert result == []
-    mock_execute_query.assert_called_once()
-
-
-@patch("db.database.psycopg2")
-def test_save_portfolio_new(mock_psycopg2: Any) -> Any:
-    """Test saving a new portfolio."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    mock_cursor.fetchone.side_effect = [None, {"id": 5}]
-    db = Database()
-    db.connect()
-    user_address = "0xNEW"
-    allocations = {"AAPL": 0.7, "GOOG": 0.3}
-    result = db.save_portfolio(user_address, allocations)
-    assert result is True
-    assert mock_cursor.execute.call_count == 4
-    mock_cursor.execute.assert_any_call(
-        "SELECT id FROM portfolios WHERE user_address = %s", (user_address,)
+def _make_engine():
+    return create_engine(
+        "sqlite:///:memory:", connect_args={"check_same_thread": False}
     )
-    mock_cursor.execute.assert_any_call(
-        "INSERT INTO portfolios (user_address) VALUES (%s) RETURNING id",
-        (user_address,),
-    )
-    mock_cursor.execute.assert_any_call(
-        "INSERT INTO allocations (portfolio_id, asset_symbol, percentage) VALUES (%s, %s, %s)",
-        (5, "AAPL", 0.7),
-    )
-    mock_cursor.execute.assert_any_call(
-        "INSERT INTO allocations (portfolio_id, asset_symbol, percentage) VALUES (%s, %s, %s)",
-        (5, "GOOG", 0.3),
-    )
-    mock_conn.commit.assert_called_once()
 
 
-@patch("db.database.psycopg2")
-def test_save_portfolio_update(mock_psycopg2: Any) -> Any:
-    """Test updating an existing portfolio."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    mock_cursor.fetchone.return_value = {"id": 10}
-    db = Database()
-    db.connect()
-    user_address = "0xUPDATE"
-    allocations = {"MSFT": 1.0}
-    result = db.save_portfolio(user_address, allocations)
-    assert result is True
-    assert mock_cursor.execute.call_count == 3
-    mock_cursor.execute.assert_any_call(
-        "SELECT id FROM portfolios WHERE user_address = %s", (user_address,)
-    )
-    mock_cursor.execute.assert_any_call(
-        "DELETE FROM allocations WHERE portfolio_id = %s", (10,)
-    )
-    mock_cursor.execute.assert_any_call(
-        "INSERT INTO allocations (portfolio_id, asset_symbol, percentage) VALUES (%s, %s, %s)",
-        (10, "MSFT", 1.0),
-    )
-    mock_conn.commit.assert_called_once()
+def _make_session(engine):
+    Session = sessionmaker(bind=engine)
+    return Session()
 
 
-@patch("db.database.psycopg2")
-def test_save_portfolio_error(mock_psycopg2: Any) -> Any:
-    """Test error handling during portfolio save."""
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_psycopg2.connect.return_value = mock_conn
-    mock_conn.cursor.return_value = mock_cursor
-    mock_psycopg2.DatabaseError = MockDatabaseError
-    mock_cursor.execute.side_effect = MockDatabaseError("Save failed")
-    db = Database()
-    db.connect()
-    user_address = "0xFAIL"
-    allocations = {"FAIL": 1.0}
-    result = db.save_portfolio(user_address, allocations)
-    assert result is False
-    mock_conn.rollback.assert_called_once()
-    mock_conn.commit.assert_not_called()
+def _create_tables(engine):
+    from riskoptimizer.infrastructure.database.models import Base
+
+    Base.metadata.create_all(bind=engine)
+
+
+# ---------------------------------------------------------------------------
+# Session management tests
+# ---------------------------------------------------------------------------
+
+
+def test_engine_creation() -> Any:
+    """Test that an in-memory SQLite engine can be created."""
+    engine = _make_engine()
+    assert engine is not None
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT 1"))
+        assert result.fetchone()[0] == 1
+
+
+def test_session_commit_rollback() -> Any:
+    """Test session commit and rollback behave correctly."""
+    engine = _make_engine()
+    _create_tables(engine)
+    Session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+    session = Session()
+    try:
+        session.execute(text("SELECT 1"))
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def test_get_db_session_context_manager() -> Any:
+    """Test that get_db_session yields a session and commits on clean exit."""
+    with patch(
+        "riskoptimizer.infrastructure.database.session.SessionLocal"
+    ) as mock_factory:
+        mock_session = MagicMock()
+        mock_factory.return_value = mock_session
+        from riskoptimizer.infrastructure.database.session import get_db_session
+
+        with get_db_session() as session:
+            assert session is mock_session
+        mock_session.commit.assert_called_once()
+        mock_session.close.assert_called_once()
+
+
+def test_get_db_session_rolls_back_on_error() -> Any:
+    """Test that get_db_session rolls back when an exception occurs."""
+    with patch(
+        "riskoptimizer.infrastructure.database.session.SessionLocal"
+    ) as mock_factory:
+        mock_session = MagicMock()
+        mock_factory.return_value = mock_session
+        from riskoptimizer.core.exceptions import DatabaseError
+        from riskoptimizer.infrastructure.database.session import get_db_session
+
+        with pytest.raises(DatabaseError):
+            with get_db_session() as session:
+                raise RuntimeError("simulated error")
+        mock_session.rollback.assert_called_once()
+        mock_session.close.assert_called_once()
+
+
+# ---------------------------------------------------------------------------
+# Model table creation tests
+# ---------------------------------------------------------------------------
+
+
+def test_all_tables_created() -> Any:
+    """Test that all expected tables are created by Base.metadata.create_all."""
+    engine = _make_engine()
+    _create_tables(engine)
+    from sqlalchemy import inspect
+
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+    expected = {
+        "users",
+        "portfolios",
+        "allocations",
+        "risk_assessments",
+        "market_data",
+        "optimization_results",
+        "task_results",
+        "audit_logs",
+    }
+    for table in expected:
+        assert table in tables, f"Expected table '{table}' not found"
+
+
+def test_user_model_columns() -> Any:
+    """Test the User model has required columns."""
+    engine = _make_engine()
+    _create_tables(engine)
+    from sqlalchemy import inspect
+
+    inspector = inspect(engine)
+    cols = {c["name"] for c in inspector.get_columns("users")}
+    for expected_col in (
+        "id",
+        "email",
+        "username",
+        "hashed_password",
+        "is_active",
+        "role",
+    ):
+        assert expected_col in cols, f"Column '{expected_col}' missing from users table"
+
+
+def test_portfolio_model_columns() -> Any:
+    """Test the Portfolio model has required columns."""
+    engine = _make_engine()
+    _create_tables(engine)
+    from sqlalchemy import inspect
+
+    inspector = inspect(engine)
+    cols = {c["name"] for c in inspector.get_columns("portfolios")}
+    for expected_col in ("id", "user_id", "user_address", "name", "total_value"):
+        assert (
+            expected_col in cols
+        ), f"Column '{expected_col}' missing from portfolios table"
+
+
+def test_allocation_model_columns() -> Any:
+    """Test the Allocation model has required columns."""
+    engine = _make_engine()
+    _create_tables(engine)
+    from sqlalchemy import inspect
+
+    inspector = inspect(engine)
+    cols = {c["name"] for c in inspector.get_columns("allocations")}
+    for expected_col in ("id", "portfolio_id", "asset_symbol", "percentage"):
+        assert (
+            expected_col in cols
+        ), f"Column '{expected_col}' missing from allocations table"
+
+
+# ---------------------------------------------------------------------------
+# check_db_connection tests
+# ---------------------------------------------------------------------------
+
+
+def test_check_db_connection_success() -> Any:
+    """Test check_db_connection returns True on healthy engine."""
+    with patch("riskoptimizer.infrastructure.database.session.engine") as mock_engine:
+        mock_conn = MagicMock()
+        mock_engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
+        mock_engine.connect.return_value.__exit__ = MagicMock(return_value=False)
+        mock_conn.execute.return_value = MagicMock()
+        from riskoptimizer.infrastructure.database.session import check_db_connection
+
+        result = check_db_connection()
+        assert result is True
+
+
+def test_check_db_connection_failure() -> Any:
+    """Test check_db_connection returns False when engine raises."""
+    with patch("riskoptimizer.infrastructure.database.session.engine") as mock_engine:
+        mock_engine.connect.side_effect = Exception("Connection refused")
+        from riskoptimizer.infrastructure.database.session import check_db_connection
+
+        result = check_db_connection()
+        assert result is False

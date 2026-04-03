@@ -6,7 +6,6 @@ from riskoptimizer.core.config import config
 from riskoptimizer.core.exceptions import ConflictError, DatabaseError, NotFoundError
 from riskoptimizer.domain.services.audit_service import audit_service
 from riskoptimizer.infrastructure.database.models import User
-from riskoptimizer.infrastructure.database.session import get_db_session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -50,10 +49,10 @@ class UserRepository:
             session: An optional session provided by the caller.
 
         Returns:
-            A SQLAlchemy session. If a session is provided, it's used; otherwise,
-            a new session is obtained from `get_db_session()`.
+            A SQLAlchemy session. If a session is provided, it's used; otherwise
+            falls back to the instance session.
         """
-        return session or get_db_session()
+        return session or self._session
 
     def _encrypt_data(self, data: Optional[str]) -> Optional[str]:
         """

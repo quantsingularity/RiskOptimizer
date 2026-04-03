@@ -199,8 +199,8 @@ class TestWorkflowIntegration:
             "asset_names": list(asset_params.keys()),
         }
 
-    @patch("tasks.risk_tasks.task_result_manager")
-    @patch("tasks.portfolio_tasks.task_result_manager")
+    @patch("riskoptimizer.tasks.risk_tasks.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
     @patch("tasks.report_tasks.task_result_manager")
     def test_complete_risk_analysis_workflow(
         self,
@@ -209,8 +209,11 @@ class TestWorkflowIntegration:
         mock_risk_manager: Any,
     ) -> Any:
         """Test complete risk analysis workflow from start to finish."""
+        from riskoptimizer.tasks.risk_tasks import (
+            monte_carlo_simulation,
+            stress_test_portfolio,
+        )
         from tasks.report_tasks import generate_risk_report
-        from tasks.risk_tasks import monte_carlo_simulation, stress_test_portfolio
 
         portfolio_data = {
             "weights": [0.4, 0.25, 0.2, 0.1, 0.05],
@@ -254,12 +257,15 @@ class TestWorkflowIntegration:
             assert "return_impact" in scenario_result
             assert "volatility_impact" in scenario_result
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
     def test_portfolio_optimization_and_rebalancing_workflow(
         self, mock_task_manager: Any
     ) -> Any:
         """Test complete portfolio optimization and rebalancing workflow."""
-        from tasks.portfolio_tasks import optimize_portfolio, rebalance_portfolio
+        from riskoptimizer.tasks.portfolio_tasks import (
+            optimize_portfolio,
+            rebalance_portfolio,
+        )
 
         assets_data = {
             "returns": self.historical_returns["returns"].tolist(),

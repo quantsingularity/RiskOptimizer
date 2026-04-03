@@ -98,12 +98,12 @@ def run_portfolio_optimization() -> Any:
             "Since we don't have a current portfolio, we'll use the Max Sharpe weights as the target for a mock rebalance."
         )
     except FileNotFoundError as e:
-        logger.info(f"Error: {e}")
+        logger.error(f"Error: {e}")
         logger.info(
             "Please ensure the data ingestion script (data_ingestion.py) has been run successfully."
         )
     except Exception as e:
-        logger.info(f"An unexpected error occurred during portfolio optimization: {e}")
+        logger.error(f"An unexpected error occurred during portfolio optimization: {e}")
 
 
 if __name__ == "__main__":

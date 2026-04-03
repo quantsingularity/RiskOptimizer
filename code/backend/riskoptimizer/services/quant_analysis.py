@@ -34,8 +34,8 @@ class RiskMetrics:
         mean = np.mean(_decimal_to_float(decimal_returns))
         std = np.std(_decimal_to_float(decimal_returns))
         z_score = Decimal(str(norm.ppf(1 - confidence)))
-        var = mean + z_score * std
-        return var
+        var = Decimal(str(mean)) + z_score * Decimal(str(std))
+        return abs(var)
 
     @staticmethod
     def calculate_cvar(returns: Any, confidence: Any = 0.95) -> Any:
@@ -57,8 +57,8 @@ class RiskMetrics:
         tail_losses = [r for r in decimal_returns if r <= var]
         if not tail_losses:
             return var
-        cvar = np.mean(tail_losses)
-        return cvar
+        cvar = Decimal(str(np.mean([float(x) for x in tail_losses])))
+        return abs(cvar)
 
     @staticmethod
     def efficient_frontier(returns: Any, cov_matrix: Any) -> Any:
@@ -108,3 +108,61 @@ class RiskMetrics:
             return Decimal("0.0")
         sharpe_ratio = mean_excess_return / std_dev_excess_return
         return sharpe_ratio
+
+    @staticmethod
+    def calculate_max_drawdown(returns: Any) -> Any:
+        """
+        Calculate Maximum Drawdown of a portfolio.
+
+        Args:
+            returns: A list or array of portfolio returns.
+
+        Returns:
+            Decimal: The calculated Maximum Drawdown (positive value).
+        """
+        if not isinstance(returns, (list, np.ndarray)) or len(returns) < 2:
+            raise ValueError(
+                "Returns must be a list or numpy array with at least two elements."
+            )
+        float_returns = [float(r) for r in returns]
+        cumulative = np.cumprod([1 + r for r in float_returns])
+        peak = np.maximum.accumulate(cumulative)
+        drawdown = (cumulative - peak) / peak
+        max_drawdown = abs(float(np.min(drawdown)))
+        return Decimal(str(max_drawdown))
+
+    @staticmethod
+    def calculate_expected_return(returns: Any) -> Any:
+        """
+        Calculate the expected (mean) return of a portfolio.
+
+        Args:
+            returns: A list or array of portfolio returns.
+
+        Returns:
+            Decimal: The calculated expected return.
+        """
+        if not isinstance(returns, (list, np.ndarray)) or len(returns) == 0:
+            raise ValueError("Returns must be a non-empty list or numpy array.")
+        float_returns = [float(r) for r in returns]
+        mean = float(np.mean(float_returns))
+        return Decimal(str(mean))
+
+    @staticmethod
+    def calculate_volatility(returns: Any) -> Any:
+        """
+        Calculate the volatility (standard deviation) of a portfolio.
+
+        Args:
+            returns: A list or array of portfolio returns.
+
+        Returns:
+            Decimal: The calculated volatility.
+        """
+        if not isinstance(returns, (list, np.ndarray)) or len(returns) < 2:
+            raise ValueError(
+                "Returns must be a list or numpy array with at least two elements."
+            )
+        float_returns = [float(r) for r in returns]
+        vol = float(np.std(float_returns, ddof=1))
+        return Decimal(str(vol))

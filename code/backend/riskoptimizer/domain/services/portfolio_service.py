@@ -246,7 +246,7 @@ class PortfolioService:
                 "portfolio_id",
                 portfolio_id,
             )
-        if not data or not isinstance(data, dict) or (not data):
+        if not data or not isinstance(data, dict):
             raise ValidationError(
                 "Update data is required and must be a non-empty dictionary.",
                 "data",

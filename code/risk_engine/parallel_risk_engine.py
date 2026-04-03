@@ -23,7 +23,6 @@ import psutil
 from joblib import Parallel, delayed
 from scipy import stats
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
@@ -159,7 +158,6 @@ class ParallelRiskEngine:
         )
         start_time = time.time()
         assets = returns.columns
-        len(assets)
         batch_size = max(100, n_portfolios // (self.n_jobs * 10))
         n_batches = n_portfolios // batch_size
         portfolio_batches = Parallel(
@@ -420,7 +418,7 @@ class ParallelRiskEngine:
                 std = np.std(returns_array)
                 z_score = stats.norm.ppf(conf)
                 var = -(mean + z_score * std)
-                es = -(mean - std * stats.norm.pdf(z_score) / (1 - conf))
+                es = max(0.0, -(mean - std * stats.norm.pdf(z_score) / (1 - conf)))
             elif model == "historical":
                 var = -np.percentile(returns_array, 100 * (1 - conf))
                 es = -np.mean(returns_array[returns_array <= -var])
@@ -595,7 +593,6 @@ class ParallelRiskEngine:
         Returns:
             result: Dictionary of scenario results
         """
-        returns.mean()
         cov_matrix = returns.cov()
         shock_factors = np.random.normal(0, 1, len(returns.columns))
         chol_decomp = np.linalg.cholesky(cov_matrix)
@@ -918,8 +915,15 @@ class ParallelRiskEngine:
         logger.info(f"Risk decomposition completed in {time_taken:.2f} seconds")
         return {
             "risk_measure": risk_measure,
+            "portfolio_risk": portfolio_risk,
             "total_risk": portfolio_risk,
             "contributions": contributions,
+            "component_contributions": [
+                c["component_contribution"] for c in contributions
+            ],
+            "percentage_contributions": [
+                c["percentage_contribution"] for c in contributions
+            ],
             "time_taken": time_taken,
         }
 

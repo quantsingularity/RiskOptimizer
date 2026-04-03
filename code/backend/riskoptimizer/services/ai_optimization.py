@@ -17,7 +17,27 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from ai_models.optimization_model import AdvancedPortfolioOptimizer
+
+try:
+    from ai_models.optimization_model import AdvancedPortfolioOptimizer
+except ImportError:
+    try:
+        import os
+        import sys
+
+        _ai_models_path = os.path.join(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                )
+            ),
+            "ai_models",
+        )
+        if _ai_models_path not in sys.path:
+            sys.path.insert(0, os.path.dirname(_ai_models_path))
+        from ai_models.optimization_model import AdvancedPortfolioOptimizer
+    except ImportError:
+        AdvancedPortfolioOptimizer = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,6 +73,12 @@ class AIOptimizationService:
     def load_model(self) -> Any:
         """Load the trained model"""
         try:
+            if AdvancedPortfolioOptimizer is None:
+                logger.warning(
+                    "AdvancedPortfolioOptimizer not available; AI features disabled."
+                )
+                self.optimizer = None
+                return
             if os.path.exists(self.model_path):
                 self.optimizer = AdvancedPortfolioOptimizer.load_model(self.model_path)
                 logger.info(f"Loaded optimization model from {self.model_path}")

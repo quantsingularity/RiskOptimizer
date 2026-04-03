@@ -145,7 +145,7 @@ def calculate_var() -> Response:
 
         # Create success response
         response = create_success_response(
-            data={"value_at_risk": var},
+            data={"value_at_risk": float(var)},
             message="VaR calculated successfully",
             meta={
                 "confidence": validated_data.get("confidence", 0.95),
@@ -254,7 +254,7 @@ def calculate_cvar() -> Response:
 
         # Create success response
         response = create_success_response(
-            data={"conditional_value_at_risk": cvar},
+            data={"conditional_value_at_risk": float(cvar)},
             message="CVaR calculated successfully",
             meta={
                 "confidence": validated_data.get("confidence", 0.95),
@@ -363,7 +363,7 @@ def calculate_sharpe_ratio() -> Response:
 
         # Create success response
         response = create_success_response(
-            data={"sharpe_ratio": sharpe_ratio},
+            data={"sharpe_ratio": float(sharpe_ratio)},
             message="Sharpe ratio calculated successfully",
             meta={
                 "risk_free_rate": validated_data.get("risk_free_rate", 0.0),
@@ -466,7 +466,7 @@ def calculate_max_drawdown() -> Response:
 
         # Create success response
         response = create_success_response(
-            data={"max_drawdown": max_drawdown},
+            data={"max_drawdown": float(max_drawdown)},
             message="Maximum drawdown calculated successfully",
             meta={"data_points": len(validated_data["returns"])},
         )
@@ -600,9 +600,12 @@ def calculate_risk_metrics() -> Response:
             risk_free_rate=validated_data.get("risk_free_rate", 0.0),
         )
 
-        # Create success response
+        # Create success response — convert Decimal values to float for JSON serialization
+        serializable_metrics = {
+            k: float(v) if hasattr(v, "__float__") else v for k, v in metrics.items()
+        }
         response = create_success_response(
-            data=metrics,
+            data=serializable_metrics,
             message="Risk metrics calculated successfully",
             meta={
                 "confidence": validated_data.get("confidence", 0.95),
@@ -738,9 +741,23 @@ def calculate_efficient_frontier() -> Response:
             points=validated_data.get("points", 20),
         )
 
-        # Create success response
+        # Create success response — serialize Decimal values to float
+        serialized_points = []
+        for point in frontier_points:
+            serialized_point = {}
+            for k, v in point.items():
+                if hasattr(v, "__float__"):
+                    serialized_point[k] = float(v)
+                elif isinstance(v, dict):
+                    serialized_point[k] = {
+                        wk: float(wv) if hasattr(wv, "__float__") else wv
+                        for wk, wv in v.items()
+                    }
+                else:
+                    serialized_point[k] = v
+            serialized_points.append(serialized_point)
         response = create_success_response(
-            data={"frontier_points": frontier_points},
+            data={"frontier_points": serialized_points},
             message="Efficient frontier calculated successfully",
             meta={
                 "assets": list(validated_data["returns"].keys()),

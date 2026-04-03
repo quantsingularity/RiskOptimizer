@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 def preprocess_data(filepath: Any) -> Any:
     df = pd.read_csv(filepath)
-    df = df.fillna(method="ffill")
+    df = df.ffill()
     df["log_returns"] = np.log(df["close"] / df["close"].shift(1))
     scaler = MinMaxScaler()
     scaled_data = scaler.fit_transform(

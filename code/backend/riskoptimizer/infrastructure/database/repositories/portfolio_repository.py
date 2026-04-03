@@ -454,21 +454,39 @@ class PortfolioRepository:
                 .filter(Allocation.portfolio_id == portfolio.id)
                 .all()
             )
-            assets = []
-            allocation_percentages = []
+            allocation_dicts = []
             for allocation in allocations:
-                assets.append(allocation.asset_symbol)
-                allocation_percentages.append(float(allocation.percentage))
+                allocation_dicts.append(
+                    {
+                        "id": allocation.id,
+                        "asset_symbol": allocation.asset_symbol,
+                        "asset_name": allocation.asset_name,
+                        "percentage": (
+                            Decimal(str(allocation.percentage))
+                            if allocation.percentage is not None
+                            else Decimal("0")
+                        ),
+                        "amount": (
+                            Decimal(str(allocation.amount))
+                            if allocation.amount is not None
+                            else None
+                        ),
+                        "current_price": (
+                            Decimal(str(allocation.current_price))
+                            if allocation.current_price is not None
+                            else None
+                        ),
+                    }
+                )
             return {
                 "user_address": user_address,
                 "portfolio_id": portfolio.id,
                 "name": portfolio.name,
-                "assets": assets,
-                "allocations": allocation_percentages,
+                "allocations": allocation_dicts,
                 "total_value": (
-                    float(portfolio.total_value)
+                    Decimal(str(portfolio.total_value))
                     if portfolio.total_value is not None
-                    else None
+                    else Decimal("0")
                 ),
             }
         except NotFoundError:

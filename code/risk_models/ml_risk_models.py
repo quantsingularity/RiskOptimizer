@@ -23,7 +23,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
@@ -94,7 +93,8 @@ class MLRiskModel:
             returns = pd.DataFrame(returns)
         n_samples = len(returns) - feature_window
         n_assets = len(returns.columns)
-        X = np.zeros((n_samples, n_assets * 5 + 3))
+        n_extra_features = 3 if n_assets > 1 else 0
+        X = np.zeros((n_samples, n_assets * 5 + n_extra_features))
         feature_names = []
         for i, col in enumerate(returns.columns):
             asset_returns = returns[col].values

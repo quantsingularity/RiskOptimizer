@@ -141,12 +141,12 @@ def run_risk_analysis() -> Any:
         garch_volatility_forecast(returns, horizon=5)
         stress_test(returns, scenario_multiplier=4.0)
     except FileNotFoundError as e:
-        logger.info(f"Error: {e}")
+        logger.error(f"Error: {e}")
         logger.info(
             "Please ensure the data ingestion script (data_ingestion.py) has been run successfully."
         )
     except Exception as e:
-        logger.info(f"An unexpected error occurred during risk analysis: {e}")
+        logger.error(f"An unexpected error occurred during risk analysis: {e}")
 
 
 if __name__ == "__main__":

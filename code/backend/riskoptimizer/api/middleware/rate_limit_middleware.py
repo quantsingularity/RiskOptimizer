@@ -77,23 +77,25 @@ def rate_limit(
                 window_start = now - 60
                 count = redis_cache.get(key) or []
                 count = [ts for ts in count if ts > window_start]
-                if len(count) >= requests_per_minute:
-                    if len(count) >= burst:
-                        logger.warning(
-                            f"Rate limit exceeded for {endpoint}: {len(count)} requests in last minute"
-                        )
-                        reset_time = count[0] + 60 - now
-                        error = RateLimitError(
-                            f"Rate limit exceeded. Maximum {requests_per_minute} requests per minute allowed.",
-                            reset_time=reset_time,
-                            limit=requests_per_minute,
-                        )
-                        response = jsonify(create_error_response(error))
-                        response.headers["X-RateLimit-Limit"] = str(requests_per_minute)
-                        response.headers["X-RateLimit-Remaining"] = "0"
-                        response.headers["X-RateLimit-Reset"] = str(reset_time)
-                        response.headers["Retry-After"] = str(reset_time)
-                        return (response, 429)
+                effective_limit = (
+                    burst if burst > requests_per_minute else requests_per_minute
+                )
+                if len(count) >= effective_limit:
+                    logger.warning(
+                        f"Rate limit exceeded for {endpoint}: {len(count)} requests in last minute"
+                    )
+                    reset_time = count[0] + 60 - now if count else 60
+                    error = RateLimitError(
+                        f"Rate limit exceeded. Maximum {requests_per_minute} requests per minute allowed.",
+                        reset_time=reset_time,
+                        limit=requests_per_minute,
+                    )
+                    response = jsonify(create_error_response(error))
+                    response.headers["X-RateLimit-Limit"] = str(requests_per_minute)
+                    response.headers["X-RateLimit-Remaining"] = "0"
+                    response.headers["X-RateLimit-Reset"] = str(reset_time)
+                    response.headers["Retry-After"] = str(reset_time)
+                    return (response, 429)
                 count.append(now)
                 redis_cache.set(key, count, ttl=60)
                 response = func(*args, **kwargs)

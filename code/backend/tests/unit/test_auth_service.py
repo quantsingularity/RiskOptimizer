@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 from typing import Any
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import bcrypt
 import jwt
@@ -56,7 +56,7 @@ class TestAuthService(unittest.TestCase):
         wrong_password = "wrongpassword"
         hashed_password = bcrypt.hashpw(
             password.encode("utf-8"),
-            bcrypt.gensalt(rounds=self.auth_service.password_hash_rounds),
+            bcrypt.gensalt(rounds=self.auth_service.password_rounds),
         ).decode("utf-8")
         self.assertFalse(
             self.auth_service.verify_password(wrong_password, hashed_password)
@@ -153,7 +153,7 @@ class TestAuthService(unittest.TestCase):
         self.assertIn("access_token", new_access_token_data)
         self.assertIn("token_type", new_access_token_data)
         self.assertIn("expires_in", new_access_token_data)
-        self.auth_service.user_repo.get_by_id.assert_called_once_with(user_id, Any)
+        self.auth_service.user_repo.get_by_id.assert_called_once_with(user_id, ANY)
 
     def test_refresh_access_token_invalid_refresh_token(self) -> Any:
         with self.assertRaises(AuthenticationError) as cm:
@@ -178,7 +178,7 @@ class TestAuthService(unittest.TestCase):
         password = "testpassword123"
         hashed_password = bcrypt.hashpw(
             password.encode("utf-8"),
-            bcrypt.gensalt(rounds=self.auth_service.password_hash_rounds),
+            bcrypt.gensalt(rounds=self.auth_service.password_rounds),
         ).decode("utf-8")
         mock_user = MagicMock()
         mock_user.id = 1
@@ -195,12 +195,12 @@ class TestAuthService(unittest.TestCase):
         user_data, tokens = self.auth_service.authenticate_user(email, password)
         self.assertEqual(user_data["email"], email)
         self.assertIn("access_token", tokens)
-        self.auth_service.user_repo.get_by_email.assert_called_once_with(email, Any)
+        self.auth_service.user_repo.get_by_email.assert_called_once_with(email, ANY)
         self.auth_service.audit_service.log_action.assert_called_with(
             user_id=mock_user.id,
             action_type="LOGIN_SUCCESS",
             entity_type="USER",
-            details={"email": email, "ip_address": ""},
+            details={"email": email, "ip_address": ANY},
         )
 
     def test_authenticate_user_invalid_credentials(self) -> Any:
@@ -222,7 +222,11 @@ class TestAuthService(unittest.TestCase):
             user_id=mock_user.id,
             action_type="LOGIN_FAILURE",
             entity_type="USER",
-            details={"email": email, "reason": "Invalid credentials", "ip_address": ""},
+            details={
+                "email": email,
+                "reason": "Invalid credentials",
+                "ip_address": ANY,
+            },
         )
 
     def test_authenticate_user_account_locked(self) -> Any:
@@ -238,7 +242,7 @@ class TestAuthService(unittest.TestCase):
             user_id=None,
             action_type="LOGIN_ATTEMPT_LOCKED",
             entity_type="USER",
-            details={"email": email, "ip_address": ""},
+            details={"email": email, "ip_address": ANY},
         )
 
     def test_register_user_success(self) -> Any:
@@ -264,7 +268,7 @@ class TestAuthService(unittest.TestCase):
             action_type="USER_REGISTERED",
             entity_type="USER",
             entity_id=mock_user.id,
-            details={"email": email, "username": username, "ip_address": ""},
+            details={"email": email, "username": username, "ip_address": ANY},
         )
 
     def test_register_user_conflict(self) -> Any:

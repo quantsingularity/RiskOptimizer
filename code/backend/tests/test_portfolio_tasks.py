@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-from tasks.celery_app import TaskValidationError
-from tasks.portfolio_tasks import (
+from riskoptimizer.tasks.celery_app import TaskValidationError
+from riskoptimizer.tasks.portfolio_tasks import (
     _calculate_tracking_error,
     _check_constraints,
     _optimize_mean_variance,
@@ -40,8 +40,11 @@ class TestPortfolioOptimization:
             "min_weight_per_asset": 0.05,
         }
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_mean_variance_optimization_success(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_mean_variance_optimization_success(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test successful mean-variance optimization."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -62,8 +65,11 @@ class TestPortfolioOptimization:
         assert "volatility" in metrics
         assert "sharpe_ratio" in metrics
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_risk_parity_optimization_success(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_risk_parity_optimization_success(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test successful risk parity optimization."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -77,8 +83,11 @@ class TestPortfolioOptimization:
         risk_contrib_std = np.std(risk_contrib)
         assert risk_contrib_std < 0.1
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_minimum_variance_optimization_success(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_minimum_variance_optimization_success(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test successful minimum variance optimization."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -123,8 +132,11 @@ class TestPortfolioRebalancing:
             "transaction_cost_rate": 0.001,
         }
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_rebalancing_analysis_success(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_rebalancing_analysis_success(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test successful rebalancing analysis."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -155,8 +167,11 @@ class TestPortfolioRebalancing:
             assert "transaction_amount" in transaction
             assert "transaction_type" in transaction
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_rebalancing_with_new_assets(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_rebalancing_with_new_assets(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test rebalancing when adding new assets."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -191,8 +206,11 @@ class TestPortfolioPerformanceAnalysis:
         self.benchmark_data = {"returns": benchmark_returns.tolist()}
         self.analysis_period = {"start_date": "2023-01-01", "end_date": "2023-12-31"}
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_performance_analysis_success(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_performance_analysis_success(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test successful performance analysis."""
         mock_self = MagicMock()
         mock_self.request.id = "test-task-id"
@@ -236,7 +254,8 @@ class TestPortfolioPerformanceAnalysis:
         assert -1 <= perf_summary["max_drawdown"] <= 0
         assert benchmark_comp["beta"] > 0
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
     def test_performance_analysis_with_different_lengths(
         self, mock_task_manager: Any
     ) -> Any:
@@ -369,8 +388,11 @@ class TestPortfolioTasksIntegration:
             "asset_names": [f"Asset_{i}" for i in range(n_assets)],
         }
 
-    @patch("tasks.portfolio_tasks.task_result_manager")
-    def test_full_optimization_workflow(self, mock_task_manager: Any) -> Any:
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
+    def test_full_optimization_workflow(
+        self, mock_task_manager: Any, mock_celery_manager: Any
+    ) -> Any:
         """Test complete optimization workflow."""
         mock_self = MagicMock()
         mock_self.request.id = "integration-test-id"
@@ -399,7 +421,8 @@ class TestPortfolioTasksPerformance:
     """Performance tests for portfolio management tasks."""
 
     @pytest.mark.slow
-    @patch("tasks.portfolio_tasks.task_result_manager")
+    @patch("riskoptimizer.tasks.celery_app.task_result_manager")
+    @patch("riskoptimizer.tasks.portfolio_tasks.task_result_manager")
     def test_optimization_performance_large_universe(
         self, mock_task_manager: Any
     ) -> Any:
