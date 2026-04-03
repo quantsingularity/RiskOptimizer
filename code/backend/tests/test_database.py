@@ -29,7 +29,7 @@ def _make_session(engine):
 
 
 def _create_tables(engine):
-    from riskoptimizer.infrastructure.database.models import Base
+    from src.infrastructure.database.models import Base
 
     Base.metadata.create_all(bind=engine)
 
@@ -71,7 +71,7 @@ def test_get_db_session_context_manager() -> Any:
     ) as mock_factory:
         mock_session = MagicMock()
         mock_factory.return_value = mock_session
-        from riskoptimizer.infrastructure.database.session import get_db_session
+        from src.infrastructure.database.session import get_db_session
 
         with get_db_session() as session:
             assert session is mock_session
@@ -86,8 +86,8 @@ def test_get_db_session_rolls_back_on_error() -> Any:
     ) as mock_factory:
         mock_session = MagicMock()
         mock_factory.return_value = mock_session
-        from riskoptimizer.core.exceptions import DatabaseError
-        from riskoptimizer.infrastructure.database.session import get_db_session
+        from src.core.exceptions import DatabaseError
+        from src.infrastructure.database.session import get_db_session
 
         with pytest.raises(DatabaseError):
             with get_db_session() as session:
@@ -182,7 +182,7 @@ def test_check_db_connection_success() -> Any:
         mock_engine.connect.return_value.__enter__ = MagicMock(return_value=mock_conn)
         mock_engine.connect.return_value.__exit__ = MagicMock(return_value=False)
         mock_conn.execute.return_value = MagicMock()
-        from riskoptimizer.infrastructure.database.session import check_db_connection
+        from src.infrastructure.database.session import check_db_connection
 
         result = check_db_connection()
         assert result is True
@@ -192,7 +192,7 @@ def test_check_db_connection_failure() -> Any:
     """Test check_db_connection returns False when engine raises."""
     with patch("riskoptimizer.infrastructure.database.session.engine") as mock_engine:
         mock_engine.connect.side_effect = Exception("Connection refused")
-        from riskoptimizer.infrastructure.database.session import check_db_connection
+        from src.infrastructure.database.session import check_db_connection
 
         result = check_db_connection()
         assert result is False

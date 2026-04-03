@@ -209,10 +209,7 @@ class TestWorkflowIntegration:
         mock_risk_manager: Any,
     ) -> Any:
         """Test complete risk analysis workflow from start to finish."""
-        from riskoptimizer.tasks.risk_tasks import (
-            monte_carlo_simulation,
-            stress_test_portfolio,
-        )
+        from src.tasks.risk_tasks import monte_carlo_simulation, stress_test_portfolio
         from tasks.report_tasks import generate_risk_report
 
         portfolio_data = {
@@ -262,10 +259,7 @@ class TestWorkflowIntegration:
         self, mock_task_manager: Any
     ) -> Any:
         """Test complete portfolio optimization and rebalancing workflow."""
-        from riskoptimizer.tasks.portfolio_tasks import (
-            optimize_portfolio,
-            rebalance_portfolio,
-        )
+        from src.tasks.portfolio_tasks import optimize_portfolio, rebalance_portfolio
 
         assets_data = {
             "returns": self.historical_returns["returns"].tolist(),

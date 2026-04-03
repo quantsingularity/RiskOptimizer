@@ -22,7 +22,7 @@ def app():
     with patch("riskoptimizer.infrastructure.database.session.SessionLocal"), patch(
         "riskoptimizer.infrastructure.cache.redis_cache.redis_cache._available", False
     ), patch("riskoptimizer.infrastructure.database.session.engine"):
-        from riskoptimizer.core.config import config
+        from src.core.config import config
 
         config.api.debug = False
         try:

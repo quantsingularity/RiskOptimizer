@@ -5,13 +5,9 @@ from unittest.mock import ANY, MagicMock
 
 import bcrypt
 import jwt
-from riskoptimizer.core.config import config
-from riskoptimizer.core.exceptions import (
-    AuthenticationError,
-    ConflictError,
-    ValidationError,
-)
-from riskoptimizer.domain.services.auth_service import AuthService
+from src.core.config import config
+from src.core.exceptions import AuthenticationError, ConflictError, ValidationError
+from src.domain.services.auth_service import AuthService
 
 config.security.jwt_secret_key = "test_secret_key"
 config.security.jwt_access_token_expires = 3600

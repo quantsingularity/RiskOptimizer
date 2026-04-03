@@ -4,8 +4,8 @@ from decimal import Decimal, getcontext
 from typing import Any
 from unittest.mock import MagicMock
 
-from riskoptimizer.core.exceptions import NotFoundError, ValidationError
-from riskoptimizer.domain.services.portfolio_service import PortfolioService
+from src.core.exceptions import NotFoundError, ValidationError
+from src.domain.services.portfolio_service import PortfolioService
 
 getcontext().prec = 28
 

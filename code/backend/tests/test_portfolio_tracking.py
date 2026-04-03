@@ -11,8 +11,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-from riskoptimizer.services.ai_optimization import AIOptimizationService
-from riskoptimizer.services.blockchain_service import BlockchainService
+from src.services.ai_optimization import AIOptimizationService
+from src.services.blockchain_service import BlockchainService
 
 
 class TestPortfolioTracking:

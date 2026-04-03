@@ -3,8 +3,8 @@ from decimal import Decimal, getcontext
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-from riskoptimizer.core.exceptions import CalculationError, ValidationError
-from riskoptimizer.domain.services.risk_service import RiskService
+from src.core.exceptions import CalculationError, ValidationError
+from src.domain.services.risk_service import RiskService
 
 getcontext().prec = 28
 

@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-from riskoptimizer.tasks.celery_app import TaskValidationError
-from riskoptimizer.tasks.portfolio_tasks import (
+from src.tasks.celery_app import TaskValidationError
+from src.tasks.portfolio_tasks import (
     _calculate_tracking_error,
     _check_constraints,
     _optimize_mean_variance,

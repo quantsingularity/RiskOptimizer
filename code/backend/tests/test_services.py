@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
-from riskoptimizer.services.quant_analysis import RiskMetrics
+from src.services.quant_analysis import RiskMetrics
 
 
 def test_calculate_var() -> Any:
