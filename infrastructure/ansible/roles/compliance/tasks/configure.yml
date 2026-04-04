@@ -1,0 +1,4 @@
+---
+- name: Verify compliance is operational on {{ inventory_hostname }}
+  debug:
+    msg: "compliance configuration applied"

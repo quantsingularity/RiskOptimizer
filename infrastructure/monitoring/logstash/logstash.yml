@@ -153,11 +153,12 @@ dead_letter_queue.max_bytes: 1024mb
 # If using dead_letter_queue.enable: true, the interval in milliseconds between dead letter queue
 # flushes. Default is 5000.
 dead_letter_queue.flush_interval: 5000
+dead_letter_queue.storage_policy: drop_newer
 
 # ------------ Metrics Settings --------------
 #
 # Bind address for the metrics REST endpoint
-http.host: "0.0.0.0"
+http.host: "127.0.0.1"
 
 # Bind port for the metrics REST endpoint, this option also accept a range
 # (9600-9700) and logstash will pick up the first available ports.

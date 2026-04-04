@@ -8,7 +8,7 @@ backend:
     repository: registry.example.com/app/backend
     tag: production
     pullPolicy: Always
-  containerPort: 3000
+  containerPort: 8080
   servicePort: 80
   resources:
     limits:
@@ -17,9 +17,7 @@ backend:
     requests:
       cpu: 1000m
       memory: 1Gi
-  apiUrl: http://app-backend
-  jwtSecret: prod-jwt-secret
-  apiKey: prod-api-key
+  apiUrl: http://riskoptimizer-backend:8080
 
 # Frontend configuration
 frontend:
@@ -28,7 +26,7 @@ frontend:
     repository: registry.example.com/app/frontend
     tag: production
     pullPolicy: Always
-  containerPort: 80
+  containerPort: 8080
   servicePort: 80
   apiUrl: /api
   service:
@@ -45,16 +43,15 @@ frontend:
 database:
   replicas: 3
   image:
-    repository: mysql
-    tag: 8.0
+    repository: postgres
+    tag: 15-alpine
     pullPolicy: IfNotPresent
-  containerPort: 3306
-  servicePort: 3306
+  containerPort: 5432
+  servicePort: 5432
   name: riskoptimizerdb
   user: appuser
   password: prod-password
-  rootPassword: prod-root-password
-  url: mysql://appuser:prod-password@app-database:3306/appdb
+  url: postgresql://appuser:CHANGEME@riskoptimizer-database:5432/riskoptimizerdb
   storageClass: premium-rwo
   storage: 50Gi
   resources:
@@ -70,7 +67,7 @@ redis:
   replicas: 3
   image:
     repository: redis
-    tag: 6.2
+    tag: 7-alpine
     pullPolicy: IfNotPresent
   containerPort: 6379
   servicePort: 6379

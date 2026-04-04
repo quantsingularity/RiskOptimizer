@@ -1,80 +1,89 @@
 # Dockerfile for RiskOptimizer with Security Best Practices
 # Multi-stage build for security and efficiency
 
-# Build stage
-FROM node:18-alpine AS builder
+# ── Stage 1: Dependencies ──────────────────────────────────────────────────
+FROM node:20-alpine AS deps
 
-# Security: Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
-
-# Security: Set working directory
 WORKDIR /app
 
-# Security: Copy package files first for better caching
+# Install dependencies required for native modules
+RUN apk add --no-cache libc6-compat python3 make g++
+
+# Copy package manifests and install ALL deps (including dev for build)
 COPY package*.json ./
 COPY yarn.lock* ./
 
-# Security: Install dependencies with exact versions
-RUN npm ci --only=production && \
-    npm cache clean --force
+RUN npm ci && npm cache clean --force
 
-# Copy source code
+# ── Stage 2: Builder ────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS runner
+# Prune dev dependencies after build
+RUN npm prune --omit=dev && npm cache clean --force
 
-# Security: Install security updates
+# ── Stage 3: Production runner ──────────────────────────────────────────────
+FROM node:20-alpine AS runner
+
+# Install security updates and minimal runtime tools
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-    dumb-init \
-    curl \
-    ca-certificates && \
-    rm -rf /var/cache/apk/*
+        dumb-init \
+        curl \
+        ca-certificates \
+        tzdata && \
+    rm -rf /var/cache/apk/* && \
+    # Remove package manager to reduce attack surface
+    rm -f /usr/local/bin/npm /usr/local/bin/npx
 
-# Security: Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
+# Create non-root user with explicit IDs
+RUN addgroup -g 10001 -S appgroup && \
+    adduser -S appuser -u 10001 -G appgroup
 
-# Security: Set working directory
 WORKDIR /app
 
-# Security: Copy built application with proper ownership
-COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+# Copy built artifacts and pruned production node_modules from builder
+COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
+COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
 
-# Security: Create necessary directories with proper permissions
+# Create required runtime directories with correct ownership
 RUN mkdir -p /app/logs /app/tmp && \
-    chown -R nextjs:nodejs /app && \
-    chmod -R 755 /app
+    chown -R appuser:appgroup /app && \
+    chmod -R 750 /app && \
+    chmod -R 770 /app/logs /app/tmp
 
-# Security: Switch to non-root user
-USER nextjs
+# Drop to non-root user
+USER appuser
 
-# Security: Expose port (non-privileged)
+# Expose non-privileged port
 EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
+    CMD curl -sf http://localhost:8080/health || exit 1
 
-# Security: Use dumb-init to handle signals properly
+# Use dumb-init to handle signals properly and prevent zombie processes
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start application
 CMD ["node", "dist/server.js"]
 
-# Security labels
-LABEL maintainer="devops@riskoptimizer.com" \
-      version="1.0.0" \
-      description="RiskOptimizer Application" \
-      security.scan="enabled" \
+# OCI image labels
+LABEL org.opencontainers.image.title="RiskOptimizer API" \
+      org.opencontainers.image.description="RiskOptimizer backend application" \
+      org.opencontainers.image.vendor="RiskOptimizer" \
+      org.opencontainers.image.version="1.0.0" \
+      org.opencontainers.image.source="https://github.com/riskoptimizer/riskoptimizer" \
+      org.opencontainers.image.licenses="Proprietary" \
       compliance.gdpr="true" \
       compliance.pci-dss="true" \
-      compliance.sox="true"
+      compliance.sox="true" \
+      security.scan="enabled"

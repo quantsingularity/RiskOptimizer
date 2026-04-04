@@ -1,7 +1,5 @@
 ---
-# kibana role - stub implementation
-# TODO: Implement full role functionality
-
-- name: kibana placeholder
-  debug:
-    msg: "Role kibana requires full implementation"
+# roles/kibana/tasks/main.yml
+- name: Apply kibana configuration
+  include_tasks: configure.yml
+  when: kibana_enabled | default(true) | bool

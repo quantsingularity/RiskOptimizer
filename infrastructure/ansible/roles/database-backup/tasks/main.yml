@@ -1,7 +1,50 @@
 ---
-# database-backup role - stub implementation
-# TODO: Implement full role functionality
+- name: Install backup utilities
+  package:
+    name:
+      - postgresql-client
+      - awscli
+    state: present
 
-- name: database-backup placeholder
-  debug:
-    msg: "Role database-backup requires full implementation"
+- name: Create backup directory
+  file:
+    path: /opt/backups/postgresql
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0750"
+
+- name: Deploy PostgreSQL backup script
+  copy:
+    dest: /usr/local/bin/pg_backup.sh
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      BACKUP_DIR=/opt/backups/postgresql
+      TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+      DB_NAME="{{ db_name }}"
+      S3_BUCKET="{{ backup_s3_bucket | default('') }}"
+
+      pg_dump -Fc -U postgres "$DB_NAME" > "${BACKUP_DIR}/${DB_NAME}_${TIMESTAMP}.dump"
+      gzip "${BACKUP_DIR}/${DB_NAME}_${TIMESTAMP}.dump"
+
+      # Upload to S3 if bucket configured
+      if [[ -n "$S3_BUCKET" ]]; then
+        aws s3 cp "${BACKUP_DIR}/${DB_NAME}_${TIMESTAMP}.dump.gz" \
+          "s3://${S3_BUCKET}/postgresql/${DB_NAME}_${TIMESTAMP}.dump.gz" \
+          --sse aws:kms
+      fi
+
+      # Cleanup local backups older than 7 days
+      find "$BACKUP_DIR" -name "*.dump.gz" -mtime +7 -delete
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Schedule PostgreSQL backups
+  cron:
+    name: "PostgreSQL backup"
+    minute: "0"
+    hour: "2"
+    job: "/usr/local/bin/pg_backup.sh >> /var/log/pg_backup.log 2>&1"
+    user: postgres

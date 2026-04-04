@@ -1,3 +1,4 @@
+---
 # Pod Security Standards and Network Policies for RiskOptimizer
 ---
 # Pod Security Admission (PSA) Configuration - Recommended for modern Kubernetes
@@ -19,7 +20,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: security
@@ -35,7 +36,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: backend-to-database
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: application
@@ -67,7 +68,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: frontend-to-backend
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: application
@@ -95,7 +96,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-monitoring
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: monitoring
@@ -123,7 +124,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: infrastructure
@@ -145,7 +146,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-vault-access
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: security
@@ -167,7 +168,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-logging
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: logging
@@ -192,7 +193,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-tracing
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
     policy-type: observability
@@ -215,7 +216,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
     component: api
@@ -227,7 +228,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
     component: api
@@ -248,14 +249,14 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
     component: api
 subjects:
   - kind: ServiceAccount
     name: riskoptimizer-backend
-    namespace: riskoptimizer-prod
+    namespace: riskoptimizer
 roleRef:
   kind: Role
   name: riskoptimizer-backend
@@ -279,7 +280,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: riskoptimizer-quota
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
 spec:
@@ -301,7 +302,7 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   name: riskoptimizer-limits
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer
 spec:
@@ -340,7 +341,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: riskoptimizer-backend-pdb
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
 spec:
@@ -355,7 +356,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: riskoptimizer-backend-hpa
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
 spec:

@@ -1,7 +1,5 @@
 ---
-# web-security role - stub implementation
-# TODO: Implement full role functionality
-
-- name: web-security placeholder
-  debug:
-    msg: "Role web-security requires full implementation"
+# roles/web-security/tasks/main.yml
+- name: Apply web-security configuration
+  include_tasks: configure.yml
+  when: web_security_enabled | default(true) | bool

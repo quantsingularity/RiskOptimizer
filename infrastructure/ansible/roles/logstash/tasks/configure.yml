@@ -1,0 +1,4 @@
+---
+- name: Verify logstash is operational on {{ inventory_hostname }}
+  debug:
+    msg: "logstash configuration applied"

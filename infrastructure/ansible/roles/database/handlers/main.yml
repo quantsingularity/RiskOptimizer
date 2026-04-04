@@ -1,6 +1,10 @@
 ---
-# roles/database/handlers/main.yml
-- name: Restart MariaDB
+- name: Restart PostgreSQL
   systemd:
-    name: mariadb
+    name: "{{ 'postgresql-15' if ansible_os_family == 'RedHat' else 'postgresql@15-main' }}"
     state: restarted
+
+- name: Reload PostgreSQL
+  systemd:
+    name: "{{ 'postgresql-15' if ansible_os_family == 'RedHat' else 'postgresql@15-main' }}"
+    state: reloaded

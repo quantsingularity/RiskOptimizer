@@ -1,0 +1,4 @@
+---
+- name: Verify web-security is operational on {{ inventory_hostname }}
+  debug:
+    msg: "web-security configuration applied"

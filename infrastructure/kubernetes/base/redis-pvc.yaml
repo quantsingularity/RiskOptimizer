@@ -1,11 +1,15 @@
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: riskoptimizer-redis-pvc
+  namespace: riskoptimizer
+  labels:
+    app: riskoptimizer-redis
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  storageClassName: gp2
   resources:
     requests:
       storage: 5Gi

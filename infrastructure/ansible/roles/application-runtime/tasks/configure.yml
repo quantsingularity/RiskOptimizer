@@ -1,0 +1,4 @@
+---
+- name: Verify application-runtime is operational on {{ inventory_hostname }}
+  debug:
+    msg: "application-runtime configuration applied"

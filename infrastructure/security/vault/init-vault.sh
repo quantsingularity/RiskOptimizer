@@ -59,14 +59,10 @@ initialize_vault() {
         -key-threshold=3 \
         -format=json > "$VAULT_INIT_FILE"
 
-    if [[ $? -eq 0 ]]; then
-        log "Vault initialized successfully"
-        chmod 600 "$VAULT_INIT_FILE"
-        warn "IMPORTANT: Store the unseal keys and root token securely!"
-        warn "Unseal keys and root token saved to: $VAULT_INIT_FILE"
-    else
-        error "Failed to initialize Vault"
-    fi
+    log "Vault initialized successfully"
+    chmod 600 "$VAULT_INIT_FILE"
+    warn "IMPORTANT: Store the unseal keys and root token securely!"
+    warn "Unseal keys and root token saved to: $VAULT_INIT_FILE"
 }
 
 # Unseal Vault
@@ -82,10 +78,15 @@ unseal_vault() {
     UNSEAL_KEY_2=$(jq -r '.unseal_keys_b64[1]' "$VAULT_INIT_FILE")
     UNSEAL_KEY_3=$(jq -r '.unseal_keys_b64[2]' "$VAULT_INIT_FILE")
 
+    # Validate unseal keys were extracted
+    if [[ -z "$UNSEAL_KEY_1" || "$UNSEAL_KEY_1" == "null" ]]; then
+        error "Failed to extract unseal keys from init file"
+    fi
+
     # Unseal with threshold keys
-    vault operator unseal "$UNSEAL_KEY_1"
-    vault operator unseal "$UNSEAL_KEY_2"
-    vault operator unseal "$UNSEAL_KEY_3"
+    vault operator unseal "$UNSEAL_KEY_1" || error "Failed to apply unseal key 1"
+    vault operator unseal "$UNSEAL_KEY_2" || error "Failed to apply unseal key 2"
+    vault operator unseal "$UNSEAL_KEY_3" || error "Failed to apply unseal key 3"
 
     log "Vault unsealed successfully"
 }
@@ -99,7 +100,7 @@ authenticate_vault() {
     fi
 
     ROOT_TOKEN=$(jq -r '.root_token' "$VAULT_INIT_FILE")
-    vault auth "$ROOT_TOKEN"
+    vault login "$ROOT_TOKEN"
 
     log "Authenticated with Vault successfully"
 }

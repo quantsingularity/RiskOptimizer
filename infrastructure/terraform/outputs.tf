@@ -439,3 +439,26 @@ output "troubleshooting_commands" {
   }
   sensitive = true
 }
+
+# Backup Outputs
+output "backup_vault_arn" {
+  description = "ARN of the AWS Backup vault"
+  value       = module.backup.backup_vault_arn
+}
+
+# Load Balancer Outputs
+output "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer"
+  value       = module.load_balancer.alb_dns_name
+}
+
+output "alb_zone_id" {
+  description = "Zone ID of the ALB for Route53"
+  value       = module.load_balancer.alb_zone_id
+}
+
+# Monitoring Outputs
+output "alerts_topic_arn" {
+  description = "ARN of the SNS alerts topic"
+  value       = module.monitoring.alerts_topic_arn
+}

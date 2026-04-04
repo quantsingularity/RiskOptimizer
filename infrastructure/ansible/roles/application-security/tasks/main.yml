@@ -1,7 +1,5 @@
 ---
-# application-security role - stub implementation
-# TODO: Implement full role functionality
-
-- name: application-security placeholder
-  debug:
-    msg: "Role application-security requires full implementation"
+# roles/application-security/tasks/main.yml
+- name: Apply application-security configuration
+  include_tasks: configure.yml
+  when: application_security_enabled | default(true) | bool

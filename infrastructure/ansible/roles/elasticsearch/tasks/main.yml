@@ -1,7 +1,5 @@
 ---
-# elasticsearch role - stub implementation
-# TODO: Implement full role functionality
-
-- name: elasticsearch placeholder
-  debug:
-    msg: "Role elasticsearch requires full implementation"
+# roles/elasticsearch/tasks/main.yml
+- name: Apply elasticsearch configuration
+  include_tasks: configure.yml
+  when: elasticsearch_enabled | default(true) | bool

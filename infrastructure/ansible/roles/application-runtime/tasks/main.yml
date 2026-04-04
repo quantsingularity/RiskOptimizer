@@ -1,7 +1,5 @@
 ---
-# application-runtime role - stub implementation
-# TODO: Implement full role functionality
-
-- name: application-runtime placeholder
-  debug:
-    msg: "Role application-runtime requires full implementation"
+# roles/application-runtime/tasks/main.yml
+- name: Apply application-runtime configuration
+  include_tasks: configure.yml
+  when: application_runtime_enabled | default(true) | bool

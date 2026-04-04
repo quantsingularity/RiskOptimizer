@@ -1,9 +1,12 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: riskoptimizer-frontend
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-frontend
+    component: frontend
 spec:
   type: ClusterIP
   ports:
@@ -13,3 +16,4 @@ spec:
       name: http
   selector:
     app: riskoptimizer-frontend
+    component: frontend

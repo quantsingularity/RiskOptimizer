@@ -23,7 +23,7 @@ vars:
     ENIP_SERVER: "$HOME_NET"
 
   port-groups:
-    HTTP_PORTS: "80"
+    HTTP_PORTS: "[80, 8080, 8443, 3000, 8000]"
     SHELLCODE_PORTS: "!80"
     ORACLE_PORTS: 1521
     SSH_PORTS: 22
@@ -52,7 +52,7 @@ outputs:
       filetype: regular
       filename: eve.json
       pcap-file: false
-      community-id: false
+      community-id: true
       community-id-seed: 0
       types:
         - alert:

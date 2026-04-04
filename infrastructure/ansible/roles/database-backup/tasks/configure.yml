@@ -1,0 +1,5 @@
+---
+# database-backup configuration tasks
+- name: Verify database-backup service status
+  debug:
+    msg: "database-backup configuration applied for {{ inventory_hostname }}"

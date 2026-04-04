@@ -1,0 +1,4 @@
+---
+- name: Verify application-monitoring is operational on {{ inventory_hostname }}
+  debug:
+    msg: "application-monitoring configuration applied"

@@ -1,9 +1,12 @@
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: riskoptimizer-database
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-database
+    component: database
 spec:
   serviceName: riskoptimizer-database
   replicas: 1
@@ -14,66 +17,79 @@ spec:
     metadata:
       labels:
         app: riskoptimizer-database
+        component: database
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
         - name: riskoptimizer-database
-          image: mysql:8.0
+          image: postgres:15-alpine
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 3306
+            - containerPort: 5432
+              name: postgres
           resources:
             limits:
               cpu: 1000m
-              memory: 1Gi
+              memory: 2Gi
             requests:
               cpu: 500m
-              memory: 512Mi
+              memory: 1Gi
           env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: riskoptimizer-secrets
-                  key: mysql-root-password
-            - name: MYSQL_DATABASE
+            - name: POSTGRES_DB
               value: riskoptimizerdb
-            - name: MYSQL_USER
+            - name: POSTGRES_USER
               value: appuser
-            - name: MYSQL_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: riskoptimizer-secrets
-                  key: mysql-password
+                  key: database-password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: riskoptimizer-database-data
-              mountPath: /var/lib/mysql
+              mountPath: /var/lib/postgresql/data
           livenessProbe:
             exec:
               command:
-                - mysqladmin
-                - ping
-                - -u
-                - root
-                - -p${MYSQL_ROOT_PASSWORD}
+                - pg_isready
+                - -U
+                - appuser
+                - -d
+                - riskoptimizerdb
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             exec:
               command:
-                - mysql
-                - -u
-                - root
-                - -p${MYSQL_ROOT_PASSWORD}
-                - -e
-                - SELECT 1
-            initialDelaySeconds: 5
+                - pg_isready
+                - -U
+                - appuser
+                - -d
+                - riskoptimizerdb
+            initialDelaySeconds: 10
             periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
   volumeClaimTemplates:
     - metadata:
         name: riskoptimizer-database-data
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: standard
+        storageClassName: gp2
         resources:
           requests:
-            storage: 10Gi
+            storage: 20Gi

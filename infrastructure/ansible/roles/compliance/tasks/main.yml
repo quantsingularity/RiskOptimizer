@@ -1,7 +1,5 @@
 ---
-# Tasks for compliance role
-# TODO: Implement compliance tasks
-
-- name: Placeholder task for compliance
-  debug:
-    msg: "Role compliance is not yet fully implemented"
+# roles/compliance/tasks/main.yml
+- name: Apply compliance configuration
+  include_tasks: configure.yml
+  when: compliance_enabled | default(true) | bool

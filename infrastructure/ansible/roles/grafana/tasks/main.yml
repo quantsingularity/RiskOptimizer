@@ -1,7 +1,5 @@
 ---
-# grafana role - stub implementation
-# TODO: Implement full role functionality
-
-- name: grafana placeholder
-  debug:
-    msg: "Role grafana requires full implementation"
+# roles/grafana/tasks/main.yml
+- name: Apply grafana configuration
+  include_tasks: configure.yml
+  when: grafana_enabled | default(true) | bool

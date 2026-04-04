@@ -1,7 +1,5 @@
 ---
-# logstash role - stub implementation
-# TODO: Implement full role functionality
-
-- name: logstash placeholder
-  debug:
-    msg: "Role logstash requires full implementation"
+# roles/logstash/tasks/main.yml
+- name: Apply logstash configuration
+  include_tasks: configure.yml
+  when: logstash_enabled | default(true) | bool

@@ -2,6 +2,6 @@
 # roles/webserver/vars/main.yml
 app_name: "{{ app_name }}"
 server_name: "{{ inventory_hostname }}"
-app_port: 3000
+app_port: 8080
 nginx_worker_processes: auto
 nginx_worker_connections: 1024

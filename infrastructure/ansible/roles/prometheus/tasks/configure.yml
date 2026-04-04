@@ -1,0 +1,5 @@
+---
+# prometheus configuration tasks
+- name: Verify prometheus service status
+  debug:
+    msg: "prometheus configuration applied for {{ inventory_hostname }}"

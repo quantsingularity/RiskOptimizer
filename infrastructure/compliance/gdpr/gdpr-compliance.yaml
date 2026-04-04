@@ -6,8 +6,8 @@ project_information:
   project_name: RiskOptimizer Financial Platform
   data_controller: RiskOptimizer Ltd.
   data_protection_officer: dpo@riskoptimizer.com
-  assessment_date: $(date +%Y-%m-%d)
-  review_date: $(date -d "+1 year" +%Y-%m-%d)
+  assessment_date: 2026-04-04
+  review_date: 2027-04-04
 
 data_processing_description:
   personal_data_categories:

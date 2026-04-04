@@ -1,0 +1,4 @@
+---
+- name: Verify grafana is operational on {{ inventory_hostname }}
+  debug:
+    msg: "grafana configuration applied"

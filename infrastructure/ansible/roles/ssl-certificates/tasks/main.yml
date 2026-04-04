@@ -1,7 +1,55 @@
 ---
-# ssl-certificates role - stub implementation
-# TODO: Implement full role functionality
+- name: Install certbot and nginx plugin
+  package:
+    name:
+      - certbot
+      - "{{ 'python3-certbot-nginx' if ansible_os_family == 'Debian' else 'certbot-nginx' }}"
+    state: present
 
-- name: ssl-certificates placeholder
-  debug:
-    msg: "Role ssl-certificates requires full implementation"
+- name: Create certificate directory
+  file:
+    path: /etc/nginx/certs
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Obtain Let's Encrypt certificate
+  command: >
+    certbot certonly --nginx
+    --non-interactive
+    --agree-tos
+    --email {{ ssl_admin_email | mandatory }}
+    --domains {{ ssl_domains | join(',') }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ ssl_domains[0] }}/fullchain.pem"
+  when: ssl_provider | default('letsencrypt') == 'letsencrypt'
+
+- name: Create symlinks to certificates
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    force: yes
+  loop:
+    - src: "/etc/letsencrypt/live/{{ ssl_domains[0] }}/fullchain.pem"
+      dest: "/etc/nginx/certs/{{ ssl_domains[0] }}.crt"
+    - src: "/etc/letsencrypt/live/{{ ssl_domains[0] }}/privkey.pem"
+      dest: "/etc/nginx/certs/{{ ssl_domains[0] }}.key"
+  when: ssl_provider | default('letsencrypt') == 'letsencrypt'
+  notify: Reload Nginx
+
+- name: Set up certificate auto-renewal cron job
+  cron:
+    name: "certbot renewal"
+    minute: "0"
+    hour: "2"
+    weekday: "1"
+    job: "certbot renew --quiet --post-hook 'systemctl reload nginx'"
+    user: root
+  when: ssl_provider | default('letsencrypt') == 'letsencrypt'
+
+- name: Configure DH parameters for forward secrecy
+  command: openssl dhparam -out /etc/nginx/certs/dhparam.pem 2048
+  args:
+    creates: /etc/nginx/certs/dhparam.pem

@@ -1,22 +1,59 @@
+# Terraform variables for production environment
+environment = "production"
+app_name    = "riskoptimizer"
 aws_region  = "us-west-2"
-environment = "prod"
-app_name    = "app"
 
-vpc_cidr             = "10.2.0.0/16"
-availability_zones   = ["us-west-2a", "us-west-2b", "us-west-2c"]
-public_subnet_cidrs  = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
-private_subnet_cidrs = ["10.2.4.0/24", "10.2.5.0/24", "10.2.6.0/24"]
+# Network
+vpc_cidr              = "10.2.0.0/16"
+public_subnet_cidrs   = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
+private_subnet_cidrs  = ["10.2.11.0/24", "10.2.12.0/24", "10.2.13.0/24"]
+database_subnet_cidrs = ["10.2.21.0/24", "10.2.22.0/24", "10.2.23.0/24"]
 
-instance_type = "t3.large"
-# key_name      = "prod-key"  # TODO: Provide via environment variable or secure input
+# Database (PostgreSQL)
+db_engine_version        = "15.4"
+db_instance_class        = "db.r6g.large"
+db_name                  = "riskoptimizerdb"
+db_username              = "riskoptimizer_admin"
+db_allocated_storage     = 100
+db_max_allocated_storage = 1000
 
-db_instance_class = "db.t3.large"
-db_name           = "appdb"
-db_username       = "admin"
-# db_password       = "Password123!" # Use AWS Secrets Manager in production  # TODO: Provide via environment variable or secure input
+# Redis
+redis_node_type = "cache.r6g.large"
+redis_num_nodes = 3
 
+# EKS
+eks_cluster_version         = "1.28"
+eks_node_instance_types     = ["m5.large"]
+eks_node_group_min_size     = 3
+eks_node_group_max_size     = 10
+eks_node_group_desired_size = 3
+
+# Security & Compliance
+compliance_level    = "strict"
+enable_encryption   = true
+enable_guardduty    = true
+enable_security_hub = true
+enable_config       = true
+enable_cloudtrail   = true
+
+# Monitoring
+notification_endpoints = [
+  {
+    type     = "email"
+    endpoint = "alerts@riskoptimizer.com"
+  }
+]
+
+# Feature flags
+enable_waf        = true
+enable_shield     = false
+enable_debug_mode = false
+
+# Tags
 default_tags = {
-  Terraform   = "true"
-  Environment = "prod"
-  Project     = "app"
+  Project     = "RiskOptimizer"
+  Environment = "production"
+  Owner       = "DevOps Team"
+  CostCenter  = "Engineering"
+  ManagedBy   = "Terraform"
 }

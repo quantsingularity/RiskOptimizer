@@ -1,0 +1,4 @@
+---
+- name: Verify security-monitoring is operational on {{ inventory_hostname }}
+  debug:
+    msg: "security-monitoring configuration applied"

@@ -189,3 +189,44 @@ audit-reports/
 # Script outputs
 *.output
 run_*.log
+# =========================
+# Docker secrets
+# =========================
+docker/.env
+docker/certs/
+docker/data/
+*.env.local
+
+# =========================
+# Vault init output (contains unseal keys + root token - NEVER commit)
+# =========================
+security/vault/vault-init*.json
+security/vault/.vault-token
+
+# =========================
+# Ansible secrets
+# =========================
+ansible/inventory/hosts.yml
+ansible/**/*vault*.yml
+ansible/**/*secrets*.yml
+ansible/.vault_pass
+
+# =========================
+# Certificates and keys (catch-all)
+# =========================
+**/*.crt
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+**/*.truststore
+!**/*.crt.example
+!**/*.key.example
+
+# =========================
+# Terraform plan files (may contain secrets)
+# =========================
+tfplan-*
+terraform/tfplan-*

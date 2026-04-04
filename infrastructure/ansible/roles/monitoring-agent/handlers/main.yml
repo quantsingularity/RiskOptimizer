@@ -1,0 +1,12 @@
+---
+- name: Restart CloudWatch Agent
+  systemd:
+    name: amazon-cloudwatch-agent
+    state: restarted
+    enabled: yes
+
+- name: Restart node_exporter
+  systemd:
+    name: node_exporter
+    state: restarted
+    daemon_reload: yes

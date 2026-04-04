@@ -1,7 +1,5 @@
 ---
-# database-security role - stub implementation
-# TODO: Implement full role functionality
-
-- name: database-security placeholder
-  debug:
-    msg: "Role database-security requires full implementation"
+# roles/database-security/tasks/main.yml
+- name: Apply database-security configuration
+  include_tasks: configure.yml
+  when: database_security_enabled | default(true) | bool

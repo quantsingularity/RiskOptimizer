@@ -24,6 +24,10 @@ iptables -A OUTPUT -o lo -j ACCEPT
 
 # Allow established and related connections
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+# Drop INVALID packets
+iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
+iptables -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+
 
 # Rate limiting for SSH (prevent brute force)
 iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name SSH
@@ -82,3 +86,25 @@ if command -v service >/dev/null 2>&1; then
 fi
 
 echo "iptables rules applied successfully"
+
+# Apply equivalent rules for IPv6
+if command -v ip6tables &>/dev/null; then
+    ip6tables -F
+    ip6tables -X
+    ip6tables -P INPUT DROP
+    ip6tables -P FORWARD DROP
+    ip6tables -P OUTPUT ACCEPT
+    ip6tables -A INPUT -i lo -j ACCEPT
+    ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+    ip6tables -A INPUT -m conntrack --ctstate INVALID -j DROP
+    ip6tables -A INPUT -p ipv6-icmp -j ACCEPT
+    ip6tables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name SSHv6
+    ip6tables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --update --seconds 60 --hitcount 4 --name SSHv6 -j DROP
+    ip6tables -A INPUT -p tcp --dport 22 -j ACCEPT
+    ip6tables -A INPUT -p tcp --dport 80 -j ACCEPT
+    ip6tables -A INPUT -p tcp --dport 443 -j ACCEPT
+    ip6tables -A INPUT -j DROP
+    if command -v ip6tables-save &>/dev/null; then
+        ip6tables-save > /etc/iptables/rules.v6
+    fi
+fi

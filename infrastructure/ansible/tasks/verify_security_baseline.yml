@@ -1,7 +1,89 @@
 ---
 # Security baseline verification tasks
-# TODO: Implement comprehensive security checks
 
-- name: Verify security baseline placeholder
+- name: Check SSH root login is disabled
+  command: sshd -T
+  register: sshd_config
+  changed_when: false
+  check_mode: no
+
+- name: Assert SSH PermitRootLogin is no
+  assert:
+    that: "'permitrootlogin no' in sshd_config.stdout.lower()"
+    fail_msg: "SECURITY VIOLATION: SSH root login is permitted on {{ inventory_hostname }}"
+    success_msg: "SSH root login is correctly disabled"
+
+- name: Assert SSH PasswordAuthentication is no
+  assert:
+    that: "'passwordauthentication no' in sshd_config.stdout.lower()"
+    fail_msg: "SECURITY VIOLATION: SSH password authentication is enabled on {{ inventory_hostname }}"
+    success_msg: "SSH password authentication is correctly disabled"
+
+- name: Check that firewall is running (RedHat)
+  systemd:
+    name: firewalld
+  register: firewalld_status
+  changed_when: false
+  failed_when: false
+  when: ansible_os_family == "RedHat"
+
+- name: Assert firewall is active (RedHat)
+  assert:
+    that: firewalld_status.status.ActiveState == "active"
+    fail_msg: "SECURITY VIOLATION: firewalld is not running on {{ inventory_hostname }}"
+    success_msg: "Firewall is running"
+  when:
+    - ansible_os_family == "RedHat"
+    - firewalld_status is defined
+
+- name: Check kernel ASLR is enabled
+  command: sysctl -n kernel.randomize_va_space
+  register: aslr_check
+  changed_when: false
+  check_mode: no
+
+- name: Assert ASLR is enabled
+  assert:
+    that: aslr_check.stdout | int == 2
+    fail_msg: "SECURITY VIOLATION: ASLR is not fully enabled (value: {{ aslr_check.stdout }}) on {{ inventory_hostname }}"
+    success_msg: "ASLR is correctly enabled"
+
+- name: Check dmesg restriction
+  command: sysctl -n kernel.dmesg_restrict
+  register: dmesg_check
+  changed_when: false
+  check_mode: no
+
+- name: Assert dmesg is restricted
+  assert:
+    that: dmesg_check.stdout | int == 1
+    fail_msg: "SECURITY VIOLATION: kernel dmesg is not restricted on {{ inventory_hostname }}"
+    success_msg: "kernel dmesg restriction is correctly configured"
+
+- name: Verify IP forwarding is disabled
+  command: sysctl -n net.ipv4.ip_forward
+  register: ip_forward_check
+  changed_when: false
+  check_mode: no
+
+- name: Assert IP forwarding is disabled
+  assert:
+    that: ip_forward_check.stdout | int == 0
+    fail_msg: "SECURITY VIOLATION: IP forwarding is enabled on {{ inventory_hostname }}"
+    success_msg: "IP forwarding is correctly disabled"
+
+- name: Check for world-writable files in critical directories
+  command: find /etc /usr/bin /usr/sbin -perm -002 -type f
+  register: world_writable
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: Warn about world-writable files
   debug:
-    msg: "Security baseline verification not yet implemented"
+    msg: "WARNING: World-writable files found: {{ world_writable.stdout_lines }}"
+  when: world_writable.stdout_lines | length > 0
+
+- name: Security baseline verification complete
+  debug:
+    msg: "Security baseline verification passed for {{ inventory_hostname }}"

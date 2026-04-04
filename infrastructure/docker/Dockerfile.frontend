@@ -1,0 +1,65 @@
+# Dockerfile for RiskOptimizer Frontend (React/Next.js)
+# Multi-stage build for optimized production image
+
+# ── Stage 1: Dependencies ──────────────────────────────────────────────────
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+RUN apk add --no-cache libc6-compat
+
+COPY package*.json ./
+COPY yarn.lock* ./
+
+RUN npm ci && npm cache clean --force
+
+# ── Stage 2: Builder ────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npm run build
+
+# ── Stage 3: Nginx runner ──────────────────────────────────────────────────
+FROM nginx:1.25-alpine AS runner
+
+# Install security updates
+RUN apk update && \
+    apk upgrade && \
+    rm -rf /var/cache/apk/*
+
+# Create non-root user
+RUN addgroup -g 10001 -S webgroup && \
+    adduser -S webuser -u 10001 -G webgroup
+
+# Copy nginx config
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy built frontend assets
+COPY --from=builder --chown=webuser:webgroup /app/dist /usr/share/nginx/html
+
+# Fix nginx directories for non-root operation
+RUN chown -R webuser:webgroup \
+        /var/cache/nginx \
+        /var/log/nginx \
+        /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown webuser:webgroup /var/run/nginx.pid
+
+USER webuser
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:8080/health || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]
+
+LABEL org.opencontainers.image.title="RiskOptimizer Frontend" \
+      org.opencontainers.image.description="RiskOptimizer frontend application"

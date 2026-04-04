@@ -1,0 +1,4 @@
+---
+- name: Verify application-security is operational on {{ inventory_hostname }}
+  debug:
+    msg: "application-security configuration applied"

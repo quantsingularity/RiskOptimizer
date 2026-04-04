@@ -1,7 +1,123 @@
 ---
-# Tasks for security-hardening role
-# TODO: Implement security-hardening tasks
+# roles/security-hardening/tasks/main.yml - CIS Benchmark hardening
 
-- name: Placeholder task for security-hardening
-  debug:
-    msg: "Role security-hardening is not yet fully implemented"
+- name: Set sysctl security parameters
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.d/99-riskoptimizer-security.conf
+  loop:
+    # Network hardening
+    - { name: "net.ipv4.ip_forward", value: "0" }
+    - { name: "net.ipv4.conf.all.send_redirects", value: "0" }
+    - { name: "net.ipv4.conf.default.send_redirects", value: "0" }
+    - { name: "net.ipv4.conf.all.accept_redirects", value: "0" }
+    - { name: "net.ipv4.conf.default.accept_redirects", value: "0" }
+    - { name: "net.ipv4.conf.all.accept_source_route", value: "0" }
+    - { name: "net.ipv4.conf.default.accept_source_route", value: "0" }
+    - { name: "net.ipv4.conf.all.log_martians", value: "1" }
+    - { name: "net.ipv4.conf.default.log_martians", value: "1" }
+    - { name: "net.ipv4.icmp_echo_ignore_broadcasts", value: "1" }
+    - { name: "net.ipv4.icmp_ignore_bogus_error_responses", value: "1" }
+    - { name: "net.ipv4.tcp_syncookies", value: "1" }
+    - { name: "net.ipv6.conf.all.accept_redirects", value: "0" }
+    - { name: "net.ipv6.conf.default.accept_redirects", value: "0" }
+    # Kernel hardening
+    - { name: "kernel.randomize_va_space", value: "2" }
+    - { name: "kernel.dmesg_restrict", value: "1" }
+    - { name: "kernel.kptr_restrict", value: "2" }
+    - { name: "kernel.yama.ptrace_scope", value: "1" }
+    - { name: "fs.suid_dumpable", value: "0" }
+    - { name: "fs.protected_hardlinks", value: "1" }
+    - { name: "fs.protected_symlinks", value: "1" }
+
+- name: Configure SSH hardening
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: sshd -t -f %s
+  loop:
+    - { regexp: "^#?Protocol", line: "Protocol 2" }
+    - { regexp: "^#?PermitRootLogin", line: "PermitRootLogin no" }
+    - { regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "^#?PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
+    - {
+        regexp: "^#?ChallengeResponseAuth",
+        line: "ChallengeResponseAuthentication no",
+      }
+    - { regexp: "^#?X11Forwarding", line: "X11Forwarding no" }
+    - { regexp: "^#?MaxAuthTries", line: "MaxAuthTries 4" }
+    - { regexp: "^#?ClientAliveInterval", line: "ClientAliveInterval 300" }
+    - { regexp: "^#?ClientAliveCountMax", line: "ClientAliveCountMax 2" }
+    - { regexp: "^#?LoginGraceTime", line: "LoginGraceTime 60" }
+    - { regexp: "^#?AllowAgentForwarding", line: "AllowAgentForwarding no" }
+    - { regexp: "^#?AllowTcpForwarding", line: "AllowTcpForwarding no" }
+    - { regexp: "^#?Compression", line: "Compression no" }
+    - { regexp: "^#?TCPKeepAlive", line: "TCPKeepAlive no" }
+    - { regexp: "^#?UseDNS", line: "UseDNS no" }
+    - { regexp: "^#?Banner", line: "Banner /etc/issue.net" }
+    - {
+        regexp: "^#?Ciphers",
+        line: "Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr",
+      }
+    - {
+        regexp: "^#?MACs",
+        line: "MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com",
+      }
+    - {
+        regexp: "^#?KexAlgorithms",
+        line: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512",
+      }
+  notify: Restart SSHD
+
+- name: Set login banner
+  copy:
+    dest: /etc/issue.net
+    content: |
+      ******************************************************************************
+      WARNING: Authorized access only. All activity is monitored and logged.
+      Unauthorized access will be prosecuted to the full extent of the law.
+      ******************************************************************************
+    mode: "0644"
+
+- name: Disable unused filesystems
+  copy:
+    dest: /etc/modprobe.d/riskoptimizer-disable-filesystems.conf
+    content: |
+      install cramfs /bin/true
+      install freevxfs /bin/true
+      install jffs2 /bin/true
+      install hfs /bin/true
+      install hfsplus /bin/true
+      install squashfs /bin/true
+      install udf /bin/true
+      install vfat /bin/true
+    mode: "0644"
+
+- name: Disable unused network protocols
+  copy:
+    dest: /etc/modprobe.d/riskoptimizer-disable-protocols.conf
+    content: |
+      install dccp /bin/true
+      install sctp /bin/true
+      install rds /bin/true
+      install tipc /bin/true
+    mode: "0644"
+
+- name: Set file permission on sensitive files
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "/etc/passwd", owner: root, group: root, mode: "0644" }
+    - { path: "/etc/shadow", owner: root, group: shadow, mode: "0640" }
+    - { path: "/etc/group", owner: root, group: root, mode: "0644" }
+    - { path: "/etc/gshadow", owner: root, group: shadow, mode: "0640" }
+    - { path: "/etc/ssh/sshd_config", owner: root, group: root, mode: "0600" }
+  ignore_errors: yes

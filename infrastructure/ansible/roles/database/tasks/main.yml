@@ -1,47 +1,86 @@
 ---
 # roles/database/tasks/main.yml
-- name: Install database packages
+# Uses PostgreSQL to match Terraform/Kubernetes configuration
+
+- name: Install PostgreSQL packages (RedHat)
   yum:
     name:
-      - mariadb-server
-      - mariadb
-      - python3-PyMySQL
+      - postgresql15-server
+      - postgresql15
+      - python3-psycopg2
     state: present
+  when: ansible_os_family == "RedHat"
 
-- name: Configure MariaDB
-  template:
-    src: my.cnf.j2
-    dest: /etc/my.cnf.d/server.cnf
-  notify: Restart MariaDB
+- name: Install PostgreSQL packages (Debian)
+  apt:
+    name:
+      - postgresql-15
+      - postgresql-client-15
+      - python3-psycopg2
+      - libpq-dev
+    state: present
+  when: ansible_os_family == "Debian"
 
-- name: Start and enable MariaDB
+- name: Initialize PostgreSQL database cluster (RedHat)
+  command: postgresql-15-setup initdb
+  args:
+    creates: /var/lib/pgsql/15/data/PG_VERSION
+  when: ansible_os_family == "RedHat"
+
+- name: Start and enable PostgreSQL
   systemd:
-    name: mariadb
+    name: "{{ 'postgresql-15' if ansible_os_family == 'RedHat' else 'postgresql@15-main' }}"
     state: started
     enabled: yes
 
-- name: Set root password
-  mysql_user:
-    name: root
-    password: "{{ db_root_password }}"
-    host_all: yes
-    state: present
-  no_log: true
-
 - name: Create application database
-  mysql_db:
+  community.postgresql.postgresql_db:
     name: "{{ db_name }}"
     state: present
-    login_user: root
-    login_password: "{{ db_root_password }}"
+    encoding: UTF8
+    lc_collate: en_US.UTF-8
+    lc_ctype: en_US.UTF-8
+  become: yes
+  become_user: postgres
+  no_log: false
 
 - name: Create application database user
-  mysql_user:
+  community.postgresql.postgresql_user:
     name: "{{ db_user }}"
     password: "{{ db_password }}"
-    priv: "{{ db_name }}.*:ALL"
-    host: "%"
+    db: "{{ db_name }}"
+    priv: "ALL"
     state: present
-    login_user: root
-    login_password: "{{ db_root_password }}"
+    role_attr_flags: NOSUPERUSER,NOCREATEDB,NOCREATEROLE
+  become: yes
+  become_user: postgres
   no_log: true
+
+- name: Grant schema privileges to app user
+  community.postgresql.postgresql_privs:
+    database: "{{ db_name }}"
+    privs: ALL
+    type: schema
+    obj: public
+    role: "{{ db_user }}"
+  become: yes
+  become_user: postgres
+
+- name: Configure PostgreSQL authentication (pg_hba.conf)
+  template:
+    src: pg_hba.conf.j2
+    dest: "/etc/postgresql/15/main/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: "0640"
+  notify: Restart PostgreSQL
+  when: ansible_os_family == "Debian"
+
+- name: Ensure PostgreSQL listens on correct interface
+  lineinfile:
+    path: "/etc/postgresql/15/main/postgresql.conf"
+    regexp: "^#?listen_addresses"
+    line: "listen_addresses = 'localhost'"
+    state: present
+  notify: Restart PostgreSQL
+  when: ansible_os_family == "Debian"

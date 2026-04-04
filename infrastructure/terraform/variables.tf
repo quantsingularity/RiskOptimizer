@@ -1,10 +1,14 @@
 # Enhanced Terraform Variables for RiskOptimizer Infrastructure
-# This file defines all variables with security and compliance considerations
 
 # Environment Configuration
 variable "environment" {
   description = "Environment name (development, staging, production)"
   type        = string
+
+  validation {
+    condition     = contains(["development", "staging", "production"], var.environment)
+    error_message = "Environment must be one of: development, staging, production."
+  }
 }
 
 variable "app_name" {
@@ -24,6 +28,11 @@ variable "compliance_level" {
   description = "Compliance level (basic, standard, strict)"
   type        = string
   default     = "strict"
+
+  validation {
+    condition     = contains(["basic", "standard", "strict"], var.compliance_level)
+    error_message = "Compliance level must be one of: basic, standard, strict."
+  }
 }
 
 variable "enable_encryption" {
@@ -92,18 +101,33 @@ variable "eks_node_group_min_size" {
   description = "Minimum number of nodes in EKS node group"
   type        = number
   default     = 3
-# VALIDATION DISABLED: }
-# VALIDATION DISABLED: 
-# VALIDATION DISABLED: variable "eks_node_group_max_size" {
-# VALIDATION DISABLED:   description = "Maximum number of nodes in EKS node group"
-# VALIDATION DISABLED:   type        = number
-# VALIDATION DISABLED:   default     = 10
-# VALIDATION DISABLED: }
-# VALIDATION DISABLED: 
-# VALIDATION DISABLED: variable "eks_node_group_desired_size" {
-# VALIDATION DISABLED:   description = "Desired number of nodes in EKS node group"
-# VALIDATION DISABLED:   type        = number
-# VALIDATION DISABLED:   default     = 3
+
+  validation {
+    condition     = var.eks_node_group_min_size >= 1
+    error_message = "Minimum node group size must be at least 1."
+  }
+}
+
+variable "eks_node_group_max_size" {
+  description = "Maximum number of nodes in EKS node group"
+  type        = number
+  default     = 10
+
+  validation {
+    condition     = var.eks_node_group_max_size >= 1
+    error_message = "Maximum node group size must be at least 1."
+  }
+}
+
+variable "eks_node_group_desired_size" {
+  description = "Desired number of nodes in EKS node group"
+  type        = number
+  default     = 3
+
+  validation {
+    condition     = var.eks_node_group_desired_size >= 1
+    error_message = "Desired node group size must be at least 1."
+  }
 }
 
 # Database Configuration
@@ -123,12 +147,22 @@ variable "db_allocated_storage" {
   description = "Initial allocated storage for RDS instance (GB)"
   type        = number
   default     = 100
-# VALIDATION DISABLED: }
-# VALIDATION DISABLED: 
-# VALIDATION DISABLED: variable "db_max_allocated_storage" {
-# VALIDATION DISABLED:   description = "Maximum allocated storage for RDS instance (GB)"
-# VALIDATION DISABLED:   type        = number
-# VALIDATION DISABLED:   default     = 1000
+
+  validation {
+    condition     = var.db_allocated_storage >= 20
+    error_message = "Allocated storage must be at least 20 GB."
+  }
+}
+
+variable "db_max_allocated_storage" {
+  description = "Maximum allocated storage for RDS instance (GB)"
+  type        = number
+  default     = 1000
+
+  validation {
+    condition     = var.db_max_allocated_storage >= 20
+    error_message = "Maximum allocated storage must be at least 20 GB."
+  }
 }
 
 variable "db_name" {
@@ -224,12 +258,12 @@ variable "default_tags" {
   type        = map(string)
   default = {
     Project             = "RiskOptimizer"
-    Owner              = "DevOps Team"
-    CostCenter         = "Engineering"
-    BusinessUnit       = "Technology"
-    DataClassification = "Confidential"
-    BackupRequired     = "true"
-    MonitoringEnabled  = "true"
+    Owner               = "DevOps Team"
+    CostCenter          = "Engineering"
+    BusinessUnit        = "Technology"
+    DataClassification  = "Confidential"
+    BackupRequired      = "true"
+    MonitoringEnabled   = "true"
   }
 }
 

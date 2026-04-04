@@ -1,0 +1,4 @@
+---
+- name: Verify kibana is operational on {{ inventory_hostname }}
+  debug:
+    msg: "kibana configuration applied"

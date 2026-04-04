@@ -1,8 +1,9 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: riskoptimizer-backend
-  namespace: riskoptimizer-prod
+  namespace: riskoptimizer
   labels:
     app: riskoptimizer-backend
     component: api
@@ -63,7 +64,7 @@ spec:
 
       # Service Account
       serviceAccountName: riskoptimizer-backend
-      automountServiceAccountToken: true
+      automountServiceAccountToken: false
 
       # Node Selection and Affinity
       nodeSelector:
@@ -290,7 +291,7 @@ spec:
 
         # Sidecar Containers
         - name: vault-agent
-          image: vault:1.12.0
+          image: hashicorp/vault:1.15.0
           command: ["vault", "agent", "-config=/vault/config/agent.hcl"]
           securityContext:
             runAsNonRoot: true
@@ -316,7 +317,7 @@ spec:
               memory: 64Mi
 
         - name: log-forwarder
-          image: fluent/fluent-bit:1.9.0
+          image: fluent/fluent-bit:2.2.0
           securityContext:
             runAsNonRoot: true
             runAsUser: 10001

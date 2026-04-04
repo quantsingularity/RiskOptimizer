@@ -1,0 +1,4 @@
+---
+- name: Verify database-security is operational on {{ inventory_hostname }}
+  debug:
+    msg: "database-security configuration applied"

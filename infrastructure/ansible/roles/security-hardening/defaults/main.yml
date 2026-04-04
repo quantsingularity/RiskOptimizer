@@ -1,2 +1,3 @@
 ---
-# Default variables for security-hardening role
+security_hardening_enabled: true
+ssh_port: 22

@@ -1,12 +1,23 @@
 ---
 # roles/webserver/tasks/main.yml
-- name: Install web server packages
+
+- name: Install web server packages (RedHat)
   yum:
     name:
       - nginx
       - nodejs
       - npm
     state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install web server packages (Debian)
+  apt:
+    name:
+      - nginx
+      - nodejs
+      - npm
+    state: present
+  when: ansible_os_family == "Debian"
 
 - name: Create web application directory
   file:
@@ -14,16 +25,45 @@
     state: directory
     owner: nginx
     group: nginx
-    mode: "0755"
+    mode: "0750"
+
+- name: Create nginx log directory
+  file:
+    path: /var/log/nginx
+    state: directory
+    owner: nginx
+    group: adm
+    mode: "0750"
 
 - name: Configure Nginx
   template:
     src: nginx.conf.j2
     dest: /etc/nginx/conf.d/{{ app_name }}.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: nginx -t -c %s
   notify: Restart Nginx
+
+- name: Remove default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Restart Nginx
+  ignore_errors: yes
 
 - name: Start and enable Nginx
   systemd:
     name: nginx
     state: started
     enabled: yes
+
+- name: Verify Nginx is responding
+  uri:
+    url: "http://localhost/health"
+    status_code: [200, 404]
+    timeout: 5
+  retries: 3
+  delay: 5
+  register: nginx_check
+  until: nginx_check.status in [200, 404]

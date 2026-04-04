@@ -1,12 +1,21 @@
 ---
 # roles/common/tasks/main.yml
-- name: Update all packages
+
+- name: Update all packages (RedHat/Amazon Linux)
   yum:
     name: "*"
     state: latest
     update_only: yes
+  when: ansible_os_family == "RedHat"
 
-- name: Install common packages
+- name: Update all packages (Debian/Ubuntu)
+  apt:
+    upgrade: safe
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Install common packages (RedHat/Amazon Linux)
   yum:
     name:
       - vim
@@ -17,26 +26,91 @@
       - net-tools
       - python3
       - python3-pip
+      - ntp
+      - logrotate
+      - rsyslog
     state: present
+  when: ansible_os_family == "RedHat"
 
-- name: Set timezone
-  timezone:
+- name: Install common packages (Debian/Ubuntu)
+  apt:
+    name:
+      - vim
+      - git
+      - wget
+      - unzip
+      - htop
+      - net-tools
+      - python3
+      - python3-pip
+      - ntp
+      - logrotate
+      - rsyslog
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Set timezone to UTC
+  community.general.timezone:
     name: UTC
 
-- name: Configure firewall
+- name: Configure firewall services (RedHat)
   firewalld:
     service: "{{ item }}"
     permanent: yes
     state: enabled
+    immediate: yes
   loop:
     - http
     - https
     - ssh
   when: ansible_os_family == "RedHat"
 
-- name: Start and enable firewalld
+- name: Start and enable firewalld (RedHat)
   systemd:
     name: firewalld
     state: started
     enabled: yes
   when: ansible_os_family == "RedHat"
+
+- name: Configure ufw (Debian/Ubuntu)
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - "22"
+    - "80"
+    - "443"
+  when: ansible_os_family == "Debian"
+
+- name: Enable ufw (Debian/Ubuntu)
+  community.general.ufw:
+    state: enabled
+    policy: deny
+  when: ansible_os_family == "Debian"
+
+- name: Ensure NTP is started and enabled
+  systemd:
+    name: "{{ 'chronyd' if ansible_os_family == 'RedHat' else 'ntp' }}"
+    state: started
+    enabled: yes
+
+- name: Configure logrotate
+  copy:
+    dest: /etc/logrotate.d/riskoptimizer
+    content: |
+      /var/log/riskoptimizer/*.log {
+          daily
+          rotate 14
+          compress
+          delaycompress
+          missingok
+          notifempty
+          create 0640 root adm
+      }
+    owner: root
+    group: root
+    mode: "0644"

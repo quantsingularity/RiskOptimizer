@@ -1,7 +1,101 @@
 ---
-# vault role - stub implementation
-# TODO: Implement full role functionality
+- name: Install Vault dependencies
+  package:
+    name:
+      - unzip
+      - curl
+    state: present
 
-- name: vault placeholder
-  debug:
-    msg: "Role vault requires full implementation"
+- name: Download HashiCorp Vault
+  get_url:
+    url: "https://releases.hashicorp.com/vault/{{ vault_version | default('1.15.0') }}/vault_{{ vault_version | default('1.15.0') }}_linux_amd64.zip"
+    dest: /tmp/vault.zip
+    mode: "0644"
+    checksum: "sha256:{{ vault_checksum | default(omit) }}"
+
+- name: Extract Vault binary
+  unarchive:
+    src: /tmp/vault.zip
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: "0755"
+
+- name: Create vault system user
+  user:
+    name: vault
+    system: yes
+    shell: /bin/false
+    home: /etc/vault.d
+    create_home: no
+
+- name: Create Vault directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: vault
+    group: vault
+    mode: "0750"
+  loop:
+    - /etc/vault.d
+    - /opt/vault/data
+    - /opt/vault/logs
+
+- name: Copy Vault configuration
+  copy:
+    src: "{{ playbook_dir }}/../security/vault/vault.hcl"
+    dest: /etc/vault.d/vault.hcl
+    owner: vault
+    group: vault
+    mode: "0640"
+  notify: Restart Vault
+
+- name: Create Vault systemd service
+  copy:
+    dest: /etc/systemd/system/vault.service
+    content: |
+      [Unit]
+      Description=HashiCorp Vault
+      Documentation=https://www.vaultproject.io/docs/
+      Requires=network-online.target
+      After=network-online.target
+      ConditionFileNotEmpty=/etc/vault.d/vault.hcl
+
+      [Service]
+      Type=notify
+      User=vault
+      Group=vault
+      ProtectSystem=strict
+      ProtectHome=read-only
+      PrivateTmp=yes
+      PrivateDevices=yes
+      NoNewPrivileges=yes
+      SecureBits=keep-caps
+      AmbientCapabilities=CAP_IPC_LOCK
+      CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
+      LimitMEMLOCK=infinity
+      ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+      ExecReload=/bin/kill --signal HUP $MAINPID
+      KillMode=process
+      KillSignal=SIGINT
+      Restart=on-failure
+      RestartSec=5
+      TimeoutStopSec=30
+
+      [Install]
+      WantedBy=multi-user.target
+    mode: "0644"
+  notify: Restart Vault
+
+- name: Start and enable Vault
+  systemd:
+    name: vault
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Set VAULT_ADDR environment variable system-wide
+  lineinfile:
+    path: /etc/environment
+    regexp: "^VAULT_ADDR="
+    line: "VAULT_ADDR=https://127.0.0.1:8200"
+    state: present

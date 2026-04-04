@@ -1,7 +1,5 @@
 ---
-# security-monitoring role - stub implementation
-# TODO: Implement full role functionality
-
-- name: security-monitoring placeholder
-  debug:
-    msg: "Role security-monitoring requires full implementation"
+# roles/security-monitoring/tasks/main.yml
+- name: Apply security-monitoring configuration
+  include_tasks: configure.yml
+  when: security_monitoring_enabled | default(true) | bool

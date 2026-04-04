@@ -1,7 +1,5 @@
 ---
-# application-monitoring role - stub implementation
-# TODO: Implement full role functionality
-
-- name: application-monitoring placeholder
-  debug:
-    msg: "Role application-monitoring requires full implementation"
+# roles/application-monitoring/tasks/main.yml
+- name: Apply application-monitoring configuration
+  include_tasks: configure.yml
+  when: application_monitoring_enabled | default(true) | bool
