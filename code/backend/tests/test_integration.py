@@ -210,7 +210,7 @@ class TestWorkflowIntegration:
     ) -> Any:
         """Test complete risk analysis workflow from start to finish."""
         from src.tasks.risk_tasks import monte_carlo_simulation, stress_test_portfolio
-        from tasks.report_tasks import generate_risk_report
+        from src.tasks.report_tasks import generate_risk_report
 
         portfolio_data = {
             "weights": [0.4, 0.25, 0.2, 0.1, 0.05],
