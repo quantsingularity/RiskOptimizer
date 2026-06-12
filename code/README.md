@@ -41,9 +41,3 @@ All Python quantitative and ML services.
 | `reporting/`   | HTML/PDF report generation, scheduling, archiving       |
 | `data/`        | Historical OHLCV CSV files                              |
 | `tests/`       | Comprehensive test suite                                |
-
-## Docker (full stack)
-
-```bash
-docker-compose up --build
-```
