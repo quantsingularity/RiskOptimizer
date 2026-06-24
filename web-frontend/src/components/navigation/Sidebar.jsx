@@ -2,6 +2,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -24,6 +25,7 @@ const menuItems = [
   { text: "Portfolio", icon: <AccountBalanceWalletIcon />, path: "/portfolio" },
   { text: "Risk Analysis", icon: <AssessmentIcon />, path: "/risk-analysis" },
   { text: "Optimization", icon: <TrendingUpIcon />, path: "/optimization" },
+  { text: "System Status", icon: <MonitorHeartIcon />, path: "/monitoring" },
   { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
 ];
 
@@ -70,7 +72,7 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
             mb: 0.5,
             mx: 1,
             borderRadius: 1,
-            "&:hover": { backgroundColor: "rgba(97, 218, 251, 0.05)" },
+            "&:hover": { backgroundColor: "rgba(91, 141, 239, 0.06)" },
           }}
         >
           <ListItemIcon sx={{ color: "text.secondary", minWidth: 40 }}>
@@ -91,13 +93,13 @@ const Sidebar = ({ mobileOpen, onClose, isMobile }) => {
                 mx: 1,
                 borderRadius: 1,
                 "&.Mui-selected": {
-                  backgroundColor: "rgba(97, 218, 251, 0.1)",
+                  backgroundColor: "rgba(91, 141, 239, 0.12)",
                   "&:hover": {
-                    backgroundColor: "rgba(97, 218, 251, 0.15)",
+                    backgroundColor: "rgba(91, 141, 239, 0.18)",
                   },
                 },
                 "&:hover": {
-                  backgroundColor: "rgba(97, 218, 251, 0.05)",
+                  backgroundColor: "rgba(91, 141, 239, 0.06)",
                 },
               }}
             >

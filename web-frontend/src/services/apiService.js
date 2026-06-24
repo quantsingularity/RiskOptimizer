@@ -8,18 +8,20 @@ const api = axios.create({
   timeout: 30000,
 });
 
+const STORAGE_KEY = "riskoptimizer.auth";
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const user = localStorage.getItem("user");
-    if (user) {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
       try {
-        const userData = JSON.parse(user);
-        if (userData.token) {
-          config.headers.Authorization = `Bearer ${userData.token}`;
+        const session = JSON.parse(raw);
+        if (session.token) {
+          config.headers.Authorization = `Bearer ${session.token}`;
         }
       } catch {
-        localStorage.removeItem("user");
+        localStorage.removeItem(STORAGE_KEY);
       }
     }
     return config;
@@ -63,29 +65,29 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const savedUser = localStorage.getItem("user");
-      const refreshToken = savedUser
-        ? JSON.parse(savedUser)?.refresh_token
-        : null;
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const session = saved ? JSON.parse(saved) : null;
+      const refreshToken = session?.refresh_token || null;
 
       if (refreshToken) {
         try {
           const response = await api.post("/api/v1/auth/refresh", {
             refresh_token: refreshToken,
           });
-          const { token } = response.data?.data || {};
-          if (token) {
-            const userData = JSON.parse(localStorage.getItem("user") || "{}");
-            userData.token = token;
-            localStorage.setItem("user", JSON.stringify(userData));
-            api.defaults.headers.common.Authorization = `Bearer ${token}`;
-            processQueue(null, token);
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+          const newAccess =
+            response.data?.data?.tokens?.access_token ||
+            response.data?.data?.access_token;
+          if (newAccess) {
+            session.token = newAccess;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+            api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
+            processQueue(null, newAccess);
+            originalRequest.headers.Authorization = `Bearer ${newAccess}`;
             return api(originalRequest);
           }
         } catch (refreshError) {
           processQueue(refreshError, null);
-          localStorage.removeItem("user");
+          localStorage.removeItem(STORAGE_KEY);
           window.location.href = "/login";
           return Promise.reject(refreshError);
         } finally {
@@ -93,7 +95,7 @@ api.interceptors.response.use(
         }
       } else {
         isRefreshing = false;
-        localStorage.removeItem("user");
+        localStorage.removeItem(STORAGE_KEY);
         window.location.href = "/login";
       }
     }
@@ -135,7 +137,7 @@ const endpoints = {
   calculateCVaR: "/api/v1/risk/cvar",
   calculateSharpeRatio: "/api/v1/risk/sharpe-ratio",
   calculateMaxDrawdown: "/api/v1/risk/max-drawdown",
-  riskMetrics: "/api/v1/risk/metrics",
+  riskMetrics: "/api/v1/risk/portfolio-metrics",
   efficientFrontier: "/api/v1/risk/efficient-frontier",
 
   // Optimization (task controller)

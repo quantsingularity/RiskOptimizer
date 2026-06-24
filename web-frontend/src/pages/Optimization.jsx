@@ -30,15 +30,10 @@ import {
 import { useState } from "react";
 import {
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
-  Scatter,
-  ScatterChart,
   Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
-  ZAxis,
-  Line,
   ComposedChart,
   Area,
 } from "recharts";
@@ -74,7 +69,7 @@ function generateEfficientFrontier(riskTolerance) {
   return { points, optimalIdx: optIdx };
 }
 
-const EfficientFrontierChart = ({ data, riskTolerance }) => {
+const EfficientFrontierChart = ({ data }) => {
   if (!data) return null;
   const { points, optimalIdx } = data;
   const optimal = points[optimalIdx];

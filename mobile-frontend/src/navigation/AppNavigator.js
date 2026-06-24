@@ -3,9 +3,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon } from "@rneui/themed";
 import { useAuth } from "../context/AuthContext";
+import colors from "../theme/colors";
 
 // Import Screens (create placeholder files first)
 import LoginScreen from "../screens/Auth/LoginScreen";
+import RegisterScreen from "../screens/Auth/RegisterScreen";
+import WelcomeScreen from "../screens/Auth/WelcomeScreen";
 import DashboardScreen from "../screens/Dashboard/DashboardScreen";
 import MarketScreen from "../screens/Market/MarketScreen";
 import OptimizationScreen from "../screens/Optimize/OptimizationScreen";
@@ -126,8 +129,12 @@ const AppTabs = () => (
           <Icon name={iconName} type={iconType} size={size} color={color} />
         );
       },
-      tabBarActiveTintColor: "#007AFF", // Example active color
-      tabBarInactiveTintColor: "gray",
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: colors.textMuted,
+      tabBarStyle: {
+        backgroundColor: colors.surface,
+        borderTopColor: colors.border,
+      },
     })}
   >
     <Tab.Screen name="Dashboard" component={DashboardStack} />
@@ -154,7 +161,11 @@ const AppNavigator = () => {
         {authenticated ? (
           <Stack.Screen name="App" component={AppTabs} />
         ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
         )}
         {/* Add other non-tab screens like Modals here if needed */}
       </Stack.Navigator>

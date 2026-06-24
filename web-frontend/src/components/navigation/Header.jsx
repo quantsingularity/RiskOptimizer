@@ -9,7 +9,6 @@ import {
   Avatar,
   Badge,
   Box,
-  Chip,
   Divider,
   IconButton,
   ListItemIcon,
@@ -35,10 +34,10 @@ const Header = ({ onMenuClick }) => {
   const handleNotifOpen = (e) => setNotifAnchor(e.currentTarget);
   const handleNotifClose = () => setNotifAnchor(null);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleProfileClose();
-    logout();
-    navigate("/");
+    await logout();
+    navigate("/login", { replace: true });
   };
 
   const handleSettings = () => {

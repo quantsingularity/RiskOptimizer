@@ -27,14 +27,16 @@ const MainLayout = () => {
           component="main"
           sx={{
             flexGrow: 1,
+            // The sidebar nav box already reserves its width in this flex row,
+            // so the main area only needs to fill the remaining space. Adding a
+            // left margin here would double-count the sidebar and leave a large
+            // empty band between the sidebar and the page content.
+            minWidth: 0,
             p: { xs: 2, sm: 3 },
-            // On desktop, offset by sidebar width; on mobile sidebar is an overlay
-            ml: { xs: 0, sm: `${DRAWER_WIDTH}px` },
-            width: { xs: "100%", sm: `calc(100% - ${DRAWER_WIDTH}px)` },
             minHeight: "calc(100vh - 64px)",
           }}
         >
-          {/* Spacer for fixed AppBar */}
+          {/* Spacer to clear the fixed AppBar */}
           <Box sx={{ mt: { xs: 7, sm: 8 }, mb: 2 }}>
             <Outlet />
           </Box>

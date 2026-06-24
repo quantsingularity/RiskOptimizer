@@ -1,417 +1,343 @@
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
+import BoltIcon from "@mui/icons-material/Bolt";
+import InsightsIcon from "@mui/icons-material/Insights";
 import SecurityIcon from "@mui/icons-material/Security";
-import SpeedIcon from "@mui/icons-material/Speed";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import TuneIcon from "@mui/icons-material/Tune";
 import {
   Box,
   Button,
   Card,
-  CardContent,
   Chip,
   Container,
-  Divider,
   Grid,
+  Stack,
   Typography,
 } from "@mui/material";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { mono } from "../theme";
 
 const features = [
   {
-    icon: <AutoGraphIcon sx={{ fontSize: 40 }} />,
-    title: "AI-Powered Optimization",
-    description:
-      "Leverage cutting-edge algorithms to find the optimal asset allocation that maximizes returns for your risk tolerance.",
-    color: "#61dafb",
+    icon: <ShowChartIcon />,
+    title: "Value at Risk and CVaR",
+    body: "Historical and parametric tail-risk estimates on your return series, computed server-side and returned with full precision.",
   },
   {
-    icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
-    title: "Advanced Risk Analysis",
-    description:
-      "Calculate VaR, CVaR, Sharpe Ratio, and run stress tests against historical market crises.",
-    color: "#4caf50",
+    icon: <InsightsIcon />,
+    title: "Risk-adjusted performance",
+    body: "Sharpe ratio, maximum drawdown, and portfolio metrics from a single return stream, ready to compare across strategies.",
   },
   {
-    icon: <SecurityIcon sx={{ fontSize: 40 }} />,
-    title: "Portfolio Protection",
-    description:
-      "Monitor drawdown, volatility, and correlation to protect your portfolio from unexpected market events.",
-    color: "#ff9800",
+    icon: <TuneIcon />,
+    title: "Efficient frontier",
+    body: "Trace the risk-return frontier for a set of assets and see where a candidate allocation sits against the optimum.",
   },
   {
-    icon: <SpeedIcon sx={{ fontSize: 40 }} />,
-    title: "Real-Time Monitoring",
-    description:
-      "Track portfolio performance in real-time with interactive charts and live risk metrics.",
-    color: "#e91e63",
+    icon: <SecurityIcon />,
+    title: "Token-based access",
+    body: "JWT authentication with refresh, so a session stays live without re-entering credentials on every request.",
+  },
+  {
+    icon: <BoltIcon />,
+    title: "Live system status",
+    body: "Watch API, cache, and database health from the monitoring panel, with the same numbers the operators see.",
+  },
+  {
+    icon: <AutoGraphIcon />,
+    title: "Built for iteration",
+    body: "Type returns or paste a series, run a metric, adjust, and rerun. The desk is built for fast what-if loops.",
   },
 ];
 
 const stats = [
-  { label: "Assets Tracked", value: "10,000+" },
-  { label: "Avg. Sharpe Improvement", value: "+38%" },
-  { label: "Portfolios Optimized", value: "5,200+" },
-  { label: "Risk Reduction", value: "Up to 22%" },
+  { value: "6", label: "Risk metrics served" },
+  { value: "0.95", label: "Default confidence" },
+  { value: "JWT", label: "Session security" },
 ];
 
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handleGetStarted = () => {
-    if (user) {
-      navigate("/dashboard");
-    } else {
-      navigate("/login");
-    }
-  };
+  useEffect(() => {
+    // Returning, authenticated users skip the marketing page.
+    if (user) navigate("/dashboard", { replace: true });
+  }, [user, navigate]);
 
   return (
     <Box
-      sx={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #0a1929 0%, #0d2137 50%, #0a1929 100%)",
-        color: "white",
-      }}
+      sx={{ width: "100%", minHeight: "100vh", bgcolor: "background.default" }}
     >
-      {/* Hero Section */}
+      {/* Top bar */}
       <Box
         sx={{
-          position: "relative",
-          overflow: "hidden",
-          pt: { xs: 10, md: 14 },
-          pb: { xs: 8, md: 12 },
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
+          backdropFilter: "blur(10px)",
+          bgcolor: "rgba(10,15,30,0.7)",
+          borderBottom: "1px solid",
+          borderColor: "divider",
         }}
       >
-        {/* Background decorative elements */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: -100,
-            right: -100,
-            width: 600,
-            height: 600,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(97,218,251,0.08) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: -200,
-            left: -200,
-            width: 700,
-            height: 700,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(255,152,0,0.06) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-            <Chip
-              label="AI-Powered Portfolio Intelligence"
-              sx={{
-                mb: 3,
-                backgroundColor: "rgba(97,218,251,0.1)",
-                color: "#61dafb",
-                border: "1px solid rgba(97,218,251,0.3)",
-                fontWeight: 600,
-                fontSize: "0.8rem",
-                px: 1,
-              }}
-            />
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: 68 }}
+          >
             <Typography
-              variant="h1"
-              component="h1"
-              sx={{
-                fontSize: { xs: "2.5rem", md: "4rem", lg: "5rem" },
-                fontWeight: 800,
-                lineHeight: 1.1,
-                mb: 3,
-                background:
-                  "linear-gradient(135deg, #ffffff 30%, #61dafb 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontFamily: "Poppins, sans-serif",
-              }}
+              variant="h6"
+              sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
             >
-              Optimize Your
-              <br />
-              Portfolio Risk
+              Risk<span style={{ color: "#5B8DEF" }}>Optimizer</span>
             </Typography>
-            <Typography
-              variant="h5"
-              sx={{
-                color: "rgba(255,255,255,0.65)",
-                maxWidth: 600,
-                mx: "auto",
-                mb: 5,
-                lineHeight: 1.6,
-                fontWeight: 400,
-                fontSize: { xs: "1rem", md: "1.25rem" },
-              }}
-            >
-              Professional-grade risk analytics and portfolio optimization
-              powered by quantitative finance algorithms.
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                justifyContent: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleGetStarted}
-                startIcon={<TrendingUpIcon />}
-                sx={{
-                  py: 1.8,
-                  px: 5,
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  borderRadius: 3,
-                  background:
-                    "linear-gradient(135deg, #61dafb 0%, #4db8d9 100%)",
-                  color: "#0a1929",
-                  boxShadow: "0 8px 32px rgba(97,218,251,0.35)",
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #8be9fd 0%, #61dafb 100%)",
-                    boxShadow: "0 12px 40px rgba(97,218,251,0.5)",
-                    transform: "translateY(-2px)",
-                  },
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {user ? "Go to Dashboard" : "Get Started Free"}
+            <Stack direction="row" spacing={1.5}>
+              <Button color="inherit" onClick={() => navigate("/login")}>
+                Sign in
               </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => navigate("/dashboard")}
-                sx={{
-                  py: 1.8,
-                  px: 5,
-                  fontSize: "1rem",
-                  borderRadius: 3,
-                  borderColor: "rgba(97,218,251,0.4)",
-                  color: "#61dafb",
-                  "&:hover": {
-                    borderColor: "#61dafb",
-                    backgroundColor: "rgba(97,218,251,0.07)",
-                  },
-                }}
-              >
-                View Demo
+              <Button variant="contained" onClick={() => navigate("/register")}>
+                Create account
               </Button>
-            </Box>
-          </Box>
+            </Stack>
+          </Stack>
         </Container>
       </Box>
 
-      {/* Stats Row */}
-      <Container maxWidth="lg" sx={{ pb: 8 }}>
-        <Card
-          sx={{
-            background: "rgba(19, 47, 76, 0.8)",
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(97,218,251,0.15)",
-            borderRadius: 4,
-            p: { xs: 3, md: 4 },
-          }}
-        >
-          <Grid container spacing={2} justifyContent="space-evenly">
-            {stats.map((stat, index) => (
-              <Grid item xs={6} md={3} key={index} sx={{ textAlign: "center" }}>
-                <Typography
-                  variant="h3"
+      {/* Hero */}
+      <Container
+        maxWidth="lg"
+        sx={{ pt: { xs: 8, md: 12 }, pb: { xs: 6, md: 10 } }}
+      >
+        <Grid container spacing={6} alignItems="center">
+          <Grid item xs={12} md={7}>
+            <Chip
+              label="Quantitative portfolio risk"
+              size="small"
+              sx={{
+                mb: 3,
+                bgcolor: "rgba(91,141,239,0.12)",
+                color: "primary.light",
+                border: "1px solid rgba(91,141,239,0.3)",
+              }}
+            />
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: { xs: "2.4rem", md: "3.4rem" },
+                lineHeight: 1.05,
+                mb: 2.5,
+              }}
+            >
+              Measure the risk before
+              <br />
+              you commit the capital.
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 400,
+                maxWidth: 560,
+                mb: 4,
+              }}
+            >
+              RiskOptimizer turns a return series into the numbers that matter:
+              value at risk, expected shortfall, Sharpe, drawdown, and the
+              efficient frontier. No spreadsheets, no guesswork.
+            </Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <Button
+                size="large"
+                variant="contained"
+                onClick={() => navigate("/register")}
+                sx={{ py: 1.4, px: 3.5 }}
+              >
+                Get started free
+              </Button>
+              <Button
+                size="large"
+                variant="outlined"
+                onClick={() => navigate("/login")}
+                sx={{ py: 1.4, px: 3.5 }}
+              >
+                Sign in
+              </Button>
+            </Stack>
+
+            <Stack direction="row" spacing={5} sx={{ mt: 6 }}>
+              {stats.map((s) => (
+                <Box key={s.label}>
+                  <Typography
+                    sx={{
+                      fontFamily: mono,
+                      fontSize: "1.8rem",
+                      fontWeight: 600,
+                      color: "secondary.main",
+                    }}
+                  >
+                    {s.value}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {s.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Grid>
+
+          {/* Signature: a mock risk readout in tabular mono */}
+          <Grid item xs={12} md={5}>
+            <Card sx={{ p: 3 }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ mb: 2 }}
+              >
+                <Typography variant="overline" color="text.secondary">
+                  Risk readout
+                </Typography>
+                <Chip
+                  size="small"
+                  label="95% confidence"
                   sx={{
-                    fontWeight: 800,
-                    color: "#61dafb",
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: { xs: "1.8rem", md: "2.5rem" },
+                    bgcolor: "rgba(52,199,123,0.12)",
+                    color: "success.main",
+                  }}
+                />
+              </Stack>
+              {[
+                ["Value at Risk", "-2.53%", "negative"],
+                ["Conditional VaR", "-3.81%", "negative"],
+                ["Sharpe ratio", "1.42", "neutral"],
+                ["Max drawdown", "-11.7%", "negative"],
+                ["Annualized return", "+14.2%", "positive"],
+              ].map(([label, value, tone]) => (
+                <Stack
+                  key={label}
+                  direction="row"
+                  justifyContent="space-between"
+                  sx={{
+                    py: 1.4,
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                    "&:last-of-type": { borderBottom: 0 },
                   }}
                 >
-                  {stat.value}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "rgba(255,255,255,0.55)", mt: 0.5 }}
-                >
-                  {stat.label}
-                </Typography>
-              </Grid>
-            ))}
+                  <Typography variant="body2" color="text.secondary">
+                    {label}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: mono,
+                      fontVariantNumeric: "tabular-nums",
+                      fontWeight: 600,
+                      color:
+                        tone === "positive"
+                          ? "success.main"
+                          : tone === "negative"
+                            ? "error.main"
+                            : "text.primary",
+                    }}
+                  >
+                    {value}
+                  </Typography>
+                </Stack>
+              ))}
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: "block", mt: 2 }}
+              >
+                Illustrative figures. Sign in to compute on your own series.
+              </Typography>
+            </Card>
           </Grid>
-        </Card>
+        </Grid>
       </Container>
 
-      {/* Features Section */}
-      <Container maxWidth="lg" sx={{ pb: 10 }}>
-        <Box sx={{ textAlign: "center", mb: 7 }}>
-          <Typography
-            variant="overline"
-            sx={{ color: "#61dafb", fontWeight: 700, letterSpacing: 3 }}
-          >
-            CAPABILITIES
-          </Typography>
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 700,
-              mt: 1,
-              fontFamily: "Poppins, sans-serif",
-              fontSize: { xs: "1.8rem", md: "2.5rem" },
-            }}
-          >
-            Everything You Need to Manage Risk
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: "rgba(255,255,255,0.55)",
-              mt: 2,
-              maxWidth: 560,
-              mx: "auto",
-            }}
-          >
-            From individual asset analysis to full portfolio optimization,
-            RiskOptimizer provides institutional-grade tools for every investor.
-          </Typography>
-        </Box>
-
+      {/* Features */}
+      <Container maxWidth="lg" sx={{ pb: { xs: 8, md: 12 } }}>
+        <Typography variant="overline" color="primary.light">
+          What you get
+        </Typography>
+        <Typography variant="h4" sx={{ mb: 5, mt: 1 }}>
+          A risk desk, not a dashboard
+        </Typography>
         <Grid container spacing={3}>
-          {features.map((feature, index) => (
-            <Grid item xs={12} sm={6} key={index}>
-              <Card
-                sx={{
-                  height: "100%",
-                  background: "rgba(19, 47, 76, 0.6)",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 4,
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    border: `1px solid ${feature.color}44`,
-                    transform: "translateY(-4px)",
-                    boxShadow: `0 20px 60px rgba(0,0,0,0.4), 0 0 30px ${feature.color}18`,
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      display: "inline-flex",
-                      p: 1.5,
-                      borderRadius: 3,
-                      backgroundColor: `${feature.color}18`,
-                      color: feature.color,
-                      mb: 2.5,
-                    }}
-                  >
-                    {feature.icon}
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 700,
-                      mb: 1.5,
-                      fontFamily: "Poppins, sans-serif",
-                    }}
-                  >
-                    {feature.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}
-                  >
-                    {feature.description}
-                  </Typography>
-                </CardContent>
+          {features.map((f) => (
+            <Grid item xs={12} sm={6} md={4} key={f.title}>
+              <Card sx={{ p: 3, height: "100%" }}>
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "rgba(91,141,239,0.12)",
+                    color: "primary.light",
+                    mb: 2,
+                  }}
+                >
+                  {f.icon}
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1, fontSize: "1.05rem" }}>
+                  {f.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {f.body}
+                </Typography>
               </Card>
             </Grid>
           ))}
         </Grid>
       </Container>
 
-      {/* CTA Section */}
-      <Container maxWidth="md" sx={{ pb: 12 }}>
+      {/* CTA */}
+      <Container maxWidth="lg" sx={{ pb: { xs: 10, md: 14 } }}>
         <Card
           sx={{
-            background:
-              "linear-gradient(135deg, rgba(97,218,251,0.12) 0%, rgba(19,47,76,0.9) 100%)",
-            border: "1px solid rgba(97,218,251,0.25)",
-            borderRadius: 5,
-            p: { xs: 4, md: 7 },
+            p: { xs: 4, md: 6 },
             textAlign: "center",
+            background:
+              "linear-gradient(135deg, rgba(91,141,239,0.14), rgba(229,181,103,0.08))",
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{ fontWeight: 700, mb: 2, fontFamily: "Poppins, sans-serif" }}
-          >
-            Ready to Optimize Your Portfolio?
+          <Typography variant="h4" sx={{ mb: 1.5 }}>
+            Run your first risk report in minutes
           </Typography>
           <Typography
-            variant="body1"
-            sx={{
-              color: "rgba(255,255,255,0.6)",
-              mb: 4,
-              maxWidth: 450,
-              mx: "auto",
-            }}
+            color="text.secondary"
+            sx={{ mb: 3, maxWidth: 520, mx: "auto" }}
           >
-            Join thousands of investors who use RiskOptimizer to make
-            data-driven portfolio decisions.
+            Create an account, paste a return series, and get value at risk,
+            Sharpe, and drawdown on the same screen.
           </Typography>
-          <Divider sx={{ mb: 4, borderColor: "rgba(255,255,255,0.1)" }} />
           <Button
-            variant="contained"
             size="large"
-            onClick={handleGetStarted}
-            sx={{
-              py: 1.8,
-              px: 6,
-              fontSize: "1rem",
-              fontWeight: 700,
-              borderRadius: 3,
-              background: "linear-gradient(135deg, #61dafb 0%, #4db8d9 100%)",
-              color: "#0a1929",
-              "&:hover": {
-                background: "linear-gradient(135deg, #8be9fd 0%, #61dafb 100%)",
-                transform: "translateY(-2px)",
-              },
-              transition: "all 0.2s ease",
-            }}
+            variant="contained"
+            onClick={() => navigate("/register")}
+            sx={{ py: 1.4, px: 4 }}
           >
-            {user ? "Open Dashboard" : "Start for Free"}
+            Create your account
           </Button>
         </Card>
       </Container>
 
-      {/* Footer */}
-      <Box
-        sx={{
-          borderTop: "1px solid rgba(255,255,255,0.07)",
-          py: 4,
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.35)" }}>
-          © {new Date().getFullYear()} RiskOptimizer · AI-Powered Portfolio
-          Optimization
-        </Typography>
+      <Box sx={{ borderTop: "1px solid", borderColor: "divider", py: 3 }}>
+        <Container maxWidth="lg">
+          <Typography variant="caption" color="text.secondary">
+            RiskOptimizer — quantitative portfolio risk. For research and
+            educational use; not investment advice.
+          </Typography>
+        </Container>
       </Box>
     </Box>
   );
