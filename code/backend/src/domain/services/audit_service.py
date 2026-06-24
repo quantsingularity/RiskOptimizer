@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from src.infrastructure.database.models import AuditLog
 from src.infrastructure.database.session import get_db_session
@@ -72,7 +71,10 @@ class AuditService:
             else:
                 with get_db_session() as db:
                     _do_log(db)
-        except SQLAlchemyError as e:
+        except Exception as e:
+            # Audit logging must never break the primary operation. Any failure
+            # here (including a DatabaseError raised by the session context
+            # manager) is logged and swallowed.
             logger.error(
                 f"Failed to log audit action: {action_type}. Error: {e}", exc_info=True
             )

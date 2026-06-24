@@ -150,7 +150,7 @@ def monte_carlo_simulation(
 
 @task_with_progress()
 def calculate_var_cvar(
-    self, portfolio_data: Dict, confidence_levels: List[float] = [0.95, 0.99]
+    self, portfolio_data: Dict, confidence_levels: List[float] = None
 ) -> Dict[str, Any]:
     """
     Calculate Value at Risk (VaR) and Conditional Value at Risk (CVaR) for a portfolio.
@@ -163,6 +163,8 @@ def calculate_var_cvar(
         Dict containing VaR and CVaR values
     """
     try:
+        if confidence_levels is None:
+            confidence_levels = [0.95, 0.99]
         # Validate inputs
         for level in confidence_levels:
             if not 0 < level < 1:

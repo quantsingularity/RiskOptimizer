@@ -8,23 +8,20 @@ import {
 } from "@testing-library/react-native";
 import LoginScreen from "../../src/screens/Auth/LoginScreen";
 
-// Mock navigation
+// Mock context login function (mock-prefixed so jest allows it in factories)
+const mockLogin = jest.fn();
 const mockNavigate = jest.fn();
 const mockNavigation = { navigate: mockNavigate };
 
 // Mock the useAuth hook
-jest.mock("../../src/context/AuthContext", () => {
-  const originalModule = jest.requireActual("../../src/context/AuthContext");
-  return {
-    ...originalModule,
-    useAuth: () => ({
-      login: mockLogin,
-      loading: false,
-      authenticated: false,
-      user: null,
-    }),
-  };
-});
+jest.mock("../../src/context/AuthContext", () => ({
+  useAuth: () => ({
+    login: mockLogin,
+    loading: false,
+    authenticated: false,
+    user: null,
+  }),
+}));
 
 // Mock the apiService
 jest.mock("../../src/services/apiService", () => ({
@@ -40,16 +37,41 @@ jest.mock("expo-secure-store", () => ({
   deleteItemAsync: jest.fn(() => Promise.resolve()),
 }));
 
-// Mock context login function
-const mockLogin = jest.fn();
-
-// Mock theme
+// Mock @rneui/themed with real React Native primitives so that React Native
+// Testing Library queries (testID) and events (changeText/press) behave as at runtime.
 jest.mock("@rneui/themed", () => {
   const React = require("react");
-  const originalModule = jest.requireActual("@rneui/themed");
+  const { TextInput, TouchableOpacity, Text, View } = require("react-native");
+
+  const Input = ({
+    placeholder,
+    onChangeText,
+    value,
+    secureTextEntry,
+    disabled,
+    testID,
+  }) =>
+    React.createElement(TextInput, {
+      placeholder,
+      onChangeText,
+      value,
+      secureTextEntry,
+      editable: !disabled,
+      testID: testID || `input-${placeholder}`,
+    });
+
+  const Button = ({ title, onPress, disabled, testID }) =>
+    React.createElement(
+      TouchableOpacity,
+      { onPress, disabled, testID: testID || "button" },
+      React.createElement(Text, null, title),
+    );
+
+  const Card = ({ children }) => React.createElement(View, null, children);
+  Card.Title = ({ children }) => React.createElement(Text, null, children);
+  Card.Divider = () => React.createElement(View, null);
 
   return {
-    ...originalModule,
     useTheme: () => ({
       theme: {
         colors: {
@@ -60,46 +82,10 @@ jest.mock("@rneui/themed", () => {
         },
       },
     }),
-    Input: ({
-      placeholder,
-      leftIcon,
-      onChangeText,
-      value,
-      secureTextEntry,
-      containerStyle,
-      disabled,
-      testID,
-    }) => (
-      <React.Fragment>
-        <input
-          placeholder={placeholder}
-          onChange={(e) => onChangeText(e.target.value)}
-          value={value}
-          type={secureTextEntry ? "password" : "text"}
-          disabled={disabled}
-          data-testid={testID || `input-${placeholder}`}
-        />
-      </React.Fragment>
-    ),
-    Button: ({ title, onPress, buttonStyle, disabled, testID }) => (
-      <button
-        onClick={onPress}
-        disabled={disabled}
-        data-testid={testID || "button"}
-      >
-        {title}
-      </button>
-    ),
-    Text: ({ style, children }) => <span style={style}>{children}</span>,
-    Card: {
-      Title: ({ h3, style, children }) => <h3 style={style}>{children}</h3>,
-      Divider: () => <hr />,
-      ...React.forwardRef(({ containerStyle, children }, ref) => (
-        <div ref={ref} style={containerStyle}>
-          {children}
-        </div>
-      )),
-    },
+    Input,
+    Button,
+    Text: ({ children }) => React.createElement(Text, null, children),
+    Card,
   };
 });
 
@@ -107,12 +93,11 @@ describe("Login Screen", () => {
   beforeEach(() => {
     mockLogin.mockClear();
     mockNavigate.mockClear();
-    mockLogin.mockResolvedValue(true); // Default to successful login
+    mockLogin.mockResolvedValue(true);
   });
 
-  const renderLoginScreen = () => {
-    return render(<LoginScreen navigation={mockNavigation} />);
-  };
+  const renderLoginScreen = () =>
+    render(<LoginScreen navigation={mockNavigation} />);
 
   it("should render email and password inputs and login button", () => {
     renderLoginScreen();
@@ -123,25 +108,23 @@ describe("Login Screen", () => {
 
   it("should update input fields when user types", () => {
     renderLoginScreen();
-    const emailInput = screen.getByTestId("input-Email");
-    const passwordInput = screen.getByTestId("input-Password");
+    fireEvent.changeText(screen.getByTestId("input-Email"), "test@example.com");
+    fireEvent.changeText(screen.getByTestId("input-Password"), "password123");
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-
-    expect(emailInput.value).toBe("test@example.com");
-    expect(passwordInput.value).toBe("password123");
+    expect(screen.getByTestId("input-Email").props.value).toBe(
+      "test@example.com",
+    );
+    expect(screen.getByTestId("input-Password").props.value).toBe(
+      "password123",
+    );
   });
 
   it("should call login function on button press with credentials", async () => {
     renderLoginScreen();
-    const emailInput = screen.getByTestId("input-Email");
-    const passwordInput = screen.getByTestId("input-Password");
-    const loginButton = screen.getByTestId("button");
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-    fireEvent.click(loginButton);
+    fireEvent.changeText(screen.getByTestId("input-Email"), "test@example.com");
+    fireEvent.changeText(screen.getByTestId("input-Password"), "password123");
+    fireEvent.press(screen.getByTestId("button"));
 
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith("test@example.com", "password123");
@@ -150,16 +133,16 @@ describe("Login Screen", () => {
   });
 
   it("should display error message on failed login", async () => {
-    mockLogin.mockResolvedValue(false); // Simulate failed login
+    mockLogin.mockResolvedValue(false);
 
     renderLoginScreen();
-    const emailInput = screen.getByTestId("input-Email");
-    const passwordInput = screen.getByTestId("input-Password");
-    const loginButton = screen.getByTestId("button");
 
-    fireEvent.change(emailInput, { target: { value: "wrong@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "wrong" } });
-    fireEvent.click(loginButton);
+    fireEvent.changeText(
+      screen.getByTestId("input-Email"),
+      "wrong@example.com",
+    );
+    fireEvent.changeText(screen.getByTestId("input-Password"), "wrong");
+    fireEvent.press(screen.getByTestId("button"));
 
     await waitFor(() => {
       expect(
@@ -168,12 +151,9 @@ describe("Login Screen", () => {
     });
   });
 
-  it("should validate input fields before submission", async () => {
+  it("should validate input fields before submission", () => {
     renderLoginScreen();
-    const loginButton = screen.getByTestId("button");
-
-    // Try to login without entering credentials
-    fireEvent.click(loginButton);
+    fireEvent.press(screen.getByTestId("button"));
 
     expect(
       screen.getByText("Please enter both email and password."),

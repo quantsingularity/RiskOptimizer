@@ -67,6 +67,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolio by address: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -101,6 +102,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting portfolio by ID: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -137,6 +139,7 @@ class PortfolioRepository:
                 f"Error getting portfolios by user ID: {str(e)}", exc_info=True
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -180,6 +183,7 @@ class PortfolioRepository:
             db.flush()
             logger.info(f"Created portfolio {portfolio.id} for user {user_id}")
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="PORTFOLIO_CREATED",
                 entity_type="PORTFOLIO",
@@ -190,6 +194,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error creating portfolio: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -240,6 +245,7 @@ class PortfolioRepository:
             db.flush()
             logger.info(f"Updated portfolio {portfolio_id}")
             self.audit_service.log_action(
+                session=db,
                 user_id=portfolio.user_id,
                 action_type="PORTFOLIO_UPDATED",
                 entity_type="PORTFOLIO",
@@ -252,6 +258,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error updating portfolio: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -292,6 +299,7 @@ class PortfolioRepository:
             db.flush()
             logger.info(f"Deleted portfolio {portfolio_id}")
             self.audit_service.log_action(
+                session=db,
                 user_id=portfolio.user_id,
                 action_type="PORTFOLIO_DELETED",
                 entity_type="PORTFOLIO",
@@ -302,6 +310,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error deleting portfolio: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -358,6 +367,7 @@ class PortfolioRepository:
                 f"Saved {len(allocation_objects)} allocations for portfolio {portfolio_id}"
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=portfolio.user_id,
                 action_type="ALLOCATIONS_SAVED",
                 entity_type="PORTFOLIO",
@@ -370,6 +380,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error saving allocations: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="ALLOCATION",
@@ -408,6 +419,7 @@ class PortfolioRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting allocations: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="ALLOCATION",
@@ -496,6 +508,7 @@ class PortfolioRepository:
                 f"Error getting portfolio with allocations: {str(e)}", exc_info=True
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",
@@ -554,6 +567,7 @@ class PortfolioRepository:
                 f"Saved portfolio with {len(allocations)} allocations for user {user_address}"
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="PORTFOLIO_ALLOCATIONS_SAVED",
                 entity_type="PORTFOLIO",
@@ -570,6 +584,7 @@ class PortfolioRepository:
                 f"Error saving portfolio with allocations: {str(e)}", exc_info=True
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="PORTFOLIO",

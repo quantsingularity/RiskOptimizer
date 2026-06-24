@@ -169,7 +169,7 @@ spec:
 
           # Environment Variables
           env:
-            - name: NODE_ENV
+            - name: FLASK_ENV
               value: "production"
             - name: PORT
               value: "8080"
@@ -249,8 +249,8 @@ spec:
           # Health Checks
           livenessProbe:
             httpGet:
-              path: /health/live
-              port: health
+              path: /health
+              port: http
               scheme: HTTP
             initialDelaySeconds: 60
             periodSeconds: 30
@@ -260,8 +260,8 @@ spec:
 
           readinessProbe:
             httpGet:
-              path: /health/ready
-              port: health
+              path: /health
+              port: http
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -271,8 +271,8 @@ spec:
 
           startupProbe:
             httpGet:
-              path: /health/startup
-              port: health
+              path: /health
+              port: http
               scheme: HTTP
             initialDelaySeconds: 10
             periodSeconds: 5

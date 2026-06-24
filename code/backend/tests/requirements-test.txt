@@ -1,6 +1,4 @@
-"""
-Test requirements for the RiskOptimizer test suite.
-"""
+# Test requirements for the RiskOptimizer test suite.
 
 # Testing framework
 pytest>=7.0.0

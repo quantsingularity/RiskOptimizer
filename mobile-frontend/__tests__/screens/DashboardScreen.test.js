@@ -7,14 +7,20 @@ import theme from "../../src/styles/theme";
 
 // Mock dependencies
 jest.mock("../../src/services/apiService");
-jest.mock("@react-navigation/native", () => ({
-  useFocusEffect: (callback) => {
-    callback();
-  },
-  useNavigation: () => ({
-    navigate: jest.fn(),
-  }),
-}));
+jest.mock("@react-navigation/native", () => {
+  const React = require("react");
+  return {
+    useFocusEffect: (callback) => {
+      React.useEffect(() => {
+        const cleanup = callback();
+        return cleanup;
+      }, [callback]);
+    },
+    useNavigation: () => ({
+      navigate: jest.fn(),
+    }),
+  };
+});
 
 const mockNavigation = {
   navigate: jest.fn(),

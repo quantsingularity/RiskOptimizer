@@ -249,11 +249,14 @@ def create_portfolio() -> Response:
         if not data:
             raise ValidationError("Request body is required")
 
-        # Validate request data
-        # Note: This uses a generic validation, specific schema validation might be needed
-        # if validate_portfolio_request is not suitable for create.
-        # For now, assuming it covers the basic fields for creation.
-        validated_data = data  # Assuming basic validation happens in service layer
+        # Validate required fields are present so a missing field returns a
+        # 400 validation error rather than surfacing as a 500 from a KeyError.
+        required_fields = ["user_id", "user_address", "name"]
+        missing = [f for f in required_fields if data.get(f) in (None, "")]
+        if missing:
+            raise ValidationError(f"Missing required field(s): {', '.join(missing)}")
+
+        validated_data = data
 
         # Create portfolio
         portfolio_data = portfolio_service.create_portfolio(

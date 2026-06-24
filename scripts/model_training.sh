@@ -138,13 +138,18 @@ install_requirements() {
 
     # Install model-specific packages
     case $MODEL_TYPE in
-        "all"|"optimization")
+        "optimization")
             pip install cvxpy pyportfolioopt > /dev/null
             ;;
-        "all"|"risk")
+        "risk")
             pip install arch statsmodels > /dev/null
             ;;
-        "all"|"prediction")
+        "prediction")
+            pip install keras prophet > /dev/null
+            ;;
+        "all")
+            pip install cvxpy pyportfolioopt > /dev/null
+            pip install arch statsmodels > /dev/null
             pip install keras prophet > /dev/null
             ;;
     esac

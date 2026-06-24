@@ -277,7 +277,7 @@ def database_maintenance(self) -> object:
             "successful_tasks": len(completed_tasks),
             "failed_tasks": len(failed_tasks),
             "completed_tasks": completed_tasks,
-            "failed_tasks": failed_tasks,
+            "failed_task_details": failed_tasks,
         }
         logger.info(
             f"Database maintenance completed: {len(completed_tasks)} successful, {len(failed_tasks)} failed"

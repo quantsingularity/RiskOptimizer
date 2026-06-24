@@ -203,7 +203,7 @@ run_js_linting() {
     local component=$1
     log "INFO" "Running JavaScript/TypeScript linting for $component..."
 
-    cd "$PROJECT_ROOT/code/$component"
+    cd "$PROJECT_ROOT/code/$component" || { log "ERROR" "Directory not found: $PROJECT_ROOT/code/$component"; return 1; }
 
     # Check if package.json exists
     if [ ! -f "package.json" ]; then
@@ -275,7 +275,7 @@ run_solidity_linting() {
     local component=$1
     log "INFO" "Running Solidity linting for $component..."
 
-    cd "$PROJECT_ROOT/code/$component"
+    cd "$PROJECT_ROOT/code/$component" || { log "ERROR" "Directory not found: $PROJECT_ROOT/code/$component"; return 1; }
 
     # Check if package.json exists
     if [ ! -f "package.json" ]; then

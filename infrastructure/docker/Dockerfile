@@ -1,89 +1,51 @@
-# Dockerfile for RiskOptimizer with Security Best Practices
-# Multi-stage build for security and efficiency
+# Backend image for the RiskOptimizer Flask API.
+# Build context is the repository root so the image can access code/backend.
+# Example (from repo root):
+#   docker build -f infrastructure/docker/Dockerfile -t riskoptimizer-backend .
 
-# ── Stage 1: Dependencies ──────────────────────────────────────────────────
-FROM node:20-alpine AS deps
+# ---- Builder: install Python dependencies into a venv ----
+FROM python:3.12-slim AS builder
 
-WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-# Install dependencies required for native modules
-RUN apk add --no-cache libc6-compat python3 make g++
-
-# Copy package manifests and install ALL deps (including dev for build)
-COPY package*.json ./
-COPY yarn.lock* ./
-
-RUN npm ci && npm cache clean --force
-
-# ── Stage 2: Builder ────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Build application
-RUN npm run build
+COPY code/backend/requirements.txt ./requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Prune dev dependencies after build
-RUN npm prune --omit=dev && npm cache clean --force
+# ---- Runtime ----
+FROM python:3.12-slim AS runtime
 
-# ── Stage 3: Production runner ──────────────────────────────────────────────
-FROM node:20-alpine AS runner
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    PORT=8080
 
-# Install security updates and minimal runtime tools
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache \
-        dumb-init \
-        curl \
-        ca-certificates \
-        tzdata && \
-    rm -rf /var/cache/apk/* && \
-    # Remove package manager to reduce attack surface
-    rm -f /usr/local/bin/npm /usr/local/bin/npx
+# Non-root user
+RUN groupadd --system app && useradd --system --gid app --create-home app
 
-# Create non-root user with explicit IDs
-RUN addgroup -g 10001 -S appgroup && \
-    adduser -S appuser -u 10001 -G appgroup
+COPY --from=builder /opt/venv /opt/venv
 
 WORKDIR /app
+COPY code/backend/ /app/
 
-# Copy built artifacts and pruned production node_modules from builder
-COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
-COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
-COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
+RUN chown -R app:app /app
+USER app
 
-# Create required runtime directories with correct ownership
-RUN mkdir -p /app/logs /app/tmp && \
-    chown -R appuser:appgroup /app && \
-    chmod -R 750 /app && \
-    chmod -R 770 /app/logs /app/tmp
-
-# Drop to non-root user
-USER appuser
-
-# Expose non-privileged port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -sf http://localhost:8080/health || exit 1
+# Health endpoint served by the Flask app on the single application port.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health').status < 500 else 1)" || exit 1
 
-# Use dumb-init to handle signals properly and prevent zombie processes
-ENTRYPOINT ["dumb-init", "--"]
-
-CMD ["node", "dist/server.js"]
-
-# OCI image labels
-LABEL org.opencontainers.image.title="RiskOptimizer API" \
-      org.opencontainers.image.description="RiskOptimizer backend application" \
-      org.opencontainers.image.vendor="RiskOptimizer" \
-      org.opencontainers.image.version="1.0.0" \
-      org.opencontainers.image.source="https://github.com/riskoptimizer/riskoptimizer" \
-      org.opencontainers.image.licenses="Proprietary" \
-      compliance.gdpr="true" \
-      compliance.pci-dss="true" \
-      compliance.sox="true" \
-      security.scan="enabled"
+# app:app is the Flask WSGI callable defined in code/backend/app.py
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "app:app"]

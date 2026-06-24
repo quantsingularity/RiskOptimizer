@@ -17,7 +17,7 @@ import {
   addToWatchlist,
   isInWatchlist,
   removeFromWatchlist,
-} from "../utils/watchlist"; // Import watchlist functions
+} from "../../utils/watchlist"; // Import watchlist functions
 
 const screenWidth = Dimensions.get("window").width;
 

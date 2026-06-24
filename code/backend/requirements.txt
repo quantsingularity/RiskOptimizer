@@ -60,6 +60,7 @@ reportlab==4.0.7
 matplotlib==3.8.2
 plotly==5.17.0
 jinja2==3.1.2
+openpyxl==3.1.2 # Required by pandas ExcelWriter for xlsx report export
 
 # Utilities
 python-dateutil==2.8.2

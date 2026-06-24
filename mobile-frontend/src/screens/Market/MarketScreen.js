@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import apiService from "../../services/apiService";
-import { getWatchlist } from "../utils/watchlist"; // Import watchlist utility
+import { getWatchlist } from "../../utils/watchlist"; // Import watchlist utility
 
 const MarketScreen = ({ navigation }) => {
   const [marketData, setMarketData] = useState([]); // Holds the initial/default list

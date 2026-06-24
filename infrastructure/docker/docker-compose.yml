@@ -21,28 +21,23 @@ services:
   # ── Backend API ────────────────────────────────────────────────────────────
   backend:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      target: runner
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
     image: riskoptimizer/backend:${IMAGE_TAG:-latest}
     container_name: riskoptimizer-backend
     restart: unless-stopped
     <<: *security-defaults
     ports:
       - "127.0.0.1:8080:8080"
-      - "127.0.0.1:8081:8081"
-      - "127.0.0.1:8082:8082"
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: "8080"
-      METRICS_PORT: "8081"
-      HEALTH_PORT: "8082"
-      LOG_LEVEL: ${LOG_LEVEL:-info}
+      FLASK_ENV: ${FLASK_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
       LOG_FORMAT: json
       DATABASE_URL: postgresql://${DB_USER:-appuser}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-riskoptimizerdb}
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      JWT_SECRET: ${JWT_SECRET}
-      API_KEY: ${API_KEY}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       ENABLE_METRICS: "true"
       ENABLE_AUDIT_LOGGING: "true"
     volumes:
@@ -60,7 +55,13 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:8082/health/live"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health').status < 500 else 1)",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -73,9 +74,10 @@ services:
   # ── Frontend ───────────────────────────────────────────────────────────────
   frontend:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile.frontend
-      target: runner
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
     image: riskoptimizer/frontend:${IMAGE_TAG:-latest}
     container_name: riskoptimizer-frontend
     restart: unless-stopped
@@ -86,8 +88,9 @@ services:
     ports:
       - "127.0.0.1:3000:8080"
     environment:
-      REACT_APP_API_URL: /api
-      REACT_APP_ENV: ${NODE_ENV:-development}
+      # The web bundle is built by Vite, which inlines VITE_API_URL at build
+      # time (see build.args above). No runtime API env is needed here.
+      NGINX_ENV: ${FLASK_ENV:-production}
     volumes:
       - type: tmpfs
         target: /tmp

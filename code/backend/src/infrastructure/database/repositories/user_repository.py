@@ -112,6 +112,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting user by ID: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -145,6 +146,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting user by email: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -178,6 +180,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting user by username: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -223,6 +226,7 @@ class UserRepository:
                 f"Error getting user by wallet address: {str(e)}", exc_info=True
             )
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -273,6 +277,7 @@ class UserRepository:
                 user.wallet_address = self._decrypt_data(user.wallet_address)
             logger.info(f"Created user {user.id} with email {email}")
             self.audit_service.log_action(
+                session=db,
                 user_id=user.id,
                 action_type="USER_CREATED",
                 entity_type="USER",
@@ -283,6 +288,7 @@ class UserRepository:
         except IntegrityError as e:
             logger.error(f"Error creating user (conflict): {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -308,6 +314,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error creating user: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -358,6 +365,7 @@ class UserRepository:
                 user.wallet_address = self._decrypt_data(user.wallet_address)
             logger.info(f"Updated user {user_id}")
             self.audit_service.log_action(
+                session=db,
                 user_id=user.id,
                 action_type="USER_UPDATED",
                 entity_type="USER",
@@ -370,6 +378,7 @@ class UserRepository:
         except IntegrityError as e:
             logger.error(f"Error updating user (conflict): {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -403,6 +412,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error updating user: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -443,6 +453,7 @@ class UserRepository:
             db.flush()
             logger.info(f"Deleted user {user_id}")
             self.audit_service.log_action(
+                session=db,
                 user_id=user.id,
                 action_type="USER_DELETED",
                 entity_type="USER",
@@ -453,6 +464,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error deleting user: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=user_id,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -488,6 +500,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error getting all users: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
@@ -515,6 +528,7 @@ class UserRepository:
         except SQLAlchemyError as e:
             logger.error(f"Error counting users: {str(e)}", exc_info=True)
             self.audit_service.log_action(
+                session=db,
                 user_id=None,
                 action_type="DB_ERROR",
                 entity_type="USER",
